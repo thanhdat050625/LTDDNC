@@ -1,61 +1,40 @@
-# compiled output
-/dist
-/node_modules
-/build
-
-# Logs
-logs
+# Node / Root artifacts
+node_modules/
+dist/
+dist-ssr/
+build/
+*.local
 *.log
-npm-debug.log*
-pnpm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
+logs/
 
-# OS
-.DS_Store
-
-# Tests
-/coverage
-/.nyc_output
-
-# IDEs and editors
-/.idea
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
-
-# IDE - VSCode
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-
-# dotenv environment variable files
+# Dotenv environment variables
 .env
-.env.development.local
-.env.test.local
-.env.production.local
-.env.local
+.env.dev
+.env.prod
+.env.*
+!.env.example
 
-# temp directory
-.temp
-.tmp
+# OS files
+.DS_Store
+Thumbs.db
 
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
+# IDEs
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
 
-# Diagnostic reports (https://nodejs.org/api/report.html)
-report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+# Flutter / Dart Mobile artifacts
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+*.apk
+*.aab
+*.ipa
 
-build_errors.txt
-lint_errors.txt
-*.pem
-*.tsbuildinfo
+# Testing & Coverage
+coverage/
+.nyc_output/
