@@ -1,0 +1,293 @@
+{
+  "@@locale": "en",
+  "appTitle": "CINEPLEX",
+  "appName": "Cineplex",
+  "login": "Login",
+  "register": "Register",
+  "email": "Email",
+  "password": "Password",
+  "confirmPassword": "Confirm Password",
+  "forgotPassword": "Forgot Password?",
+  "sendOtp": "Send OTP",
+  "otpCode": "OTP Code",
+  "otpSent": "OTP Sent",
+  "otpVerify": "Verify OTP",
+  "registerSuccess": "Registered successfully",
+  "resetPasswordSuccess": "Password reset successfully",
+  "changePassword": "Change Password",
+  "oldPassword": "Old Password",
+  "newPassword": "New Password",
+  "logout": "Logout",
+  "logoutConfirm": "Are you sure you want to logout?",
+  "rememberMe": "Remember me",
+  "noAccount": "Don't have an account?",
+  "haveAccount": "Already have an account?",
+  "emailRequired": "Email is required",
+  "passwordRequired": "Password is required",
+  "passwordMinLength": "Password must be at least 6 characters",
+  "passwordMismatch": "Passwords do not match",
+  "emailInvalid": "Invalid email address",
+  "home": "Home",
+  "nowShowing": "Now Showing",
+  "comingSoon": "Coming Soon",
+  "audiencePick": "Audience Pick",
+  "seeAll": "See All",
+  "welcome": "Welcome",
+  "totalCinemas": "Total Cinemas",
+  "todayShowtimes": "Today's Showtimes",
+  "movies": "Movies",
+  "movieDetail": "Movie Detail",
+  "duration": "Duration",
+  "durationMinutes": "{minutes} minutes",
+  "@durationMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "ageLimit": "Age Limit",
+  "genre": "Genre",
+  "director": "Director",
+  "cast": "Cast",
+  "language": "Language",
+  "releaseDate": "Release Date",
+  "description": "Description",
+  "trailer": "Trailer",
+  "bookNow": "Book Now",
+  "noMovies": "No movies available",
+  "rating": "Rating",
+  "searchMovies": "Search Movies",
+  "filterByGenre": "Filter by Genre",
+  "allGenres": "All Genres",
+  "selectShowtime": "Select Showtime",
+  "selectDate": "Select Date",
+  "selectCinema": "Select Cinema",
+  "format2D": "2D",
+  "format3D": "3D",
+  "formatIMAX": "IMAX",
+  "noShowtimes": "No showtimes available",
+  "showtimeAt": "Showtime at {time}",
+  "@showtimeAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "seatSelection": "Seat Selection",
+  "selectSeats": "Please select seats",
+  "seatStandard": "Standard",
+  "seatVIP": "VIP",
+  "seatCouple": "Couple",
+  "seatSelected": "Selected",
+  "seatHeld": "Held",
+  "seatBooked": "Booked",
+  "seatAvailable": "Available",
+  "holdSeatExpired": "Seat hold expired",
+  "holdTimerLabel": "Seat hold time:",
+  "holdTimerMinutes": "{minutes}:{seconds}",
+  "@holdTimerMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      },
+      "seconds": {
+        "type": "String"
+      }
+    }
+  },
+  "continueBtn": "Continue",
+  "maxSeatsReached": "Maximum seats reached",
+  "seatHeldByOther": "Seat is held by another user",
+  "seatsSelected": "Selected Seats:",
+  "totalPrice": "Total Price: {price}",
+  "@totalPrice": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "createBooking": "Create Booking",
+  "concessions": "Concessions",
+  "popcornDrinks": "Popcorn & Drinks",
+  "addToOrder": "Add to Order",
+  "removeFromOrder": "Remove",
+  "quantity": "Quantity",
+  "subtotal": "Subtotal",
+  "skipConcession": "Skip",
+  "concessionTotal": "Concession Total",
+  "checkout": "Checkout",
+  "orderSummary": "Order Summary",
+  "paymentMethod": "Payment Method",
+  "selectPaymentMethod": "Select Payment Method",
+  "momo": "MoMo Wallet",
+  "vnpay": "VNPAY",
+  "paypal": "PayPal",
+  "cash": "Cash",
+  "payNow": "Pay Now",
+  "processing": "Processing...",
+  "paymentSuccess": "Payment Successful",
+  "paymentFailed": "Payment Failed",
+  "paymentPending": "Payment Pending",
+  "paymentExpired": "Payment Expired",
+  "bookingCode": "Booking Code",
+  "secondsRemaining": "{seconds} seconds",
+  "@secondsRemaining": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "loyaltyPoints": "Loyalty Points",
+  "usePoints": "Use Points",
+  "pointsDiscount": "Points Discount",
+  "maxPointsDiscount": "Max Discount",
+  "totalAmount": "Total Amount",
+  "discountAmount": "Discount Amount",
+  "ticketTotal": "Ticket Total",
+  "concessionTotalLabel": "Concession Total",
+  "promotionCode": "Promotion Code",
+  "applyPromotion": "Apply",
+  "promotionApplied": "Promotion applied",
+  "promotionInvalid": "Invalid promotion code",
+  "redeemWithPoints": "Redeem",
+  "myTickets": "My Tickets",
+  "ticketDetail": "Ticket Detail",
+  "qrCode": "QR Code",
+  "seatInfo": "Seat Info",
+  "noTickets": "No tickets found",
+  "checkedIn": "Checked In",
+  "checkedInAt": "Checked in at {time}",
+  "@checkedInAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "notCheckedIn": "Not checked in",
+  "ticketActive": "Active",
+  "ticketUsed": "Used",
+  "ticketCancelled": "Cancelled",
+  "upcomingTickets": "Upcoming",
+  "pastTickets": "Past",
+  "bookingHistory": "Booking History",
+  "notifications": "Notifications",
+  "noNotifications": "No notifications",
+  "markAllRead": "Mark all as read",
+  "unreadCount": "{count} unread",
+  "@unreadCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationTicketConfirm": "Booking Confirmation",
+  "notificationPromotion": "Promotion",
+  "notificationReminder": "Reminder",
+  "notificationSystem": "System",
+  "notificationPaymentFailed": "Payment Failed",
+  "profile": "Profile",
+  "editProfile": "Edit Profile",
+  "fullName": "Full Name",
+  "phone": "Phone Number",
+  "gender": "Gender",
+  "dateOfBirth": "Date of Birth",
+  "male": "Male",
+  "female": "Female",
+  "other": "Other",
+  "saveChanges": "Save Changes",
+  "profileUpdated": "Profile updated successfully",
+  "loyaltyInfo": "Loyalty Info",
+  "earnRate": "Earn Rate",
+  "pointValue": "Point Value",
+  "settings": "Settings",
+  "darkMode": "Dark Mode",
+  "lightMode": "Light Mode",
+  "language": "Language",
+  "vietnamese": "Tiếng Việt",
+  "english": "English",
+  "appVersion": "App Version",
+  "about": "About Us",
+  "staffDashboard": "Staff Dashboard",
+  "qrScanner": "QR Scanner",
+  "scanTicket": "Scan Ticket",
+  "scanResult": "Scan Result",
+  "ticketValid": "Ticket Valid",
+  "ticketInvalid": "Ticket Invalid",
+  "ticketAlreadyChecked": "Ticket Already Checked",
+  "counterSale": "Counter Sale",
+  "selectCustomer": "Select Customer",
+  "searchCustomer": "Search Customer",
+  "statistics": "Statistics",
+  "revenue": "Revenue",
+  "revenueReport": "Revenue Report",
+  "movieStats": "Movie Stats",
+  "systemSummary": "System Summary",
+  "timeFrame": "Time Frame",
+  "day": "Day",
+  "week": "Week",
+  "month": "Month",
+  "year": "Year",
+  "ticketsSold": "Tickets Sold",
+  "occupancyRate": "Occupancy Rate",
+  "activeMovies": "Active Movies",
+  "totalRevenue": "Total Revenue",
+  "loading": "Loading...",
+  "error": "An error occurred",
+  "retry": "Retry",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "save": "Save",
+  "delete": "Delete",
+  "back": "Back",
+  "next": "Next",
+  "search": "Search",
+  "noData": "No data available",
+  "noInternet": "No internet connection",
+  "serverError": "Server error",
+  "unknownError": "Unknown error",
+  "success": "Success",
+  "warning": "Warning",
+  "info": "Info",
+  "close": "Close",
+  "ok": "OK",
+  "yes": "Yes",
+  "no": "No",
+  "refresh": "Refresh",
+  "more": "More",
+  "less": "Less",
+  "viewAll": "View All",
+  "selectAll": "Select All",
+  "clear": "Clear",
+  "apply": "Apply",
+  "reset": "Reset",
+  "seatCount": "{count} seats selected",
+  "@seatCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "priceFormat": "{price}",
+  "@priceFormat": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "dateFormat": "{date}",
+  "@dateFormat": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  }
+}

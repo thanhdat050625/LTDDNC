@@ -1,0 +1,293 @@
+{
+  "@@locale": "vi",
+  "appTitle": "CINEPLEX",
+  "appName": "Cineplex",
+  "login": "Đăng nhập",
+  "register": "Đăng ký",
+  "email": "Email",
+  "password": "Mật khẩu",
+  "confirmPassword": "Xác nhận mật khẩu",
+  "forgotPassword": "Quên mật khẩu?",
+  "sendOtp": "Gửi mã OTP",
+  "otpCode": "Mã OTP",
+  "otpSent": "Mã OTP đã được gửi",
+  "otpVerify": "Xác thực OTP",
+  "registerSuccess": "Đăng ký thành công",
+  "resetPasswordSuccess": "Đặt lại mật khẩu thành công",
+  "changePassword": "Đổi mật khẩu",
+  "oldPassword": "Mật khẩu cũ",
+  "newPassword": "Mật khẩu mới",
+  "logout": "Đăng xuất",
+  "logoutConfirm": "Bạn có chắc chắn muốn đăng xuất?",
+  "rememberMe": "Ghi nhớ đăng nhập",
+  "noAccount": "Chưa có tài khoản?",
+  "haveAccount": "Đã có tài khoản?",
+  "emailRequired": "Email không được để trống",
+  "passwordRequired": "Mật khẩu không được để trống",
+  "passwordMinLength": "Mật khẩu phải có ít nhất 6 ký tự",
+  "passwordMismatch": "Mật khẩu không khớp",
+  "emailInvalid": "Email không hợp lệ",
+  "home": "Trang chủ",
+  "nowShowing": "Đang chiếu",
+  "comingSoon": "Sắp chiếu",
+  "audiencePick": "Khán giả bình chọn",
+  "seeAll": "Xem tất cả",
+  "welcome": "Xin chào",
+  "totalCinemas": "Tổng số rạp",
+  "todayShowtimes": "Suất chiếu hôm nay",
+  "movies": "Phim",
+  "movieDetail": "Chi tiết phim",
+  "duration": "Thời lượng",
+  "durationMinutes": "{minutes} phút",
+  "@durationMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "ageLimit": "Độ tuổi",
+  "genre": "Thể loại",
+  "director": "Đạo diễn",
+  "cast": "Diễn viên",
+  "language": "Ngôn ngữ",
+  "releaseDate": "Ngày khởi chiếu",
+  "description": "Nội dung",
+  "trailer": "Trailer",
+  "bookNow": "Đặt vé ngay",
+  "noMovies": "Không có phim nào",
+  "rating": "Đánh giá",
+  "searchMovies": "Tìm kiếm phim",
+  "filterByGenre": "Lọc theo thể loại",
+  "allGenres": "Tất cả thể loại",
+  "selectShowtime": "Chọn suất chiếu",
+  "selectDate": "Chọn ngày",
+  "selectCinema": "Chọn rạp",
+  "format2D": "2D",
+  "format3D": "3D",
+  "formatIMAX": "IMAX",
+  "noShowtimes": "Không có suất chiếu nào",
+  "showtimeAt": "Suất chiếu lúc {time}",
+  "@showtimeAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "seatSelection": "Chọn ghế",
+  "selectSeats": "Vui lòng chọn ghế",
+  "seatStandard": "Thường",
+  "seatVIP": "VIP",
+  "seatCouple": "Ghế đôi",
+  "seatSelected": "Đang chọn",
+  "seatHeld": "Đang giữ",
+  "seatBooked": "Đã đặt",
+  "seatAvailable": "Trống",
+  "holdSeatExpired": "Hết thời gian giữ ghế",
+  "holdTimerLabel": "Thời gian giữ ghế:",
+  "holdTimerMinutes": "{minutes}:{seconds}",
+  "@holdTimerMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      },
+      "seconds": {
+        "type": "String"
+      }
+    }
+  },
+  "continueBtn": "Tiếp tục",
+  "maxSeatsReached": "Đã đạt số lượng ghế tối đa",
+  "seatHeldByOther": "Ghế đã có người chọn",
+  "seatsSelected": "Các ghế đã chọn:",
+  "totalPrice": "Tổng tiền: {price}",
+  "@totalPrice": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "createBooking": "Tạo đơn hàng",
+  "concessions": "Bắp nước",
+  "popcornDrinks": "Bắp & Nước",
+  "addToOrder": "Thêm vào đơn",
+  "removeFromOrder": "Bỏ khỏi đơn",
+  "quantity": "Số lượng",
+  "subtotal": "Tạm tính",
+  "skipConcession": "Bỏ qua",
+  "concessionTotal": "Tổng bắp nước",
+  "checkout": "Thanh toán",
+  "orderSummary": "Tóm tắt đơn hàng",
+  "paymentMethod": "Phương thức thanh toán",
+  "selectPaymentMethod": "Chọn phương thức thanh toán",
+  "momo": "Ví MoMo",
+  "vnpay": "VNPAY",
+  "paypal": "PayPal",
+  "cash": "Tiền mặt",
+  "payNow": "Thanh toán ngay",
+  "processing": "Đang xử lý...",
+  "paymentSuccess": "Thanh toán thành công",
+  "paymentFailed": "Thanh toán thất bại",
+  "paymentPending": "Đang chờ thanh toán",
+  "paymentExpired": "Thanh toán hết hạn",
+  "bookingCode": "Mã đặt vé",
+  "secondsRemaining": "{seconds} giây",
+  "@secondsRemaining": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "loyaltyPoints": "Điểm tích luỹ",
+  "usePoints": "Sử dụng điểm",
+  "pointsDiscount": "Giảm giá từ điểm",
+  "maxPointsDiscount": "Giảm tối đa",
+  "totalAmount": "Tổng cộng",
+  "discountAmount": "Giảm giá",
+  "ticketTotal": "Tổng tiền vé",
+  "concessionTotalLabel": "Tổng tiền bắp nước",
+  "promotionCode": "Mã khuyến mãi",
+  "applyPromotion": "Áp dụng",
+  "promotionApplied": "Đã áp dụng mã khuyến mãi",
+  "promotionInvalid": "Mã khuyến mãi không hợp lệ",
+  "redeemWithPoints": "Đổi điểm",
+  "myTickets": "Vé của tôi",
+  "ticketDetail": "Chi tiết vé",
+  "qrCode": "Mã QR",
+  "seatInfo": "Thông tin ghế",
+  "noTickets": "Chưa có vé nào",
+  "checkedIn": "Đã check-in",
+  "checkedInAt": "Check-in lúc {time}",
+  "@checkedInAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "notCheckedIn": "Chưa check-in",
+  "ticketActive": "Khả dụng",
+  "ticketUsed": "Đã sử dụng",
+  "ticketCancelled": "Đã hủy",
+  "upcomingTickets": "Sắp diễn ra",
+  "pastTickets": "Đã qua",
+  "bookingHistory": "Lịch sử đặt vé",
+  "notifications": "Thông báo",
+  "noNotifications": "Không có thông báo nào",
+  "markAllRead": "Đánh dấu tất cả đã đọc",
+  "unreadCount": "{count} chưa đọc",
+  "@unreadCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationTicketConfirm": "Xác nhận đặt vé",
+  "notificationPromotion": "Khuyến mãi",
+  "notificationReminder": "Nhắc nhở",
+  "notificationSystem": "Hệ thống",
+  "notificationPaymentFailed": "Thanh toán thất bại",
+  "profile": "Tài khoản",
+  "editProfile": "Chỉnh sửa thông tin",
+  "fullName": "Họ và tên",
+  "phone": "Số điện thoại",
+  "gender": "Giới tính",
+  "dateOfBirth": "Ngày sinh",
+  "male": "Nam",
+  "female": "Nữ",
+  "other": "Khác",
+  "saveChanges": "Lưu thay đổi",
+  "profileUpdated": "Cập nhật thành công",
+  "loyaltyInfo": "Thông tin thẻ thành viên",
+  "earnRate": "Tỉ lệ tích điểm",
+  "pointValue": "Giá trị điểm",
+  "settings": "Cài đặt",
+  "darkMode": "Chế độ tối",
+  "lightMode": "Chế độ sáng",
+  "language": "Ngôn ngữ",
+  "vietnamese": "Tiếng Việt",
+  "english": "English",
+  "appVersion": "Phiên bản ứng dụng",
+  "about": "Về chúng tôi",
+  "staffDashboard": "Bảng điều khiển nhân viên",
+  "qrScanner": "Quét mã QR",
+  "scanTicket": "Quét vé",
+  "scanResult": "Kết quả quét",
+  "ticketValid": "Vé hợp lệ",
+  "ticketInvalid": "Vé không hợp lệ",
+  "ticketAlreadyChecked": "Vé đã được kiểm tra",
+  "counterSale": "Bán tại quầy",
+  "selectCustomer": "Chọn khách hàng",
+  "searchCustomer": "Tìm kiếm khách hàng",
+  "statistics": "Thống kê",
+  "revenue": "Doanh thu",
+  "revenueReport": "Báo cáo doanh thu",
+  "movieStats": "Thống kê phim",
+  "systemSummary": "Tổng quan hệ thống",
+  "timeFrame": "Khung thời gian",
+  "day": "Ngày",
+  "week": "Tuần",
+  "month": "Tháng",
+  "year": "Năm",
+  "ticketsSold": "Số vé đã bán",
+  "occupancyRate": "Tỉ lệ lấp đầy",
+  "activeMovies": "Phim đang chiếu",
+  "totalRevenue": "Tổng doanh thu",
+  "loading": "Đang tải...",
+  "error": "Đã xảy ra lỗi",
+  "retry": "Thử lại",
+  "cancel": "Hủy",
+  "confirm": "Xác nhận",
+  "save": "Lưu",
+  "delete": "Xóa",
+  "back": "Quay lại",
+  "next": "Tiếp theo",
+  "search": "Tìm kiếm",
+  "noData": "Không có dữ liệu",
+  "noInternet": "Không có kết nối mạng",
+  "serverError": "Lỗi máy chủ",
+  "unknownError": "Lỗi không xác định",
+  "success": "Thành công",
+  "warning": "Cảnh báo",
+  "info": "Thông tin",
+  "close": "Đóng",
+  "ok": "Đồng ý",
+  "yes": "Có",
+  "no": "Không",
+  "refresh": "Làm mới",
+  "more": "Thêm",
+  "less": "Ẩn bớt",
+  "viewAll": "Xem tất cả",
+  "selectAll": "Chọn tất cả",
+  "clear": "Xóa",
+  "apply": "Áp dụng",
+  "reset": "Đặt lại",
+  "seatCount": "{count} ghế đã chọn",
+  "@seatCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "priceFormat": "{price}",
+  "@priceFormat": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "dateFormat": "{date}",
+  "@dateFormat": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  }
+}
