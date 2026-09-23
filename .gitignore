@@ -24,17 +24,6 @@ Thumbs.db
 !.vscode/extensions.json
 !.vscode/settings.json
 
-# Flutter / Dart Mobile artifacts
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-.packages
-.pub-cache/
-.pub/
-*.apk
-*.aab
-*.ipa
-
 # Testing & Coverage
 coverage/
 .nyc_output/
