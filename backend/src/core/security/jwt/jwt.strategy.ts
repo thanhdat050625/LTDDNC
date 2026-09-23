@@ -13,6 +13,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     configService: ConfigService,
     private dataSource: DataSource,
   ) {
+    const secret = configService.get<string>(ENV_VARS.JWT_ACCESS_SECRET);
+    if (!secret) {
+      throw new Error(`Thiếu biến môi trường: ${ENV_VARS.JWT_ACCESS_SECRET}`);
+    }
+
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) => {
@@ -21,7 +26,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         ExtractJwt.fromAuthHeaderAsBearerToken(),
       ]),
       ignoreExpiration: false,
-      secretOrKey: configService.get<string>(ENV_VARS.JWT_ACCESS_SECRET) as string,
+      secretOrKey: secret,
     });
   }
 

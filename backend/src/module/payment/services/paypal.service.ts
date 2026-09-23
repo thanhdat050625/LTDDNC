@@ -9,7 +9,7 @@ export class PaypalService {
   private readonly baseUrl: string;
 
   constructor(private readonly configService: ConfigService) {
-    const env = this.configService.get<string>(ENV_VARS.PAYPAL_ENVIRONMENT) || 'sandbox';
+    const env = this.getRequiredEnv(ENV_VARS.PAYPAL_ENVIRONMENT);
     this.baseUrl = env === 'sandbox'
       ? 'https://api-m.sandbox.paypal.com'
       : 'https://api-m.paypal.com';

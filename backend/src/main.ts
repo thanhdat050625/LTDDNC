@@ -14,9 +14,11 @@ async function bootstrap() {
 
   app.set('trust proxy', 'loopback');
 
-  const allowedOrigins = process.env.FRONTEND_URL
-    ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
-    : ['http://localhost:3000'];
+  const frontendUrl = process.env.FRONTEND_URL;
+  if (!frontendUrl) {
+    throw new Error('Thiếu biến môi trường: FRONTEND_URL');
+  }
+  const allowedOrigins = frontendUrl.split(',').map((url) => url.trim());
 
   app.enableCors({
     origin: allowedOrigins,
@@ -36,6 +38,10 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalInterceptors(new LoggingInterceptor());
 
-  await app.listen(process.env.PORT ?? 3000);
+  const port = process.env.PORT;
+  if (!port) {
+    throw new Error('Thiếu biến môi trường: PORT');
+  }
+  await app.listen(port);
 }
 bootstrap();

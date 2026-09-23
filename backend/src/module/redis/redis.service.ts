@@ -11,13 +11,36 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   constructor(private readonly config: ConfigService) { }
 
   onModuleInit() {
-    const host = this.config.get<string>(ENV_VARS.REDIS_HOST, 'localhost');
+    const host = this.config.get<string>(ENV_VARS.REDIS_HOST);
+    if (!host) {
+      throw new Error(`Thiếu biến môi trường: ${ENV_VARS.REDIS_HOST}`);
+    }
+
+    const portRaw = this.config.get<number | string>(ENV_VARS.REDIS_PORT);
+    if (portRaw === undefined || portRaw === null || portRaw === '') {
+      throw new Error(`Thiếu biến môi trường: ${ENV_VARS.REDIS_PORT}`);
+    }
+    const port = Number(portRaw);
+
+    const username = this.config.get<string>(ENV_VARS.REDIS_USER);
+    if (!username) {
+      throw new Error(`Thiếu biến môi trường: ${ENV_VARS.REDIS_USER}`);
+    }
+
+    const dbRaw = this.config.get<number | string>(ENV_VARS.REDIS_DB);
+    if (dbRaw === undefined || dbRaw === null || dbRaw === '') {
+      throw new Error(`Thiếu biến môi trường: ${ENV_VARS.REDIS_DB}`);
+    }
+    const db = Number(dbRaw);
+
+    const password = this.config.get<string>(ENV_VARS.REDIS_PASS);
+
     this.client = new Redis({
-      host: host,
-      port: this.config.get<number>(ENV_VARS.REDIS_PORT, 6379),
-      username: this.config.get<string>(ENV_VARS.REDIS_USER, 'default'),
-      password: this.config.get<string>(ENV_VARS.REDIS_PASS),
-      db: this.config.get<number>(ENV_VARS.REDIS_DB, 0),
+      host,
+      port,
+      username,
+      ...(password ? { password } : {}),
+      db,
       lazyConnect: true,
       tls: host !== 'localhost' && host !== '127.0.0.1' ? {} : undefined,
     });
