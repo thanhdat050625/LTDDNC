@@ -10,8 +10,23 @@ import 'package:cineplex_mobile/features/home/presentation/widgets/promotion_ban
 import 'package:cineplex_mobile/core/widgets/app_loading.dart';
 import 'package:cineplex_mobile/core/widgets/app_error_view.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Đảm bảo dữ liệu được tải khi vào màn hình này (khắc phục lỗi không gọi được initState ở app.dart khi Hot Reload)
+    final cubit = context.read<HomeCubit>();
+    if (cubit.state is HomeInitial) {
+      cubit.load();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +36,7 @@ class HomeScreen extends StatelessWidget {
       body: SafeArea(
         child: BlocBuilder<HomeCubit, HomeState>(
           builder: (context, state) {
-            if (state is HomeLoading) {
+            if (state is HomeLoading || state is HomeInitial) {
               return const Center(child: AppLoading());
             } else if (state is HomeError) {
               return AppErrorView(message: state.error, onRetry: () => context.read<HomeCubit>().load());

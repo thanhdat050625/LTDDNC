@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cineplex_mobile/core/theme/app_colors.dart';
+import 'package:cineplex_mobile/core/theme/cineplex_colors.dart';
 import 'package:cineplex_mobile/features/booking/data/models/seat_model.dart';
 
 class SeatItemWidget extends StatelessWidget {
@@ -16,7 +16,8 @@ class SeatItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color seatColor = _getSeatColor();
+    final colors = Theme.of(context).extension<CineplexColors>()!;
+    Color seatColor = _getSeatColor(colors);
     
     return GestureDetector(
       onTap: onTap,
@@ -55,15 +56,15 @@ class SeatItemWidget extends StatelessWidget {
     );
   }
 
-  Color _getSeatColor() {
-    if (isSelected) return AppColors.seatSelected;
+  Color _getSeatColor(CineplexColors colors) {
+    if (isSelected) return colors.seatSelected;
     switch (seat.status) {
-      case SeatStatus.booked: return AppColors.seatBooked;
-      case SeatStatus.held: return AppColors.seatHeld;
+      case SeatStatus.booked: return colors.seatBooked;
+      case SeatStatus.held: return colors.seatHeld;
       case SeatStatus.maintenance: return Colors.grey;
       case SeatStatus.available:
       default:
-        return seat.isCouple ? AppColors.seatCouple : AppColors.seatStandard;
+        return seat.isCouple ? colors.seatCouple : colors.seatStandard;
     }
   }
 }
