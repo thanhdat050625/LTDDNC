@@ -676,4 +676,104 @@ class AppLocalizationsVi extends AppLocalizations {
   String dateFormat(String date) {
     return '$date';
   }
+
+  @override
+  String get fullNameRequired => 'Vui lòng nhập họ và tên';
+
+  @override
+  String get loyaltyPolicyTitle => 'Chính sách tích & tiêu điểm';
+
+  @override
+  String get loyaltyPolicyEarn =>
+      'Tích lũy: Nhận ngay 10% giá trị đơn hàng sau khi thanh toán thành công.';
+
+  @override
+  String get loyaltyPolicyDiscount =>
+      'Giảm giá: Dùng điểm giảm giá tối đa 20% tổng đơn (1 điểm = 1 VNĐ).';
+
+  @override
+  String get loyaltyPolicyGifts =>
+      'Đổi quà: Dùng điểm quy đổi các Combo bắp nước miễn phí.';
+
+  @override
+  String get currentPointsBalance => 'Số dư điểm hiện tại:';
+
+  @override
+  String get pointsSuffix => 'điểm';
+
+  @override
+  String get managementSection => 'Quản lý & Nghiệp vụ';
+
+  @override
+  String get userManagement => 'Quản lý người dùng';
+
+  @override
+  String get scanBookingCodeWarning =>
+      'Đây là mã đặt vé (BK-), vui lòng quét mã QR của từng vé (bắt đầu bằng TKT-).';
+
+  @override
+  String get scanAlreadyCheckedIn => 'Vé này đã được soát trước đó!';
+
+  @override
+  String get scanTicketNotActive => 'Vé không còn hiệu lực!';
+
+  @override
+  String get scanTicketNotFound => 'Không tìm thấy vé trong hệ thống!';
+
+  @override
+  String get scanSuccess => 'Soát vé thành công';
+
+  @override
+  String get manualTicketInput => 'Nhập mã vé thủ công (TKT-...)';
+
+  @override
+  String get verifyTicket => 'Soát vé';
+
+  @override
+  String get searchUser => 'Tìm kiếm theo email hoặc số điện thoại';
+
+  @override
+  String get blockUser => 'Khóa tài khoản';
+
+  @override
+  String get unblockUser => 'Mở khóa';
+
+  @override
+  String get confirmBlockUser => 'Bạn có chắc chắn muốn khóa tài khoản này?';
+
+  @override
+  String get confirmUnblockUser =>
+      'Bạn có chắc chắn muốn mở khóa tài khoản này?';
+
+  @override
+  String get userStatusUpdated => 'Cập nhật trạng thái người dùng thành công';
+
+  @override
+  String get revenueTrend => 'Xu hướng doanh thu';
+
+  @override
+  String get moviePerformance => 'Hiệu suất phim';
+
+  @override
+  String get ticketsSoldCol => 'Vé bán';
+
+  @override
+  String get revenueCol => 'Doanh thu';
+
+  @override
+  String get allMonths => 'Tất cả các tháng';
+
+  @override
+  String monthFormat(int month) {
+    return 'Tháng $month';
+  }
+
+  @override
+  String get ticketListEmptyPrompt => 'Bạn chưa có vé xem phim nào';
+
+  @override
+  String get selectGender => 'Chọn giới tính';
+
+  @override
+  String get phoneInvalid => 'Số điện thoại không hợp lệ';
 }

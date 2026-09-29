@@ -1393,6 +1393,192 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'{date}'**
   String dateFormat(String date);
+
+  /// No description provided for @fullNameRequired.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vui lòng nhập họ và tên'**
+  String get fullNameRequired;
+
+  /// No description provided for @loyaltyPolicyTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chính sách tích & tiêu điểm'**
+  String get loyaltyPolicyTitle;
+
+  /// No description provided for @loyaltyPolicyEarn.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tích lũy: Nhận ngay 10% giá trị đơn hàng sau khi thanh toán thành công.'**
+  String get loyaltyPolicyEarn;
+
+  /// No description provided for @loyaltyPolicyDiscount.
+  ///
+  /// In vi, this message translates to:
+  /// **'Giảm giá: Dùng điểm giảm giá tối đa 20% tổng đơn (1 điểm = 1 VNĐ).'**
+  String get loyaltyPolicyDiscount;
+
+  /// No description provided for @loyaltyPolicyGifts.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đổi quà: Dùng điểm quy đổi các Combo bắp nước miễn phí.'**
+  String get loyaltyPolicyGifts;
+
+  /// No description provided for @currentPointsBalance.
+  ///
+  /// In vi, this message translates to:
+  /// **'Số dư điểm hiện tại:'**
+  String get currentPointsBalance;
+
+  /// No description provided for @pointsSuffix.
+  ///
+  /// In vi, this message translates to:
+  /// **'điểm'**
+  String get pointsSuffix;
+
+  /// No description provided for @managementSection.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quản lý & Nghiệp vụ'**
+  String get managementSection;
+
+  /// No description provided for @userManagement.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quản lý người dùng'**
+  String get userManagement;
+
+  /// No description provided for @scanBookingCodeWarning.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đây là mã đặt vé (BK-), vui lòng quét mã QR của từng vé (bắt đầu bằng TKT-).'**
+  String get scanBookingCodeWarning;
+
+  /// No description provided for @scanAlreadyCheckedIn.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vé này đã được soát trước đó!'**
+  String get scanAlreadyCheckedIn;
+
+  /// No description provided for @scanTicketNotActive.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vé không còn hiệu lực!'**
+  String get scanTicketNotActive;
+
+  /// No description provided for @scanTicketNotFound.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không tìm thấy vé trong hệ thống!'**
+  String get scanTicketNotFound;
+
+  /// No description provided for @scanSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Soát vé thành công'**
+  String get scanSuccess;
+
+  /// No description provided for @manualTicketInput.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhập mã vé thủ công (TKT-...)'**
+  String get manualTicketInput;
+
+  /// No description provided for @verifyTicket.
+  ///
+  /// In vi, this message translates to:
+  /// **'Soát vé'**
+  String get verifyTicket;
+
+  /// No description provided for @searchUser.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tìm kiếm theo email hoặc số điện thoại'**
+  String get searchUser;
+
+  /// No description provided for @blockUser.
+  ///
+  /// In vi, this message translates to:
+  /// **'Khóa tài khoản'**
+  String get blockUser;
+
+  /// No description provided for @unblockUser.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mở khóa'**
+  String get unblockUser;
+
+  /// No description provided for @confirmBlockUser.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn có chắc chắn muốn khóa tài khoản này?'**
+  String get confirmBlockUser;
+
+  /// No description provided for @confirmUnblockUser.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn có chắc chắn muốn mở khóa tài khoản này?'**
+  String get confirmUnblockUser;
+
+  /// No description provided for @userStatusUpdated.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cập nhật trạng thái người dùng thành công'**
+  String get userStatusUpdated;
+
+  /// No description provided for @revenueTrend.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xu hướng doanh thu'**
+  String get revenueTrend;
+
+  /// No description provided for @moviePerformance.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hiệu suất phim'**
+  String get moviePerformance;
+
+  /// No description provided for @ticketsSoldCol.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vé bán'**
+  String get ticketsSoldCol;
+
+  /// No description provided for @revenueCol.
+  ///
+  /// In vi, this message translates to:
+  /// **'Doanh thu'**
+  String get revenueCol;
+
+  /// No description provided for @allMonths.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tất cả các tháng'**
+  String get allMonths;
+
+  /// No description provided for @monthFormat.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tháng {month}'**
+  String monthFormat(int month);
+
+  /// No description provided for @ticketListEmptyPrompt.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn chưa có vé xem phim nào'**
+  String get ticketListEmptyPrompt;
+
+  /// No description provided for @selectGender.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn giới tính'**
+  String get selectGender;
+
+  /// No description provided for @phoneInvalid.
+  ///
+  /// In vi, this message translates to:
+  /// **'Số điện thoại không hợp lệ'**
+  String get phoneInvalid;
 }
 
 class _AppLocalizationsDelegate
