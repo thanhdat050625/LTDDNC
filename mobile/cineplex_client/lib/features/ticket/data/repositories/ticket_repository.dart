@@ -1,6 +1,4 @@
-import 'package:cineplex_client/core/api/dio_client.dart';
-import 'package:cineplex_client/core/api/api_response.dart';
-import 'package:cineplex_client/features/ticket/data/models/ticket_model.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 
 class TicketRepository {
   final DioClient _dioClient;

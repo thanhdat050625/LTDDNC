@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mobile_shared/l10n/app_localizations.dart';
-import 'package:cineplex_client/core/theme/app_colors.dart';
-import 'package:cineplex_client/core/widgets/app_button.dart';
-import 'package:cineplex_client/core/widgets/app_loading.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 import 'package:cineplex_client/features/booking/presentation/bloc/seat_booking_bloc.dart';
 import 'package:cineplex_client/features/booking/presentation/widgets/seat_layout_widget.dart';
 import 'package:cineplex_client/features/booking/presentation/widgets/seat_legend.dart';

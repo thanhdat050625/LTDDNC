@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 
 class FormatUtils {
-  static String formatCurrency(int amount) {
+  static String formatCurrency(num amount) {
     return '${NumberFormat('#,###', 'vi_VN').format(amount)} đ';
   }
 

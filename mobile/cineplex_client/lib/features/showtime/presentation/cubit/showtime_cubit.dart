@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cineplex_client/features/showtime/data/models/showtime_model.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 import 'package:cineplex_client/features/showtime/data/repositories/showtime_repository.dart';
 
 abstract class ShowtimeState extends Equatable {

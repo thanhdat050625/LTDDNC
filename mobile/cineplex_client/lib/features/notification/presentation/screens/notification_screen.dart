@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cineplex_client/core/widgets/app_scaffold.dart';
-import 'package:cineplex_client/core/widgets/app_loading.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 import '../cubit/notification_cubit.dart';
 import '../widgets/notification_item.dart';
 

@@ -276,6 +276,14 @@ class AppLocalizationsVi extends AppLocalizations {
   String get skipConcession => 'Bỏ qua';
 
   @override
+  String get skip => 'Bỏ qua';
+
+  @override
+  String availableSeatsCount(int available, int total) {
+    return '$available/$total ghế';
+  }
+
+  @override
   String get concessionTotal => 'Tổng bắp nước';
 
   @override

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'core/api/dio_client.dart';
-import 'package:cineplex_client/core/services/storage_service.dart';
-import 'features/auth/data/repositories/auth_repository.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 import 'features/home/data/repositories/home_repository.dart';
 import 'features/movie/data/repositories/movie_repository.dart';
 import 'features/showtime/data/repositories/showtime_repository.dart';

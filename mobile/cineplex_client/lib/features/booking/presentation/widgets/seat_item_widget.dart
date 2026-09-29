@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cineplex_client/core/theme/cineplex_colors.dart';
-import 'package:cineplex_client/features/booking/data/models/seat_model.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 
 class SeatItemWidget extends StatelessWidget {
   final SeatModel seat;

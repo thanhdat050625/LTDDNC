@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cineplex_client/features/concession/data/models/concession_model.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 import 'package:cineplex_client/features/concession/data/repositories/concession_repository.dart';
 
 abstract class ConcessionState extends Equatable {

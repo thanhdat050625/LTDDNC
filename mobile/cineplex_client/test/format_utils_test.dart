@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:cineplex_client/core/utils/format_utils.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 
 void main() {
   test('FormatUtils currency, duration and countdown format checks', () {

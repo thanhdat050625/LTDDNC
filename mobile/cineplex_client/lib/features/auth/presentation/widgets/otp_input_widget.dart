@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:cineplex_client/core/theme/app_colors.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 
 class OtpInputWidget extends StatefulWidget {
   final int length;

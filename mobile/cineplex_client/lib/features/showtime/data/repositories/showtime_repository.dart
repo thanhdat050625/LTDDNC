@@ -1,6 +1,4 @@
-import 'package:cineplex_client/core/api/dio_client.dart';
-import 'package:cineplex_client/features/showtime/data/models/showtime_model.dart';
-import 'package:cineplex_client/features/showtime/data/models/cinema_model.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 
 class ShowtimeRepository {
   final DioClient _dioClient;

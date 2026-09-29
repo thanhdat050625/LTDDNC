@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cineplex_client/core/theme/app_colors.dart';
-import 'package:cineplex_client/core/widgets/app_button.dart';
-import 'package:cineplex_client/core/widgets/app_scaffold.dart';
-import 'package:cineplex_client/core/widgets/app_loading.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 import '../cubit/payment_cubit.dart';
 
 class PaymentResultScreen extends StatefulWidget {

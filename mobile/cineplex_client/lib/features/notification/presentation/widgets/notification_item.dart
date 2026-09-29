@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../data/models/notification_model.dart';
-import 'package:cineplex_client/core/utils/format_utils.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 
 class NotificationItem extends StatelessWidget {
   final NotificationModel notification;

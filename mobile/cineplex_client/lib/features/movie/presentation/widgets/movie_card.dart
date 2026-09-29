@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:cineplex_client/features/movie/data/models/movie_model.dart';
-import 'package:cineplex_client/core/widgets/app_cached_image.dart';
-import 'package:cineplex_client/core/theme/app_colors.dart';
-import 'package:cineplex_client/core/utils/format_utils.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class MovieCard extends StatelessWidget {

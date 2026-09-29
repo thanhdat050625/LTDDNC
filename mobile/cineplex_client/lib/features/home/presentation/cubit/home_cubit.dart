@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:cineplex_client/features/home/data/models/home_data_model.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 import 'package:cineplex_client/features/home/data/repositories/home_repository.dart';
 
 abstract class HomeState extends Equatable { const HomeState(); @override List<Object> get props => []; }

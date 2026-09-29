@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:cineplex_client/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:mobile_shared/l10n/app_localizations.dart';
-import 'package:cineplex_client/core/widgets/app_button.dart';
-import 'package:cineplex_client/core/widgets/app_text_field.dart';
-import 'package:cineplex_client/core/theme/app_colors.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 import 'package:cineplex_client/features/auth/presentation/widgets/otp_input_widget.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -52,10 +48,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         actions: [
           TextButton(
             onPressed: () => context.go('/home'),
-            child: const Text(
-              'Bỏ qua', // TODO: L10n
-              style: TextStyle(color: Colors.white70, fontWeight: FontWeight.w500),
-            ),
+            child: Text(l10n.skip, style: const TextStyle(color: Colors.white70, fontWeight: FontWeight.w500)),
           ),
           const SizedBox(width: 8),
         ],
@@ -74,7 +67,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               } else if (state is AuthOtpSent) {
                 if (_currentStep == 0) _nextStep();
               } else if (state is AuthAuthenticated) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Đăng ký thành công!')));
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.registerSuccess)));
                 context.go('/home');
               }
             },
@@ -175,7 +168,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               if (_otp.isNotEmpty && _password.isNotEmpty && _password == _confirmPassword) {
                 context.read<AuthBloc>().add(RegisterRequested(_email, _otp, _password, _confirmPassword));
               } else if (_password != _confirmPassword) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Mật khẩu không khớp')));
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.passwordMismatch)));
               }
             },
           ),

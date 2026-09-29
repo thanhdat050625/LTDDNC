@@ -1,5 +1,4 @@
-import 'package:cineplex_client/core/api/dio_client.dart';
-import 'package:cineplex_client/features/movie/data/models/movie_model.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 
 class MovieRepository {
   final DioClient _dio;

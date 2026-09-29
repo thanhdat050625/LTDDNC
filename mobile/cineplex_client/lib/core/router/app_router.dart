@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:cineplex_client/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 import 'package:cineplex_client/features/auth/presentation/screens/login_screen.dart';
 import 'package:cineplex_client/features/auth/presentation/screens/register_screen.dart';
 import 'package:cineplex_client/features/auth/presentation/screens/forgot_password_screen.dart';
@@ -19,7 +19,6 @@ import 'package:cineplex_client/features/ticket/presentation/screens/my_tickets_
 import 'package:cineplex_client/features/ticket/presentation/screens/ticket_detail_screen.dart';
 import 'package:cineplex_client/features/ticket/presentation/cubit/my_tickets_cubit.dart';
 import 'package:cineplex_client/features/ticket/data/repositories/ticket_repository.dart';
-import 'package:cineplex_client/features/ticket/data/models/ticket_model.dart';
 import 'package:cineplex_client/features/notification/presentation/screens/notification_screen.dart';
 import 'package:cineplex_client/features/profile/presentation/screens/profile_screen.dart';
 import 'package:cineplex_client/features/profile/presentation/screens/edit_profile_screen.dart';

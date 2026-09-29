@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cineplex_client/core/theme/app_colors.dart';
-import 'package:cineplex_client/features/concession/data/models/concession_model.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 
 class ConcessionItemCard extends StatelessWidget {
   final ConcessionProductModel product;
@@ -55,7 +54,7 @@ class ConcessionItemCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  '${product.price} đ',
+                  FormatUtils.formatCurrency(product.price),
                   style: const TextStyle(
                     color: AppColors.primary,
                     fontWeight: FontWeight.bold,

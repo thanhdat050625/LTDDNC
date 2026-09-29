@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mobile_shared/l10n/app_localizations.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 import 'package:go_router/go_router.dart';
 
-import 'core/theme/app_theme.dart';
 import 'core/router/app_router.dart';
-import 'core/api/dio_client.dart';
-import 'package:cineplex_client/core/services/storage_service.dart';
 
-import 'features/auth/data/repositories/auth_repository.dart';
 import 'features/home/data/repositories/home_repository.dart';
 import 'features/movie/data/repositories/movie_repository.dart';
 import 'features/showtime/data/repositories/showtime_repository.dart';
@@ -19,7 +15,6 @@ import 'features/ticket/data/repositories/ticket_repository.dart';
 import 'features/notification/data/repositories/notification_repository.dart';
 import 'features/profile/data/repositories/profile_repository.dart';
 
-import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/home/presentation/cubit/home_cubit.dart';
 import 'features/notification/presentation/cubit/notification_cubit.dart';
 import 'features/profile/presentation/cubit/profile_cubit.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:cineplex_client/features/ticket/data/models/ticket_model.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 import 'package:cineplex_client/features/ticket/data/repositories/ticket_repository.dart';
 
 abstract class MyTicketsState extends Equatable {

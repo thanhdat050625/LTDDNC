@@ -1,5 +1,4 @@
-import 'package:cineplex_client/core/api/dio_client.dart';
-import 'package:cineplex_client/features/concession/data/models/concession_model.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 
 class ConcessionRepository {
   final DioClient _dioClient;

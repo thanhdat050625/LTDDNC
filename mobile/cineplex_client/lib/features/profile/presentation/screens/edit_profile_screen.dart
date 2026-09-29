@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:cineplex_client/core/widgets/app_scaffold.dart';
-import 'package:cineplex_client/core/widgets/app_button.dart';
-import 'package:cineplex_client/core/widgets/app_text_field.dart';
-import 'package:mobile_shared/l10n/app_localizations.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 import '../cubit/profile_cubit.dart';
 
 class EditProfileScreen extends StatefulWidget {

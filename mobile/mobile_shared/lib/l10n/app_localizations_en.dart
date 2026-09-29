@@ -276,6 +276,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get skipConcession => 'Skip';
 
   @override
+  String get skip => 'Skip';
+
+  @override
+  String availableSeatsCount(int available, int total) {
+    return '$available/$total seats';
+  }
+
+  @override
   String get concessionTotal => 'Concession Total';
 
   @override

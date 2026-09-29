@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cineplex_client/core/theme/app_colors.dart';
-import 'package:cineplex_client/core/utils/format_utils.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 
 class BookingTimerWidget extends StatelessWidget {
   final int secondsRemaining;

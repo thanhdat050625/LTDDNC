@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cineplex_client/core/widgets/app_scaffold.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 // Note: Requires webview_flutter in pubspec.yaml
 
 class PaymentWebviewScreen extends StatelessWidget {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:cineplex_client/core/theme/app_colors.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 
 class DateSelector extends StatelessWidget {
   final List<DateTime> dates;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mobile_shared/l10n/app_localizations.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import 'package:cineplex_client/features/notification/presentation/cubit/notification_cubit.dart';

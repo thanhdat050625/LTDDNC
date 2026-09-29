@@ -1,10 +1,8 @@
 import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cineplex_client/core/services/socket_service.dart';
-import 'package:cineplex_client/features/booking/data/models/seat_model.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 import 'package:cineplex_client/features/booking/data/repositories/booking_repository.dart';
-import 'package:cineplex_client/features/showtime/data/models/cinema_model.dart';
 
 abstract class SeatBookingEvent extends Equatable {
   const SeatBookingEvent();

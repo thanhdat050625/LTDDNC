@@ -614,6 +614,18 @@ abstract class AppLocalizations {
   /// **'Bỏ qua'**
   String get skipConcession;
 
+  /// No description provided for @skip.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bỏ qua'**
+  String get skip;
+
+  /// No description provided for @availableSeatsCount.
+  ///
+  /// In vi, this message translates to:
+  /// **'{available}/{total} ghế'**
+  String availableSeatsCount(int available, int total);
+
   /// No description provided for @concessionTotal.
   ///
   /// In vi, this message translates to:

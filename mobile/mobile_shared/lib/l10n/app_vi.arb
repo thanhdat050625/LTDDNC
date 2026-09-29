@@ -117,6 +117,14 @@
   "quantity": "Số lượng",
   "subtotal": "Tạm tính",
   "skipConcession": "Bỏ qua",
+  "skip": "Bỏ qua",
+  "availableSeatsCount": "{available}/{total} ghế",
+  "@availableSeatsCount": {
+    "placeholders": {
+      "available": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
   "concessionTotal": "Tổng bắp nước",
   "checkout": "Thanh toán",
   "orderSummary": "Tóm tắt đơn hàng",

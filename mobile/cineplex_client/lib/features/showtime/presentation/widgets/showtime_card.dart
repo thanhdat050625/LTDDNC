@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:cineplex_client/core/theme/app_colors.dart';
-import 'package:cineplex_client/features/showtime/data/models/showtime_model.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 
 class ShowtimeCard extends StatelessWidget {
   final ShowtimeModel showtime;
@@ -15,6 +14,7 @@ class ShowtimeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -54,7 +54,7 @@ class ShowtimeCard extends StatelessWidget {
             if (showtime.totalSeats > 0) ...[
               const SizedBox(height: 6),
               Text(
-                '${showtime.availableSeats}/${showtime.totalSeats} ghế',
+                l10n.availableSeatsCount(showtime.availableSeats, showtime.totalSeats),
                 style: TextStyle(
                   fontSize: 11,
                   color: showtime.availableSeats == 0 ? Colors.red : Colors.grey,

@@ -3,10 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cineplex_client/features/movie/presentation/widgets/movie_card.dart';
 import 'package:cineplex_client/features/movie/presentation/cubit/movie_list_cubit.dart';
 import 'package:cineplex_client/features/movie/data/repositories/movie_repository.dart';
-import 'package:cineplex_client/core/theme/app_colors.dart';
-import 'package:mobile_shared/l10n/app_localizations.dart';
-import 'package:cineplex_client/core/widgets/shimmer_skeleton.dart';
-import 'package:cineplex_client/core/widgets/staggered_list.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 
 class MovieListScreen extends StatelessWidget {
   const MovieListScreen({super.key});

@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:cineplex_client/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:mobile_shared/l10n/app_localizations.dart';
-import 'package:cineplex_client/core/widgets/app_button.dart';
-import 'package:cineplex_client/core/widgets/app_text_field.dart';
-import 'package:cineplex_client/core/theme/app_colors.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 import 'package:cineplex_client/features/auth/presentation/widgets/otp_input_widget.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -64,7 +60,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               } else if (state is AuthOtpSent) {
                 if (_currentStep == 0) _nextStep();
               } else if (state is AuthPasswordReset) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Đổi mật khẩu thành công!')));
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.resetPasswordSuccess)));
                 context.pop();
               }
             },
@@ -149,7 +145,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               if (_otp.isNotEmpty && _newPassword.isNotEmpty && _newPassword == _confirmPassword) {
                 context.read<AuthBloc>().add(ForgotPasswordRequested(_email, _otp, _newPassword, _confirmPassword));
               } else if (_newPassword != _confirmPassword) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Mật khẩu không khớp')));
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.passwordMismatch)));
               }
             },
           ),

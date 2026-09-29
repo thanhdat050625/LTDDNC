@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../data/models/movie_model.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 import '../../data/repositories/movie_repository.dart';
 
 abstract class MovieDetailState extends Equatable {

@@ -117,6 +117,14 @@
   "quantity": "Quantity",
   "subtotal": "Subtotal",
   "skipConcession": "Skip",
+  "skip": "Skip",
+  "availableSeatsCount": "{available}/{total} seats",
+  "@availableSeatsCount": {
+    "placeholders": {
+      "available": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
   "concessionTotal": "Concession Total",
   "checkout": "Checkout",
   "orderSummary": "Order Summary",

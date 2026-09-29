@@ -1,4 +1,4 @@
-package com.cineplex.cineplex_mobile
+package com.cineplex.admin
 
 import io.flutter.embedding.android.FlutterActivity
 

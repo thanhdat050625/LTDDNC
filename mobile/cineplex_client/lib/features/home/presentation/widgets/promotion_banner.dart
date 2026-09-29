@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cineplex_client/features/home/data/models/home_data_model.dart';
-import 'package:cineplex_client/core/theme/app_colors.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 
 class PromotionBanner extends StatelessWidget {
   final List<PromotionModel> promotions;

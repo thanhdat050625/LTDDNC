@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cineplex_client/core/theme/app_colors.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 import 'package:cineplex_client/features/home/presentation/cubit/home_cubit.dart';
 import 'package:cineplex_client/features/home/presentation/widgets/movie_carousel.dart';
 import 'package:cineplex_client/features/home/presentation/widgets/now_showing_section.dart';
 import 'package:cineplex_client/features/home/presentation/widgets/coming_soon_section.dart';
 import 'package:cineplex_client/features/home/presentation/widgets/promotion_banner.dart';
-import 'package:cineplex_client/core/widgets/app_loading.dart';
-import 'package:cineplex_client/core/widgets/app_error_view.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Đảm bảo dữ liệu được tải khi vào màn hình này (khắc phục lỗi không gọi được initState ở app.dart khi Hot Reload)
+    // Đảm bảo dữ liệu được tải khi vào màn hình này
     final cubit = context.read<HomeCubit>();
     if (cubit.state is HomeInitial) {
       cubit.load();
