@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:cineplex_mobile/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:cineplex_mobile/l10n/app_localizations.dart';
 import 'package:cineplex_mobile/core/widgets/app_button.dart';
 import 'package:cineplex_mobile/core/widgets/app_text_field.dart';
@@ -17,6 +19,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   int _currentStep = 0;
   String _email = '';
   String _otp = '';
+  String _password = '';
+  String _confirmPassword = '';
 
   void _nextStep() {
     if (_currentStep < 2) {
@@ -63,28 +67,42 @@ class _RegisterScreenState extends State<RegisterScreen> {
           gradient: AppColors.cinematicGradient,
         ),
         child: SafeArea(
-        child: Column(
-          children: [
-            LinearProgressIndicator(value: (_currentStep + 1) / 3, backgroundColor: AppColors.darkSurface, color: AppColors.primary),
-            Expanded(
-              child: PageView(
-                controller: _pageCtrl,
-                physics: const NeverScrollableScrollPhysics(),
+          child: BlocConsumer<AuthBloc, AuthState>(
+            listener: (context, state) {
+              if (state is AuthError) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+              } else if (state is AuthOtpSent) {
+                if (_currentStep == 0) _nextStep();
+              } else if (state is AuthAuthenticated) {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Đăng ký thành công!')));
+                context.go('/home');
+              }
+            },
+            builder: (context, state) {
+              return Column(
                 children: [
-                  _buildStep1(l10n),
-                  _buildStep2(l10n),
-                  _buildStep3(l10n),
+                  LinearProgressIndicator(value: (_currentStep + 1) / 3, backgroundColor: AppColors.darkSurface, color: AppColors.primary),
+                  Expanded(
+                    child: PageView(
+                      controller: _pageCtrl,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: [
+                        _buildStep1(l10n, state is AuthLoading),
+                        _buildStep2(l10n),
+                        _buildStep3(l10n, state is AuthLoading),
+                      ],
+                    ),
+                  ),
                 ],
-              ),
-            ),
-          ],
+              );
+            },
+          ),
         ),
-      ),
       ),
     );
   }
 
-  Widget _buildStep1(AppLocalizations l10n) {
+  Widget _buildStep1(AppLocalizations l10n, bool isLoading) {
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
@@ -98,7 +116,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
             prefixIcon: Icons.email_outlined,
           ),
           const SizedBox(height: 32),
-          AppButton(text: l10n.sendOtp, onPressed: _nextStep),
+          AppButton(
+            text: l10n.sendOtp,
+            isLoading: isLoading,
+            onPressed: () {
+              if (_email.isNotEmpty) {
+                context.read<AuthBloc>().add(SendOtpRequested(_email, 'REGISTER'));
+              }
+            },
+          ),
         ],
       ),
     );
@@ -122,7 +148,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _buildStep3(AppLocalizations l10n) {
+  Widget _buildStep3(AppLocalizations l10n, bool isLoading) {
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
@@ -130,13 +156,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
         children: [
           Text(l10n.password, style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 24),
-          AppTextField(hintText: l10n.password, obscureText: true),
+          AppTextField(
+            hintText: l10n.password,
+            obscureText: true,
+            onChanged: (val) => _password = val,
+          ),
           const SizedBox(height: 16),
-          AppTextField(hintText: l10n.confirmPassword, obscureText: true),
+          AppTextField(
+            hintText: l10n.confirmPassword,
+            obscureText: true,
+            onChanged: (val) => _confirmPassword = val,
+          ),
           const SizedBox(height: 32),
-          AppButton(text: l10n.register, onPressed: () {
-            if (_otp.isNotEmpty) {}
-          }),
+          AppButton(
+            text: l10n.register,
+            isLoading: isLoading,
+            onPressed: () {
+              if (_otp.isNotEmpty && _password.isNotEmpty && _password == _confirmPassword) {
+                context.read<AuthBloc>().add(RegisterRequested(_email, _otp, _password, _confirmPassword));
+              } else if (_password != _confirmPassword) {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Mật khẩu không khớp')));
+              }
+            },
+          ),
         ],
       ),
     );

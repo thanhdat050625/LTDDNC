@@ -51,6 +51,17 @@ class ShowtimeCard extends StatelessWidget {
                 ),
               ),
             ),
+            if (showtime.totalSeats > 0) ...[
+              const SizedBox(height: 6),
+              Text(
+                '${showtime.availableSeats}/${showtime.totalSeats} ghế',
+                style: TextStyle(
+                  fontSize: 11,
+                  color: showtime.availableSeats == 0 ? Colors.red : Colors.grey,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
           ],
         ),
       ),
