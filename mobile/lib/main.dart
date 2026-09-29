@@ -13,6 +13,7 @@ import 'features/notification/data/repositories/notification_repository.dart';
 import 'features/profile/data/repositories/profile_repository.dart';
 import 'features/staff/data/repositories/staff_repository.dart';
 import 'features/statistics/data/repositories/statistics_repository.dart';
+import 'features/admin/users/data/repositories/user_management_repository.dart';
 import 'app.dart';
 
 void main() async {
@@ -36,5 +37,6 @@ void main() async {
     profileRepo: ProfileRepository(dioClient),
     staffRepo: StaffRepository(dioClient),
     statisticsRepo: StatisticsRepository(dioClient),
+    userManagementRepo: UserManagementRepository(dioClient),
   ));
 }

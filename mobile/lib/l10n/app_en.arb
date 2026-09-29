@@ -289,5 +289,98 @@
         "type": "String"
       }
     }
-  }
+  },
+  "fullNameRequired": "Full name is required",
+  "loyaltyPolicyTitle": "Loyalty Points Policy",
+  "loyaltyPolicyEarn": "Earn: Receive 10% of order value into points upon successful payment.",
+  "loyaltyPolicyDiscount": "Discount: Redeem points for up to 20% discount on total order (1 point = 1 VND).",
+  "loyaltyPolicyGifts": "Gifts: Redeem points for free popcorn & drink combos.",
+  "currentPointsBalance": "Current points balance:",
+  "pointsSuffix": "pts",
+  "managementSection": "Management & Operations",
+  "userManagement": "User Management",
+  "scanBookingCodeWarning": "This is a booking code (BK-), please scan ticket QR code (starts with TKT-).",
+  "scanAlreadyCheckedIn": "This ticket has already been checked in!",
+  "scanTicketNotActive": "Ticket is not active!",
+  "scanTicketNotFound": "Ticket not found in system!",
+  "scanSuccess": "Check-in Successful",
+  "manualTicketInput": "Enter ticket code manually (TKT-...)",
+  "verifyTicket": "Check-in",
+  "searchUser": "Search by email or phone number",
+  "blockUser": "Block User",
+  "unblockUser": "Unblock",
+  "confirmBlockUser": "Are you sure you want to block this user?",
+  "confirmUnblockUser": "Are you sure you want to unblock this user?",
+  "userStatusUpdated": "User status updated successfully",
+  "revenueTrend": "Revenue Trend",
+  "moviePerformance": "Movie Performance",
+  "ticketsSoldCol": "Tickets Sold",
+  "revenueCol": "Revenue",
+  "allMonths": "All months",
+  "monthFormat": "Month {month}",
+  "@monthFormat": {
+    "placeholders": {
+      "month": {
+        "type": "int"
+      }
+    }
+  },
+  "ticketListEmptyPrompt": "You do not have any tickets yet",
+  "selectGender": "Select gender",
+  "phoneInvalid": "Invalid phone number",
+  "orderStatus": "Status",
+  "orderCode": "Order Code",
+  "screeningRoom": "Screening Room",
+  "totalUsersCount": "Total: {count}",
+  "@totalUsersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "blockedUsersCount": "Blocked: {count}",
+  "@blockedUsersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noMatchingUsers": "No matching users found",
+  "confirmBlockUserWithName": "Are you sure you want to block {name}? The user will not be able to log in or book tickets.",
+  "@confirmBlockUserWithName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmUnblockUserWithName": "Are you sure you want to unblock {name}?",
+  "@confirmUnblockUserWithName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "qrCodeAvailableAfterPayment": "QR code will be available once the order is paid successfully.",
+  "noRevenueInPeriod": "No revenue generated in this period",
+  "scanSuccessDetail": "{successMsg}!\nSeat: {seat} • Code: {code}",
+  "@scanSuccessDetail": {
+    "placeholders": {
+      "successMsg": {
+        "type": "String"
+      },
+      "seat": {
+        "type": "String"
+      },
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "scanTicketSubtitle": "Check-in tickets for screening rooms",
+  "userManagementSubtitle": "List & manage user accounts",
+  "statisticsSubtitle": "Reports & revenue analytics"
 }

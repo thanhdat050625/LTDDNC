@@ -20,6 +20,7 @@ import 'features/notification/data/repositories/notification_repository.dart';
 import 'features/profile/data/repositories/profile_repository.dart';
 import 'features/staff/data/repositories/staff_repository.dart';
 import 'features/statistics/data/repositories/statistics_repository.dart';
+import 'features/admin/users/data/repositories/user_management_repository.dart';
 
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/home/presentation/cubit/home_cubit.dart';
@@ -41,6 +42,7 @@ class App extends StatefulWidget {
   final ProfileRepository profileRepo;
   final StaffRepository staffRepo;
   final StatisticsRepository statisticsRepo;
+  final UserManagementRepository userManagementRepo;
 
   const App({
     super.key,
@@ -58,6 +60,7 @@ class App extends StatefulWidget {
     required this.profileRepo,
     required this.staffRepo,
     required this.statisticsRepo,
+    required this.userManagementRepo,
   });
 
   @override
@@ -108,6 +111,7 @@ class _AppState extends State<App> {
         RepositoryProvider.value(value: widget.profileRepo),
         RepositoryProvider.value(value: widget.staffRepo),
         RepositoryProvider.value(value: widget.statisticsRepo),
+        RepositoryProvider.value(value: widget.userManagementRepo),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -117,6 +121,7 @@ class _AppState extends State<App> {
           BlocProvider.value(value: _profileCubit),
         ],
         child: MaterialApp.router(
+          title: 'Cineplex',
           routerConfig: _router,
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,

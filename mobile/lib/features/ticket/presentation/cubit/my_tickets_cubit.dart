@@ -36,9 +36,28 @@ class MyTicketsCubit extends Cubit<MyTicketsState> {
     emit(MyTicketsLoading());
     try {
       final bookings = await repository.getMyBookings();
-      // Simple logic: assume if status is PAID/ACTIVE it's upcoming, else past
-      final upcoming = bookings.where((b) => b.status == 'PAID').toList();
-      final past = bookings.where((b) => b.status != 'PAID').toList();
+      final now = DateTime.now();
+
+      final upcoming = <BookingDetailModel>[];
+      final past = <BookingDetailModel>[];
+
+      for (final b in bookings) {
+        if (b.status == 'PAID') {
+          DateTime? showtimeDate;
+          if (b.startTime != null) {
+            showtimeDate = DateTime.tryParse(b.startTime!);
+          }
+
+          if (showtimeDate != null && showtimeDate.isBefore(now)) {
+            past.add(b);
+          } else {
+            upcoming.add(b);
+          }
+        } else {
+          past.add(b);
+        }
+      }
+
       emit(MyTicketsLoaded(upcoming, past));
     } catch (e) {
       emit(MyTicketsError(e.toString()));

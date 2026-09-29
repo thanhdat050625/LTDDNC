@@ -42,7 +42,18 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
+  Future<bool> updateProfile(Map<String, dynamic> data) async {
+    try {
+      await repository.updateProfile(data);
+      await loadProfile();
+      return true;
+    } catch (e) {
+      emit(ProfileError(e.toString()));
+      return false;
+    }
+  }
+
   Future<void> logout() async {
-    // Implement logout logic here
+    // Handled by AuthBloc in ProfileScreen
   }
 }

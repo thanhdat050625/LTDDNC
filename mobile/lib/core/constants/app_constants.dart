@@ -1,6 +1,8 @@
 class AppConstants {
-  static const String baseUrl =
-      'http://localhost:3000'; // Android emulator localhost
+  static const String baseUrl = String.fromEnvironment(
+    'BASE_URL',
+    defaultValue: 'http://localhost:3000',
+  );
   static const Duration connectTimeout = Duration(seconds: 15);
   static const Duration receiveTimeout = Duration(seconds: 15);
   static const int seatHoldDurationSeconds = 300; // 5 minutes

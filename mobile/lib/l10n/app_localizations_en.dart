@@ -676,4 +676,157 @@ class AppLocalizationsEn extends AppLocalizations {
   String dateFormat(String date) {
     return '$date';
   }
+
+  @override
+  String get fullNameRequired => 'Full name is required';
+
+  @override
+  String get loyaltyPolicyTitle => 'Loyalty Points Policy';
+
+  @override
+  String get loyaltyPolicyEarn =>
+      'Earn: Receive 10% of order value into points upon successful payment.';
+
+  @override
+  String get loyaltyPolicyDiscount =>
+      'Discount: Redeem points for up to 20% discount on total order (1 point = 1 VND).';
+
+  @override
+  String get loyaltyPolicyGifts =>
+      'Gifts: Redeem points for free popcorn & drink combos.';
+
+  @override
+  String get currentPointsBalance => 'Current points balance:';
+
+  @override
+  String get pointsSuffix => 'pts';
+
+  @override
+  String get managementSection => 'Management & Operations';
+
+  @override
+  String get userManagement => 'User Management';
+
+  @override
+  String get scanBookingCodeWarning =>
+      'This is a booking code (BK-), please scan ticket QR code (starts with TKT-).';
+
+  @override
+  String get scanAlreadyCheckedIn => 'This ticket has already been checked in!';
+
+  @override
+  String get scanTicketNotActive => 'Ticket is not active!';
+
+  @override
+  String get scanTicketNotFound => 'Ticket not found in system!';
+
+  @override
+  String get scanSuccess => 'Check-in Successful';
+
+  @override
+  String get manualTicketInput => 'Enter ticket code manually (TKT-...)';
+
+  @override
+  String get verifyTicket => 'Check-in';
+
+  @override
+  String get searchUser => 'Search by email or phone number';
+
+  @override
+  String get blockUser => 'Block User';
+
+  @override
+  String get unblockUser => 'Unblock';
+
+  @override
+  String get confirmBlockUser => 'Are you sure you want to block this user?';
+
+  @override
+  String get confirmUnblockUser =>
+      'Are you sure you want to unblock this user?';
+
+  @override
+  String get userStatusUpdated => 'User status updated successfully';
+
+  @override
+  String get revenueTrend => 'Revenue Trend';
+
+  @override
+  String get moviePerformance => 'Movie Performance';
+
+  @override
+  String get ticketsSoldCol => 'Tickets Sold';
+
+  @override
+  String get revenueCol => 'Revenue';
+
+  @override
+  String get allMonths => 'All months';
+
+  @override
+  String monthFormat(int month) {
+    return 'Month $month';
+  }
+
+  @override
+  String get ticketListEmptyPrompt => 'You do not have any tickets yet';
+
+  @override
+  String get selectGender => 'Select gender';
+
+  @override
+  String get phoneInvalid => 'Invalid phone number';
+
+  @override
+  String get orderStatus => 'Status';
+
+  @override
+  String get orderCode => 'Order Code';
+
+  @override
+  String get screeningRoom => 'Screening Room';
+
+  @override
+  String totalUsersCount(int count) {
+    return 'Total: $count';
+  }
+
+  @override
+  String blockedUsersCount(int count) {
+    return 'Blocked: $count';
+  }
+
+  @override
+  String get noMatchingUsers => 'No matching users found';
+
+  @override
+  String confirmBlockUserWithName(String name) {
+    return 'Are you sure you want to block $name? The user will not be able to log in or book tickets.';
+  }
+
+  @override
+  String confirmUnblockUserWithName(String name) {
+    return 'Are you sure you want to unblock $name?';
+  }
+
+  @override
+  String get qrCodeAvailableAfterPayment =>
+      'QR code will be available once the order is paid successfully.';
+
+  @override
+  String get noRevenueInPeriod => 'No revenue generated in this period';
+
+  @override
+  String scanSuccessDetail(String successMsg, String seat, String code) {
+    return '$successMsg!\nSeat: $seat • Code: $code';
+  }
+
+  @override
+  String get scanTicketSubtitle => 'Check-in tickets for screening rooms';
+
+  @override
+  String get userManagementSubtitle => 'List & manage user accounts';
+
+  @override
+  String get statisticsSubtitle => 'Reports & revenue analytics';
 }

@@ -289,5 +289,98 @@
         "type": "String"
       }
     }
-  }
+  },
+  "fullNameRequired": "Vui lòng nhập họ và tên",
+  "loyaltyPolicyTitle": "Chính sách tích & tiêu điểm",
+  "loyaltyPolicyEarn": "Tích lũy: Nhận ngay 10% giá trị đơn hàng sau khi thanh toán thành công.",
+  "loyaltyPolicyDiscount": "Giảm giá: Dùng điểm giảm giá tối đa 20% tổng đơn (1 điểm = 1 VNĐ).",
+  "loyaltyPolicyGifts": "Đổi quà: Dùng điểm quy đổi các Combo bắp nước miễn phí.",
+  "currentPointsBalance": "Số dư điểm hiện tại:",
+  "pointsSuffix": "điểm",
+  "managementSection": "Quản lý & Nghiệp vụ",
+  "userManagement": "Quản lý người dùng",
+  "scanBookingCodeWarning": "Đây là mã đặt vé (BK-), vui lòng quét mã QR của từng vé (bắt đầu bằng TKT-).",
+  "scanAlreadyCheckedIn": "Vé này đã được soát trước đó!",
+  "scanTicketNotActive": "Vé không còn hiệu lực!",
+  "scanTicketNotFound": "Không tìm thấy vé trong hệ thống!",
+  "scanSuccess": "Soát vé thành công",
+  "manualTicketInput": "Nhập mã vé thủ công (TKT-...)",
+  "verifyTicket": "Soát vé",
+  "searchUser": "Tìm kiếm theo email hoặc số điện thoại",
+  "blockUser": "Khóa tài khoản",
+  "unblockUser": "Mở khóa",
+  "confirmBlockUser": "Bạn có chắc chắn muốn khóa tài khoản này?",
+  "confirmUnblockUser": "Bạn có chắc chắn muốn mở khóa tài khoản này?",
+  "userStatusUpdated": "Cập nhật trạng thái người dùng thành công",
+  "revenueTrend": "Xu hướng doanh thu",
+  "moviePerformance": "Hiệu suất phim",
+  "ticketsSoldCol": "Vé bán",
+  "revenueCol": "Doanh thu",
+  "allMonths": "Tất cả các tháng",
+  "monthFormat": "Tháng {month}",
+  "@monthFormat": {
+    "placeholders": {
+      "month": {
+        "type": "int"
+      }
+    }
+  },
+  "ticketListEmptyPrompt": "Bạn chưa có vé xem phim nào",
+  "selectGender": "Chọn giới tính",
+  "phoneInvalid": "Số điện thoại không hợp lệ",
+  "orderStatus": "Trạng thái",
+  "orderCode": "Mã đơn hàng",
+  "screeningRoom": "Phòng chiếu",
+  "totalUsersCount": "Tổng số: {count}",
+  "@totalUsersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "blockedUsersCount": "Đã khóa: {count}",
+  "@blockedUsersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noMatchingUsers": "Không tìm thấy người dùng phù hợp",
+  "confirmBlockUserWithName": "Bạn có chắc chắn muốn khóa tài khoản {name}? Người dùng sẽ không thể đăng nhập hoặc đặt vé.",
+  "@confirmBlockUserWithName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmUnblockUserWithName": "Bạn có chắc chắn muốn mở khóa tài khoản {name}?",
+  "@confirmUnblockUserWithName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "qrCodeAvailableAfterPayment": "Mã QR chỉ khả dụng sau khi đơn hàng được thanh toán thành công.",
+  "noRevenueInPeriod": "Không có phát sinh doanh thu trong giai đoạn này",
+  "scanSuccessDetail": "{successMsg}!\nGhế: {seat} • Mã: {code}",
+  "@scanSuccessDetail": {
+    "placeholders": {
+      "successMsg": {
+        "type": "String"
+      },
+      "seat": {
+        "type": "String"
+      },
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "scanTicketSubtitle": "Soát vé vào phòng chiếu",
+  "userManagementSubtitle": "Danh sách & Quản lý tài khoản",
+  "statisticsSubtitle": "Báo cáo & Thống kê doanh thu"
 }

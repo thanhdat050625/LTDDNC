@@ -9,17 +9,20 @@ class AppException implements Exception {
 }
 
 class ServerException extends AppException {
-  ServerException(super.message);
+  final String? code;
+  ServerException(super.message, {this.code});
 
   factory ServerException.fromDioError(DioException e) {
     String msg = 'Server Error';
+    String? code;
     if (e.response != null && e.response?.data != null) {
       final data = e.response?.data;
       if (data is Map<String, dynamic> && data['error'] != null) {
         msg = data['error']['message'] ?? msg;
+        code = data['error']['code']?.toString();
       }
     }
-    return ServerException(msg);
+    return ServerException(msg, code: code);
   }
 }
 
