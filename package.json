@@ -4,9 +4,6 @@
   "description": "Root workspace for Cineplex Cinema Management System",
   "private": true,
   "scripts": {
-    "backend:dev": "npm --prefix backend run start:dev",
-    "backend:prod": "npm --prefix backend run start:prod",
-    "mobile:dev": "node scripts/update-ip.js && cd mobile && flutter run --dart-define-from-file=.env",
-    "mobile:prod": "node scripts/update-ip.js && cd mobile && flutter build apk --dart-define-from-file=.env"
+    
   }
 }

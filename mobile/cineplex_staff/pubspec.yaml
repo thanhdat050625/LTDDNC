@@ -1,0 +1,37 @@
+name: cineplex_staff
+description: CINEPLEX Staff - POS & Ticket Check-in App
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # State management
+  flutter_bloc: ^9.1.0
+  equatable: ^2.0.7
+
+  # Routing
+  go_router: ^14.8.1
+
+  # QR Scanner
+  mobile_scanner: ^7.4.2
+
+  # Shared Core & Theme & Models
+  mobile_shared:
+    path: ../mobile_shared
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/

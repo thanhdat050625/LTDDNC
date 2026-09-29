@@ -1,0 +1,82 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:cineplex_client/core/theme/app_colors.dart';
+import 'package:cineplex_client/features/home/presentation/cubit/home_cubit.dart';
+import 'package:cineplex_client/features/home/presentation/widgets/movie_carousel.dart';
+import 'package:cineplex_client/features/home/presentation/widgets/now_showing_section.dart';
+import 'package:cineplex_client/features/home/presentation/widgets/coming_soon_section.dart';
+import 'package:cineplex_client/features/home/presentation/widgets/promotion_banner.dart';
+import 'package:cineplex_client/core/widgets/app_loading.dart';
+import 'package:cineplex_client/core/widgets/app_error_view.dart';
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Đảm bảo dữ liệu được tải khi vào màn hình này (khắc phục lỗi không gọi được initState ở app.dart khi Hot Reload)
+    final cubit = context.read<HomeCubit>();
+    if (cubit.state is HomeInitial) {
+      cubit.load();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.darkBackground,
+      body: SafeArea(
+        child: BlocBuilder<HomeCubit, HomeState>(
+          builder: (context, state) {
+            if (state is HomeLoading || state is HomeInitial) {
+              return const Center(child: AppLoading());
+            } else if (state is HomeError) {
+              return AppErrorView(message: state.error, onRetry: () => context.read<HomeCubit>().load());
+            } else if (state is HomeLoaded) {
+              final data = state.data;
+              return RefreshIndicator(
+                onRefresh: () async => context.read<HomeCubit>().load(),
+                color: AppColors.primary,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Text(
+                          'CINEPLEX',
+                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).primaryColor,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                      ),
+                      if (data.nowShowing.isNotEmpty)
+                        MovieCarousel(movies: data.nowShowing.take(5).toList()),
+                      const SizedBox(height: 24),
+                      NowShowingSection(movies: data.nowShowing),
+                      const SizedBox(height: 24),
+                      ComingSoonSection(movies: data.comingSoon),
+                      const SizedBox(height: 24),
+                      PromotionBanner(promotions: data.activePromotions),
+                      const SizedBox(height: 48),
+                    ],
+                  ),
+                ),
+              );
+            }
+            return const SizedBox.shrink();
+          },
+        ),
+      ),
+    );
+  }
+}
