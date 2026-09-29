@@ -4,6 +4,18 @@
   "description": "Root workspace for Cineplex Cinema Management System",
   "private": true,
   "scripts": {
-    
+    "backend:dev": "npm --prefix backend run start:dev",
+    "backend:prod": "npm --prefix backend run start:prod",
+    "mobile:update-ip": "node scripts/update-ip.js",
+    "mobile:get": "npm run mobile:update-ip && cd mobile/mobile_shared && flutter pub get && cd ../cineplex_client && flutter pub get && cd ../cineplex_staff && flutter pub get && cd ../cineplex_admin && flutter pub get",
+    "mobile:analyze": "cd mobile/mobile_shared && flutter analyze --no-fatal-infos && cd ../cineplex_client && flutter analyze --no-fatal-infos && cd ../cineplex_staff && flutter analyze --no-fatal-infos && cd ../cineplex_admin && flutter analyze --no-fatal-infos",
+    "mobile:client": "npm run mobile:update-ip && cd mobile/cineplex_client && flutter run --dart-define-from-file=.env",
+    "mobile:staff": "npm run mobile:update-ip && cd mobile/cineplex_staff && flutter run --dart-define-from-file=.env",
+    "mobile:admin": "npm run mobile:update-ip && cd mobile/cineplex_admin && flutter run --dart-define-from-file=.env",
+    "mobile:client:build": "npm run mobile:update-ip && cd mobile/cineplex_client && flutter build apk --dart-define-from-file=.env",
+    "mobile:staff:build": "npm run mobile:update-ip && cd mobile/cineplex_staff && flutter build apk --dart-define-from-file=.env",
+    "mobile:admin:build": "npm run mobile:update-ip && cd mobile/cineplex_admin && flutter build apk --dart-define-from-file=.env",
+    "mobile:dev": "npm run mobile:client",
+    "mobile:prod": "npm run mobile:client:build"
   }
 }
