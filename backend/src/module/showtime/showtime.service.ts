@@ -553,6 +553,7 @@ export class ShowtimeService {
       .createQueryBuilder('showtime')
       .leftJoinAndSelect('showtime.room', 'room')
       .leftJoinAndSelect('room.cinema', 'cinema')
+      .leftJoinAndSelect('showtime.seatHolds', 'seatHolds', 'seatHolds.status != :released', { released: ESeatHoldStatus.RELEASED })
       .where('showtime.movieId = :movieId', { movieId })
       .andWhere('showtime.status IN (:...statuses)', {
         statuses: [EShowtimeStatus.SCHEDULED, EShowtimeStatus.ACTIVE],
@@ -562,8 +563,19 @@ export class ShowtimeService {
       .orderBy('showtime.publicStartTime', 'ASC')
       .getMany();
 
+    // Map thêm totalSeats và availableSeats
+    const mappedShowtimes = showtimes.map((st) => {
+      const bookedOrHeld = new Set(st.seatHolds?.map((h) => h.seatId)).size;
+      const totalSeats = st.room?.totalSeats ?? 0;
+      return {
+        ...st,
+        totalSeats,
+        availableSeats: Math.max(0, totalSeats - bookedOrHeld),
+      };
+    });
+
     // Nhóm theo ngày
-    const grouped = this.groupByDate(showtimes);
+    const grouped = this.groupByDate(mappedShowtimes as any);
     return new ApiResponse(
       true,
       'Lấy suất chiếu theo phim thành công',

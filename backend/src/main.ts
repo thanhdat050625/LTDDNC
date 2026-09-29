@@ -21,7 +21,7 @@ async function bootstrap() {
   const allowedOrigins = frontendUrl.split(',').map((url) => url.trim());
 
   app.enableCors({
-    origin: allowedOrigins,
+    origin: true, // Allow all origins for Flutter Web random ports
     credentials: true,
   });
 

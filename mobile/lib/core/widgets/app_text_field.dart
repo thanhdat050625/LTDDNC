@@ -42,11 +42,18 @@ class _AppTextFieldState extends State<AppTextField> {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-        child: TextFormField(
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+              child: Container(color: AppColors.glassmorphismColor),
+            ),
+          ),
+        ),
+        TextFormField(
           controller: widget.controller,
           validator: widget.validator,
           obscureText: _obscureText,
@@ -57,10 +64,11 @@ class _AppTextFieldState extends State<AppTextField> {
           decoration: InputDecoration(
             labelText: widget.label.isNotEmpty ? widget.label : null,
             labelStyle: const TextStyle(color: Colors.white70),
+            floatingLabelStyle: const TextStyle(color: AppColors.primary),
             hintText: widget.hint,
             hintStyle: const TextStyle(color: Colors.white54),
             filled: true,
-            fillColor: AppColors.glassmorphismColor,
+            fillColor: Colors.transparent, // Let the Stack background show through
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(color: Colors.white24, width: 1),
@@ -82,7 +90,7 @@ class _AppTextFieldState extends State<AppTextField> {
                 : null,
           ),
         ),
-      ),
+      ],
     );
   }
 }
