@@ -42,31 +42,31 @@ function Create-CineplexMasterIcon {
     $g.DrawPath($borderPen, $path)
     $borderPen.Dispose()
 
-    # Center Coordinates
+    # Center Coordinates - perfectly centered
     $cx = [float]($size * 0.5)
-    $cy = [float]($size * 0.43)
+    $cy = [float]($size * 0.5)
 
     # Ambient Cinema Red Glow
     $glowPath = [System.Drawing.Drawing2D.GraphicsPath]::new()
-    $glowRect = [System.Drawing.RectangleF]::new(($cx - $size * 0.35), ($cy - $size * 0.35), ($size * 0.7), ($size * 0.7))
+    $glowRect = [System.Drawing.RectangleF]::new(($cx - $size * 0.38), ($cy - $size * 0.38), ($size * 0.76), ($size * 0.76))
     $glowPath.AddEllipse($glowRect)
     $pbr = [System.Drawing.Drawing2D.PathGradientBrush]::new($glowPath)
-    $pbr.CenterColor = [System.Drawing.Color]::FromArgb(100, 229, 9, 20) # Vibrant Cinema Red
+    $pbr.CenterColor = [System.Drawing.Color]::FromArgb(110, 229, 9, 20) # Rich Cinema Red Glow
     $pbr.SurroundColors = @([System.Drawing.Color]::FromArgb(0, 0, 0, 0))
     $g.FillPath($pbr, $glowPath)
     $pbr.Dispose()
     $glowPath.Dispose()
 
-    # 2. Main Cinema "C" Arc
-    $cRadius = [float]($size * 0.22)
-    $cThickness = [float]($size * 0.11)
+    # 2. Main Cinema "C" Arc (Bold & Centered)
+    $cRadius = [float]($size * 0.25)
+    $cThickness = [float]($size * 0.125)
     $cRect = [System.Drawing.RectangleF]::new(($cx - $cRadius), ($cy - $cRadius), ($cRadius * 2), ($cRadius * 2))
 
     # Drop Shadow for "C"
     $cShadowPen = [System.Drawing.Pen]::new([System.Drawing.Color]::FromArgb(180, 0, 0, 0), $cThickness)
     $cShadowPen.StartCap = [System.Drawing.Drawing2D.LineCap]::Round
     $cShadowPen.EndCap = [System.Drawing.Drawing2D.LineCap]::Round
-    $cShadowRect = [System.Drawing.RectangleF]::new(($cx - $cRadius), ($cy - $cRadius + $size * 0.02), ($cRadius * 2), ($cRadius * 2))
+    $cShadowRect = [System.Drawing.RectangleF]::new(($cx - $cRadius), ($cy - $cRadius + $size * 0.022), ($cRadius * 2), ($cRadius * 2))
     $g.DrawArc($cShadowPen, $cShadowRect, [float]42, [float]276)
     $cShadowPen.Dispose()
 
@@ -85,7 +85,7 @@ function Create-CineplexMasterIcon {
     $cGradBrush.Dispose()
 
     # Subtle inner highlight arc for 3D glass / metallic reflection
-    $highlightPen = [System.Drawing.Pen]::new([System.Drawing.Color]::FromArgb(90, 255, 255, 255), [float]($size * 0.015))
+    $highlightPen = [System.Drawing.Pen]::new([System.Drawing.Color]::FromArgb(90, 255, 255, 255), [float]($size * 0.016))
     $highlightPen.StartCap = [System.Drawing.Drawing2D.LineCap]::Round
     $highlightPen.EndCap = [System.Drawing.Drawing2D.LineCap]::Round
     $hRadius = $cRadius + ($cThickness * 0.28)
@@ -93,11 +93,11 @@ function Create-CineplexMasterIcon {
     $g.DrawArc($highlightPen, $hRect, [float]135, [float]90)
     $highlightPen.Dispose()
 
-    # 3. Cinema Film Perforations (5 clean white/dark sprocket dots along the curve)
+    # 3. Cinema Film Perforations (5 clean sprocket dots along the curve)
     $perfAngles = @(110, 145, 180, 215, 250)
-    $perfRadius = [float]($size * 0.018)
+    $perfRadius = [float]($size * 0.02)
     $perfBrush = [System.Drawing.SolidBrush]::new([System.Drawing.Color]::FromArgb(255, 14, 14, 20))
-    $perfPen = [System.Drawing.Pen]::new([System.Drawing.Color]::FromArgb(100, 255, 255, 255), [float]($size * 0.003))
+    $perfPen = [System.Drawing.Pen]::new([System.Drawing.Color]::FromArgb(100, 255, 255, 255), [float]($size * 0.0035))
 
     foreach ($ang in $perfAngles) {
         $rad = $ang * [Math]::PI / 180.0
@@ -112,10 +112,10 @@ function Create-CineplexMasterIcon {
 
     # 4. Cinema Play Button Triangle (▶) nestled right at the center opening
     # Popcorn Gold / Amber (#FFC800 -> #E58E26)
-    $playX = $cx + [float]($size * 0.035)
+    $playX = $cx + [float]($size * 0.04)
     $playY = $cy
-    $playW = [float]($size * 0.12)
-    $playH = [float]($size * 0.13)
+    $playW = [float]($size * 0.14)
+    $playH = [float]($size * 0.15)
 
     $playPts = @(
         [System.Drawing.PointF]::new(($playX - $playW * 0.45), ($playY - $playH * 0.5)),
@@ -125,9 +125,9 @@ function Create-CineplexMasterIcon {
 
     # Play Shadow
     $pshPts = @(
-        [System.Drawing.PointF]::new(($playX - $playW * 0.45 + 3), ($playY - $playH * 0.5 + 6)),
-        [System.Drawing.PointF]::new(($playX + $playW * 0.65 + 3), ($playY + 6)),
-        [System.Drawing.PointF]::new(($playX - $playW * 0.45 + 3), ($playY + $playH * 0.5 + 6))
+        [System.Drawing.PointF]::new(($playX - $playW * 0.45 + 4), ($playY - $playH * 0.5 + 7)),
+        [System.Drawing.PointF]::new(($playX + $playW * 0.65 + 4), ($playY + 7)),
+        [System.Drawing.PointF]::new(($playX - $playW * 0.45 + 4), ($playY + $playH * 0.5 + 7))
     )
     $pshBrush = [System.Drawing.SolidBrush]::new([System.Drawing.Color]::FromArgb(150, 0, 0, 0))
     $g.FillPolygon($pshBrush, $pshPts)
@@ -148,33 +148,7 @@ function Create-CineplexMasterIcon {
     $g.DrawPolygon($goldPen, $playPts)
     $goldPen.Dispose()
 
-    # 5. Clean, Bold Typography: "CINEPLEX"
-    $fontFamily = [System.Drawing.FontFamily]::new("Arial")
-    $fontSize = [float]($size * 0.082)
-    $font = [System.Drawing.Font]::new($fontFamily, $fontSize, [System.Drawing.FontStyle]::Bold)
-
-    $format = [System.Drawing.StringFormat]::new()
-    $format.Alignment = [System.Drawing.StringAlignment]::Center
-    $format.LineAlignment = [System.Drawing.StringAlignment]::Center
-
-    $textY = [float]($size * 0.77)
-    $textRect = [System.Drawing.RectangleF]::new(0, $textY, $size, ($size * 0.12))
-
-    # Shadow
-    $tShadowRect = [System.Drawing.RectangleF]::new(0, ($textY + 4), $size, ($size * 0.12))
-    $tShadowBrush = [System.Drawing.SolidBrush]::new([System.Drawing.Color]::FromArgb(180, 0, 0, 0))
-    $g.DrawString("C I N E P L E X", $font, $tShadowBrush, $tShadowRect, $format)
-    $tShadowBrush.Dispose()
-
-    # Pure White Crisp Text
-    $textBrush = [System.Drawing.SolidBrush]::new([System.Drawing.Color]::FromArgb(255, 255, 255, 255))
-    $g.DrawString("C I N E P L E X", $font, $textBrush, $textRect, $format)
-    $textBrush.Dispose()
-
     # Cleanup
-    $font.Dispose()
-    $fontFamily.Dispose()
-    $format.Dispose()
     $path.Dispose()
     $g.Dispose()
 
@@ -199,7 +173,7 @@ function Resize-Bitmap {
 }
 
 # 1. Generate Master Icon (1024x1024)
-Write-Host "Rendering 1024x1024 master icon..."
+Write-Host "Rendering 1024x1024 master icon (symbol only, text removed)..."
 $master = Create-CineplexMasterIcon -size 1024
 
 $assetsDir = "D:\UTE\LTDDNC\mobile\assets\images"
@@ -248,4 +222,4 @@ if (Test-Path $iosIconDir) {
 }
 
 $master.Dispose()
-Write-Host "All launcher icons generated successfully!"
+Write-Host "All launcher icons updated successfully without text!"
