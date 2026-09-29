@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:cineplex_mobile/l10n/app_localizations.dart';
 import 'package:cineplex_mobile/core/widgets/app_button.dart';
 import 'package:cineplex_mobile/core/widgets/app_text_field.dart';
@@ -37,14 +38,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      backgroundColor: AppColors.darkBackground,
+      backgroundColor: Colors.transparent, // Let gradient show through
+      extendBodyBehindAppBar: true, // Make gradient go behind appbar
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: _prevStep),
         title: Text(l10n.register),
+        actions: [
+          TextButton(
+            onPressed: () => context.go('/home'),
+            child: const Text(
+              'Bỏ qua', // TODO: L10n
+              style: TextStyle(color: Colors.white70, fontWeight: FontWeight.w500),
+            ),
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
-      body: SafeArea(
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: AppColors.cinematicGradient,
+        ),
+        child: SafeArea(
         child: Column(
           children: [
             LinearProgressIndicator(value: (_currentStep + 1) / 3, backgroundColor: AppColors.darkSurface, color: AppColors.primary),
@@ -61,6 +79,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           ],
         ),
+      ),
       ),
     );
   }

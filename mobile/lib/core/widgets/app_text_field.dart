@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
+import 'package:cineplex_mobile/core/theme/app_colors.dart';
 
 class AppTextField extends StatefulWidget {
   final String label;
@@ -40,23 +42,46 @@ class _AppTextFieldState extends State<AppTextField> {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: widget.controller,
-      validator: widget.validator,
-      obscureText: _obscureText,
-      keyboardType: widget.keyboardType,
-      textInputAction: widget.textInputAction,
-      onChanged: widget.onChanged,
-      decoration: InputDecoration(
-        labelText: widget.label.isNotEmpty ? widget.label : null,
-        hintText: widget.hint,
-        prefixIcon: widget.prefixIcon != null ? Icon(widget.prefixIcon) : null,
-        suffixIcon: widget.obscureText
-            ? IconButton(
-                icon: Icon(_obscureText ? Icons.visibility_off : Icons.visibility),
-                onPressed: () => setState(() => _obscureText = !_obscureText),
-              )
-            : null,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+        child: TextFormField(
+          controller: widget.controller,
+          validator: widget.validator,
+          obscureText: _obscureText,
+          keyboardType: widget.keyboardType,
+          textInputAction: widget.textInputAction,
+          onChanged: widget.onChanged,
+          style: const TextStyle(color: Colors.white),
+          decoration: InputDecoration(
+            labelText: widget.label.isNotEmpty ? widget.label : null,
+            labelStyle: const TextStyle(color: Colors.white70),
+            hintText: widget.hint,
+            hintStyle: const TextStyle(color: Colors.white54),
+            filled: true,
+            fillColor: AppColors.glassmorphismColor,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Colors.white24, width: 1),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Colors.white12, width: 1),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+            ),
+            prefixIcon: widget.prefixIcon != null ? Icon(widget.prefixIcon, color: Colors.white70) : null,
+            suffixIcon: widget.obscureText
+                ? IconButton(
+                    icon: Icon(_obscureText ? Icons.visibility_off : Icons.visibility, color: Colors.white70),
+                    onPressed: () => setState(() => _obscureText = !_obscureText),
+                  )
+                : null,
+          ),
+        ),
       ),
     );
   }

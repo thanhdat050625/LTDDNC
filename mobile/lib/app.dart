@@ -75,7 +75,7 @@ class _AppState extends State<App> {
   void initState() {
     super.initState();
     _authBloc = AuthBloc(widget.authRepo)..add(CheckAuthStatus());
-    _homeCubit = HomeCubit(widget.homeRepo);
+    _homeCubit = HomeCubit(widget.homeRepo)..load();
     _notificationCubit = NotificationCubit(widget.notificationRepo);
     _profileCubit = ProfileCubit(widget.profileRepo);
     _router = createRouter(_authBloc);

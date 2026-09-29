@@ -4,6 +4,7 @@ import 'package:cineplex_mobile/features/movie/data/models/movie_model.dart';
 import 'package:cineplex_mobile/core/widgets/app_cached_image.dart';
 import 'package:cineplex_mobile/core/theme/app_colors.dart';
 import 'package:cineplex_mobile/core/utils/format_utils.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class MovieCard extends StatelessWidget {
   final MovieModel movie;
@@ -23,13 +24,16 @@ class MovieCard extends StatelessWidget {
           Expanded(
             child: Stack(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: AppCachedImage(
-                    imageUrl: movie.posterUrl ?? '',
-                    width: double.infinity,
-                    height: double.infinity,
-                    fit: BoxFit.cover,
+                Hero(
+                  tag: 'poster_${movie.id}',
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: AppCachedImage(
+                      imageUrl: movie.posterUrl ?? '',
+                      width: double.infinity,
+                      height: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
                 if (isComingSoon && movie.releaseDate != null)
@@ -49,7 +53,7 @@ class MovieCard extends StatelessWidget {
           const SizedBox(height: 4),
           Row(
             children: [
-              Icon(Icons.access_time, size: 14, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
+              Icon(LucideIcons.clock, size: 14, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
               const SizedBox(width: 4),
               Text('${movie.durationMinutes}m', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), fontSize: 12)),
               const Spacer(),

@@ -6,6 +6,7 @@ import 'package:cineplex_mobile/l10n/app_localizations.dart';
 import 'package:cineplex_mobile/core/widgets/app_cached_image.dart';
 import 'package:cineplex_mobile/core/widgets/app_button.dart';
 import 'package:cineplex_mobile/core/theme/app_colors.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:cineplex_mobile/features/movie/presentation/widgets/movie_info_section.dart';
 import 'package:cineplex_mobile/features/movie/presentation/cubit/movie_detail_cubit.dart';
 import 'package:cineplex_mobile/features/movie/data/repositories/movie_repository.dart';
@@ -44,7 +45,10 @@ class MovieDetailScreen extends StatelessWidget {
                           background: Stack(
                             fit: StackFit.expand,
                             children: [
-                              AppCachedImage(imageUrl: movie.posterUrl ?? '', fit: BoxFit.cover),
+                              Hero(
+                                tag: 'poster_${movie.id}',
+                                child: AppCachedImage(imageUrl: movie.posterUrl ?? '', fit: BoxFit.cover),
+                              ),
                               Container(
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
@@ -57,7 +61,7 @@ class MovieDetailScreen extends StatelessWidget {
                               if (movie.trailerUrl != null && movie.trailerUrl!.isNotEmpty)
                                 Center(
                                   child: IconButton(
-                                    icon: const Icon(Icons.play_circle_fill, size: 64, color: Colors.white),
+                                    icon: const Icon(LucideIcons.playCircle, size: 64, color: Colors.white),
                                     onPressed: () async {
                                       final uri = Uri.parse(movie.trailerUrl!);
                                       if (await canLaunchUrl(uri)) {
@@ -83,7 +87,7 @@ class MovieDetailScreen extends StatelessWidget {
                                 runSpacing: 8,
                                 children: [
                                   if (movie.genre.isNotEmpty) _buildChip(movie.genre, context),
-                                  _buildChip('${movie.durationMinutes}m', context, icon: Icons.access_time),
+                                  _buildChip('${movie.durationMinutes}m', context, icon: LucideIcons.clock),
                                   if (movie.ageLimit != null) _buildChip('${movie.ageLimit}+', context, color: AppColors.primary),
                                   if (movie.language != null) _buildChip(movie.language!, context),
                                 ],

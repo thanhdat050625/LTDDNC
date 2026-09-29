@@ -5,6 +5,7 @@ import 'package:cineplex_mobile/core/widgets/app_button.dart';
 import 'package:cineplex_mobile/core/widgets/app_text_field.dart';
 import 'package:cineplex_mobile/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:cineplex_mobile/core/theme/app_colors.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -31,8 +32,29 @@ class _LoginScreenState extends State<LoginScreen> {
     final theme = Theme.of(context);
     
     return Scaffold(
-      backgroundColor: AppColors.darkBackground,
-      body: SafeArea(
+      backgroundColor: Colors.transparent, // Let gradient show through
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          TextButton(
+            onPressed: () => context.go('/home'),
+            child: const Text(
+              'Bỏ qua', // TODO: Move to L10n later
+              style: TextStyle(color: Colors.white70, fontWeight: FontWeight.w500),
+            ),
+          ),
+          const SizedBox(width: 8),
+        ],
+      ),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: AppColors.cinematicGradient,
+        ),
+        child: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
           child: Column(
@@ -108,13 +130,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   Text(l10n.noAccount, style: theme.textTheme.bodyMedium),
                   TextButton(
                     onPressed: () {
-                      // Navigate to register
+                      context.push('/register');
                     },
                     child: Text(l10n.register, style: TextStyle(color: AppColors.primary)),
                   ),
                 ],
               ),
             ],
+          ),
           ),
         ),
       ),

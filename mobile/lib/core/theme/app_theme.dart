@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
+import 'cineplex_colors.dart';
 
 class AppTheme {
   static ThemeData get darkTheme => ThemeData(
@@ -13,6 +14,9 @@ class AppTheme {
       surface: AppColors.darkSurface,
       error: AppColors.error,
     ),
+    extensions: const <ThemeExtension<dynamic>>[
+      CineplexColors.dark,
+    ],
     appBarTheme: const AppBarTheme(
       backgroundColor: AppColors.darkBackground,
       elevation: 0,
@@ -50,6 +54,9 @@ class AppTheme {
       surface: AppColors.lightSurface,
       error: AppColors.error,
     ),
+    extensions: const <ThemeExtension<dynamic>>[
+      CineplexColors.light,
+    ],
     appBarTheme: const AppBarTheme(
       backgroundColor: AppColors.lightBackground,
       elevation: 0,

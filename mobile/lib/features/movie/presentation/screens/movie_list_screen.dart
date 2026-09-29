@@ -5,6 +5,8 @@ import 'package:cineplex_mobile/features/movie/presentation/cubit/movie_list_cub
 import 'package:cineplex_mobile/features/movie/data/repositories/movie_repository.dart';
 import 'package:cineplex_mobile/core/theme/app_colors.dart';
 import 'package:cineplex_mobile/l10n/app_localizations.dart';
+import 'package:cineplex_mobile/core/widgets/shimmer_skeleton.dart';
+import 'package:cineplex_mobile/core/widgets/staggered_list.dart';
 
 class MovieListScreen extends StatelessWidget {
   const MovieListScreen({super.key});
@@ -92,7 +94,17 @@ class _MovieListScreenContentState extends State<_MovieListScreenContent> {
                 child: isError
                     ? Center(child: Text((state).message))
                     : isLoading && movies.isEmpty
-                        ? const Center(child: CircularProgressIndicator())
+                        ? GridView.builder(
+                            padding: const EdgeInsets.all(16),
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 0.65,
+                              crossAxisSpacing: 16,
+                              mainAxisSpacing: 16,
+                            ),
+                            itemCount: 6,
+                            itemBuilder: (context, index) => const ShimmerSkeleton(width: double.infinity, height: double.infinity),
+                          )
                         : GridView.builder(
                             controller: _scrollController,
                             padding: const EdgeInsets.all(16),
@@ -105,9 +117,12 @@ class _MovieListScreenContentState extends State<_MovieListScreenContent> {
                             itemCount: movies.length + (hasMore ? 2 : 0),
                             itemBuilder: (context, index) {
                               if (index >= movies.length) {
-                                return const Center(child: CircularProgressIndicator());
+                                return const ShimmerSkeleton(width: double.infinity, height: double.infinity);
                               }
-                              return MovieCard(movie: movies[index]);
+                              return StaggeredItem(
+                                index: index,
+                                child: MovieCard(movie: movies[index]),
+                              );
                             },
                           ),
               )
