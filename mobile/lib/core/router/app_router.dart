@@ -20,6 +20,9 @@ import 'package:cineplex_mobile/features/profile/presentation/screens/profile_sc
 import 'package:cineplex_mobile/features/profile/presentation/screens/edit_profile_screen.dart';
 import 'package:cineplex_mobile/features/staff/presentation/screens/staff_scanner_screen.dart';
 import 'package:cineplex_mobile/features/statistics/presentation/screens/statistics_screen.dart';
+import 'package:cineplex_mobile/features/showtime/presentation/cubit/showtime_cubit.dart';
+import 'package:cineplex_mobile/features/showtime/data/repositories/showtime_repository.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cineplex_mobile/core/router/main_shell.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -76,8 +79,11 @@ GoRouter createRouter(AuthBloc authBloc) {
       ),
       GoRoute(
         path: '/showtimes/:movieId',
-        builder: (_, state) => ShowtimeSelectionScreen(
-          movieId: int.parse(state.pathParameters['movieId']!),
+        builder: (_, state) => BlocProvider(
+          create: (context) => ShowtimeCubit(context.read<ShowtimeRepository>()),
+          child: ShowtimeSelectionScreen(
+            movieId: int.parse(state.pathParameters['movieId']!),
+          ),
         ),
       ),
       GoRoute(

@@ -7,10 +7,22 @@ class AppColors {
   static const Color accent = Color(0xFFE58E26);
 
   // Dark Mode
-  static const Color darkBackground = Color(0xFF121212);
-  static const Color darkSurface = Color(0xFF1E1E24);
+  static const Color darkBackground = Color(0xFF0D0D11); // Deeper base for gradients
+  static const Color darkSurface = Color(0xFF1E1E28);
   static const Color darkText = Colors.white;
   static const Color darkTextSecondary = Colors.white70;
+  static const Color glassmorphismColor = Color(0x1AFFFFFF); // 10% white for glass effect
+  static const Color neonGlow = Color(0x80E50914); // 50% opacity red for glow
+
+  static const RadialGradient cinematicGradient = RadialGradient(
+    center: Alignment.topLeft,
+    radius: 1.5,
+    colors: [
+      Color(0xFF2A2A35), // Soft grey/white tint glow
+      Color(0xFF0D0D11), // Fades to deep black
+    ],
+    stops: [0.0, 1.0],
+  );
 
   // Light Mode
   static const Color lightBackground = Color(0xFFF9FAFB);

@@ -36,14 +36,21 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      backgroundColor: AppColors.darkBackground,
+      backgroundColor: Colors.transparent, // Let gradient show through
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: _prevStep),
         title: Text(l10n.forgotPassword),
       ),
-      body: SafeArea(
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: AppColors.cinematicGradient,
+        ),
+        child: SafeArea(
         child: Column(
           children: [
             LinearProgressIndicator(value: (_currentStep + 1) / 3, backgroundColor: AppColors.darkSurface, color: AppColors.primary),
@@ -60,6 +67,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             ),
           ],
         ),
+      ),
       ),
     );
   }

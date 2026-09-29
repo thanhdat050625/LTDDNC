@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cineplex_mobile/core/theme/app_colors.dart';
 
 class AppButton extends StatefulWidget {
   final String text;
@@ -72,15 +73,28 @@ class _AppButtonState extends State<AppButton> with SingleTickerProviderStateMix
       ],
     );
 
-    final button = SizedBox(
+    final isPrimary = !widget.isOutlined && (widget.backgroundColor == null || widget.backgroundColor == theme.primaryColor);
+
+    final button = Container(
       width: widget.width ?? double.infinity,
       height: widget.height,
+      decoration: isPrimary && !disabled ? BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.neonGlow,
+            blurRadius: 15,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ) : null,
       child: widget.isOutlined
           ? OutlinedButton(
               onPressed: disabled ? null : widget.onPressed,
               style: OutlinedButton.styleFrom(
                 foregroundColor: widget.textColor ?? theme.primaryColor,
                 side: BorderSide(color: widget.textColor ?? theme.primaryColor),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
               ),
               child: child,
             )
@@ -89,6 +103,7 @@ class _AppButtonState extends State<AppButton> with SingleTickerProviderStateMix
               style: ElevatedButton.styleFrom(
                 backgroundColor: widget.backgroundColor ?? theme.primaryColor,
                 foregroundColor: widget.textColor ?? Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
               ),
               child: child,
             ),

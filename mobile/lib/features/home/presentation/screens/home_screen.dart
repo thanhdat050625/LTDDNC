@@ -53,8 +53,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Text(
-                          l10n.welcome,
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                          'CINEPLEX',
+                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).primaryColor,
+                            letterSpacing: 1.5,
+                          ),
                         ),
                       ),
                       if (data.nowShowing.isNotEmpty)
