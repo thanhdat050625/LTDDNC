@@ -776,4 +776,57 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get phoneInvalid => 'Invalid phone number';
+
+  @override
+  String get orderStatus => 'Status';
+
+  @override
+  String get orderCode => 'Order Code';
+
+  @override
+  String get screeningRoom => 'Screening Room';
+
+  @override
+  String totalUsersCount(int count) {
+    return 'Total: $count';
+  }
+
+  @override
+  String blockedUsersCount(int count) {
+    return 'Blocked: $count';
+  }
+
+  @override
+  String get noMatchingUsers => 'No matching users found';
+
+  @override
+  String confirmBlockUserWithName(String name) {
+    return 'Are you sure you want to block $name? The user will not be able to log in or book tickets.';
+  }
+
+  @override
+  String confirmUnblockUserWithName(String name) {
+    return 'Are you sure you want to unblock $name?';
+  }
+
+  @override
+  String get qrCodeAvailableAfterPayment =>
+      'QR code will be available once the order is paid successfully.';
+
+  @override
+  String get noRevenueInPeriod => 'No revenue generated in this period';
+
+  @override
+  String scanSuccessDetail(String successMsg, String seat, String code) {
+    return '$successMsg!\nSeat: $seat • Code: $code';
+  }
+
+  @override
+  String get scanTicketSubtitle => 'Check-in tickets for screening rooms';
+
+  @override
+  String get userManagementSubtitle => 'List & manage user accounts';
+
+  @override
+  String get statisticsSubtitle => 'Reports & revenue analytics';
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cineplex_mobile/features/ticket/data/models/ticket_model.dart';
 import 'package:cineplex_mobile/core/utils/format_utils.dart';
+import 'package:cineplex_mobile/l10n/app_localizations.dart';
 
 class TicketCard extends StatelessWidget {
   final BookingDetailModel booking;
@@ -10,6 +11,7 @@ class TicketCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     final isPaid = booking.status == 'PAID';
 
@@ -49,14 +51,14 @@ class TicketCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      booking.movieTitle ?? 'Mã: ${booking.bookingCode}',
+                      booking.movieTitle ?? '${l10n.orderCode}: ${booking.bookingCode}',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${booking.cinemaName ?? 'Cineplex'} • ${booking.roomName ?? 'Phòng chiếu'}',
+                      '${booking.cinemaName ?? 'Cineplex'} • ${booking.roomName ?? l10n.screeningRoom}',
                       style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant),
                     ),
                     const SizedBox(height: 6),

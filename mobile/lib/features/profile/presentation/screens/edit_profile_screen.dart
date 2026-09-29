@@ -22,6 +22,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late final TextEditingController _nameController;
   late final TextEditingController _phoneController;
   late final TextEditingController _dobController;
+  late final TextEditingController _emailController;
 
   String? _selectedGender;
   DateTime? _selectedDate;
@@ -33,6 +34,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final user = widget.initialUser ?? _getCurrentUserFromCubit();
     _nameController = TextEditingController(text: user?['fullName'] ?? user?['name'] ?? '');
     _phoneController = TextEditingController(text: user?['phone'] ?? '');
+    _emailController = TextEditingController(text: user?['email'] ?? '');
 
     _selectedGender = user?['gender'];
     if (_selectedGender != 'MALE' && _selectedGender != 'FEMALE') {
@@ -65,6 +67,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _nameController.dispose();
     _phoneController.dispose();
     _dobController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
@@ -135,8 +138,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final user = widget.initialUser ?? _getCurrentUserFromCubit();
-    final email = user?['email'] ?? '';
 
     return AppScaffold(
       title: l10n.editProfile,
@@ -153,7 +154,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   opacity: 0.6,
                   child: AppTextField(
                     label: l10n.email,
-                    controller: TextEditingController(text: email),
+                    controller: _emailController,
                     prefixIcon: Icons.email_outlined,
                   ),
                 ),

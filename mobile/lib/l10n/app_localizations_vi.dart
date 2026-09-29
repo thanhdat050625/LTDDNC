@@ -776,4 +776,58 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get phoneInvalid => 'Số điện thoại không hợp lệ';
+
+  @override
+  String get orderStatus => 'Trạng thái';
+
+  @override
+  String get orderCode => 'Mã đơn hàng';
+
+  @override
+  String get screeningRoom => 'Phòng chiếu';
+
+  @override
+  String totalUsersCount(int count) {
+    return 'Tổng số: $count';
+  }
+
+  @override
+  String blockedUsersCount(int count) {
+    return 'Đã khóa: $count';
+  }
+
+  @override
+  String get noMatchingUsers => 'Không tìm thấy người dùng phù hợp';
+
+  @override
+  String confirmBlockUserWithName(String name) {
+    return 'Bạn có chắc chắn muốn khóa tài khoản $name? Người dùng sẽ không thể đăng nhập hoặc đặt vé.';
+  }
+
+  @override
+  String confirmUnblockUserWithName(String name) {
+    return 'Bạn có chắc chắn muốn mở khóa tài khoản $name?';
+  }
+
+  @override
+  String get qrCodeAvailableAfterPayment =>
+      'Mã QR chỉ khả dụng sau khi đơn hàng được thanh toán thành công.';
+
+  @override
+  String get noRevenueInPeriod =>
+      'Không có phát sinh doanh thu trong giai đoạn này';
+
+  @override
+  String scanSuccessDetail(String successMsg, String seat, String code) {
+    return '$successMsg!\nGhế: $seat • Mã: $code';
+  }
+
+  @override
+  String get scanTicketSubtitle => 'Soát vé vào phòng chiếu';
+
+  @override
+  String get userManagementSubtitle => 'Danh sách & Quản lý tài khoản';
+
+  @override
+  String get statisticsSubtitle => 'Báo cáo & Thống kê doanh thu';
 }

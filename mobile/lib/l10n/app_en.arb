@@ -327,5 +327,60 @@
   },
   "ticketListEmptyPrompt": "You do not have any tickets yet",
   "selectGender": "Select gender",
-  "phoneInvalid": "Invalid phone number"
+  "phoneInvalid": "Invalid phone number",
+  "orderStatus": "Status",
+  "orderCode": "Order Code",
+  "screeningRoom": "Screening Room",
+  "totalUsersCount": "Total: {count}",
+  "@totalUsersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "blockedUsersCount": "Blocked: {count}",
+  "@blockedUsersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noMatchingUsers": "No matching users found",
+  "confirmBlockUserWithName": "Are you sure you want to block {name}? The user will not be able to log in or book tickets.",
+  "@confirmBlockUserWithName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmUnblockUserWithName": "Are you sure you want to unblock {name}?",
+  "@confirmUnblockUserWithName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "qrCodeAvailableAfterPayment": "QR code will be available once the order is paid successfully.",
+  "noRevenueInPeriod": "No revenue generated in this period",
+  "scanSuccessDetail": "{successMsg}!\nSeat: {seat} • Code: {code}",
+  "@scanSuccessDetail": {
+    "placeholders": {
+      "successMsg": {
+        "type": "String"
+      },
+      "seat": {
+        "type": "String"
+      },
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "scanTicketSubtitle": "Check-in tickets for screening rooms",
+  "userManagementSubtitle": "List & manage user accounts",
+  "statisticsSubtitle": "Reports & revenue analytics"
 }

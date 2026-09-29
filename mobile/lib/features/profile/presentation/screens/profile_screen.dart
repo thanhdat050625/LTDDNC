@@ -23,8 +23,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _showLoyaltyPolicyDialog(BuildContext context, Map<String, dynamic> loyalty, AppLocalizations l10n) {
     final colorScheme = Theme.of(context).colorScheme;
-    final earnRate = ((loyalty['earnRate'] as num?)?.toDouble() ?? 0.1) * 100;
-    final maxDiscountRate = ((loyalty['maxDiscountRate'] as num?)?.toDouble() ?? 0.2) * 100;
 
     showDialog(
       context: context,
@@ -44,13 +42,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             _buildPolicyItem(
               icon: Icons.card_giftcard,
               color: colorScheme.primary,
-              text: 'Tích lũy: Nhận ngay ${earnRate.toInt()}% giá trị đơn hàng sau khi thanh toán.',
+              text: l10n.loyaltyPolicyEarn,
             ),
             const SizedBox(height: 12),
             _buildPolicyItem(
               icon: Icons.discount_outlined,
               color: colorScheme.secondary,
-              text: 'Giảm giá: Dùng điểm giảm giá tối đa ${maxDiscountRate.toInt()}% tổng đơn (1 điểm = 1 VNĐ).',
+              text: l10n.loyaltyPolicyDiscount,
             ),
             const SizedBox(height: 12),
             _buildPolicyItem(
@@ -310,7 +308,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ListTile(
                           leading: const Icon(Icons.qr_code_scanner),
                           title: Text(l10n.scanTicket),
-                          subtitle: const Text('UC17: Soát vé vào phòng chiếu'),
+                          subtitle: Text(l10n.scanTicketSubtitle),
                           trailing: const Icon(Icons.chevron_right),
                           onTap: () => context.push('/staff/scanner'),
                         ),
@@ -318,7 +316,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ListTile(
                           leading: const Icon(Icons.manage_accounts_outlined),
                           title: Text(l10n.userManagement),
-                          subtitle: const Text('UC16: Danh sách & Khóa tài khoản'),
+                          subtitle: Text(l10n.userManagementSubtitle),
                           trailing: const Icon(Icons.chevron_right),
                           onTap: () => context.push('/staff/users'),
                         ),
@@ -327,7 +325,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ListTile(
                             leading: const Icon(Icons.bar_chart_outlined),
                             title: Text(l10n.statistics),
-                            subtitle: const Text('UC18: Báo cáo & Doanh thu'),
+                            subtitle: Text(l10n.statisticsSubtitle),
                             trailing: const Icon(Icons.chevron_right),
                             onTap: () => context.push('/statistics'),
                           ),

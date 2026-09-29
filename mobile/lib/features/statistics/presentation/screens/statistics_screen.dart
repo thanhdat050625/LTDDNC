@@ -243,7 +243,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               height: 160,
               alignment: Alignment.center,
               child: Text(
-                'Không có phát sinh doanh thu trong giai đoạn này',
+                l10n.noRevenueInPeriod,
                 style: TextStyle(color: colorScheme.onSurfaceVariant),
               ),
             ),

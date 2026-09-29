@@ -11,11 +11,11 @@ class TicketDetailScreen extends StatelessWidget {
 
   const TicketDetailScreen({super.key, required this.booking});
 
-  String _formatDateTime(String? raw) {
+  String _formatDateTime(String? raw, String locale) {
     if (raw == null || raw.isEmpty) return 'N/A';
     try {
       final dt = DateTime.parse(raw);
-      return DateFormat('HH:mm - EEEE, dd/MM/yyyy', 'vi').format(dt);
+      return DateFormat('HH:mm - EEEE, dd/MM/yyyy', locale).format(dt);
     } catch (_) {
       return raw;
     }
@@ -25,6 +25,7 @@ class TicketDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
+    final locale = Localizations.localeOf(context).languageCode;
 
     final qrTickets = booking.tickets.where((t) => t.qrCode.isNotEmpty).toList();
     final seatsString = booking.tickets
@@ -81,7 +82,7 @@ class TicketDetailScreen extends StatelessWidget {
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  '${booking.cinemaName ?? 'Cineplex'} - ${booking.roomName ?? 'Phòng chiếu'}',
+                                  '${booking.cinemaName ?? 'Cineplex'} - ${booking.roomName ?? l10n.screeningRoom}',
                                   style: TextStyle(fontSize: 13, color: colorScheme.onSurfaceVariant),
                                 ),
                               ],
@@ -97,7 +98,7 @@ class TicketDetailScreen extends StatelessWidget {
                       Icon(Icons.access_time, size: 16, color: colorScheme.primary),
                       const SizedBox(width: 6),
                       Text(
-                        _formatDateTime(booking.startTime),
+                        _formatDateTime(booking.startTime, locale),
                         style: TextStyle(fontSize: 13, color: colorScheme.onSurfaceVariant),
                       ),
                     ],
@@ -199,7 +200,7 @@ class TicketDetailScreen extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    'Mã QR chỉ khả dụng sau khi đơn hàng được thanh toán thành công.',
+                    l10n.qrCodeAvailableAfterPayment,
                     textAlign: TextAlign.center,
                     style: TextStyle(color: colorScheme.onSurfaceVariant),
                   ),
@@ -219,7 +220,7 @@ class TicketDetailScreen extends StatelessWidget {
               child: Column(
                 children: [
                   _buildDetailRow(
-                    label: 'Mã đơn hàng',
+                    label: l10n.orderCode,
                     value: booking.bookingCode,
                     colorScheme: colorScheme,
                   ),
@@ -234,7 +235,7 @@ class TicketDetailScreen extends StatelessWidget {
                   if (booking.concessions.isNotEmpty) ...[
                     const Divider(height: 16),
                     _buildDetailRow(
-                      label: 'Bắp nước',
+                      label: l10n.concessions,
                       value: booking.concessions
                           .map((c) => '${c['quantity'] ?? 1}x ${c['concession']?['name'] ?? 'Combo'}')
                           .join(', '),
@@ -243,14 +244,14 @@ class TicketDetailScreen extends StatelessWidget {
                   ],
                   const Divider(height: 16),
                   _buildDetailRow(
-                    label: 'Trạng thái',
+                    label: l10n.orderStatus,
                     value: booking.status,
                     colorScheme: colorScheme,
                     valueColor: booking.status == 'PAID' ? colorScheme.primary : colorScheme.error,
                   ),
                   const Divider(height: 16),
                   _buildDetailRow(
-                    label: 'Tổng tiền',
+                    label: l10n.totalAmount,
                     value: FormatUtils.formatCurrency(booking.totalAmount.toInt()),
                     colorScheme: colorScheme,
                     isBold: true,

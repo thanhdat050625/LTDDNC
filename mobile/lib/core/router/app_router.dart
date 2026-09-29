@@ -47,6 +47,7 @@ GoRouter createRouter(AuthBloc authBloc) {
     redirect: (context, state) {
       final authState = authBloc.state;
       final isAuth = authState is AuthAuthenticated;
+      final userRole = isAuth ? authState.user.role.toUpperCase() : '';
       final isOnAuth = state.matchedLocation == '/login' ||
           state.matchedLocation == '/register' ||
           state.matchedLocation == '/forgot-password';
@@ -67,6 +68,23 @@ GoRouter createRouter(AuthBloc authBloc) {
 
       if (!isAuth && isProtected) return '/login';
       if (isAuth && isOnAuth) return '/home';
+
+      // Role-based Access Control (Client-side defense-in-depth)
+      if (isAuth) {
+        // Staff routes (/staff/scanner, /staff/users) require STAFF or ADMIN
+        if (state.matchedLocation.startsWith('/staff')) {
+          if (userRole != 'STAFF' && userRole != 'ADMIN') {
+            return '/home';
+          }
+        }
+        // Admin analytics (/statistics) requires ADMIN
+        if (state.matchedLocation.startsWith('/statistics')) {
+          if (userRole != 'ADMIN') {
+            return '/home';
+          }
+        }
+      }
+
       return null;
     },
     routes: [

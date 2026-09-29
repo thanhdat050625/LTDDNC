@@ -14,3 +14,13 @@ build/
 
 # Coverage
 coverage/
+
+# Gradle / Kotlin daemon cache
+.gradle/
+.kotlin/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+

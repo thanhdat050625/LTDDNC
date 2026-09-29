@@ -41,8 +41,8 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
         title: Text(isBlocked ? l10n.unblockUser : l10n.blockUser),
         content: Text(
           isBlocked
-              ? 'Bạn có chắc chắn muốn mở khóa tài khoản $name?'
-              : 'Bạn có chắc chắn muốn khóa tài khoản $name? Người dùng sẽ không thể đăng nhập hoặc đặt vé.',
+              ? l10n.confirmUnblockUserWithName(name)
+              : l10n.confirmBlockUserWithName(name),
         ),
         actions: [
           TextButton(
@@ -141,12 +141,12 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               Text(
-                                'Tổng số: $totalUsers',
+                                l10n.totalUsersCount(totalUsers),
                                 style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
                               ),
                               Container(height: 16, width: 1, color: colorScheme.outlineVariant),
                               Text(
-                                'Đã khóa: $blockedUsers',
+                                l10n.blockedUsersCount(blockedUsers),
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 13,
@@ -163,7 +163,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                             child: Center(
                               child: Text(
                                 state.isSearching
-                                    ? 'Không tìm thấy người dùng phù hợp'
+                                    ? l10n.noMatchingUsers
                                     : l10n.noData,
                                 style: TextStyle(color: colorScheme.onSurfaceVariant),
                               ),

@@ -172,7 +172,7 @@ class _StaffScannerScreenState extends State<StaffScannerScreen> {
                 final seat = state.ticket.seatLabel ?? state.ticket.seatId;
                 return ScanResultOverlay(
                   isSuccess: true,
-                  message: '${l10n.scanSuccess}!\nGhế: $seat • Mã: ${state.ticket.qrCode}',
+                  message: l10n.scanSuccessDetail(l10n.scanSuccess, seat, state.ticket.qrCode),
                   onDismiss: () => context.read<StaffCubit>().reset(),
                 );
               }

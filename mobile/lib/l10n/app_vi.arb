@@ -327,5 +327,60 @@
   },
   "ticketListEmptyPrompt": "Bạn chưa có vé xem phim nào",
   "selectGender": "Chọn giới tính",
-  "phoneInvalid": "Số điện thoại không hợp lệ"
+  "phoneInvalid": "Số điện thoại không hợp lệ",
+  "orderStatus": "Trạng thái",
+  "orderCode": "Mã đơn hàng",
+  "screeningRoom": "Phòng chiếu",
+  "totalUsersCount": "Tổng số: {count}",
+  "@totalUsersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "blockedUsersCount": "Đã khóa: {count}",
+  "@blockedUsersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noMatchingUsers": "Không tìm thấy người dùng phù hợp",
+  "confirmBlockUserWithName": "Bạn có chắc chắn muốn khóa tài khoản {name}? Người dùng sẽ không thể đăng nhập hoặc đặt vé.",
+  "@confirmBlockUserWithName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmUnblockUserWithName": "Bạn có chắc chắn muốn mở khóa tài khoản {name}?",
+  "@confirmUnblockUserWithName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "qrCodeAvailableAfterPayment": "Mã QR chỉ khả dụng sau khi đơn hàng được thanh toán thành công.",
+  "noRevenueInPeriod": "Không có phát sinh doanh thu trong giai đoạn này",
+  "scanSuccessDetail": "{successMsg}!\nGhế: {seat} • Mã: {code}",
+  "@scanSuccessDetail": {
+    "placeholders": {
+      "successMsg": {
+        "type": "String"
+      },
+      "seat": {
+        "type": "String"
+      },
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "scanTicketSubtitle": "Soát vé vào phòng chiếu",
+  "userManagementSubtitle": "Danh sách & Quản lý tài khoản",
+  "statisticsSubtitle": "Báo cáo & Thống kê doanh thu"
 }

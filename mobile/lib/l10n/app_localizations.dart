@@ -1579,6 +1579,90 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Số điện thoại không hợp lệ'**
   String get phoneInvalid;
+
+  /// No description provided for @orderStatus.
+  ///
+  /// In vi, this message translates to:
+  /// **'Trạng thái'**
+  String get orderStatus;
+
+  /// No description provided for @orderCode.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mã đơn hàng'**
+  String get orderCode;
+
+  /// No description provided for @screeningRoom.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phòng chiếu'**
+  String get screeningRoom;
+
+  /// No description provided for @totalUsersCount.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tổng số: {count}'**
+  String totalUsersCount(int count);
+
+  /// No description provided for @blockedUsersCount.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã khóa: {count}'**
+  String blockedUsersCount(int count);
+
+  /// No description provided for @noMatchingUsers.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không tìm thấy người dùng phù hợp'**
+  String get noMatchingUsers;
+
+  /// No description provided for @confirmBlockUserWithName.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn có chắc chắn muốn khóa tài khoản {name}? Người dùng sẽ không thể đăng nhập hoặc đặt vé.'**
+  String confirmBlockUserWithName(String name);
+
+  /// No description provided for @confirmUnblockUserWithName.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn có chắc chắn muốn mở khóa tài khoản {name}?'**
+  String confirmUnblockUserWithName(String name);
+
+  /// No description provided for @qrCodeAvailableAfterPayment.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mã QR chỉ khả dụng sau khi đơn hàng được thanh toán thành công.'**
+  String get qrCodeAvailableAfterPayment;
+
+  /// No description provided for @noRevenueInPeriod.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không có phát sinh doanh thu trong giai đoạn này'**
+  String get noRevenueInPeriod;
+
+  /// No description provided for @scanSuccessDetail.
+  ///
+  /// In vi, this message translates to:
+  /// **'{successMsg}!\nGhế: {seat} • Mã: {code}'**
+  String scanSuccessDetail(String successMsg, String seat, String code);
+
+  /// No description provided for @scanTicketSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Soát vé vào phòng chiếu'**
+  String get scanTicketSubtitle;
+
+  /// No description provided for @userManagementSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Danh sách & Quản lý tài khoản'**
+  String get userManagementSubtitle;
+
+  /// No description provided for @statisticsSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Báo cáo & Thống kê doanh thu'**
+  String get statisticsSubtitle;
 }
 
 class _AppLocalizationsDelegate

@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import '../data/repositories/user_management_repository.dart';
+import 'package:cineplex_mobile/features/admin/users/data/repositories/user_management_repository.dart';
 
 abstract class UserManagementState extends Equatable {
   const UserManagementState();
