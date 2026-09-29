@@ -100,7 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   TextButton(
                     onPressed: () {
-                      // Navigate to forgot password
+                      context.push('/forgot-password');
                     },
                     child: Text(l10n.forgotPassword, style: TextStyle(color: AppColors.primary)),
                   ),
@@ -118,7 +118,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     isLoading: state is AuthLoading,
                     text: l10n.login,
                     onPressed: () {
-                      context.read<AuthBloc>().add(LoginRequested(_emailCtrl.text, _passCtrl.text));
+                      if (_emailCtrl.text.isNotEmpty && _passCtrl.text.isNotEmpty) {
+                        context.read<AuthBloc>().add(
+                          LoginRequested(
+                            _emailCtrl.text,
+                            _passCtrl.text,
+                            rememberMe: _rememberMe,
+                          ),
+                        );
+                      }
                     },
                   );
                 },
