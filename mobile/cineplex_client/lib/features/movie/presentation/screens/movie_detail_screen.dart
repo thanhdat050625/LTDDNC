@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:cineplex_client/l10n/app_localizations.dart';
+import 'package:mobile_shared/l10n/app_localizations.dart';
 import 'package:cineplex_client/core/widgets/app_cached_image.dart';
 import 'package:cineplex_client/core/widgets/app_button.dart';
 import 'package:cineplex_client/core/theme/app_colors.dart';

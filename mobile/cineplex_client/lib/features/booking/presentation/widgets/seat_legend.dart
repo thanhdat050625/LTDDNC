@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cineplex_client/core/theme/app_colors.dart';
-import 'package:cineplex_client/l10n/app_localizations.dart';
+import 'package:mobile_shared/l10n/app_localizations.dart';
 
 class SeatLegend extends StatelessWidget {
   const SeatLegend({super.key});

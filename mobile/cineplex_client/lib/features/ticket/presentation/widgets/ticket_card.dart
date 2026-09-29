@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cineplex_client/features/ticket/data/models/ticket_model.dart';
 import 'package:cineplex_client/core/utils/format_utils.dart';
-import 'package:cineplex_client/l10n/app_localizations.dart';
+import 'package:mobile_shared/l10n/app_localizations.dart';
 
 class TicketCard extends StatelessWidget {
   final BookingDetailModel booking;

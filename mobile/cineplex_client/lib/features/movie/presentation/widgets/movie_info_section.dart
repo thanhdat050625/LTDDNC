@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cineplex_client/l10n/app_localizations.dart';
+import 'package:mobile_shared/l10n/app_localizations.dart';
 
 class MovieInfoSection extends StatelessWidget {
   final String? director;

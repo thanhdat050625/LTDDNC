@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cineplex_client/l10n/app_localizations.dart';
+import 'package:mobile_shared/l10n/app_localizations.dart';
 import 'package:cineplex_client/core/theme/app_colors.dart';
 import 'package:cineplex_client/core/widgets/app_button.dart';
 import 'package:cineplex_client/core/widgets/app_loading.dart';

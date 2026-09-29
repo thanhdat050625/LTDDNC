@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cineplex_client/core/widgets/app_scaffold.dart';
 import 'package:cineplex_client/core/widgets/app_loading.dart';
-import 'package:cineplex_client/l10n/app_localizations.dart';
+import 'package:mobile_shared/l10n/app_localizations.dart';
 import '../cubit/my_tickets_cubit.dart';
 import '../widgets/ticket_card.dart';
 

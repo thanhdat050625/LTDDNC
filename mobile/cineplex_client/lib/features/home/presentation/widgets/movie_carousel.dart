@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:cineplex_client/features/movie/data/models/movie_model.dart';
 import 'package:cineplex_client/core/widgets/app_cached_image.dart';
 import 'package:cineplex_client/core/theme/app_colors.dart';
-import 'package:cineplex_client/l10n/app_localizations.dart';
+import 'package:mobile_shared/l10n/app_localizations.dart';
 
 class MovieCarousel extends StatefulWidget {
   final List<MovieModel> movies;
