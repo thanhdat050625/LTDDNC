@@ -121,6 +121,7 @@ class _AppState extends State<App> {
           BlocProvider.value(value: _profileCubit),
         ],
         child: MaterialApp.router(
+          title: 'Cineplex',
           routerConfig: _router,
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
