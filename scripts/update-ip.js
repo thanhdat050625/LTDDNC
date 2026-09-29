@@ -68,7 +68,6 @@ function updateAllMobileEnvs(ip, port = 3000) {
   const baseDir = path.resolve(__dirname, '..', 'mobile');
   
   const targetDirs = [
-    baseDir,
     path.join(baseDir, 'cineplex_client'),
     path.join(baseDir, 'cineplex_staff'),
     path.join(baseDir, 'cineplex_admin'),
