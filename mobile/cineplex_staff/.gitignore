@@ -1,0 +1,26 @@
+# Flutter / Dart build artifacts
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+
+# Application bundles & binaries
+*.apk
+*.aab
+*.ipa
+
+# Coverage
+coverage/
+
+# Gradle / Kotlin daemon cache
+.gradle/
+.kotlin/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+

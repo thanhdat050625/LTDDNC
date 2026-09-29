@@ -32,15 +32,14 @@ function getLocalIpAddress() {
 }
 
 /**
- * Creates or updates mobile/.env with the detected BASE_URL.
+ * Creates or updates .env with the detected BASE_URL for a given directory.
  */
-function updateMobileEnv(ip, port = 3000) {
-  const mobileDir = path.resolve(__dirname, '..', 'mobile');
-  const envPath = path.join(mobileDir, '.env');
+function writeEnvFile(targetDir, ip, port = 3000) {
+  const envPath = path.join(targetDir, '.env');
   const newBaseUrl = `http://${ip}:${port}`;
 
-  if (!fs.existsSync(mobileDir)) {
-    fs.mkdirSync(mobileDir, { recursive: true });
+  if (!fs.existsSync(targetDir)) {
+    fs.mkdirSync(targetDir, { recursive: true });
   }
 
   let content = '';
@@ -57,8 +56,26 @@ function updateMobileEnv(ip, port = 3000) {
   }
 
   fs.writeFileSync(envPath, content, 'utf8');
+  const relPath = path.relative(path.resolve(__dirname, '..'), envPath);
+  console.log(`[Mobile Config] Updated ${relPath} -> BASE_URL=${newBaseUrl}`);
+}
+
+/**
+ * Updates .env in all mobile applications (client, staff, admin, and legacy root).
+ */
+function updateAllMobileEnvs(ip, port = 3000) {
   console.log(`[Mobile Config] Auto-detected IP: ${ip}`);
-  console.log(`[Mobile Config] Updated mobile/.env -> BASE_URL=${newBaseUrl}`);
+  const baseDir = path.resolve(__dirname, '..', 'mobile');
+  
+  const targetDirs = [
+    path.join(baseDir, 'cineplex_client'),
+    path.join(baseDir, 'cineplex_staff'),
+    path.join(baseDir, 'cineplex_admin'),
+  ];
+
+  for (const dir of targetDirs) {
+    writeEnvFile(dir, ip, port);
+  }
 }
 
 /**
@@ -75,5 +92,5 @@ function tryAdbReverse(port = 3000) {
 
 // Execute update
 const ip = getLocalIpAddress();
-updateMobileEnv(ip);
+updateAllMobileEnvs(ip);
 tryAdbReverse(3000);

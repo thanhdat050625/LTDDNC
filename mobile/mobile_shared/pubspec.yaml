@@ -1,0 +1,45 @@
+name: mobile_shared
+description: Shared package for Cineplex Mobile ecosystem (Client, Staff, Admin)
+version: 1.0.0
+publish_to: 'none'
+
+environment:
+  sdk: ^3.13.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # State & Equality
+  flutter_bloc: ^9.1.0
+  equatable: ^2.0.7
+
+  # Networking & Realtime
+  dio: ^5.8.0+1
+  socket_io_client: ^3.0.2
+
+  # Storage
+  flutter_secure_storage: ^9.2.4
+  shared_preferences: ^2.5.3
+
+  # UI & Components
+  cached_network_image: ^3.4.1
+  shimmer: ^3.0.0
+  google_fonts: ^6.2.1
+  qr_flutter: ^4.1.0
+  flutter_svg: ^2.1.0
+  lucide_icons_flutter: ^3.1.20
+
+  # Utils
+  intl: ^0.20.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  generate: true
