@@ -49,6 +49,18 @@ GoRouter createAdminRouter(AuthBloc authBloc) {
         path: '/statistics',
         builder: (context, state) => const StatisticsScreen(),
       ),
+      GoRoute(
+        path: '/ticket-sale',
+        builder: (context, state) => const TicketSaleScreen(),
+      ),
+      GoRoute(
+        path: '/ticket-sale/seat-selection',
+        builder: (context, state) => const SeatSelectionScreen(),
+      ),
+      GoRoute(
+        path: '/ticket-sale/checkout',
+        builder: (context, state) => const CheckoutScreen(),
+      ),
     ],
   );
 }

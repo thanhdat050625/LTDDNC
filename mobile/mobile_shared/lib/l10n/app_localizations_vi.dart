@@ -847,4 +847,54 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get adminPortal => 'Cổng Quản trị Hệ thống';
+
+  @override
+  String get counterSaleDesc => 'Bán vé & Thanh toán';
+
+  @override
+  String get screen => 'MÀN HÌNH';
+
+  @override
+  String get popcornOnly => 'Bắp rang bơ';
+
+  @override
+  String get largeDrinkOnly => 'Nước ngọt lớn';
+
+  @override
+  String get combo1Popcorn2Drinks => 'Combo 1 bắp 2 nước';
+
+  @override
+  String movieTicket(int count) {
+    return 'Vé xem phim ($count ghế)';
+  }
+
+  @override
+  String get discountPointsTitle => 'Giảm giá (Điểm)';
+
+  @override
+  String get enterPoints => 'Nhập số điểm';
+
+  @override
+  String loyaltyPrompt(String points) {
+    return 'Khách hàng có $points điểm. Dùng điểm để giảm giá?';
+  }
+
+  @override
+  String paymentSuccessPrompt(String code) {
+    return 'Thanh toán thành công. Đã tạo mã vé $code.';
+  }
+
+  @override
+  String get cineplexDistrict1 => 'Cineplex Quận 1';
+
+  @override
+  String get today => 'Hôm nay';
+
+  @override
+  String roomPrefix(String id) {
+    return 'Phòng $id';
+  }
+
+  @override
+  String get standard2D => 'Standard • 2D';
 }

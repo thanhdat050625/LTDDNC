@@ -846,4 +846,54 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adminPortal => 'Admin Management Portal';
+
+  @override
+  String get counterSaleDesc => 'Ticket Sales & Payment';
+
+  @override
+  String get screen => 'SCREEN';
+
+  @override
+  String get popcornOnly => 'Popcorn';
+
+  @override
+  String get largeDrinkOnly => 'Large Drink';
+
+  @override
+  String get combo1Popcorn2Drinks => 'Combo 1 Popcorn 2 Drinks';
+
+  @override
+  String movieTicket(int count) {
+    return 'Movie Ticket ($count seats)';
+  }
+
+  @override
+  String get discountPointsTitle => 'Discount (Points)';
+
+  @override
+  String get enterPoints => 'Enter points';
+
+  @override
+  String loyaltyPrompt(String points) {
+    return 'Customer has $points points. Use points for discount?';
+  }
+
+  @override
+  String paymentSuccessPrompt(String code) {
+    return 'Payment successful. Booking code $code generated.';
+  }
+
+  @override
+  String get cineplexDistrict1 => 'Cineplex District 1';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String roomPrefix(String id) {
+    return 'Room $id';
+  }
+
+  @override
+  String get standard2D => 'Standard • 2D';
 }

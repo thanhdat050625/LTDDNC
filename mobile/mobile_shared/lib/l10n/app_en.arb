@@ -393,5 +393,47 @@
   "statisticsSubtitle": "Reports & revenue analytics",
   "accessDenied": "Access denied. Insufficient permissions.",
   "adminDashboard": "Admin Dashboard",
-  "adminPortal": "Admin Management Portal"
+  "adminPortal": "Admin Management Portal",
+  "counterSaleDesc": "Ticket Sales & Payment",
+  "screen": "SCREEN",
+  "popcornOnly": "Popcorn",
+  "largeDrinkOnly": "Large Drink",
+  "combo1Popcorn2Drinks": "Combo 1 Popcorn 2 Drinks",
+  "movieTicket": "Movie Ticket ({count} seats)",
+  "@movieTicket": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "discountPointsTitle": "Discount (Points)",
+  "enterPoints": "Enter points",
+  "loyaltyPrompt": "Customer has {points} points. Use points for discount?",
+  "@loyaltyPrompt": {
+    "placeholders": {
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentSuccessPrompt": "Payment successful. Booking code {code} generated.",
+  "@paymentSuccessPrompt": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "cineplexDistrict1": "Cineplex District 1",
+  "today": "Today",
+  "roomPrefix": "Room {id}",
+  "@roomPrefix": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "standard2D": "Standard • 2D"
 }

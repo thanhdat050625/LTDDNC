@@ -393,5 +393,47 @@
   "statisticsSubtitle": "Báo cáo & Thống kê doanh thu",
   "accessDenied": "Truy cập bị từ chối. Không đủ quyền hạn.",
   "adminDashboard": "Bảng điều khiển Quản trị",
-  "adminPortal": "Cổng Quản trị Hệ thống"
+  "adminPortal": "Cổng Quản trị Hệ thống",
+  "counterSaleDesc": "Bán vé & Thanh toán",
+  "screen": "MÀN HÌNH",
+  "popcornOnly": "Bắp rang bơ",
+  "largeDrinkOnly": "Nước ngọt lớn",
+  "combo1Popcorn2Drinks": "Combo 1 bắp 2 nước",
+  "movieTicket": "Vé xem phim ({count} ghế)",
+  "@movieTicket": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "discountPointsTitle": "Giảm giá (Điểm)",
+  "enterPoints": "Nhập số điểm",
+  "loyaltyPrompt": "Khách hàng có {points} điểm. Dùng điểm để giảm giá?",
+  "@loyaltyPrompt": {
+    "placeholders": {
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentSuccessPrompt": "Thanh toán thành công. Đã tạo mã vé {code}.",
+  "@paymentSuccessPrompt": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "cineplexDistrict1": "Cineplex Quận 1",
+  "today": "Hôm nay",
+  "roomPrefix": "Phòng {id}",
+  "@roomPrefix": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "standard2D": "Standard • 2D"
 }

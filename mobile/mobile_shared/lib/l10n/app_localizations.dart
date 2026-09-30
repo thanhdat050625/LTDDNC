@@ -1693,6 +1693,90 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Cổng Quản trị Hệ thống'**
   String get adminPortal;
+
+  /// No description provided for @counterSaleDesc.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bán vé & Thanh toán'**
+  String get counterSaleDesc;
+
+  /// No description provided for @screen.
+  ///
+  /// In vi, this message translates to:
+  /// **'MÀN HÌNH'**
+  String get screen;
+
+  /// No description provided for @popcornOnly.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bắp rang bơ'**
+  String get popcornOnly;
+
+  /// No description provided for @largeDrinkOnly.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nước ngọt lớn'**
+  String get largeDrinkOnly;
+
+  /// No description provided for @combo1Popcorn2Drinks.
+  ///
+  /// In vi, this message translates to:
+  /// **'Combo 1 bắp 2 nước'**
+  String get combo1Popcorn2Drinks;
+
+  /// No description provided for @movieTicket.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vé xem phim ({count} ghế)'**
+  String movieTicket(int count);
+
+  /// No description provided for @discountPointsTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Giảm giá (Điểm)'**
+  String get discountPointsTitle;
+
+  /// No description provided for @enterPoints.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhập số điểm'**
+  String get enterPoints;
+
+  /// No description provided for @loyaltyPrompt.
+  ///
+  /// In vi, this message translates to:
+  /// **'Khách hàng có {points} điểm. Dùng điểm để giảm giá?'**
+  String loyaltyPrompt(String points);
+
+  /// No description provided for @paymentSuccessPrompt.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thanh toán thành công. Đã tạo mã vé {code}.'**
+  String paymentSuccessPrompt(String code);
+
+  /// No description provided for @cineplexDistrict1.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cineplex Quận 1'**
+  String get cineplexDistrict1;
+
+  /// No description provided for @today.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hôm nay'**
+  String get today;
+
+  /// No description provided for @roomPrefix.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phòng {id}'**
+  String roomPrefix(String id);
+
+  /// No description provided for @standard2D.
+  ///
+  /// In vi, this message translates to:
+  /// **'Standard • 2D'**
+  String get standard2D;
 }
 
 class _AppLocalizationsDelegate

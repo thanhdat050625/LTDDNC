@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 import '../cubit/staff_cubit.dart';
@@ -58,6 +60,11 @@ class _StaffScannerScreenState extends State<StaffScannerScreen> {
     return AppScaffold(
       title: l10n.scanTicket,
       actions: [
+        IconButton(
+          icon: const Icon(LucideIcons.monitorSmartphone),
+          tooltip: l10n.counterSale,
+          onPressed: () => context.push('/ticket-sale'),
+        ),
         IconButton(
           icon: const Icon(Icons.logout),
           tooltip: l10n.logout,
@@ -153,15 +160,11 @@ class _StaffScannerScreenState extends State<StaffScannerScreen> {
                           ),
                         ),
                         const SizedBox(width: 10),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: colorScheme.primary,
-                            foregroundColor: colorScheme.onPrimary,
-                            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                          ),
+                        AppButton(
+                          text: l10n.verifyTicket,
                           onPressed: _submitManualCode,
-                          child: Text(l10n.verifyTicket),
+                          width: null, // wrap content
+                          backgroundColor: colorScheme.primary,
                         ),
                       ],
                     ),

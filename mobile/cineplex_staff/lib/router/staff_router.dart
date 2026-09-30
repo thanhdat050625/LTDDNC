@@ -39,6 +39,18 @@ GoRouter createStaffRouter(AuthBloc authBloc) {
         path: '/scanner',
         builder: (context, state) => const StaffScannerScreen(),
       ),
+      GoRoute(
+        path: '/ticket-sale',
+        builder: (context, state) => const TicketSaleScreen(),
+      ),
+      GoRoute(
+        path: '/ticket-sale/seat-selection',
+        builder: (context, state) => const SeatSelectionScreen(),
+      ),
+      GoRoute(
+        path: '/ticket-sale/checkout',
+        builder: (context, state) => const CheckoutScreen(),
+      ),
     ],
   );
 }

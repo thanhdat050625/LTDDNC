@@ -56,3 +56,8 @@ export 'bloc/auth_bloc.dart';
 
 // L10n
 export 'l10n/app_localizations.dart';
+
+// Features (Shared Screens)
+export 'features/ticket_sale/presentation/screens/ticket_sale_screen.dart';
+export 'features/ticket_sale/presentation/screens/seat_selection_screen.dart';
+export 'features/ticket_sale/presentation/screens/checkout_screen.dart';
