@@ -7,6 +7,7 @@ class AppScaffold extends StatelessWidget {
   final List<Widget>? actions;
   final Widget? floatingActionButton;
   final Widget? bottomNavigationBar;
+  final Widget? drawer;
 
   const AppScaffold({
     super.key,
@@ -16,6 +17,7 @@ class AppScaffold extends StatelessWidget {
     this.actions,
     this.floatingActionButton,
     this.bottomNavigationBar,
+    this.drawer,
   });
 
   @override
@@ -26,6 +28,7 @@ class AppScaffold extends StatelessWidget {
         automaticallyImplyLeading: showBackButton,
         actions: actions,
       ),
+      drawer: drawer,
       body: SafeArea(child: body),
       floatingActionButton: floatingActionButton,
       bottomNavigationBar: bottomNavigationBar,

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:mobile_shared/mobile_shared.dart';
+import '../../../home/presentation/widgets/staff_drawer.dart';
 import '../cubit/staff_cubit.dart';
 import '../widgets/scan_result_overlay.dart';
 
@@ -59,6 +60,7 @@ class _StaffScannerScreenState extends State<StaffScannerScreen> {
 
     return AppScaffold(
       title: l10n.scanTicket,
+      drawer: const StaffDrawer(),
       actions: [
         IconButton(
           icon: const Icon(LucideIcons.monitorSmartphone),

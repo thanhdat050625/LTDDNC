@@ -6,6 +6,7 @@ import '../features/auth/presentation/screens/admin_login_screen.dart';
 import '../features/dashboard/presentation/screens/admin_dashboard_screen.dart';
 import '../features/users/presentation/screens/user_management_screen.dart';
 import '../features/statistics/presentation/screens/statistics_screen.dart';
+import '../features/dashboard/presentation/widgets/admin_drawer.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -39,19 +40,23 @@ GoRouter createAdminRouter(AuthBloc authBloc) {
       ),
       GoRoute(
         path: '/dashboard',
-        builder: (context, state) => const AdminDashboardScreen(),
+        builder: (context, state) => const AdminDashboardScreen(drawer: AdminDrawer()),
       ),
       GoRoute(
         path: '/users',
-        builder: (context, state) => const UserManagementScreen(),
+        builder: (context, state) => const UserManagementScreen(drawer: AdminDrawer()),
       ),
       GoRoute(
         path: '/statistics',
-        builder: (context, state) => const StatisticsScreen(),
+        builder: (context, state) => const StatisticsScreen(drawer: AdminDrawer()),
+      ),
+      GoRoute(
+        path: '/movies',
+        builder: (context, state) => const MovieManagementScreen(drawer: AdminDrawer()),
       ),
       GoRoute(
         path: '/ticket-sale',
-        builder: (context, state) => const TicketSaleScreen(),
+        builder: (context, state) => const TicketSaleScreen(drawer: AdminDrawer()),
       ),
       GoRoute(
         path: '/ticket-sale/seat-selection',

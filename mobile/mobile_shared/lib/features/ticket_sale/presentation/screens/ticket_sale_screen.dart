@@ -4,7 +4,8 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 
 class TicketSaleScreen extends StatefulWidget {
-  const TicketSaleScreen({super.key});
+  final Widget? drawer;
+  const TicketSaleScreen({super.key, this.drawer});
 
   @override
   State<TicketSaleScreen> createState() => _TicketSaleScreenState();
@@ -53,6 +54,7 @@ class _TicketSaleScreenState extends State<TicketSaleScreen> {
 
     return AppScaffold(
       title: l10n.counterSale,
+      drawer: widget.drawer,
       body: SizedBox.expand(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

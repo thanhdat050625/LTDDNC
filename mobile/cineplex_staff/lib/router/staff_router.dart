@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 import '../features/auth/presentation/screens/staff_login_screen.dart';
 import '../features/scanner/presentation/screens/staff_scanner_screen.dart';
+import '../features/home/presentation/widgets/staff_drawer.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -41,7 +42,7 @@ GoRouter createStaffRouter(AuthBloc authBloc) {
       ),
       GoRoute(
         path: '/ticket-sale',
-        builder: (context, state) => const TicketSaleScreen(),
+        builder: (context, state) => const TicketSaleScreen(drawer: StaffDrawer()),
       ),
       GoRoute(
         path: '/ticket-sale/seat-selection',
@@ -50,6 +51,10 @@ GoRouter createStaffRouter(AuthBloc authBloc) {
       GoRoute(
         path: '/ticket-sale/checkout',
         builder: (context, state) => const CheckoutScreen(),
+      ),
+      GoRoute(
+        path: '/movies',
+        builder: (context, state) => const MovieManagementScreen(drawer: StaffDrawer()),
       ),
     ],
   );

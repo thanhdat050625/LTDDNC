@@ -5,7 +5,8 @@ import 'package:mobile_shared/mobile_shared.dart';
 import '../cubit/statistics_cubit.dart';
 
 class StatisticsScreen extends StatefulWidget {
-  const StatisticsScreen({super.key});
+  final Widget? drawer;
+  const StatisticsScreen({super.key, this.drawer});
 
   @override
   State<StatisticsScreen> createState() => _StatisticsScreenState();
@@ -27,6 +28,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
 
     return AppScaffold(
       title: l10n.statistics,
+      drawer: widget.drawer,
       body: BlocBuilder<StatisticsCubit, StatisticsState>(
         builder: (context, state) {
           if (state is StatisticsLoading) return const AppLoading();

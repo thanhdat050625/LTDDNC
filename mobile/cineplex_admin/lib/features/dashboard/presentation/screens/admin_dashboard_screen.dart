@@ -4,7 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 
 class AdminDashboardScreen extends StatelessWidget {
-  const AdminDashboardScreen({super.key});
+  final Widget? drawer;
+  const AdminDashboardScreen({super.key, this.drawer});
 
   @override
   Widget build(BuildContext context) {
@@ -12,6 +13,7 @@ class AdminDashboardScreen extends StatelessWidget {
 
     return AppScaffold(
       title: l10n.adminDashboard,
+      drawer: drawer,
       actions: [
         IconButton(
           icon: const Icon(Icons.logout),
