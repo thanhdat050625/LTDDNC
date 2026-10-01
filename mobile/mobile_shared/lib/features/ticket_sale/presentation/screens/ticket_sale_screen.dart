@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 
@@ -10,7 +11,7 @@ class TicketSaleScreen extends StatefulWidget {
 }
 
 class _TicketSaleScreenState extends State<TicketSaleScreen> {
-  late final List<String> _cinemas;
+  late List<String> _cinemas;
   late String _selectedCinema;
 
   final List<Map<String, dynamic>> _movies = [
@@ -49,98 +50,100 @@ class _TicketSaleScreenState extends State<TicketSaleScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context).extension<CineplexColors>()!;
     final l10n = AppLocalizations.of(context)!;
-    
+
     return AppScaffold(
       title: l10n.counterSale,
-      body: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Sidebar: Movies list
-          Expanded(
-            flex: 1,
-            child: Container(
-              decoration: BoxDecoration(
-                color: theme.surface,
-                border: Border(right: BorderSide(color: theme.textSecondary.withValues(alpha: 0.1))),
-              ),
-              child: Column(
-                children: [
-                  _buildCinemaSelector(theme, l10n),
-                  Divider(color: theme.textSecondary.withValues(alpha: 0.1), height: 1),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: _movies.length,
-                      itemBuilder: (context, index) {
-                        final movie = _movies[index];
-                        final isSelected = movie['id'] == _selectedMovieId;
-                        return InkWell(
-                          onTap: () => setState(() => _selectedMovieId = movie['id']),
-                          child: Container(
-                            padding: EdgeInsets.all(theme.spacingMd),
-                            decoration: BoxDecoration(
-                              color: isSelected ? theme.primary.withValues(alpha: 0.1) : Colors.transparent,
-                              border: Border(
-                                left: BorderSide(
-                                  color: isSelected ? theme.primary : Colors.transparent,
-                                  width: 4,
+      body: SizedBox.expand(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Top: Movies list (35% height)
+            Expanded(
+              flex: 35,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: theme.surface,
+                  border: Border(bottom: BorderSide(color: theme.textSecondary.withValues(alpha: 0.1))),
+                ),
+                child: Column(
+                  children: [
+                    _buildCinemaSelector(theme, l10n),
+                    Divider(color: theme.textSecondary.withValues(alpha: 0.1), height: 1),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: _movies.length,
+                        itemBuilder: (context, index) {
+                          final movie = _movies[index];
+                          final isSelected = movie['id'] == _selectedMovieId;
+                          return InkWell(
+                            onTap: () => setState(() => _selectedMovieId = movie['id']),
+                            child: Container(
+                              padding: EdgeInsets.all(theme.spacingMd),
+                              decoration: BoxDecoration(
+                                color: isSelected ? theme.primary.withValues(alpha: 0.1) : Colors.transparent,
+                                border: Border(
+                                  left: BorderSide(
+                                    color: isSelected ? theme.primary : Colors.transparent,
+                                    width: 4,
+                                  ),
                                 ),
                               ),
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 40,
-                                  height: 60,
-                                  decoration: BoxDecoration(
-                                    color: theme.textSecondary.withValues(alpha: 0.1),
-                                    borderRadius: BorderRadius.circular(theme.radiusSm),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 40,
+                                    height: 60,
+                                    decoration: BoxDecoration(
+                                      color: theme.textSecondary.withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(theme.radiusSm),
+                                    ),
+                                    child: Icon(LucideIcons.film, color: theme.textSecondary, size: 20),
                                   ),
-                                  child: Icon(LucideIcons.film, color: theme.textSecondary, size: 20),
-                                ),
-                                SizedBox(width: theme.spacingSm),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        movie['title'],
-                                        style: TextStyle(
-                                          color: theme.textPrimary,
-                                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                  SizedBox(width: theme.spacingSm),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          movie['title'],
+                                          style: TextStyle(
+                                            color: theme.textPrimary,
+                                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                          ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      SizedBox(height: 4),
-                                      Text(
-                                        l10n.durationMinutes(movie['duration']),
-                                        style: TextStyle(
-                                          color: theme.textSecondary,
-                                          fontSize: 12,
+                                        SizedBox(height: 4),
+                                        Text(
+                                          l10n.durationMinutes(movie['duration']),
+                                          style: TextStyle(
+                                            color: theme.textSecondary,
+                                            fontSize: 12,
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          // Main content: Showtimes
-          Expanded(
-            flex: 2,
-            child: _selectedMovieId == null 
-              ? Center(child: Text(l10n.noData, style: TextStyle(color: theme.textSecondary)))
-              : _buildShowtimes(theme, l10n),
-          ),
-        ],
+            // Main content: Showtimes (65% height)
+            Expanded(
+              flex: 65,
+              child: _selectedMovieId == null
+                  ? Center(child: Text(l10n.noData, style: TextStyle(color: theme.textSecondary)))
+                  : _buildShowtimes(theme, l10n),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -202,13 +205,8 @@ class _TicketSaleScreenState extends State<TicketSaleScreen> {
   }
 
   Widget _buildShowtimeCard(CineplexColors theme, String time, String type) {
-    return InkWell(
-      onTap: () {
-        // Navigate to seat selection
-        // In a real app we'd pass showtimeId, here we mock
-        Navigator.of(context).pushNamed('/staff/ticket-sale/seat-selection');
-      },
-      borderRadius: BorderRadius.circular(theme.radiusMd),
+    return GestureDetector(
+      onTap: () => context.push('/ticket-sale/seat-selection'),
       child: AppCard(
         padding: EdgeInsets.symmetric(vertical: theme.spacingMd, horizontal: theme.spacingSm),
         child: Column(

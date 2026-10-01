@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_shared/mobile_shared.dart';
@@ -15,7 +16,7 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
   
   String _customerSearch = '';
 
-  late final Map<String, int> _concessions;
+  late Map<String, int> _concessions;
 
   @override
   void didChangeDependencies() {
@@ -35,18 +36,18 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
 
     return AppScaffold(
       title: l10n.seatSelection,
-      body: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Left: Seat Map
+          // Top: Seat Map (55% height)
           Expanded(
-            flex: 2,
+            flex: 55,
             child: _buildSeatMap(theme, l10n),
           ),
           
-          // Right: Order Summary & Customer
+          // Bottom: Order Summary & Customer (45% height)
           Expanded(
-            flex: 1,
+            flex: 45,
             child: Container(
               color: theme.surface,
               child: Column(
@@ -105,9 +106,12 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
             child: InteractiveViewer(
               minScale: 0.5,
               maxScale: 2.0,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(8, (r) {
+              constrained: false,
+              child: Padding(
+                padding: EdgeInsets.all(theme.spacingLg),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(8, (r) {
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -159,19 +163,22 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
               ),
             ),
           ),
+        ),
           
           // Legend
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildLegendItem(theme, theme.seatStandard, l10n.seatStandard),
-              SizedBox(width: 16),
-              _buildLegendItem(theme, theme.seatVIP, l10n.seatVIP),
-              SizedBox(width: 16),
-              _buildLegendItem(theme, theme.seatSelected, l10n.seatSelected),
-              SizedBox(width: 16),
-              _buildLegendItem(theme, theme.seatBooked, l10n.seatBooked),
-            ],
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _buildLegendItem(theme, theme.seatStandard, l10n.seatStandard),
+                SizedBox(width: 16),
+                _buildLegendItem(theme, theme.seatVIP, l10n.seatVIP),
+                SizedBox(width: 16),
+                _buildLegendItem(theme, theme.seatSelected, l10n.seatSelected),
+                SizedBox(width: 16),
+                _buildLegendItem(theme, theme.seatBooked, l10n.seatBooked),
+              ],
+            ),
           ),
         ],
       ),
@@ -337,7 +344,7 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
             child: AppButton(
               text: l10n.continueBtn,
               onPressed: _selectedSeats.isEmpty ? null : () {
-                Navigator.of(context).pushNamed('/staff/ticket-sale/checkout');
+                context.push('/ticket-sale/checkout');
               },
             ),
           ),

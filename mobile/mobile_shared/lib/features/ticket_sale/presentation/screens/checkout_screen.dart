@@ -12,7 +12,7 @@ class CheckoutScreen extends StatefulWidget {
 class _CheckoutScreenState extends State<CheckoutScreen> {
   String _selectedMethod = 'CASH';
 
-  late final List<Map<String, dynamic>> _methods;
+  late List<Map<String, dynamic>> _methods;
 
   @override
   void didChangeDependencies() {
@@ -49,12 +49,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
     return AppScaffold(
       title: l10n.checkout,
-      body: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Left: Payment Methods
+          // Top: Payment Methods (50% height)
           Expanded(
-            flex: 3,
+            flex: 50,
             child: SingleChildScrollView(
               padding: EdgeInsets.all(theme.spacingLg),
               child: Column(
@@ -72,75 +72,77 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ),
           ),
           
-          // Right: Summary & Pay
+          // Bottom: Summary & Pay (50% height)
           Expanded(
-            flex: 2,
+            flex: 50,
             child: Container(
               color: theme.surface,
               padding: EdgeInsets.all(theme.spacingLg),
               child: Column(
                 children: [
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(l10n.orderSummary, style: AppTextStyles.title.copyWith(color: theme.textPrimary)),
-                        SizedBox(height: theme.spacingLg),
-                        
-                        // Movie info
-                        Row(
-                          children: [
-                            Container(
-                              width: 60,
-                              height: 80,
-                              decoration: BoxDecoration(
-                                color: theme.textSecondary.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(theme.radiusSm),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(l10n.orderSummary, style: AppTextStyles.title.copyWith(color: theme.textPrimary)),
+                          SizedBox(height: theme.spacingLg),
+                          
+                          // Movie info
+                          Row(
+                            children: [
+                              Container(
+                                width: 60,
+                                height: 80,
+                                decoration: BoxDecoration(
+                                  color: theme.textSecondary.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(theme.radiusSm),
+                                ),
+                                child: Icon(LucideIcons.film, color: theme.textSecondary),
                               ),
-                              child: Icon(LucideIcons.film, color: theme.textSecondary),
-                            ),
-                            SizedBox(width: theme.spacingMd),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("Mai", style: TextStyle(color: theme.textPrimary, fontWeight: FontWeight.bold, fontSize: 18)),
-                                  Text("${l10n.roomPrefix('1')} • 15:15 ${l10n.today}", style: TextStyle(color: theme.textSecondary)),
-                                  SizedBox(height: 4),
-                                  Wrap(
-                                    spacing: 4,
-                                    children: [
-                                      _buildSeatChip(theme, "G5"),
-                                      _buildSeatChip(theme, "G6"),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                        
-                        SizedBox(height: theme.spacingLg),
-                        Divider(color: theme.textSecondary.withValues(alpha: 0.2)),
-                        SizedBox(height: theme.spacingLg),
-                        
-                        // Breakdown
-                        _buildBreakdownRow(theme, l10n.movieTicket(2), 150000),
-                        _buildBreakdownRow(theme, l10n.concessions, 115000),
-                        _buildBreakdownRow(theme, l10n.discountPointsTitle, -20000, isDiscount: true),
-                        
-                        SizedBox(height: theme.spacingLg),
-                        Divider(color: theme.textSecondary.withValues(alpha: 0.2)),
-                        SizedBox(height: theme.spacingMd),
-                        
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(l10n.totalAmount.toUpperCase(), style: TextStyle(color: theme.textPrimary, fontWeight: FontWeight.bold)),
-                            Text(FormatUtils.formatCurrency(245000), style: TextStyle(color: theme.accent, fontSize: 24, fontWeight: FontWeight.bold)),
-                          ],
-                        ),
-                      ],
+                              SizedBox(width: theme.spacingMd),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("Mai", style: TextStyle(color: theme.textPrimary, fontWeight: FontWeight.bold, fontSize: 18)),
+                                    Text("${l10n.roomPrefix('1')} • 15:15 ${l10n.today}", style: TextStyle(color: theme.textSecondary)),
+                                    SizedBox(height: 4),
+                                    Wrap(
+                                      spacing: 4,
+                                      children: [
+                                        _buildSeatChip(theme, "G5"),
+                                        _buildSeatChip(theme, "G6"),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                          
+                          SizedBox(height: theme.spacingLg),
+                          Divider(color: theme.textSecondary.withValues(alpha: 0.2)),
+                          SizedBox(height: theme.spacingLg),
+                          
+                          // Breakdown
+                          _buildBreakdownRow(theme, l10n.movieTicket(2), 150000),
+                          _buildBreakdownRow(theme, l10n.concessions, 115000),
+                          _buildBreakdownRow(theme, l10n.discountPointsTitle, -20000, isDiscount: true),
+                          
+                          SizedBox(height: theme.spacingLg),
+                          Divider(color: theme.textSecondary.withValues(alpha: 0.2)),
+                          SizedBox(height: theme.spacingMd),
+                          
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(l10n.totalAmount.toUpperCase(), style: TextStyle(color: theme.textPrimary, fontWeight: FontWeight.bold)),
+                              Text(FormatUtils.formatCurrency(245000), style: TextStyle(color: theme.accent, fontSize: 24, fontWeight: FontWeight.bold)),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   

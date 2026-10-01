@@ -77,20 +77,42 @@ function updateAllMobileEnvs(ip, port = 3000) {
     writeEnvFile(dir, ip, port);
   }
 }
+function getAdbPath() {
+  try {
+    execSync('adb version', { stdio: 'ignore' });
+    return 'adb';
+  } catch (_) {
+    const localAppData = process.env.LOCALAPPDATA;
+    if (localAppData) {
+      const sdkAdb = path.join(localAppData, 'Android', 'Sdk', 'platform-tools', 'adb.exe');
+      if (fs.existsSync(sdkAdb)) return `"${sdkAdb}"`;
+    }
+  }
+  return null;
+}
 
 /**
  * Attempts to forward port 3000 via adb reverse if adb is connected.
  */
 function tryAdbReverse(port = 3000) {
+  const adb = getAdbPath();
+  if (!adb) return false;
   try {
-    execSync(`adb reverse tcp:${port} tcp:${port}`, { stdio: 'ignore' });
-    console.log(`[ADB Reverse] Forwarded tcp:${port} -> tcp:${port}`);
+    const devicesOutput = execSync(`${adb} devices`).toString();
+    const hasDevice = devicesOutput.split('\n').some(line => line.endsWith('\tdevice') || line.endsWith('\tdevice\r'));
+    if (hasDevice) {
+      execSync(`${adb} reverse tcp:${port} tcp:${port}`, { stdio: 'ignore' });
+      console.log(`[ADB Reverse] Forwarded tcp:${port} -> tcp:${port}`);
+      return true;
+    }
   } catch (_) {
-    // ADB not connected or not in PATH, safe to ignore
+    // ADB not connected, safe to ignore
   }
+  return false;
 }
 
 // Execute update
-const ip = getLocalIpAddress();
+const adbSuccess = tryAdbReverse(3000);
+// If ADB reverse is connected, localhost works via USB and bypasses Windows Firewall
+const ip = adbSuccess ? '127.0.0.1' : getLocalIpAddress();
 updateAllMobileEnvs(ip);
-tryAdbReverse(3000);
