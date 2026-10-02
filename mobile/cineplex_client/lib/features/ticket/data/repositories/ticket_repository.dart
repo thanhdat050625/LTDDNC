@@ -10,7 +10,10 @@ class TicketRepository {
       'page': page,
       'pageSize': pageSize,
     });
-    final apiResponse = ApiResponse.fromJson(response.data);
-    return (apiResponse.data as List).map((e) => BookingDetailModel.fromJson(e)).toList();
+    final raw = response.data;
+    final List<dynamic> list = (raw is Map && raw['data'] is List)
+        ? raw['data'] as List<dynamic>
+        : (raw is List ? raw : []);
+    return list.map((e) => BookingDetailModel.fromJson(e as Map<String, dynamic>)).toList();
   }
 }

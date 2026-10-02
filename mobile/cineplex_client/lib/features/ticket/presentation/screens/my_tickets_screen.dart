@@ -35,6 +35,7 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> with SingleTickerProv
 
     return AppScaffold(
       title: l10n.myTickets,
+      bottomSafeArea: false,
       body: Column(
         children: [
           TabBar(
@@ -88,7 +89,7 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> with SingleTickerProv
     if (bookings.isEmpty) {
       return Center(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: EdgeInsets.fromLTRB(24, 24, 24, MediaQuery.of(context).padding.bottom + 16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -119,7 +120,7 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> with SingleTickerProv
     return RefreshIndicator(
       onRefresh: () => context.read<MyTicketsCubit>().loadMyTickets(),
       child: ListView.builder(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.fromLTRB(16, 16, 16, MediaQuery.of(context).padding.bottom + 16),
         itemCount: bookings.length,
         itemBuilder: (context, index) {
           return TicketCard(booking: bookings[index]);

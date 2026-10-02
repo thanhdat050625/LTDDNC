@@ -26,7 +26,9 @@ class MovieManagementRepository {
     final data = response.data;
     List<dynamic> items = [];
     
-    if (data is Map && data.containsKey('items')) {
+    if (data is Map && data.containsKey('data')) {
+      items = data['data'] is List ? data['data'] : [];
+    } else if (data is Map && data.containsKey('items')) {
       items = data['items'];
     } else if (data is List) {
       items = data;
@@ -45,7 +47,8 @@ class MovieManagementRepository {
     }
 
     final response = await _dioClient.post('/movies/create-movie', data: formData);
-    return MovieModel.fromJson(response.data);
+    final payload = (response.data is Map && response.data.containsKey('data')) ? response.data['data'] : response.data;
+    return MovieModel.fromJson(payload as Map<String, dynamic>);
   }
 
   Future<MovieModel> updateMovie(int id, Map<String, dynamic> data, String? posterPath) async {
@@ -58,6 +61,7 @@ class MovieManagementRepository {
     }
 
     final response = await _dioClient.put('/movies/update-movie/$id', data: formData);
-    return MovieModel.fromJson(response.data);
+    final payload = (response.data is Map && response.data.containsKey('data')) ? response.data['data'] : response.data;
+    return MovieModel.fromJson(payload as Map<String, dynamic>);
   }
 }

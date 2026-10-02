@@ -114,6 +114,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return AppScaffold(
       title: l10n.profile,
+      bottomSafeArea: false,
       body: BlocBuilder<ProfileCubit, ProfileState>(
         builder: (context, state) {
           if (state is ProfileLoading) return const AppLoading();
@@ -133,50 +134,61 @@ class _ProfileScreenState extends State<ProfileScreen> {
             final points = loyalty['loyaltyPoints'] ?? user['loyaltyPoints'] ?? 0;
 
             return ListView(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.fromLTRB(16, 16, 16, MediaQuery.of(context).padding.bottom + 16),
               children: [
-                // Header Avatar & Name
-                Center(
-                  child: Column(
-                    children: [
-                      CircleAvatar(
-                        radius: 40,
-                        backgroundColor: colorScheme.primaryContainer,
-                        child: Text(
-                          fullName.isNotEmpty ? fullName[0].toUpperCase() : 'U',
-                          style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: colorScheme.onPrimaryContainer),
+                // Header Avatar & Name (Avatar qua trái, thông tin qua phải)
+                Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 36,
+                      backgroundColor: colorScheme.primary,
+                      child: Text(
+                        fullName.isNotEmpty ? fullName[0].toUpperCase() : 'U',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: colorScheme.onPrimary,
                         ),
                       ),
-                      const SizedBox(height: 12),
-                      Text(
-                        fullName,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        email,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: colorScheme.onSurfaceVariant),
-                      ),
-                      const SizedBox(height: 6),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: isStaffOrAdmin ? colorScheme.errorContainer : colorScheme.secondaryContainer,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          role,
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: isStaffOrAdmin ? colorScheme.onErrorContainer : colorScheme.onSecondaryContainer,
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            fullName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                           ),
-                        ),
+                          const SizedBox(height: 4),
+                          Text(
+                            email,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(fontSize: 13, color: colorScheme.onSurfaceVariant),
+                          ),
+                          const SizedBox(height: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: isStaffOrAdmin ? colorScheme.errorContainer : colorScheme.secondaryContainer,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              role,
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: isStaffOrAdmin ? colorScheme.onErrorContainer : colorScheme.onSecondaryContainer,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 20),
 
@@ -220,7 +232,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               style: TextStyle(
                                 fontSize: 26,
                                 fontWeight: FontWeight.bold,
-                                color: colorScheme.primary,
+                                color: colorScheme.onSurface,
                               ),
                             ),
                           ],

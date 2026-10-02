@@ -84,10 +84,13 @@ class _CustomGlassBottomBar extends StatelessWidget {
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
             child: Container(
-              height: 64,
+              height: 68,
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface.withOpacity(0.4),
-                border: Border.all(color: Colors.white.withOpacity(0.1), width: 1),
+                color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.65),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3),
+                  width: 1,
+                ),
                 borderRadius: BorderRadius.circular(32),
               ),
               child: LayoutBuilder(
@@ -95,19 +98,23 @@ class _CustomGlassBottomBar extends StatelessWidget {
                   final tabWidth = constraints.maxWidth / tabs.length;
                   return Stack(
                     children: [
-                      // Liquid Indicator
+                      // Active Tab Capsule Indicator
                       AnimatedPositioned(
                         duration: const Duration(milliseconds: 250),
                         curve: Curves.easeOutCubic,
                         left: currentIndex * tabWidth,
-                        top: 0,
-                        bottom: 0,
+                        top: 5,
+                        bottom: 5,
                         width: tabWidth,
                         child: Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                          margin: const EdgeInsets.symmetric(horizontal: 4),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primary.withOpacity(0.25),
-                            borderRadius: BorderRadius.circular(24),
+                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.22),
+                            border: Border.all(
+                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.35),
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(16),
                           ),
                         ),
                       ),
@@ -117,7 +124,7 @@ class _CustomGlassBottomBar extends StatelessWidget {
                           final isSelected = index == currentIndex;
                           final color = isSelected 
                               ? Theme.of(context).colorScheme.primary 
-                              : Theme.of(context).colorScheme.onSurface.withOpacity(0.5);
+                              : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5);
 
                           return Expanded(
                             child: GestureDetector(
@@ -127,16 +134,22 @@ class _CustomGlassBottomBar extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   if (index == 3) 
-                                    _NotificationBadgeIcon(color: color)
+                                    _NotificationBadgeIcon(color: color, size: 22)
                                   else
-                                    Icon(tabs[index]['icon'] as IconData, color: color),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    tabs[index]['label'] as String,
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                                      color: color,
+                                    Icon(tabs[index]['icon'] as IconData, color: color, size: 22),
+                                  const SizedBox(height: 3),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 2),
+                                    child: Text(
+                                      tabs[index]['label'] as String,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 10.5,
+                                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                                        color: color,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -159,7 +172,8 @@ class _CustomGlassBottomBar extends StatelessWidget {
 
 class _NotificationBadgeIcon extends StatelessWidget {
   final Color color;
-  const _NotificationBadgeIcon({required this.color});
+  final double size;
+  const _NotificationBadgeIcon({required this.color, this.size = 22});
 
   @override
   Widget build(BuildContext context) {
@@ -169,7 +183,7 @@ class _NotificationBadgeIcon extends StatelessWidget {
         return Badge(
           isLabelVisible: count > 0,
           label: Text('$count'),
-          child: Icon(LucideIcons.bell, color: color),
+          child: Icon(LucideIcons.bell, color: color, size: size),
         );
       },
     );

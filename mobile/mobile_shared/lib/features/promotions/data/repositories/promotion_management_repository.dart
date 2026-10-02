@@ -9,7 +9,9 @@ class PromotionManagementRepository {
     final response = await _dioClient.get('/promotions', queryParameters: {'limit': 100});
     final data = response.data;
     List<dynamic> items = [];
-    if (data is Map && data.containsKey('items')) {
+    if (data is Map && data.containsKey('data')) {
+      items = data['data'] is List ? data['data'] : [];
+    } else if (data is Map && data.containsKey('items')) {
       items = data['items'];
     } else if (data is List) {
       items = data;
@@ -19,12 +21,14 @@ class PromotionManagementRepository {
 
   Future<PromotionModel> createPromotion(Map<String, dynamic> data) async {
     final response = await _dioClient.post('/promotions', data: data);
-    return PromotionModel.fromJson(response.data);
+    final payload = (response.data is Map && response.data.containsKey('data')) ? response.data['data'] : response.data;
+    return PromotionModel.fromJson(payload as Map<String, dynamic>);
   }
 
   Future<PromotionModel> updatePromotion(int id, Map<String, dynamic> data) async {
     final response = await _dioClient.put('/promotions/$id', data: data);
-    return PromotionModel.fromJson(response.data);
+    final payload = (response.data is Map && response.data.containsKey('data')) ? response.data['data'] : response.data;
+    return PromotionModel.fromJson(payload as Map<String, dynamic>);
   }
 
   Future<void> deletePromotion(int id) async {

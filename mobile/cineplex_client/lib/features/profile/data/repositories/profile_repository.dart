@@ -7,8 +7,14 @@ class ProfileRepository {
 
   Future<Map<String, dynamic>> getProfile() async {
     final response = await _dioClient.get('/users/profile');
-    final apiResponse = ApiResponse.fromJson(response.data, (j) => j);
-    return apiResponse.data;
+    final raw = response.data;
+    if (raw is Map<String, dynamic>) {
+      if (raw.containsKey('data') && raw['data'] is Map<String, dynamic>) {
+        return raw['data'] as Map<String, dynamic>;
+      }
+      return raw;
+    }
+    return {};
   }
 
   Future<void> updateProfile(Map<String, dynamic> data) async {
@@ -17,8 +23,14 @@ class ProfileRepository {
 
   Future<Map<String, dynamic>> getLoyaltyInfo() async {
     final response = await _dioClient.get('/users/loyalty-info');
-    final apiResponse = ApiResponse.fromJson(response.data, (j) => j);
-    return apiResponse.data;
+    final raw = response.data;
+    if (raw is Map<String, dynamic>) {
+      if (raw.containsKey('data') && raw['data'] is Map<String, dynamic>) {
+        return raw['data'] as Map<String, dynamic>;
+      }
+      return raw;
+    }
+    return {};
   }
 
   Future<void> changePassword(String oldPassword, String newPassword, String confirmPassword) async {

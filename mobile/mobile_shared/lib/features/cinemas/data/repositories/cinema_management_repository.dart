@@ -9,7 +9,9 @@ class CinemaManagementRepository {
     final response = await _dioClient.get('/cinemas', queryParameters: {'limit': 100});
     final data = response.data;
     List<dynamic> items = [];
-    if (data is Map && data.containsKey('items')) {
+    if (data is Map && data.containsKey('data')) {
+      items = data['data'] is List ? data['data'] : [];
+    } else if (data is Map && data.containsKey('items')) {
       items = data['items'];
     } else if (data is List) {
       items = data;
@@ -19,12 +21,14 @@ class CinemaManagementRepository {
 
   Future<CinemaModel> createCinema(Map<String, dynamic> data) async {
     final response = await _dioClient.post('/cinemas', data: data);
-    return CinemaModel.fromJson(response.data);
+    final payload = (response.data is Map && response.data.containsKey('data')) ? response.data['data'] : response.data;
+    return CinemaModel.fromJson(payload as Map<String, dynamic>);
   }
 
   Future<CinemaModel> updateCinema(int id, Map<String, dynamic> data) async {
     final response = await _dioClient.put('/cinemas/$id', data: data);
-    return CinemaModel.fromJson(response.data);
+    final payload = (response.data is Map && response.data.containsKey('data')) ? response.data['data'] : response.data;
+    return CinemaModel.fromJson(payload as Map<String, dynamic>);
   }
 
   Future<void> deleteCinema(int id) async {
@@ -35,7 +39,9 @@ class CinemaManagementRepository {
     final response = await _dioClient.get('/cinemas/$cinemaId/rooms');
     final data = response.data;
     List<dynamic> items = [];
-    if (data is Map && data.containsKey('items')) {
+    if (data is Map && data.containsKey('data')) {
+      items = data['data'] is List ? data['data'] : [];
+    } else if (data is Map && data.containsKey('items')) {
       items = data['items'];
     } else if (data is List) {
       items = data;
@@ -45,12 +51,14 @@ class CinemaManagementRepository {
 
   Future<RoomModel> createRoom(int cinemaId, Map<String, dynamic> data) async {
     final response = await _dioClient.post('/cinemas/$cinemaId/rooms', data: data);
-    return RoomModel.fromJson(response.data);
+    final payload = (response.data is Map && response.data.containsKey('data')) ? response.data['data'] : response.data;
+    return RoomModel.fromJson(payload as Map<String, dynamic>);
   }
 
   Future<RoomModel> updateRoom(int roomId, Map<String, dynamic> data) async {
     final response = await _dioClient.put('/cinemas/rooms/$roomId', data: data);
-    return RoomModel.fromJson(response.data);
+    final payload = (response.data is Map && response.data.containsKey('data')) ? response.data['data'] : response.data;
+    return RoomModel.fromJson(payload as Map<String, dynamic>);
   }
 
   Future<void> deleteRoom(int roomId) async {

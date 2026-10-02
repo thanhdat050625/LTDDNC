@@ -75,7 +75,8 @@ class _CineplexAdminAppState extends State<CineplexAdminApp> {
           themeMode: ThemeMode.dark,
           routerConfig: _router,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
+          supportedLocales: const [Locale('vi')],
+          locale: const Locale('vi'),
         ),
       ),
     );

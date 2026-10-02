@@ -7,7 +7,8 @@ class BookingManagementRepository {
 
   Future<List<SeatModel>> getShowtimeSeats(int showtimeId) async {
     final response = await _dioClient.get('/bookings/showtime/$showtimeId/seats');
-    final data = response.data;
+    final raw = response.data;
+    final data = (raw is Map && raw.containsKey('data')) ? raw['data'] : raw;
     if (data is List) {
       return data.map((e) => SeatModel.fromJson(e as Map<String, dynamic>)).toList();
     }
@@ -28,7 +29,8 @@ class BookingManagementRepository {
       'seatIds': seatIds,
       if (customerId != null) 'customerId': customerId,
     });
-    return BookingModel.fromJson(response.data);
+    final payload = (response.data is Map && response.data.containsKey('data')) ? response.data['data'] : response.data;
+    return BookingModel.fromJson(payload as Map<String, dynamic>);
   }
 
   Future<void> confirmBooking(int bookingId, String paymentMethod) async {

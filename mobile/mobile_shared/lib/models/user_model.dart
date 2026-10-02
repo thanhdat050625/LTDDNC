@@ -10,6 +10,7 @@ class UserModel extends Equatable {
   final int loyaltyPoints;
   final String? gender;
   final DateTime? dateOfBirth;
+  final DateTime? createdAt;
 
   const UserModel({
     required this.id,
@@ -21,19 +22,29 @@ class UserModel extends Equatable {
     this.loyaltyPoints = 0,
     this.gender,
     this.dateOfBirth,
+    this.createdAt,
   });
+
+  bool get isBlocked => status.toUpperCase() == 'BLOCKED';
+  bool get isActive => status.toUpperCase() == 'ACTIVE';
+  bool get isStaff => role.toUpperCase() == 'STAFF';
+  bool get isAdmin => role.toUpperCase() == 'ADMIN';
+  bool get isCustomer => role.toUpperCase() == 'CUSTOMER';
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: json['id'],
-      fullName: json['fullName'],
-      email: json['email'],
-      role: json['role'],
-      phone: json['phone'],
-      status: json['status'],
-      loyaltyPoints: json['loyaltyPoints'] ?? 0,
-      gender: json['gender'],
-      dateOfBirth: json['dateOfBirth'] != null ? DateTime.parse(json['dateOfBirth']) : null,
+      id: json['id'] is int ? json['id'] : int.tryParse(json['id'].toString()) ?? 0,
+      fullName: json['fullName'] ?? json['name'] ?? '',
+      email: json['email'] ?? '',
+      role: (json['role'] ?? 'CUSTOMER').toString().toUpperCase(),
+      phone: json['phone']?.toString(),
+      status: (json['status'] ?? 'ACTIVE').toString().toUpperCase(),
+      loyaltyPoints: json['loyaltyPoints'] is int
+          ? json['loyaltyPoints']
+          : int.tryParse(json['loyaltyPoints']?.toString() ?? '0') ?? 0,
+      gender: json['gender']?.toString(),
+      dateOfBirth: json['dateOfBirth'] != null ? DateTime.tryParse(json['dateOfBirth'].toString()) : null,
+      createdAt: json['createdAt'] != null ? DateTime.tryParse(json['createdAt'].toString()) : null,
     );
   }
 
@@ -47,8 +58,20 @@ class UserModel extends Equatable {
         'loyaltyPoints': loyaltyPoints,
         'gender': gender,
         'dateOfBirth': dateOfBirth?.toIso8601String(),
+        'createdAt': createdAt?.toIso8601String(),
       };
 
   @override
-  List<Object?> get props => [id, fullName, email, role, phone, status, loyaltyPoints, gender, dateOfBirth];
+  List<Object?> get props => [
+        id,
+        fullName,
+        email,
+        role,
+        phone,
+        status,
+        loyaltyPoints,
+        gender,
+        dateOfBirth,
+        createdAt,
+      ];
 }

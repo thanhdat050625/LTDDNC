@@ -30,6 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: AppColors.darkBackground,
       body: SafeArea(
+        bottom: false,
         child: BlocBuilder<HomeCubit, HomeState>(
           builder: (context, state) {
             if (state is HomeLoading || state is HomeInitial) {
@@ -63,9 +64,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       NowShowingSection(movies: data.nowShowing),
                       const SizedBox(height: 24),
                       ComingSoonSection(movies: data.comingSoon),
-                      const SizedBox(height: 24),
-                      PromotionBanner(promotions: data.activePromotions),
-                      const SizedBox(height: 48),
+                      if (data.activePromotions.isNotEmpty) ...[
+                        const SizedBox(height: 24),
+                        PromotionBanner(promotions: data.activePromotions),
+                      ],
+                      SizedBox(height: MediaQuery.of(context).padding.bottom + 16),
                     ],
                   ),
                 ),

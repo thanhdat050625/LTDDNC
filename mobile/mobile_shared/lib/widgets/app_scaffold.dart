@@ -8,6 +8,7 @@ class AppScaffold extends StatelessWidget {
   final Widget? floatingActionButton;
   final Widget? bottomNavigationBar;
   final Widget? drawer;
+  final bool bottomSafeArea;
 
   const AppScaffold({
     super.key,
@@ -18,6 +19,7 @@ class AppScaffold extends StatelessWidget {
     this.floatingActionButton,
     this.bottomNavigationBar,
     this.drawer,
+    this.bottomSafeArea = true,
   });
 
   @override
@@ -29,7 +31,10 @@ class AppScaffold extends StatelessWidget {
         actions: actions,
       ),
       drawer: drawer,
-      body: SafeArea(child: body),
+      body: SafeArea(
+        bottom: bottomSafeArea,
+        child: body,
+      ),
       floatingActionButton: floatingActionButton,
       bottomNavigationBar: bottomNavigationBar,
     );

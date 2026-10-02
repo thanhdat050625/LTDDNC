@@ -11,7 +11,13 @@ class ApiResponse<T> {
     this.pagination,
   });
 
-  factory ApiResponse.fromJson(Map<String, dynamic> json, [T Function(dynamic)? parser]) {
+  factory ApiResponse.fromJson(dynamic json, [T Function(dynamic)? parser]) {
+    if (json is! Map<String, dynamic>) {
+      if (json is List && parser != null) {
+        return ApiResponse(success: true, data: parser(json));
+      }
+      return ApiResponse(success: false);
+    }
     return ApiResponse(
       success: json['success'] ?? false,
       message: json['message'],
