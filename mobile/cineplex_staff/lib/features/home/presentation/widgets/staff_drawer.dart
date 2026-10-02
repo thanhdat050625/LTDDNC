@@ -63,6 +63,13 @@ class StaffDrawer extends StatelessWidget {
                 ),
                 _buildDrawerItem(
                   context,
+                  icon: LucideIcons.mapPin,
+                  title: AppLocalizations.of(context)!.manageCinemas,
+                  route: '/cinemas',
+                  theme: theme,
+                ),
+                _buildDrawerItem(
+                  context,
                   icon: LucideIcons.calendarDays,
                   title: 'Quản lý Suất chiếu',
                   route: '/showtimes',

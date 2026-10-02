@@ -117,6 +117,73 @@ GoRouter createStaffRouter(AuthBloc authBloc) {
           );
         },
       ),
+      GoRoute(
+        path: '/cinemas',
+        builder: (context, state) => BlocProvider(
+          create: (context) => CinemaManagementCubit(
+            CinemaManagementRepository(context.read<DioClient>()),
+          ),
+          child: const CinemaManagementScreen(drawer: StaffDrawer()),
+        ),
+      ),
+      GoRoute(
+        path: '/cinemas/new',
+        builder: (context, state) => BlocProvider(
+          create: (context) => CinemaFormCubit(
+            CinemaManagementRepository(context.read<DioClient>()),
+          ),
+          child: const CinemaFormScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/cinemas/:id/edit',
+        builder: (context, state) {
+          final extra = state.extra as CinemaModel?;
+          return BlocProvider(
+            create: (context) => CinemaFormCubit(
+              CinemaManagementRepository(context.read<DioClient>()),
+            ),
+            child: CinemaFormScreen(cinema: extra),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/cinemas/:cinemaId/rooms',
+        builder: (context, state) {
+          final cinemaId = int.parse(state.pathParameters['cinemaId']!);
+          return BlocProvider(
+            create: (context) => RoomManagementCubit(
+              CinemaManagementRepository(context.read<DioClient>()),
+            ),
+            child: RoomManagementScreen(cinemaId: cinemaId),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/cinemas/:cinemaId/rooms/new',
+        builder: (context, state) {
+          final cinemaId = int.parse(state.pathParameters['cinemaId']!);
+          return BlocProvider(
+            create: (context) => RoomFormCubit(
+              CinemaManagementRepository(context.read<DioClient>()),
+            ),
+            child: RoomFormScreen(cinemaId: cinemaId),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/cinemas/:cinemaId/rooms/:roomId/edit',
+        builder: (context, state) {
+          final cinemaId = int.parse(state.pathParameters['cinemaId']!);
+          final extra = state.extra as RoomModel?;
+          return BlocProvider(
+            create: (context) => RoomFormCubit(
+              CinemaManagementRepository(context.read<DioClient>()),
+            ),
+            child: RoomFormScreen(cinemaId: cinemaId, room: extra),
+          );
+        },
+      ),
     ],
   );
 }

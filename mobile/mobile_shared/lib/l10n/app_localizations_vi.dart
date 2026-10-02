@@ -979,4 +979,49 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get createShowtimeBtn => 'Tạo suất chiếu';
+
+  @override
+  String get manageCinemas => 'Quản lý Rạp';
+
+  @override
+  String get addCinema => 'Thêm Rạp';
+
+  @override
+  String get editCinema => 'Sửa Rạp';
+
+  @override
+  String get cinemaName => 'Tên rạp';
+
+  @override
+  String get address => 'Địa chỉ';
+
+  @override
+  String get roomCount => 'Số phòng';
+
+  @override
+  String get manageRooms => 'Phòng chiếu';
+
+  @override
+  String get addRoom => 'Thêm phòng';
+
+  @override
+  String get editRoom => 'Sửa phòng';
+
+  @override
+  String get roomName => 'Tên phòng';
+
+  @override
+  String get roomType => 'Loại phòng';
+
+  @override
+  String get noCinemas => 'Chưa có rạp nào.';
+
+  @override
+  String get noRooms => 'Chưa có phòng nào.';
+
+  @override
+  String get confirmDeleteCinema => 'Bạn có chắc muốn xóa rạp này không?';
+
+  @override
+  String get confirmDeleteRoom => 'Bạn có chắc muốn xóa phòng chiếu này không?';
 }

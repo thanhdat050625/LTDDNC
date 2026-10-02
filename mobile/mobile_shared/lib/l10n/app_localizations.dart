@@ -1939,6 +1939,96 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Tạo suất chiếu'**
   String get createShowtimeBtn;
+
+  /// No description provided for @manageCinemas.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quản lý Rạp'**
+  String get manageCinemas;
+
+  /// No description provided for @addCinema.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thêm Rạp'**
+  String get addCinema;
+
+  /// No description provided for @editCinema.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sửa Rạp'**
+  String get editCinema;
+
+  /// No description provided for @cinemaName.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tên rạp'**
+  String get cinemaName;
+
+  /// No description provided for @address.
+  ///
+  /// In vi, this message translates to:
+  /// **'Địa chỉ'**
+  String get address;
+
+  /// No description provided for @roomCount.
+  ///
+  /// In vi, this message translates to:
+  /// **'Số phòng'**
+  String get roomCount;
+
+  /// No description provided for @manageRooms.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phòng chiếu'**
+  String get manageRooms;
+
+  /// No description provided for @addRoom.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thêm phòng'**
+  String get addRoom;
+
+  /// No description provided for @editRoom.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sửa phòng'**
+  String get editRoom;
+
+  /// No description provided for @roomName.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tên phòng'**
+  String get roomName;
+
+  /// No description provided for @roomType.
+  ///
+  /// In vi, this message translates to:
+  /// **'Loại phòng'**
+  String get roomType;
+
+  /// No description provided for @noCinemas.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có rạp nào.'**
+  String get noCinemas;
+
+  /// No description provided for @noRooms.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có phòng nào.'**
+  String get noRooms;
+
+  /// No description provided for @confirmDeleteCinema.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn có chắc muốn xóa rạp này không?'**
+  String get confirmDeleteCinema;
+
+  /// No description provided for @confirmDeleteRoom.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn có chắc muốn xóa phòng chiếu này không?'**
+  String get confirmDeleteRoom;
 }
 
 class _AppLocalizationsDelegate

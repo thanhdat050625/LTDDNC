@@ -72,7 +72,7 @@ export 'features/movies/presentation/screens/movie_form_screen.dart';
 
 // Showtimes
 export 'features/showtimes/data/repositories/showtime_management_repository.dart';
-export 'features/showtimes/data/repositories/cinema_management_repository.dart';
+
 export 'features/showtimes/cubit/showtime_management_cubit.dart';
 export 'features/showtimes/cubit/showtime_management_state.dart';
 export 'features/showtimes/cubit/showtime_form_cubit.dart';
@@ -80,3 +80,20 @@ export 'features/showtimes/cubit/showtime_form_state.dart';
 export 'features/showtimes/presentation/screens/showtime_management_screen.dart';
 export 'features/showtimes/presentation/widgets/showtime_list_item.dart';
 export 'features/showtimes/presentation/screens/showtime_form_screen.dart';
+
+// Cinemas
+export 'features/cinemas/data/repositories/cinema_management_repository.dart';
+export 'features/cinemas/cubit/cinema_management_cubit.dart';
+export 'features/cinemas/cubit/cinema_management_state.dart';
+export 'features/cinemas/cubit/cinema_form_cubit.dart';
+export 'features/cinemas/cubit/cinema_form_state.dart';
+export 'features/cinemas/cubit/room_management_cubit.dart';
+export 'features/cinemas/cubit/room_management_state.dart';
+export 'features/cinemas/cubit/room_form_cubit.dart';
+export 'features/cinemas/cubit/room_form_state.dart';
+export 'features/cinemas/presentation/screens/cinema_management_screen.dart';
+export 'features/cinemas/presentation/screens/cinema_form_screen.dart';
+export 'features/cinemas/presentation/screens/room_management_screen.dart';
+export 'features/cinemas/presentation/screens/room_form_screen.dart';
+export 'features/cinemas/presentation/widgets/cinema_list_item.dart';
+export 'features/cinemas/presentation/widgets/room_list_item.dart';

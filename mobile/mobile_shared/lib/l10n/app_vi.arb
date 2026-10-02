@@ -465,5 +465,20 @@
   "formatLabel": "Định dạng",
   "statusLabel": "Trạng thái",
   "selectStartTimeReq": "Vui lòng chọn thời gian bắt đầu",
-  "createShowtimeBtn": "Tạo suất chiếu"
+  "createShowtimeBtn": "Tạo suất chiếu",
+  "manageCinemas": "Quản lý Rạp",
+  "addCinema": "Thêm Rạp",
+  "editCinema": "Sửa Rạp",
+  "cinemaName": "Tên rạp",
+  "address": "Địa chỉ",
+  "roomCount": "Số phòng",
+  "manageRooms": "Phòng chiếu",
+  "addRoom": "Thêm phòng",
+  "editRoom": "Sửa phòng",
+  "roomName": "Tên phòng",
+  "roomType": "Loại phòng",
+  "noCinemas": "Chưa có rạp nào.",
+  "noRooms": "Chưa có phòng nào.",
+  "confirmDeleteCinema": "Bạn có chắc muốn xóa rạp này không?",
+  "confirmDeleteRoom": "Bạn có chắc muốn xóa phòng chiếu này không?"
 }

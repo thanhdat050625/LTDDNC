@@ -465,5 +465,20 @@
   "formatLabel": "Format",
   "statusLabel": "Status",
   "selectStartTimeReq": "Please select start time",
-  "createShowtimeBtn": "Create Showtime"
+  "createShowtimeBtn": "Create Showtime",
+  "manageCinemas": "Manage Cinemas",
+  "addCinema": "Add Cinema",
+  "editCinema": "Edit Cinema",
+  "cinemaName": "Cinema Name",
+  "address": "Address",
+  "roomCount": "Rooms",
+  "manageRooms": "Rooms",
+  "addRoom": "Add Room",
+  "editRoom": "Edit Room",
+  "roomName": "Room Name",
+  "roomType": "Room Type",
+  "noCinemas": "No cinemas found.",
+  "noRooms": "No rooms found.",
+  "confirmDeleteCinema": "Are you sure you want to delete this cinema?",
+  "confirmDeleteRoom": "Are you sure you want to delete this room?"
 }

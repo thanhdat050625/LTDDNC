@@ -978,4 +978,50 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get createShowtimeBtn => 'Create Showtime';
+
+  @override
+  String get manageCinemas => 'Manage Cinemas';
+
+  @override
+  String get addCinema => 'Add Cinema';
+
+  @override
+  String get editCinema => 'Edit Cinema';
+
+  @override
+  String get cinemaName => 'Cinema Name';
+
+  @override
+  String get address => 'Address';
+
+  @override
+  String get roomCount => 'Rooms';
+
+  @override
+  String get manageRooms => 'Rooms';
+
+  @override
+  String get addRoom => 'Add Room';
+
+  @override
+  String get editRoom => 'Edit Room';
+
+  @override
+  String get roomName => 'Room Name';
+
+  @override
+  String get roomType => 'Room Type';
+
+  @override
+  String get noCinemas => 'No cinemas found.';
+
+  @override
+  String get noRooms => 'No rooms found.';
+
+  @override
+  String get confirmDeleteCinema =>
+      'Are you sure you want to delete this cinema?';
+
+  @override
+  String get confirmDeleteRoom => 'Are you sure you want to delete this room?';
 }
