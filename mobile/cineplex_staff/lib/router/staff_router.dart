@@ -6,6 +6,11 @@ import 'package:mobile_shared/mobile_shared.dart';
 import '../features/auth/presentation/screens/staff_login_screen.dart';
 import '../features/scanner/presentation/screens/staff_scanner_screen.dart';
 import '../features/home/presentation/widgets/staff_drawer.dart';
+import '../features/ticket_sale/presentation/screens/ticket_sale_screen.dart';
+import '../features/ticket_sale/presentation/screens/seat_selection_screen.dart';
+import '../features/ticket_sale/presentation/screens/checkout_screen.dart';
+import '../features/ticket_sale/presentation/cubit/ticket_sale_cubit.dart';
+import '../features/ticket_sale/presentation/cubit/ticket_sale_state.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -47,7 +52,13 @@ GoRouter createStaffRouter(AuthBloc authBloc) {
       ),
       GoRoute(
         path: '/ticket-sale/seat-selection',
-        builder: (context, state) => const SeatSelectionScreen(),
+        builder: (context, state) {
+          final cubit = state.extra as TicketSaleCubit;
+          return BlocProvider.value(
+            value: cubit,
+            child: const SeatSelectionScreen(),
+          );
+        },
       ),
       GoRoute(
         path: '/ticket-sale/checkout',

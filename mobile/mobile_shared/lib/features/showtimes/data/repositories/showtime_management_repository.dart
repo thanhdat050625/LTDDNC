@@ -37,6 +37,12 @@ class ShowtimeManagementRepository {
     return items.map((e) => ShowtimeModel.fromJson(e as Map<String, dynamic>)).toList();
   }
 
+  Future<Map<String, dynamic>> getByCinemaId(int cinemaId) async {
+    final response = await _dioClient.get('/showtimes/by-cinema/$cinemaId');
+    // Backend returns Map<String, List<Showtime>> where keys are dates YYYY-MM-DD
+    return response.data as Map<String, dynamic>;
+  }
+
   Future<ShowtimeModel> createShowtime(Map<String, dynamic> data) async {
     final response = await _dioClient.post('/showtimes', data: data);
     return ShowtimeModel.fromJson(response.data);

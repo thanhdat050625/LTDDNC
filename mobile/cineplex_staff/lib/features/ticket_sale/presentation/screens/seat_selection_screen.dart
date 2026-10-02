@@ -3,6 +3,9 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_shared/mobile_shared.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../cubit/ticket_sale_cubit.dart';
+import '../cubit/ticket_sale_state.dart';
 
 class SeatSelectionScreen extends StatefulWidget {
   const SeatSelectionScreen({super.key});
@@ -36,9 +39,16 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
 
     return AppScaffold(
       title: l10n.seatSelection,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
+      body: BlocBuilder<TicketSaleCubit, TicketSaleState>(
+        builder: (context, state) {
+          final ticketState = state is TicketSaleLoaded ? state : null;
+          final selectedSeats = ticketState?.selectedSeats ?? [];
+          final showtime = ticketState?.selectedShowtime;
+          final pricePerSeat = showtime?.pricePerSeat ?? 75000;
+          
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
           // Top: Seat Map (55% height)
           Expanded(
             flex: 55,
@@ -73,6 +83,8 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
             ),
           ),
         ],
+          );
+        }
       ),
     );
   }
@@ -101,69 +113,82 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
             ),
           ),
           
-          // Seat Grid (Dummy 8x10)
+          // Seat Grid
           Expanded(
-            child: InteractiveViewer(
-              minScale: 0.5,
-              maxScale: 2.0,
-              constrained: false,
-              child: Padding(
-                padding: EdgeInsets.all(theme.spacingLg),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(8, (r) {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 30,
-                        alignment: Alignment.center,
-                        child: Text(String.fromCharCode(65 + r), style: TextStyle(color: theme.textSecondary, fontWeight: FontWeight.bold)),
-                      ),
-                      ...List.generate(10, (c) {
-                        final seatId = '${String.fromCharCode(65 + r)}${c + 1}';
-                        final isSelected = _selectedSeats.contains(seatId);
-                        final isBooked = (r == 3 && c == 4) || (r == 3 && c == 5); // some dummy booked
-                        
-                        Color seatColor = theme.seatStandard;
-                        if (isBooked) seatColor = theme.seatBooked;
-                        else if (isSelected) seatColor = theme.seatSelected;
-                        else if (r > 5) seatColor = theme.seatVIP;
-                        
-                        return GestureDetector(
-                          onTap: isBooked ? null : () {
-                            setState(() {
-                              if (isSelected) _selectedSeats.remove(seatId);
-                              else _selectedSeats.add(seatId);
-                            });
-                          },
-                          child: Container(
-                            width: 35,
-                            height: 35,
-                            margin: EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: seatColor,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              '${c + 1}',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
+            child: BlocBuilder<TicketSaleCubit, TicketSaleState>(
+              builder: (context, state) {
+                if (state is TicketSaleLoaded) {
+                  if (state.seats.isEmpty) return const Center(child: CircularProgressIndicator());
+                  
+                  // Group seats by row
+                  final Map<String, List<SeatModel>> rowMap = {};
+                  for (var s in state.seats) {
+                    if (!rowMap.containsKey(s.row)) rowMap[s.row] = [];
+                    rowMap[s.row]!.add(s);
+                  }
+                  
+                  final rows = rowMap.keys.toList()..sort();
+                  
+                  return InteractiveViewer(
+                    minScale: 0.5,
+                    maxScale: 2.0,
+                    constrained: false,
+                    child: Padding(
+                      padding: EdgeInsets.all(theme.spacingLg),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: rows.map((r) {
+                          final rowSeats = rowMap[r]!..sort((a, b) => a.column.compareTo(b.column));
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: 30,
+                                alignment: Alignment.center,
+                                child: Text(r, style: TextStyle(color: theme.textSecondary, fontWeight: FontWeight.bold)),
                               ),
-                            ),
-                          ),
-                        );
-                      }),
-                    ],
+                              ...rowSeats.map((seat) {
+                                final isSelected = state.selectedSeats.any((s) => s.seatId == seat.seatId);
+                                final isBooked = seat.status == SeatStatus.booked || seat.status == SeatStatus.held;
+                                
+                                Color seatColor = theme.seatStandard;
+                                if (isBooked) seatColor = theme.seatBooked;
+                                else if (isSelected) seatColor = theme.seatSelected;
+                                else if (seat.isCouple) seatColor = theme.seatVIP; // Using VIP color for couple for now
+                                
+                                return GestureDetector(
+                                  onTap: isBooked ? null : () => context.read<TicketSaleCubit>().toggleSeat(seat),
+                                  child: Container(
+                                    width: seat.isCouple ? 75 : 35,
+                                    height: 35,
+                                    margin: EdgeInsets.all(4),
+                                    decoration: BoxDecoration(
+                                      color: seatColor,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      seat.isCouple ? '${seat.column},${seat.column+1}' : '${seat.column}',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ],
+                          );
+                        }).toList(),
+                      ),
+                    ),
                   );
-                }),
-              ),
+                }
+                return const SizedBox.shrink();
+              }
             ),
           ),
-        ),
           
           // Legend
           SingleChildScrollView(

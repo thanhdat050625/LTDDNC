@@ -50,6 +50,7 @@ export 'models/statistics_model.dart';
 
 // Repositories
 export 'repositories/auth_repository.dart';
+export 'features/ticket_sale/data/repositories/booking_management_repository.dart';
 
 // Bloc
 export 'bloc/auth_bloc.dart';
@@ -58,9 +59,6 @@ export 'bloc/auth_bloc.dart';
 export 'l10n/app_localizations.dart';
 
 // Features (Shared Screens)
-export 'features/ticket_sale/presentation/screens/ticket_sale_screen.dart';
-export 'features/ticket_sale/presentation/screens/seat_selection_screen.dart';
-export 'features/ticket_sale/presentation/screens/checkout_screen.dart';
 
 export 'features/movies/presentation/widgets/movie_list_item.dart';
 export 'features/movies/data/repositories/movie_management_repository.dart';

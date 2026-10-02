@@ -116,18 +116,6 @@ GoRouter createAdminRouter(AuthBloc authBloc) {
         },
       ),
       GoRoute(
-        path: '/ticket-sale',
-        builder: (context, state) => const TicketSaleScreen(drawer: AdminDrawer()),
-      ),
-      GoRoute(
-        path: '/ticket-sale/seat-selection',
-        builder: (context, state) => const SeatSelectionScreen(),
-      ),
-      GoRoute(
-        path: '/ticket-sale/checkout',
-        builder: (context, state) => const CheckoutScreen(),
-      ),
-      GoRoute(
         path: '/cinemas',
         builder: (context, state) => BlocProvider(
           create: (context) => CinemaManagementCubit(

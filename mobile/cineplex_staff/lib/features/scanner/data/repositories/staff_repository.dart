@@ -7,7 +7,6 @@ class StaffRepository {
 
   Future<TicketModel> checkinTicket(String qrCode) async {
     final response = await _dioClient.post('/tickets/$qrCode/checkin');
-    final apiResponse = ApiResponse.fromJson(response.data);
-    return TicketModel.fromJson(apiResponse.data);
+    return TicketModel.fromJson(response.data);
   }
 }
