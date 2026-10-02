@@ -19,7 +19,8 @@ class PromotionListItem extends StatelessWidget {
     final theme = Theme.of(context).extension<CineplexColors>()!;
 
     return AppCard(
-      padding: EdgeInsets.all(theme.spacingMd),
+      margin: EdgeInsets.zero,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -91,7 +92,7 @@ class PromotionListItem extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: theme.spacingMd),
+          const SizedBox(height: 6),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [

@@ -92,7 +92,7 @@ class _ConcessionManagementScreenState extends State<ConcessionManagementScreen>
                   // Metrics Section
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: EdgeInsets.fromLTRB(theme.spacingLg, theme.spacingMd, theme.spacingLg, theme.spacingSm),
+                      padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
                       child: Row(
                         children: [
                           _buildSummaryCard(
@@ -103,7 +103,7 @@ class _ConcessionManagementScreenState extends State<ConcessionManagementScreen>
                             color: theme.primary,
                             theme: theme,
                           ),
-                          SizedBox(width: theme.spacingSm),
+                          const SizedBox(width: 6),
                           _buildSummaryCard(
                             context,
                             title: l10n.lowStock,
@@ -112,7 +112,7 @@ class _ConcessionManagementScreenState extends State<ConcessionManagementScreen>
                             color: Colors.orange,
                             theme: theme,
                           ),
-                          SizedBox(width: theme.spacingSm),
+                          const SizedBox(width: 6),
                           _buildSummaryCard(
                             context,
                             title: l10n.outOfStock,
@@ -129,8 +129,9 @@ class _ConcessionManagementScreenState extends State<ConcessionManagementScreen>
                   // Search Bar Section
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: theme.spacingLg, vertical: theme.spacingSm),
+                      padding: const EdgeInsets.fromLTRB(12, 4, 12, 6),
                       child: Container(
+                        height: 40,
                         decoration: BoxDecoration(
                           color: theme.surface,
                           borderRadius: BorderRadius.circular(theme.radiusMd),
@@ -141,19 +142,22 @@ class _ConcessionManagementScreenState extends State<ConcessionManagementScreen>
                         ),
                         child: TextField(
                           controller: _searchCtrl,
-                          style: TextStyle(color: theme.textPrimary, fontSize: 14),
+                          style: TextStyle(color: theme.textPrimary, fontSize: 13),
                           decoration: InputDecoration(
                             hintText: l10n.searchConcessionPlaceholder,
-                            hintStyle: TextStyle(color: theme.textSecondary, fontSize: 14),
-                            prefixIcon: Icon(LucideIcons.search, size: 18, color: theme.textSecondary),
+                            hintStyle: TextStyle(color: theme.textSecondary, fontSize: 13),
+                            prefixIcon: Icon(LucideIcons.search, size: 16, color: theme.textSecondary),
                             suffixIcon: _searchQuery.isNotEmpty
                                 ? IconButton(
-                                    icon: Icon(LucideIcons.x, size: 16, color: theme.textSecondary),
+                                    icon: Icon(LucideIcons.x, size: 14, color: theme.textSecondary),
                                     onPressed: () => _searchCtrl.clear(),
+                                    padding: EdgeInsets.zero,
+                                    visualDensity: VisualDensity.compact,
                                   )
                                 : null,
                             border: InputBorder.none,
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            isDense: true,
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                           ),
                         ),
                       ),
@@ -191,13 +195,13 @@ class _ConcessionManagementScreenState extends State<ConcessionManagementScreen>
                     )
                   else
                     SliverPadding(
-                      padding: EdgeInsets.symmetric(horizontal: theme.spacingLg, vertical: theme.spacingSm),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {
                             final c = concessions[index];
                             return Padding(
-                              padding: EdgeInsets.only(bottom: theme.spacingSm),
+                              padding: const EdgeInsets.only(bottom: 6),
                               child: ConcessionListItem(
                                 concession: c,
                                 onEdit: () => _reloadAfterPush(
@@ -213,8 +217,8 @@ class _ConcessionManagementScreenState extends State<ConcessionManagementScreen>
                     ),
 
                   // Bottom padding for FAB
-                  SliverToBoxAdapter(
-                    child: SizedBox(height: 80),
+                  const SliverToBoxAdapter(
+                    child: SizedBox(height: 72),
                   ),
                 ],
               ),
@@ -236,38 +240,42 @@ class _ConcessionManagementScreenState extends State<ConcessionManagementScreen>
   }) {
     return Expanded(
       child: AppCard(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
         margin: EdgeInsets.zero,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.12),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, size: 16, color: color),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              value,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: theme.textPrimary,
-                    fontWeight: FontWeight.bold,
-                    height: 1.1,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.12),
+                    shape: BoxShape.circle,
                   ),
+                  child: Icon(icon, size: 13, color: color),
+                ),
+                const SizedBox(width: 5),
+                Text(
+                  value,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: theme.textPrimary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+              ],
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 3),
             Text(
               title,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: theme.textSecondary,
-                    fontSize: 11,
-                    height: 1.2,
-                  ),
+              style: TextStyle(
+                color: theme.textSecondary,
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+              ),
               textAlign: TextAlign.center,
-              maxLines: 2,
+              maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
           ],

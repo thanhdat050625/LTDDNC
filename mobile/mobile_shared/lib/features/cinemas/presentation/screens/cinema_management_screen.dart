@@ -49,9 +49,9 @@ class _CinemaManagementScreenState extends State<CinemaManagementScreen> {
               return Center(child: Text(AppLocalizations.of(context)!.noCinemas));
             }
             return ListView.separated(
-              padding: EdgeInsets.all(theme.spacingLg),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               itemCount: cinemas.length,
-              separatorBuilder: (_, __) => SizedBox(height: theme.spacingMd),
+              separatorBuilder: (_, __) => const SizedBox(height: 6),
               itemBuilder: (context, index) {
                 final c = cinemas[index];
                 return CinemaListItem(

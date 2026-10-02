@@ -5,6 +5,7 @@ class ConcessionProductModel extends Equatable {
   final String name;
   final num price;
   final int stockQuantity;
+  final String? description;
   final String? imageUrl;
 
   const ConcessionProductModel({
@@ -12,6 +13,7 @@ class ConcessionProductModel extends Equatable {
     required this.name,
     required this.price,
     required this.stockQuantity,
+    this.description,
     this.imageUrl,
   });
 
@@ -21,6 +23,7 @@ class ConcessionProductModel extends Equatable {
       name: json['name'] as String,
       price: json['price'] as num,
       stockQuantity: json['stockQuantity'] as int? ?? 0,
+      description: json['description'] as String?,
       imageUrl: json['imageUrl'] as String?,
     );
   }
@@ -30,6 +33,7 @@ class ConcessionProductModel extends Equatable {
       'name': name,
       'price': price,
       'stockQuantity': stockQuantity,
+      if (description != null) 'description': description,
       if (imageUrl != null) 'imageUrl': imageUrl,
     };
   }
@@ -39,6 +43,7 @@ class ConcessionProductModel extends Equatable {
     String? name,
     num? price,
     int? stockQuantity,
+    String? description,
     String? imageUrl,
   }) {
     return ConcessionProductModel(
@@ -46,10 +51,11 @@ class ConcessionProductModel extends Equatable {
       name: name ?? this.name,
       price: price ?? this.price,
       stockQuantity: stockQuantity ?? this.stockQuantity,
+      description: description ?? this.description,
       imageUrl: imageUrl ?? this.imageUrl,
     );
   }
 
   @override
-  List<Object?> get props => [id, name, price, stockQuantity, imageUrl];
+  List<Object?> get props => [id, name, price, stockQuantity, description, imageUrl];
 }

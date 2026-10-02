@@ -22,6 +22,7 @@ class MovieListItem extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: AppCard(
+        margin: EdgeInsets.zero,
         padding: EdgeInsets.zero,
         child: Row(
           children: [
@@ -32,8 +33,8 @@ class MovieListItem extends StatelessWidget {
                 tag: 'poster_${movie.id}',
                 child: AppCachedImage(
                   imageUrl: movie.posterUrl ?? '',
-                  width: 100,
-                  height: 140,
+                  width: 72,
+                  height: 96,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -42,7 +43,7 @@ class MovieListItem extends StatelessWidget {
             // Details
             Expanded(
               child: Padding(
-                padding: EdgeInsets.all(theme.spacingMd),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

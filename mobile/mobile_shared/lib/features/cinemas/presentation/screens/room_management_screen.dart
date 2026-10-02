@@ -53,9 +53,9 @@ class _RoomManagementScreenState extends State<RoomManagementScreen> {
               return Center(child: Text(AppLocalizations.of(context)!.noRooms));
             }
             return ListView.separated(
-              padding: EdgeInsets.all(theme.spacingLg),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               itemCount: rooms.length,
-              separatorBuilder: (_, __) => SizedBox(height: theme.spacingMd),
+              separatorBuilder: (_, __) => const SizedBox(height: 6),
               itemBuilder: (context, index) {
                 final r = rooms[index];
                 return RoomListItem(

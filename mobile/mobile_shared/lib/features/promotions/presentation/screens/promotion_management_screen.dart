@@ -49,9 +49,9 @@ class _PromotionManagementScreenState extends State<PromotionManagementScreen> {
               return Center(child: Text(AppLocalizations.of(context)!.noPromotions));
             }
             return ListView.separated(
-              padding: EdgeInsets.all(theme.spacingLg),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               itemCount: promotions.length,
-              separatorBuilder: (_, __) => SizedBox(height: theme.spacingMd),
+              separatorBuilder: (_, __) => const SizedBox(height: 6),
               itemBuilder: (context, index) {
                 final p = promotions[index];
                 return PromotionListItem(

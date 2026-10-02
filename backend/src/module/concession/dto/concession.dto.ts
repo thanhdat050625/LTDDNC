@@ -19,6 +19,10 @@ export class CreateConcessionProductDto {
 
   @IsString()
   @IsOptional()
+  description?: string;
+
+  @IsString()
+  @IsOptional()
   imageUrl?: string;
 }
 
@@ -37,6 +41,10 @@ export class UpdateConcessionProductDto {
   @IsOptional()
   @Min(0)
   stockQuantity?: number;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
 
   @IsString()
   @IsOptional()

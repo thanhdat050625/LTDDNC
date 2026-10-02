@@ -23,7 +23,8 @@ class CinemaListItem extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: AppCard(
-        padding: EdgeInsets.all(theme.spacingMd),
+        margin: EdgeInsets.zero,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -89,7 +90,7 @@ class CinemaListItem extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: theme.spacingMd),
+            const SizedBox(height: 6),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [

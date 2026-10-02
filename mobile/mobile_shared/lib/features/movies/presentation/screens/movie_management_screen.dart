@@ -56,7 +56,7 @@ class _MovieManagementScreenState extends State<MovieManagementScreen> {
         children: [
           // Search & Filter Bar
           Container(
-            padding: EdgeInsets.all(theme.spacingLg),
+            padding: const EdgeInsets.fromLTRB(12, 8, 12, 6),
             color: theme.surface,
             child: Row(
               children: [
@@ -108,9 +108,9 @@ class _MovieManagementScreenState extends State<MovieManagementScreen> {
                     return const Center(child: Text('Không có phim nào.'));
                   }
                   return ListView.separated(
-                    padding: EdgeInsets.all(theme.spacingLg),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     itemCount: movies.length,
-                    separatorBuilder: (_, __) => SizedBox(height: theme.spacingMd),
+                    separatorBuilder: (_, __) => const SizedBox(height: 6),
                     itemBuilder: (context, index) {
                       final movie = movies[index];
                       return MovieListItem(

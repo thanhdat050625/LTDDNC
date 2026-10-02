@@ -58,7 +58,7 @@ class _ShowtimeManagementScreenState extends State<ShowtimeManagementScreen> {
         children: [
           // Filter Bar
           Container(
-            padding: EdgeInsets.all(theme.spacingLg),
+            padding: const EdgeInsets.fromLTRB(12, 8, 12, 6),
             color: theme.surface,
             child: BlocBuilder<ShowtimeManagementCubit, ShowtimeManagementState>(
               builder: (context, state) {
@@ -126,9 +126,9 @@ class _ShowtimeManagementScreenState extends State<ShowtimeManagementScreen> {
                     return Center(child: Text(AppLocalizations.of(context)!.noShowtimesFound));
                   }
                   return ListView.separated(
-                    padding: EdgeInsets.all(theme.spacingLg),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     itemCount: showtimes.length,
-                    separatorBuilder: (_, __) => SizedBox(height: theme.spacingMd),
+                    separatorBuilder: (_, __) => const SizedBox(height: 6),
                     itemBuilder: (context, index) {
                       final st = showtimes[index];
                       return ShowtimeListItem(

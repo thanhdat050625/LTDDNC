@@ -218,7 +218,7 @@ class _TicketSaleScreenView extends StatelessWidget {
     }
 
     return SingleChildScrollView(
-      padding: EdgeInsets.all(theme.spacingLg),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: grouped.entries.map((entry) {
@@ -230,15 +230,15 @@ class _TicketSaleScreenView extends StatelessWidget {
             children: [
               Text(
                 dateStr,
-                style: AppTextStyles.title.copyWith(color: theme.textPrimary),
+                style: AppTextStyles.title.copyWith(color: theme.textPrimary, fontSize: 14),
               ),
-              SizedBox(height: theme.spacingMd),
+              const SizedBox(height: 8),
               Wrap(
-                spacing: theme.spacingMd,
-                runSpacing: theme.spacingMd,
+                spacing: 8,
+                runSpacing: 8,
                 children: list.map((st) => _buildShowtimeCard(context, theme, st)).toList(),
               ),
-              SizedBox(height: theme.spacingLg),
+              const SizedBox(height: 12),
             ],
           );
         }).toList(),
@@ -253,14 +253,15 @@ class _TicketSaleScreenView extends StatelessWidget {
         context.push('/ticket-sale/seat-selection', extra: context.read<TicketSaleCubit>());
       },
       child: AppCard(
-        padding: EdgeInsets.symmetric(vertical: theme.spacingMd, horizontal: theme.spacingSm),
+        margin: EdgeInsets.zero,
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
         child: Column(
           children: [
             Text(
               FormatUtils.formatTime(st.publicStartTime),
               style: TextStyle(
                 color: theme.primary,
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),

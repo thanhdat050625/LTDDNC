@@ -24,6 +24,7 @@ export 'theme/app_text_styles.dart';
 // Utils
 export 'utils/format_utils.dart';
 export 'utils/validators.dart';
+export 'package:image_picker/image_picker.dart';
 
 // Widgets
 export 'widgets/app_loading.dart';

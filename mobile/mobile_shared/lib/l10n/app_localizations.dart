@@ -2194,6 +2194,12 @@ abstract class AppLocalizations {
   /// **'Đổi ảnh'**
   String get changeImage;
 
+  /// No description provided for @changeAvatar.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thay đổi ảnh đại diện'**
+  String get changeAvatar;
+
   /// No description provided for @removeImage.
   ///
   /// In vi, this message translates to:
@@ -2499,6 +2505,12 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Có lỗi xảy ra. Vui lòng thử lại.'**
   String get errorOccurred;
+
+  /// No description provided for @productDescription.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mô tả sản phẩm'**
+  String get productDescription;
 }
 
 class _AppLocalizationsDelegate

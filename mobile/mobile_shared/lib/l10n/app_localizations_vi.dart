@@ -1111,6 +1111,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get changeImage => 'Đổi ảnh';
 
   @override
+  String get changeAvatar => 'Thay đổi ảnh đại diện';
+
+  @override
   String get removeImage => 'Xóa ảnh';
 
   @override
@@ -1273,4 +1276,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get errorOccurred => 'Có lỗi xảy ra. Vui lòng thử lại.';
+
+  @override
+  String get productDescription => 'Mô tả sản phẩm';
 }

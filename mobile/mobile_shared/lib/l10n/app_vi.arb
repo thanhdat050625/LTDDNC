@@ -509,6 +509,7 @@
   "productImage": "Ảnh sản phẩm",
   "selectImage": "Chọn ảnh",
   "changeImage": "Đổi ảnh",
+  "changeAvatar": "Thay đổi ảnh đại diện",
   "removeImage": "Xóa ảnh",
   "takePhoto": "Chụp ảnh",
   "chooseFromGallery": "Chọn từ thư viện",
@@ -598,5 +599,6 @@
   "resetFilters": "Đặt lại bộ lọc",
   "totalAccounts": "Tổng tài khoản",
   "fieldRequired": "Vui lòng nhập trường này",
-  "errorOccurred": "Có lỗi xảy ra. Vui lòng thử lại."
+  "errorOccurred": "Có lỗi xảy ra. Vui lòng thử lại.",
+  "productDescription": "Mô tả sản phẩm"
 }
