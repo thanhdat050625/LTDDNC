@@ -121,8 +121,12 @@
   "availableSeatsCount": "{available}/{total} ghế",
   "@availableSeatsCount": {
     "placeholders": {
-      "available": {"type": "int"},
-      "total": {"type": "int"}
+      "available": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "concessionTotal": "Tổng bắp nước",
@@ -216,7 +220,6 @@
   "settings": "Cài đặt",
   "darkMode": "Chế độ tối",
   "lightMode": "Chế độ sáng",
-  "language": "Ngôn ngữ",
   "vietnamese": "Tiếng Việt",
   "english": "English",
   "appVersion": "Phiên bản ứng dụng",
@@ -393,5 +396,114 @@
   "statisticsSubtitle": "Báo cáo & Thống kê doanh thu",
   "accessDenied": "Truy cập bị từ chối. Không đủ quyền hạn.",
   "adminDashboard": "Bảng điều khiển Quản trị",
-  "adminPortal": "Cổng Quản trị Hệ thống"
+  "adminPortal": "Cổng Quản trị Hệ thống",
+  "counterSaleDesc": "Bán vé & Thanh toán",
+  "screen": "MÀN HÌNH",
+  "popcornOnly": "Bắp rang bơ",
+  "largeDrinkOnly": "Nước ngọt lớn",
+  "combo1Popcorn2Drinks": "Combo 1 bắp 2 nước",
+  "movieTicket": "Vé xem phim ({count} ghế)",
+  "@movieTicket": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "discountPointsTitle": "Giảm giá (Điểm)",
+  "enterPoints": "Nhập số điểm",
+  "loyaltyPrompt": "Khách hàng có {points} điểm. Dùng điểm để giảm giá?",
+  "@loyaltyPrompt": {
+    "placeholders": {
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentSuccessPrompt": "Thanh toán thành công. Đã tạo mã vé {code}.",
+  "@paymentSuccessPrompt": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "cineplexDistrict1": "Cineplex Quận 1",
+  "today": "Hôm nay",
+  "roomPrefix": "Phòng {id}",
+  "@roomPrefix": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "standard2D": "Standard • 2D",
+  "manageShowtimes": "Quản lý Suất chiếu",
+  "addShowtime": "Thêm Suất chiếu",
+  "editShowtime": "Chỉnh sửa Suất chiếu",
+  "filterByDate": "Lọc theo ngày",
+  "noShowtimesFound": "Không có suất chiếu nào.",
+  "confirmDelete": "Xác nhận xóa",
+  "confirmDeleteShowtimeDesc": "Bạn có chắc muốn xóa suất chiếu này không?",
+  "unknownMovie": "Phim không xác định",
+  "emptyRoom": "Phòng trống",
+  "statusScheduled": "Sắp xếp",
+  "statusBooking": "Mở bán",
+  "statusFull": "Kín chỗ",
+  "statusCancelled": "Đã hủy",
+  "statusCompleted": "Hoàn thành",
+  "updateSuccess": "Cập nhật thành công!",
+  "addSuccess": "Thêm suất chiếu thành công!",
+  "fillRequiredFields": "Vui lòng điền đầy đủ thông tin bắt buộc",
+  "movieLabel": "Phim",
+  "selectMovieReq": "Vui lòng chọn phim",
+  "cinemaLabel": "Rạp",
+  "selectCinemaReq": "Vui lòng chọn rạp",
+  "roomLabel": "Phòng chiếu",
+  "selectRoomReq": "Vui lòng chọn phòng chiếu",
+  "formatLabel": "Định dạng",
+  "statusLabel": "Trạng thái",
+  "selectStartTimeReq": "Vui lòng chọn thời gian bắt đầu",
+  "createShowtimeBtn": "Tạo suất chiếu",
+  "manageCinemas": "Quản lý Rạp",
+  "addCinema": "Thêm Rạp",
+  "editCinema": "Sửa Rạp",
+  "cinemaName": "Tên rạp",
+  "address": "Địa chỉ",
+  "roomCount": "Số phòng",
+  "manageRooms": "Phòng chiếu",
+  "addRoom": "Thêm phòng",
+  "editRoom": "Sửa phòng",
+  "roomName": "Tên phòng",
+  "roomType": "Loại phòng",
+  "noCinemas": "Chưa có rạp nào.",
+  "noRooms": "Chưa có phòng nào.",
+  "confirmDeleteCinema": "Bạn có chắc muốn xóa rạp này không?",
+  "confirmDeleteRoom": "Bạn có chắc muốn xóa phòng chiếu này không?",
+  "managePromotions": "Quản lý Khuyến mãi",
+  "addPromotion": "Thêm Khuyến mãi",
+  "editPromotion": "Sửa Khuyến mãi",
+  "promoCode": "Mã khuyến mãi",
+  "promoDescription": "Mô tả",
+  "discountType": "Loại giảm giá",
+  "discountValue": "Mức giảm",
+  "percentage": "Phần trăm (%)",
+  "fixedAmount": "Số tiền cố định",
+  "maxUsage": "Số lần dùng tối đa",
+  "noPromotions": "Chưa có khuyến mãi nào.",
+  "confirmDeletePromotion": "Bạn có chắc chắn muốn xóa mã khuyến mãi này không?",
+  "startDate": "Ngày bắt đầu",
+  "endDate": "Ngày kết thúc",
+  "manageConcessions": "Quản lý Bắp nước",
+  "addProduct": "Thêm sản phẩm",
+  "editProduct": "Sửa sản phẩm",
+  "productName": "Tên sản phẩm",
+  "stockQuantity": "Tồn kho",
+  "lowStock": "Sắp hết",
+  "outOfStock": "Hết hàng",
+  "totalProducts": "Tổng sản phẩm",
+  "noConcessions": "Chưa có sản phẩm nào.",
+  "confirmDeleteProduct": "Bạn có chắc muốn xóa sản phẩm này không?",
+  "priceLabel": "Giá"
 }

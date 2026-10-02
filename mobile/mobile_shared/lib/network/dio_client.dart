@@ -28,9 +28,15 @@ class DioClient {
       onError: (DioException e, handler) async {
         if (e.response?.statusCode == 401) {
           await _storageService.deleteToken();
-          // Token cleared, BLoC logic handles redirect
         }
         return handler.next(e);
+      },
+      onResponse: (response, handler) {
+        final d = response.data;
+        if (d is Map && d.containsKey('data') && d.containsKey('success')) {
+          response.data = d['data'];
+        }
+        return handler.next(response);
       },
     ));
   }

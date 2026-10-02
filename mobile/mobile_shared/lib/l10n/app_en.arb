@@ -121,8 +121,12 @@
   "availableSeatsCount": "{available}/{total} seats",
   "@availableSeatsCount": {
     "placeholders": {
-      "available": {"type": "int"},
-      "total": {"type": "int"}
+      "available": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "concessionTotal": "Concession Total",
@@ -216,7 +220,6 @@
   "settings": "Settings",
   "darkMode": "Dark Mode",
   "lightMode": "Light Mode",
-  "language": "Language",
   "vietnamese": "Tiếng Việt",
   "english": "English",
   "appVersion": "App Version",
@@ -393,5 +396,114 @@
   "statisticsSubtitle": "Reports & revenue analytics",
   "accessDenied": "Access denied. Insufficient permissions.",
   "adminDashboard": "Admin Dashboard",
-  "adminPortal": "Admin Management Portal"
+  "adminPortal": "Admin Management Portal",
+  "counterSaleDesc": "Ticket Sales & Payment",
+  "screen": "SCREEN",
+  "popcornOnly": "Popcorn",
+  "largeDrinkOnly": "Large Drink",
+  "combo1Popcorn2Drinks": "Combo 1 Popcorn 2 Drinks",
+  "movieTicket": "Movie Ticket ({count} seats)",
+  "@movieTicket": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "discountPointsTitle": "Discount (Points)",
+  "enterPoints": "Enter points",
+  "loyaltyPrompt": "Customer has {points} points. Use points for discount?",
+  "@loyaltyPrompt": {
+    "placeholders": {
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentSuccessPrompt": "Payment successful. Booking code {code} generated.",
+  "@paymentSuccessPrompt": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "cineplexDistrict1": "Cineplex District 1",
+  "today": "Today",
+  "roomPrefix": "Room {id}",
+  "@roomPrefix": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "standard2D": "Standard • 2D",
+  "manageShowtimes": "Manage Showtimes",
+  "addShowtime": "Add Showtime",
+  "editShowtime": "Edit Showtime",
+  "filterByDate": "Filter by date",
+  "noShowtimesFound": "No showtimes found.",
+  "confirmDelete": "Confirm Delete",
+  "confirmDeleteShowtimeDesc": "Are you sure you want to delete this showtime?",
+  "unknownMovie": "Unknown Movie",
+  "emptyRoom": "Empty Room",
+  "statusScheduled": "Scheduled",
+  "statusBooking": "Booking",
+  "statusFull": "Full",
+  "statusCancelled": "Cancelled",
+  "statusCompleted": "Completed",
+  "updateSuccess": "Updated successfully!",
+  "addSuccess": "Showtime added successfully!",
+  "fillRequiredFields": "Please fill all required fields",
+  "movieLabel": "Movie",
+  "selectMovieReq": "Please select a movie",
+  "cinemaLabel": "Cinema",
+  "selectCinemaReq": "Please select a cinema",
+  "roomLabel": "Room",
+  "selectRoomReq": "Please select a room",
+  "formatLabel": "Format",
+  "statusLabel": "Status",
+  "selectStartTimeReq": "Please select start time",
+  "createShowtimeBtn": "Create Showtime",
+  "manageCinemas": "Manage Cinemas",
+  "addCinema": "Add Cinema",
+  "editCinema": "Edit Cinema",
+  "cinemaName": "Cinema Name",
+  "address": "Address",
+  "roomCount": "Rooms",
+  "manageRooms": "Rooms",
+  "addRoom": "Add Room",
+  "editRoom": "Edit Room",
+  "roomName": "Room Name",
+  "roomType": "Room Type",
+  "noCinemas": "No cinemas found.",
+  "noRooms": "No rooms found.",
+  "confirmDeleteCinema": "Are you sure you want to delete this cinema?",
+  "confirmDeleteRoom": "Are you sure you want to delete this room?",
+  "managePromotions": "Manage Promotions",
+  "addPromotion": "Add Promotion",
+  "editPromotion": "Edit Promotion",
+  "promoCode": "Promo Code",
+  "promoDescription": "Description",
+  "discountType": "Discount Type",
+  "discountValue": "Discount Value",
+  "percentage": "Percentage (%)",
+  "fixedAmount": "Fixed Amount",
+  "maxUsage": "Max Usage",
+  "noPromotions": "No promotions found.",
+  "confirmDeletePromotion": "Are you sure you want to delete this promotion?",
+  "startDate": "Start Date",
+  "endDate": "End Date",
+  "manageConcessions": "Manage Concessions",
+  "addProduct": "Add Product",
+  "editProduct": "Edit Product",
+  "productName": "Product Name",
+  "stockQuantity": "Stock Quantity",
+  "lowStock": "Low Stock",
+  "outOfStock": "Out of Stock",
+  "totalProducts": "Total Products",
+  "noConcessions": "No products found.",
+  "confirmDeleteProduct": "Are you sure you want to delete this product?",
+  "priceLabel": "Price"
 }

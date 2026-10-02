@@ -40,7 +40,7 @@ import { StatisticsModule } from './module/statistics/statistics.module';
 
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
+      envFilePath: ['.env', 'backend/.env'],
       expandVariables: true,
     }),
 

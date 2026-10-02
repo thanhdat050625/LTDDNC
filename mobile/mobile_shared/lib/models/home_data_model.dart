@@ -1,16 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'movie_model.dart';
-
-class PromotionModel extends Equatable {
-  final int id;
-  final String code;
-  final String? description;
-  const PromotionModel({required this.id, required this.code, this.description});
-  
-  factory PromotionModel.fromJson(Map<String, dynamic> json) => PromotionModel(id: json['id'], code: json['code'], description: json['description']);
-  @override
-  List<Object?> get props => [id, code, description];
-}
+import 'promotion_model.dart';
 
 class HomeDataModel extends Equatable {
   final List<MovieModel> nowShowing;

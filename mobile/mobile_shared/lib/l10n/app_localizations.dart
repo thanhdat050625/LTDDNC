@@ -1693,6 +1693,492 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Cổng Quản trị Hệ thống'**
   String get adminPortal;
+
+  /// No description provided for @counterSaleDesc.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bán vé & Thanh toán'**
+  String get counterSaleDesc;
+
+  /// No description provided for @screen.
+  ///
+  /// In vi, this message translates to:
+  /// **'MÀN HÌNH'**
+  String get screen;
+
+  /// No description provided for @popcornOnly.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bắp rang bơ'**
+  String get popcornOnly;
+
+  /// No description provided for @largeDrinkOnly.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nước ngọt lớn'**
+  String get largeDrinkOnly;
+
+  /// No description provided for @combo1Popcorn2Drinks.
+  ///
+  /// In vi, this message translates to:
+  /// **'Combo 1 bắp 2 nước'**
+  String get combo1Popcorn2Drinks;
+
+  /// No description provided for @movieTicket.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vé xem phim ({count} ghế)'**
+  String movieTicket(int count);
+
+  /// No description provided for @discountPointsTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Giảm giá (Điểm)'**
+  String get discountPointsTitle;
+
+  /// No description provided for @enterPoints.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhập số điểm'**
+  String get enterPoints;
+
+  /// No description provided for @loyaltyPrompt.
+  ///
+  /// In vi, this message translates to:
+  /// **'Khách hàng có {points} điểm. Dùng điểm để giảm giá?'**
+  String loyaltyPrompt(String points);
+
+  /// No description provided for @paymentSuccessPrompt.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thanh toán thành công. Đã tạo mã vé {code}.'**
+  String paymentSuccessPrompt(String code);
+
+  /// No description provided for @cineplexDistrict1.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cineplex Quận 1'**
+  String get cineplexDistrict1;
+
+  /// No description provided for @today.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hôm nay'**
+  String get today;
+
+  /// No description provided for @roomPrefix.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phòng {id}'**
+  String roomPrefix(String id);
+
+  /// No description provided for @standard2D.
+  ///
+  /// In vi, this message translates to:
+  /// **'Standard • 2D'**
+  String get standard2D;
+
+  /// No description provided for @manageShowtimes.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quản lý Suất chiếu'**
+  String get manageShowtimes;
+
+  /// No description provided for @addShowtime.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thêm Suất chiếu'**
+  String get addShowtime;
+
+  /// No description provided for @editShowtime.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chỉnh sửa Suất chiếu'**
+  String get editShowtime;
+
+  /// No description provided for @filterByDate.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lọc theo ngày'**
+  String get filterByDate;
+
+  /// No description provided for @noShowtimesFound.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không có suất chiếu nào.'**
+  String get noShowtimesFound;
+
+  /// No description provided for @confirmDelete.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xác nhận xóa'**
+  String get confirmDelete;
+
+  /// No description provided for @confirmDeleteShowtimeDesc.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn có chắc muốn xóa suất chiếu này không?'**
+  String get confirmDeleteShowtimeDesc;
+
+  /// No description provided for @unknownMovie.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phim không xác định'**
+  String get unknownMovie;
+
+  /// No description provided for @emptyRoom.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phòng trống'**
+  String get emptyRoom;
+
+  /// No description provided for @statusScheduled.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sắp xếp'**
+  String get statusScheduled;
+
+  /// No description provided for @statusBooking.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mở bán'**
+  String get statusBooking;
+
+  /// No description provided for @statusFull.
+  ///
+  /// In vi, this message translates to:
+  /// **'Kín chỗ'**
+  String get statusFull;
+
+  /// No description provided for @statusCancelled.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã hủy'**
+  String get statusCancelled;
+
+  /// No description provided for @statusCompleted.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hoàn thành'**
+  String get statusCompleted;
+
+  /// No description provided for @updateSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cập nhật thành công!'**
+  String get updateSuccess;
+
+  /// No description provided for @addSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thêm suất chiếu thành công!'**
+  String get addSuccess;
+
+  /// No description provided for @fillRequiredFields.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vui lòng điền đầy đủ thông tin bắt buộc'**
+  String get fillRequiredFields;
+
+  /// No description provided for @movieLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phim'**
+  String get movieLabel;
+
+  /// No description provided for @selectMovieReq.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vui lòng chọn phim'**
+  String get selectMovieReq;
+
+  /// No description provided for @cinemaLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Rạp'**
+  String get cinemaLabel;
+
+  /// No description provided for @selectCinemaReq.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vui lòng chọn rạp'**
+  String get selectCinemaReq;
+
+  /// No description provided for @roomLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phòng chiếu'**
+  String get roomLabel;
+
+  /// No description provided for @selectRoomReq.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vui lòng chọn phòng chiếu'**
+  String get selectRoomReq;
+
+  /// No description provided for @formatLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Định dạng'**
+  String get formatLabel;
+
+  /// No description provided for @statusLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Trạng thái'**
+  String get statusLabel;
+
+  /// No description provided for @selectStartTimeReq.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vui lòng chọn thời gian bắt đầu'**
+  String get selectStartTimeReq;
+
+  /// No description provided for @createShowtimeBtn.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tạo suất chiếu'**
+  String get createShowtimeBtn;
+
+  /// No description provided for @manageCinemas.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quản lý Rạp'**
+  String get manageCinemas;
+
+  /// No description provided for @addCinema.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thêm Rạp'**
+  String get addCinema;
+
+  /// No description provided for @editCinema.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sửa Rạp'**
+  String get editCinema;
+
+  /// No description provided for @cinemaName.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tên rạp'**
+  String get cinemaName;
+
+  /// No description provided for @address.
+  ///
+  /// In vi, this message translates to:
+  /// **'Địa chỉ'**
+  String get address;
+
+  /// No description provided for @roomCount.
+  ///
+  /// In vi, this message translates to:
+  /// **'Số phòng'**
+  String get roomCount;
+
+  /// No description provided for @manageRooms.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phòng chiếu'**
+  String get manageRooms;
+
+  /// No description provided for @addRoom.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thêm phòng'**
+  String get addRoom;
+
+  /// No description provided for @editRoom.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sửa phòng'**
+  String get editRoom;
+
+  /// No description provided for @roomName.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tên phòng'**
+  String get roomName;
+
+  /// No description provided for @roomType.
+  ///
+  /// In vi, this message translates to:
+  /// **'Loại phòng'**
+  String get roomType;
+
+  /// No description provided for @noCinemas.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có rạp nào.'**
+  String get noCinemas;
+
+  /// No description provided for @noRooms.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có phòng nào.'**
+  String get noRooms;
+
+  /// No description provided for @confirmDeleteCinema.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn có chắc muốn xóa rạp này không?'**
+  String get confirmDeleteCinema;
+
+  /// No description provided for @confirmDeleteRoom.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn có chắc muốn xóa phòng chiếu này không?'**
+  String get confirmDeleteRoom;
+
+  /// No description provided for @managePromotions.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quản lý Khuyến mãi'**
+  String get managePromotions;
+
+  /// No description provided for @addPromotion.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thêm Khuyến mãi'**
+  String get addPromotion;
+
+  /// No description provided for @editPromotion.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sửa Khuyến mãi'**
+  String get editPromotion;
+
+  /// No description provided for @promoCode.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mã khuyến mãi'**
+  String get promoCode;
+
+  /// No description provided for @promoDescription.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mô tả'**
+  String get promoDescription;
+
+  /// No description provided for @discountType.
+  ///
+  /// In vi, this message translates to:
+  /// **'Loại giảm giá'**
+  String get discountType;
+
+  /// No description provided for @discountValue.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mức giảm'**
+  String get discountValue;
+
+  /// No description provided for @percentage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phần trăm (%)'**
+  String get percentage;
+
+  /// No description provided for @fixedAmount.
+  ///
+  /// In vi, this message translates to:
+  /// **'Số tiền cố định'**
+  String get fixedAmount;
+
+  /// No description provided for @maxUsage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Số lần dùng tối đa'**
+  String get maxUsage;
+
+  /// No description provided for @noPromotions.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có khuyến mãi nào.'**
+  String get noPromotions;
+
+  /// No description provided for @confirmDeletePromotion.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn có chắc chắn muốn xóa mã khuyến mãi này không?'**
+  String get confirmDeletePromotion;
+
+  /// No description provided for @startDate.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ngày bắt đầu'**
+  String get startDate;
+
+  /// No description provided for @endDate.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ngày kết thúc'**
+  String get endDate;
+
+  /// No description provided for @manageConcessions.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quản lý Bắp nước'**
+  String get manageConcessions;
+
+  /// No description provided for @addProduct.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thêm sản phẩm'**
+  String get addProduct;
+
+  /// No description provided for @editProduct.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sửa sản phẩm'**
+  String get editProduct;
+
+  /// No description provided for @productName.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tên sản phẩm'**
+  String get productName;
+
+  /// No description provided for @stockQuantity.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tồn kho'**
+  String get stockQuantity;
+
+  /// No description provided for @lowStock.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sắp hết'**
+  String get lowStock;
+
+  /// No description provided for @outOfStock.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hết hàng'**
+  String get outOfStock;
+
+  /// No description provided for @totalProducts.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tổng sản phẩm'**
+  String get totalProducts;
+
+  /// No description provided for @noConcessions.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có sản phẩm nào.'**
+  String get noConcessions;
+
+  /// No description provided for @confirmDeleteProduct.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn có chắc muốn xóa sản phẩm này không?'**
+  String get confirmDeleteProduct;
+
+  /// No description provided for @priceLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Giá'**
+  String get priceLabel;
 }
 
 class _AppLocalizationsDelegate

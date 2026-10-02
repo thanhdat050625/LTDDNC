@@ -7,10 +7,13 @@
     "backend:dev": "npm --prefix backend run start:dev",
     "backend:prod": "npm --prefix backend run start:prod",
     "client:dev": "node scripts/update-ip.js && cd mobile/cineplex_client && flutter run --dart-define-from-file=.env",
+    "client:web": "node scripts/update-ip.js && cd mobile/cineplex_client && flutter run -d chrome --dart-define-from-file=.env",
     "client:prod": "node scripts/update-ip.js && cd mobile/cineplex_client && flutter build apk --dart-define-from-file=.env",
     "staff:dev": "node scripts/update-ip.js && cd mobile/cineplex_staff && flutter run --dart-define-from-file=.env",
+    "staff:web": "node scripts/update-ip.js && cd mobile/cineplex_staff && flutter run -d chrome --dart-define-from-file=.env",
     "staff:prod": "node scripts/update-ip.js && cd mobile/cineplex_staff && flutter build apk --dart-define-from-file=.env",
     "admin:dev": "node scripts/update-ip.js && cd mobile/cineplex_admin && flutter run --dart-define-from-file=.env",
+    "admin:web": "node scripts/update-ip.js && cd mobile/cineplex_admin && flutter run -d chrome --dart-define-from-file=.env",
     "admin:prod": "node scripts/update-ip.js && cd mobile/cineplex_admin && flutter build apk --dart-define-from-file=.env"
   }
 }

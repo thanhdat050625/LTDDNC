@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 class ConcessionProductModel extends Equatable {
   final int id;
   final String name;
-  final double price;
+  final num price;
   final int stockQuantity;
 
   const ConcessionProductModel({
@@ -17,9 +17,17 @@ class ConcessionProductModel extends Equatable {
     return ConcessionProductModel(
       id: json['id'] as int,
       name: json['name'] as String,
-      price: (json['price'] as num?)?.toDouble() ?? 0.0,
+      price: json['price'] as num,
       stockQuantity: json['stockQuantity'] as int? ?? 0,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'price': price,
+      'stockQuantity': stockQuantity,
+    };
   }
 
   @override
