@@ -41,55 +41,71 @@ class _RoomManagementScreenState extends State<RoomManagementScreen> {
         backgroundColor: theme.accent,
         child: const Icon(Icons.add, color: Colors.white),
       ),
-      body: BlocBuilder<RoomManagementCubit, RoomManagementState>(
-        builder: (context, state) {
-          if (state is RoomManagementLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is RoomManagementError) {
-            return Center(child: Text(state.message, style: TextStyle(color: theme.error)));
-          } else if (state is RoomManagementLoaded) {
-            final rooms = state.rooms;
-            if (rooms.isEmpty) {
-              return Center(child: Text(AppLocalizations.of(context)!.noRooms));
-            }
-            return ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              itemCount: rooms.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 6),
-              itemBuilder: (context, index) {
-                final r = rooms[index];
-                return RoomListItem(
-                  room: r,
-                  onEdit: () => _reloadAfterPush(context.push('/cinemas/${widget.cinemaId}/rooms/${r.id}/edit', extra: r)),
-                  onDelete: () {
-                    showDialog(
-                      context: context,
-                      builder: (dCtx) => AlertDialog(
-                        backgroundColor: theme.surface,
-                        title: Text(AppLocalizations.of(context)!.confirmDelete),
-                        content: Text(AppLocalizations.of(context)!.confirmDeleteRoom),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(dCtx),
-                            child: Text(AppLocalizations.of(context)!.cancel),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(dCtx);
-                              context.read<RoomManagementCubit>().deleteRoom(r.id, widget.cinemaId);
-                            },
-                            child: Text(AppLocalizations.of(context)!.delete, style: TextStyle(color: theme.error)),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
+      body: RefreshIndicator(
+        onRefresh: () => context.read<RoomManagementCubit>().loadRooms(widget.cinemaId),
+        child: BlocBuilder<RoomManagementCubit, RoomManagementState>(
+          builder: (context, state) {
+            if (state is RoomManagementLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is RoomManagementError) {
+              return ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: [
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.3),
+                  Center(child: Text(state.message, style: TextStyle(color: theme.error))),
+                ],
+              );
+            } else if (state is RoomManagementLoaded) {
+              final rooms = state.rooms;
+              if (rooms.isEmpty) {
+                return ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  children: [
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.3),
+                    Center(child: Text(AppLocalizations.of(context)!.noRooms)),
+                  ],
                 );
-              },
-            );
-          }
-          return const SizedBox.shrink();
-        },
+              }
+              return ListView.separated(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                itemCount: rooms.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 6),
+                itemBuilder: (context, index) {
+                  final r = rooms[index];
+                  return RoomListItem(
+                    room: r,
+                    onEdit: () => _reloadAfterPush(context.push('/cinemas/${widget.cinemaId}/rooms/${r.id}/edit', extra: r)),
+                    onDelete: () {
+                      showDialog(
+                        context: context,
+                        builder: (dCtx) => AlertDialog(
+                          backgroundColor: theme.surface,
+                          title: Text(AppLocalizations.of(context)!.confirmDelete),
+                          content: Text(AppLocalizations.of(context)!.confirmDeleteRoom),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(dCtx),
+                              child: Text(AppLocalizations.of(context)!.cancel),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(dCtx);
+                                context.read<RoomManagementCubit>().deleteRoom(r.id, widget.cinemaId);
+                              },
+                              child: Text(AppLocalizations.of(context)!.delete, style: TextStyle(color: theme.error)),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+              );
+            }
+            return const SizedBox.shrink();
+          },
+        ),
       ),
     );
   }

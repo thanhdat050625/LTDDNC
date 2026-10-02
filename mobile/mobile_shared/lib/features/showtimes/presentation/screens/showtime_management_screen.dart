@@ -109,69 +109,85 @@ class _ShowtimeManagementScreenState extends State<ShowtimeManagementScreen> {
           
           // Showtime List
           Expanded(
-            child: BlocBuilder<ShowtimeManagementCubit, ShowtimeManagementState>(
-              builder: (context, state) {
-                if (state is ShowtimeManagementLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (state is ShowtimeManagementError) {
-                  return Center(
-                    child: Text(
-                      state.message,
-                      style: TextStyle(color: theme.error),
-                    ),
-                  );
-                } else if (state is ShowtimeManagementLoaded) {
-                  final showtimes = state.showtimes;
-                  if (showtimes.isEmpty) {
-                    return Center(child: Text(AppLocalizations.of(context)!.noShowtimesFound));
-                  }
-                  return ListView.separated(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    itemCount: showtimes.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 6),
-                    itemBuilder: (context, index) {
-                      final st = showtimes[index];
-                      return ShowtimeListItem(
-                        showtime: st,
-                        onTap: () {
-                          // View details
-                        },
-                        onEdit: () {
-                          _reloadAfterPush(
-                            context.push('/showtimes/${st.id}/edit', extra: st),
-                          );
-                        },
-                        onDelete: () {
-                          // Handle delete logic via Cubit
-                          showDialog(
-                            context: context,
-                            builder: (dCtx) => AlertDialog(
-                              title: Text(AppLocalizations.of(context)!.confirmDelete),
-                              content: Text(AppLocalizations.of(context)!.confirmDeleteShowtimeDesc),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(dCtx),
-                                  child: Text(AppLocalizations.of(context)!.cancel),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(dCtx);
-                                    // Use ShowtimeFormCubit from another BlocProvider or add delete to ManagementCubit.
-                                    // Let's add delete to ManagementCubit for list items.
-                                    context.read<ShowtimeManagementCubit>().deleteShowtime(st.id);
-                                  },
-                                  child: Text(AppLocalizations.of(context)!.delete, style: TextStyle(color: theme.error)),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
+            child: RefreshIndicator(
+              onRefresh: () => context.read<ShowtimeManagementCubit>().loadShowtimes(),
+              child: BlocBuilder<ShowtimeManagementCubit, ShowtimeManagementState>(
+                builder: (context, state) {
+                  if (state is ShowtimeManagementLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is ShowtimeManagementError) {
+                    return ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      children: [
+                        SizedBox(height: MediaQuery.of(context).size.height * 0.25),
+                        Center(
+                          child: Text(
+                            state.message,
+                            style: TextStyle(color: theme.error),
+                          ),
+                        ),
+                      ],
+                    );
+                  } else if (state is ShowtimeManagementLoaded) {
+                    final showtimes = state.showtimes;
+                    if (showtimes.isEmpty) {
+                      return ListView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        children: [
+                          SizedBox(height: MediaQuery.of(context).size.height * 0.25),
+                          Center(child: Text(AppLocalizations.of(context)!.noShowtimesFound)),
+                        ],
                       );
-                    },
-                  );
-                }
-                return const SizedBox.shrink();
-              },
+                    }
+                    return ListView.separated(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      itemCount: showtimes.length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 6),
+                      itemBuilder: (context, index) {
+                        final st = showtimes[index];
+                        return ShowtimeListItem(
+                          showtime: st,
+                          onTap: () {
+                            // View details
+                          },
+                          onEdit: () {
+                            _reloadAfterPush(
+                              context.push('/showtimes/${st.id}/edit', extra: st),
+                            );
+                          },
+                          onDelete: () {
+                            // Handle delete logic via Cubit
+                            showDialog(
+                              context: context,
+                              builder: (dCtx) => AlertDialog(
+                                title: Text(AppLocalizations.of(context)!.confirmDelete),
+                                content: Text(AppLocalizations.of(context)!.confirmDeleteShowtimeDesc),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(dCtx),
+                                    child: Text(AppLocalizations.of(context)!.cancel),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(dCtx);
+                                      // Use ShowtimeFormCubit from another BlocProvider or add delete to ManagementCubit.
+                                      // Let's add delete to ManagementCubit for list items.
+                                      context.read<ShowtimeManagementCubit>().deleteShowtime(st.id);
+                                    },
+                                    child: Text(AppLocalizations.of(context)!.delete, style: TextStyle(color: theme.error)),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
             ),
           ),
         ],

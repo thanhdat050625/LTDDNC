@@ -138,10 +138,11 @@ class _ConcessionManagementScreenState
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(12, 4, 12, 6),
                       child: Container(
-                        height: 40,
+                        height: 42,
+                        clipBehavior: Clip.antiAlias,
                         decoration: BoxDecoration(
-                          color: theme.background,
-                          borderRadius: BorderRadius.circular(theme.radiusMd),
+                          color: theme.surface,
+                          borderRadius: BorderRadius.circular(21),
                           border: Border.all(
                             color: theme.textSecondary.withValues(alpha: 0.15),
                             width: 1,
@@ -149,11 +150,15 @@ class _ConcessionManagementScreenState
                         ),
                         child: TextField(
                           controller: _searchCtrl,
+                          textAlignVertical: TextAlignVertical.center,
                           style: TextStyle(
                             color: theme.textPrimary,
                             fontSize: 13,
                           ),
                           decoration: InputDecoration(
+                            isDense: true,
+                            filled: false,
+                            fillColor: Colors.transparent,
                             hintText: l10n.searchConcessionPlaceholder,
                             hintStyle: TextStyle(
                               color: theme.textSecondary,
@@ -177,9 +182,10 @@ class _ConcessionManagementScreenState
                                   )
                                 : null,
                             border: InputBorder.none,
-                            isDense: true,
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
                             contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 12,
+                              horizontal: 14,
                               vertical: 10,
                             ),
                           ),

@@ -50,73 +50,89 @@ class _ShowtimeSelectionScreenState extends State<ShowtimeSelectionScreen> {
           ),
           const SizedBox(height: 16),
           Expanded(
-            child: BlocBuilder<ShowtimeCubit, ShowtimeState>(
-              builder: (context, state) {
-                if (state is ShowtimeLoading) {
-                  return const Center(child: AppLoading());
-                } else if (state is ShowtimeError) {
-                  return AppErrorView(
-                    message: state.message,
-                    onRetry: () => context.read<ShowtimeCubit>().loadShowtimes(widget.movieId),
-                  );
-                } else if (state is ShowtimeLoaded) {
-                  final dateKey = DateFormat('yyyy-MM-dd').format(_selectedDate);
-                  final showtimes = state.showtimes[dateKey] ?? [];
-
-                  if (showtimes.isEmpty) {
-                    return Center(child: Text(l10n.noShowtimes));
-                  }
-
-                  // Group by cinema
-                  final Map<String, List<dynamic>> grouped = {};
-                  for (final st in showtimes) {
-                    final cinemaName = st.room?.cinema?.name ?? 'Unknown Cinema';
-                    if (!grouped.containsKey(cinemaName)) {
-                      grouped[cinemaName] = [];
-                    }
-                    grouped[cinemaName]!.add(st);
-                  }
-
-                  return ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: grouped.length,
-                    itemBuilder: (context, index) {
-                      final cinemaName = grouped.keys.elementAt(index);
-                      final cinemaShowtimes = grouped[cinemaName]!;
-                      
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 24),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              cinemaName,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            Wrap(
-                              spacing: 12,
-                              runSpacing: 12,
-                              children: cinemaShowtimes.map((st) {
-                                return ShowtimeCard(
-                                  showtime: st,
-                                  onTap: () {
-                                    Navigator.pushNamed(context, '/seat-selection', arguments: st.id);
-                                  },
-                                );
-                              }).toList(),
-                            ),
-                          ],
+            child: RefreshIndicator(
+              onRefresh: () => context.read<ShowtimeCubit>().loadShowtimes(widget.movieId),
+              child: BlocBuilder<ShowtimeCubit, ShowtimeState>(
+                builder: (context, state) {
+                  if (state is ShowtimeLoading) {
+                    return const Center(child: AppLoading());
+                  } else if (state is ShowtimeError) {
+                    return ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      children: [
+                        SizedBox(height: MediaQuery.of(context).size.height * 0.25),
+                        AppErrorView(
+                          message: state.message,
+                          onRetry: () => context.read<ShowtimeCubit>().loadShowtimes(widget.movieId),
                         ),
+                      ],
+                    );
+                  } else if (state is ShowtimeLoaded) {
+                    final dateKey = DateFormat('yyyy-MM-dd').format(_selectedDate);
+                    final showtimes = state.showtimes[dateKey] ?? [];
+
+                    if (showtimes.isEmpty) {
+                      return ListView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        children: [
+                          SizedBox(height: MediaQuery.of(context).size.height * 0.25),
+                          Center(child: Text(l10n.noShowtimes)),
+                        ],
                       );
-                    },
-                  );
-                }
-                return const SizedBox.shrink();
-              },
+                    }
+
+                    // Group by cinema
+                    final Map<String, List<dynamic>> grouped = {};
+                    for (final st in showtimes) {
+                      final cinemaName = st.room?.cinema?.name ?? 'Unknown Cinema';
+                      if (!grouped.containsKey(cinemaName)) {
+                        grouped[cinemaName] = [];
+                      }
+                      grouped[cinemaName]!.add(st);
+                    }
+
+                    return ListView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.all(16),
+                      itemCount: grouped.length,
+                      itemBuilder: (context, index) {
+                        final cinemaName = grouped.keys.elementAt(index);
+                        final cinemaShowtimes = grouped[cinemaName]!;
+                        
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 24),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                cinemaName,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              Wrap(
+                                spacing: 12,
+                                runSpacing: 12,
+                                children: cinemaShowtimes.map((st) {
+                                  return ShowtimeCard(
+                                    showtime: st,
+                                    onTap: () {
+                                      Navigator.pushNamed(context, '/seat-selection', arguments: st.id);
+                                    },
+                                  );
+                                }).toList(),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
             ),
           ),
         ],

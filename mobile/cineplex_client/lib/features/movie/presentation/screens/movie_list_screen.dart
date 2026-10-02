@@ -88,40 +88,51 @@ class _MovieListScreenContentState extends State<_MovieListScreenContent> {
                 ),
               ),
               Expanded(
-                child: isError
-                    ? Center(child: Text((state).message))
-                    : isLoading && movies.isEmpty
-                        ? GridView.builder(
-                            padding: EdgeInsets.fromLTRB(16, 16, 16, MediaQuery.of(context).padding.bottom + 16),
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              childAspectRatio: 0.65,
-                              crossAxisSpacing: 16,
-                              mainAxisSpacing: 16,
+                child: RefreshIndicator(
+                  onRefresh: () => context.read<MovieListCubit>().loadMovies(),
+                  child: isError
+                      ? ListView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          children: [
+                            SizedBox(height: MediaQuery.of(context).size.height * 0.25),
+                            Center(child: Text((state).message)),
+                          ],
+                        )
+                      : isLoading && movies.isEmpty
+                          ? GridView.builder(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              padding: EdgeInsets.fromLTRB(16, 16, 16, MediaQuery.of(context).padding.bottom + 16),
+                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                childAspectRatio: 0.65,
+                                crossAxisSpacing: 16,
+                                mainAxisSpacing: 16,
+                              ),
+                              itemCount: 6,
+                              itemBuilder: (context, index) => const ShimmerSkeleton(width: double.infinity, height: double.infinity),
+                            )
+                          : GridView.builder(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              controller: _scrollController,
+                              padding: EdgeInsets.fromLTRB(16, 16, 16, MediaQuery.of(context).padding.bottom + 16),
+                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                childAspectRatio: 0.65,
+                                crossAxisSpacing: 16,
+                                mainAxisSpacing: 16,
+                              ),
+                              itemCount: movies.length + (hasMore ? 2 : 0),
+                              itemBuilder: (context, index) {
+                                if (index >= movies.length) {
+                                  return const ShimmerSkeleton(width: double.infinity, height: double.infinity);
+                                }
+                                return StaggeredItem(
+                                  index: index,
+                                  child: MovieCard(movie: movies[index]),
+                                );
+                              },
                             ),
-                            itemCount: 6,
-                            itemBuilder: (context, index) => const ShimmerSkeleton(width: double.infinity, height: double.infinity),
-                          )
-                        : GridView.builder(
-                            controller: _scrollController,
-                            padding: EdgeInsets.fromLTRB(16, 16, 16, MediaQuery.of(context).padding.bottom + 16),
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              childAspectRatio: 0.65,
-                              crossAxisSpacing: 16,
-                              mainAxisSpacing: 16,
-                            ),
-                            itemCount: movies.length + (hasMore ? 2 : 0),
-                            itemBuilder: (context, index) {
-                              if (index >= movies.length) {
-                                return const ShimmerSkeleton(width: double.infinity, height: double.infinity);
-                              }
-                              return StaggeredItem(
-                                index: index,
-                                child: MovieCard(movie: movies[index]),
-                              );
-                            },
-                          ),
+                ),
               )
             ],
           );

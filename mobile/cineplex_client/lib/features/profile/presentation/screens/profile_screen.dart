@@ -145,9 +145,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               final dob = user['dateOfBirth'] != null ? user['dateOfBirth'].toString().split('T').first : '';
               final points = loyalty['loyaltyPoints'] ?? user['loyaltyPoints'] ?? 0;
 
-              return ListView(
-                padding: EdgeInsets.fromLTRB(16, 16, 16, MediaQuery.of(context).padding.bottom + 16),
-                children: [
+              return RefreshIndicator(
+                onRefresh: () => context.read<ProfileCubit>().loadProfile(),
+                child: ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: EdgeInsets.fromLTRB(16, 16, 16, MediaQuery.of(context).padding.bottom + 16),
+                  children: [
                   // Header Avatar & Name (Avatar qua trái, thông tin qua phải)
                   Row(
                     children: [
@@ -311,23 +314,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     onTap: () => _showLogoutDialog(context, l10n),
                   ),
                 ],
-              );
-            }
-            if (state is ProfileError) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(state.message, textAlign: TextAlign.center),
-                    const SizedBox(height: 12),
-                    ElevatedButton(
-                      onPressed: () => context.read<ProfileCubit>().loadProfile(),
-                      child: Text(l10n.retry),
+              ),
+            );
+          }
+          if (state is ProfileError) {
+            return RefreshIndicator(
+              onRefresh: () => context.read<ProfileCubit>().loadProfile(),
+              child: ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: [
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.3),
+                  Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(state.message, textAlign: TextAlign.center),
+                        const SizedBox(height: 12),
+                        ElevatedButton(
+                          onPressed: () => context.read<ProfileCubit>().loadProfile(),
+                          child: Text(l10n.retry),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              );
-            }
+                  ),
+                ],
+              ),
+            );
+          }
             return const SizedBox.shrink();
           }(),
         );

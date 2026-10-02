@@ -21,8 +21,13 @@ class AdminDashboardScreen extends StatelessWidget {
           onPressed: () => context.read<AuthBloc>().add(LogoutRequested()),
         ),
       ],
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          context.read<AuthBloc>().add(CheckAuthStatus());
+        },
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -92,7 +97,8 @@ class AdminDashboardScreen extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ),
+  );
   }
 
   Widget _buildModuleCard({
