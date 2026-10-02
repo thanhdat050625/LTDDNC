@@ -82,6 +82,13 @@ class AdminDrawer extends StatelessWidget {
                   ),
                   _buildDrawerItem(
                     context,
+                    icon: LucideIcons.coffee,
+                    title: AppLocalizations.of(context)!.manageConcessions,
+                    route: '/concessions',
+                    theme: theme,
+                  ),
+                  _buildDrawerItem(
+                    context,
                     icon: LucideIcons.barChart3,
                     title: 'Thống kê Doanh thu',
                     route: '/statistics',

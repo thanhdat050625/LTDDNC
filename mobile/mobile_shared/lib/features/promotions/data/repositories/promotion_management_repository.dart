@@ -9,8 +9,8 @@ class PromotionManagementRepository {
     final response = await _dioClient.get('/promotions', queryParameters: {'limit': 100});
     final data = response.data;
     List<dynamic> items = [];
-    if (data is Map && data.containsKey('data')) {
-      items = data['data'];
+    if (data is Map && data.containsKey('items')) {
+      items = data['items'];
     } else if (data is List) {
       items = data;
     }

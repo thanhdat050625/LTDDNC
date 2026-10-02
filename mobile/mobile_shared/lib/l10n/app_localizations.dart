@@ -2113,6 +2113,72 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Ngày kết thúc'**
   String get endDate;
+
+  /// No description provided for @manageConcessions.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quản lý Bắp nước'**
+  String get manageConcessions;
+
+  /// No description provided for @addProduct.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thêm sản phẩm'**
+  String get addProduct;
+
+  /// No description provided for @editProduct.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sửa sản phẩm'**
+  String get editProduct;
+
+  /// No description provided for @productName.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tên sản phẩm'**
+  String get productName;
+
+  /// No description provided for @stockQuantity.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tồn kho'**
+  String get stockQuantity;
+
+  /// No description provided for @lowStock.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sắp hết'**
+  String get lowStock;
+
+  /// No description provided for @outOfStock.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hết hàng'**
+  String get outOfStock;
+
+  /// No description provided for @totalProducts.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tổng sản phẩm'**
+  String get totalProducts;
+
+  /// No description provided for @noConcessions.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có sản phẩm nào.'**
+  String get noConcessions;
+
+  /// No description provided for @confirmDeleteProduct.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn có chắc muốn xóa sản phẩm này không?'**
+  String get confirmDeleteProduct;
+
+  /// No description provided for @priceLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Giá'**
+  String get priceLabel;
 }
 
 class _AppLocalizationsDelegate

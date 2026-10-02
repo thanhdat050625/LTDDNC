@@ -108,3 +108,13 @@ export 'features/promotions/presentation/widgets/promotion_list_item.dart';
 export 'features/promotions/presentation/screens/promotion_management_screen.dart';
 export 'features/promotions/presentation/screens/promotion_form_screen.dart';
 export 'models/promotion_model.dart';
+
+// Concessions
+export 'features/concessions/data/repositories/concession_management_repository.dart';
+export 'features/concessions/cubit/concession_management_cubit.dart';
+export 'features/concessions/cubit/concession_management_state.dart';
+export 'features/concessions/cubit/concession_form_cubit.dart';
+export 'features/concessions/cubit/concession_form_state.dart';
+export 'features/concessions/presentation/widgets/concession_list_item.dart';
+export 'features/concessions/presentation/screens/concession_management_screen.dart';
+export 'features/concessions/presentation/screens/concession_form_screen.dart';

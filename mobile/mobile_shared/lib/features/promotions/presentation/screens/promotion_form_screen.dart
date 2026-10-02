@@ -151,7 +151,7 @@ class _PromotionFormScreenState extends State<PromotionFormScreen> {
                   SizedBox(height: theme.spacingMd),
                   AppTextField(
                     controller: _discountValueCtrl,
-                    label: '\${AppLocalizations.of(context)!.discountValue} *',
+                    label: '${AppLocalizations.of(context)!.discountValue} *',
                     keyboardType: TextInputType.number,
                     validator: (val) => val == null || val.isEmpty ? AppLocalizations.of(context)!.fillRequiredFields : null,
                   ),

@@ -26,8 +26,8 @@ class MovieManagementRepository {
     final data = response.data;
     List<dynamic> items = [];
     
-    if (data is Map && data.containsKey('data')) {
-      items = data['data'];
+    if (data is Map && data.containsKey('items')) {
+      items = data['items'];
     } else if (data is List) {
       items = data;
     }

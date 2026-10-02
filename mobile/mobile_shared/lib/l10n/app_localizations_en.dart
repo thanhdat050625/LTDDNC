@@ -1067,4 +1067,38 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get endDate => 'End Date';
+
+  @override
+  String get manageConcessions => 'Manage Concessions';
+
+  @override
+  String get addProduct => 'Add Product';
+
+  @override
+  String get editProduct => 'Edit Product';
+
+  @override
+  String get productName => 'Product Name';
+
+  @override
+  String get stockQuantity => 'Stock Quantity';
+
+  @override
+  String get lowStock => 'Low Stock';
+
+  @override
+  String get outOfStock => 'Out of Stock';
+
+  @override
+  String get totalProducts => 'Total Products';
+
+  @override
+  String get noConcessions => 'No products found.';
+
+  @override
+  String get confirmDeleteProduct =>
+      'Are you sure you want to delete this product?';
+
+  @override
+  String get priceLabel => 'Price';
 }

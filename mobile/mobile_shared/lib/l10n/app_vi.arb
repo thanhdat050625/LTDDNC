@@ -494,5 +494,16 @@
   "noPromotions": "Chưa có khuyến mãi nào.",
   "confirmDeletePromotion": "Bạn có chắc chắn muốn xóa mã khuyến mãi này không?",
   "startDate": "Ngày bắt đầu",
-  "endDate": "Ngày kết thúc"
+  "endDate": "Ngày kết thúc",
+  "manageConcessions": "Quản lý Bắp nước",
+  "addProduct": "Thêm sản phẩm",
+  "editProduct": "Sửa sản phẩm",
+  "productName": "Tên sản phẩm",
+  "stockQuantity": "Tồn kho",
+  "lowStock": "Sắp hết",
+  "outOfStock": "Hết hàng",
+  "totalProducts": "Tổng sản phẩm",
+  "noConcessions": "Chưa có sản phẩm nào.",
+  "confirmDeleteProduct": "Bạn có chắc muốn xóa sản phẩm này không?",
+  "priceLabel": "Giá"
 }

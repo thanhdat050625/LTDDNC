@@ -9,8 +9,8 @@ class CinemaManagementRepository {
     final response = await _dioClient.get('/cinemas', queryParameters: {'limit': 100});
     final data = response.data;
     List<dynamic> items = [];
-    if (data is Map && data.containsKey('data')) {
-      items = data['data'];
+    if (data is Map && data.containsKey('items')) {
+      items = data['items'];
     } else if (data is List) {
       items = data;
     }
@@ -35,8 +35,8 @@ class CinemaManagementRepository {
     final response = await _dioClient.get('/cinemas/$cinemaId/rooms');
     final data = response.data;
     List<dynamic> items = [];
-    if (data is Map && data.containsKey('data')) {
-      items = data['data'];
+    if (data is Map && data.containsKey('items')) {
+      items = data['items'];
     } else if (data is List) {
       items = data;
     }

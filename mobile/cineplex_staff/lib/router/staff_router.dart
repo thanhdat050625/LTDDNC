@@ -219,6 +219,41 @@ GoRouter createStaffRouter(AuthBloc authBloc) {
           );
         },
       ),
+      // Concessions
+      GoRoute(
+        path: '/concessions',
+        builder: (context, state) {
+          return BlocProvider(
+            create: (context) => ConcessionManagementCubit(
+              ConcessionManagementRepository(context.read<DioClient>()),
+            ),
+            child: const ConcessionManagementScreen(drawer: StaffDrawer()),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/concessions/new',
+        builder: (context, state) {
+          return BlocProvider(
+            create: (context) => ConcessionFormCubit(
+              ConcessionManagementRepository(context.read<DioClient>()),
+            ),
+            child: const ConcessionFormScreen(),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/concessions/:id/edit',
+        builder: (context, state) {
+          final concession = state.extra as ConcessionProductModel?;
+          return BlocProvider(
+            create: (context) => ConcessionFormCubit(
+              ConcessionManagementRepository(context.read<DioClient>()),
+            ),
+            child: ConcessionFormScreen(concession: concession),
+          );
+        },
+      ),
     ],
   );
 }

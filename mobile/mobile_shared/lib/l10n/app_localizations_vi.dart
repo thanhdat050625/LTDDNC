@@ -1067,4 +1067,37 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get endDate => 'Ngày kết thúc';
+
+  @override
+  String get manageConcessions => 'Quản lý Bắp nước';
+
+  @override
+  String get addProduct => 'Thêm sản phẩm';
+
+  @override
+  String get editProduct => 'Sửa sản phẩm';
+
+  @override
+  String get productName => 'Tên sản phẩm';
+
+  @override
+  String get stockQuantity => 'Tồn kho';
+
+  @override
+  String get lowStock => 'Sắp hết';
+
+  @override
+  String get outOfStock => 'Hết hàng';
+
+  @override
+  String get totalProducts => 'Tổng sản phẩm';
+
+  @override
+  String get noConcessions => 'Chưa có sản phẩm nào.';
+
+  @override
+  String get confirmDeleteProduct => 'Bạn có chắc muốn xóa sản phẩm này không?';
+
+  @override
+  String get priceLabel => 'Giá';
 }

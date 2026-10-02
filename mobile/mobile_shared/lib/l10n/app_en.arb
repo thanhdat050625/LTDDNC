@@ -494,5 +494,16 @@
   "noPromotions": "No promotions found.",
   "confirmDeletePromotion": "Are you sure you want to delete this promotion?",
   "startDate": "Start Date",
-  "endDate": "End Date"
+  "endDate": "End Date",
+  "manageConcessions": "Manage Concessions",
+  "addProduct": "Add Product",
+  "editProduct": "Edit Product",
+  "productName": "Product Name",
+  "stockQuantity": "Stock Quantity",
+  "lowStock": "Low Stock",
+  "outOfStock": "Out of Stock",
+  "totalProducts": "Total Products",
+  "noConcessions": "No products found.",
+  "confirmDeleteProduct": "Are you sure you want to delete this product?",
+  "priceLabel": "Price"
 }
