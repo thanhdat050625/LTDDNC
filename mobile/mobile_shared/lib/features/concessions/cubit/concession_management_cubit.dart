@@ -4,7 +4,8 @@ import 'package:mobile_shared/mobile_shared.dart';
 class ConcessionManagementCubit extends Cubit<ConcessionManagementState> {
   final ConcessionManagementRepository _repository;
 
-  ConcessionManagementCubit(this._repository) : super(ConcessionManagementInitial());
+  ConcessionManagementCubit(this._repository)
+    : super(ConcessionManagementInitial());
 
   Future<void> loadConcessions() async {
     try {
@@ -13,8 +14,10 @@ class ConcessionManagementCubit extends Cubit<ConcessionManagementState> {
       int lowStock = 0;
       int outOfStock = 0;
       for (var c in concessions) {
-        if (c.stockQuantity == 0) outOfStock++;
-        else if (c.stockQuantity <= 5) lowStock++;
+        if (c.stockQuantity == 0)
+          outOfStock++;
+        else if (c.stockQuantity <= 5)
+          lowStock++;
       }
       final summary = {
         'total': concessions.length,

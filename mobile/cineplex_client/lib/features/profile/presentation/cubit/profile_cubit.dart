@@ -42,9 +42,9 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
-  Future<bool> updateProfile(Map<String, dynamic> data) async {
+  Future<bool> updateProfile(Map<String, dynamic> data, {String? avatarPath}) async {
     try {
-      await repository.updateProfile(data);
+      await repository.updateProfile(data, avatarPath: avatarPath);
       await loadProfile();
       return true;
     } catch (e) {

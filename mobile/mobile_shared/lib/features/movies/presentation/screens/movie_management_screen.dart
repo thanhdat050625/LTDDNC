@@ -56,7 +56,7 @@ class _MovieManagementScreenState extends State<MovieManagementScreen> {
         children: [
           // Search & Filter Bar
           Container(
-            padding: EdgeInsets.all(theme.spacingLg),
+            padding: const EdgeInsets.fromLTRB(12, 8, 12, 6),
             color: theme.surface,
             child: Row(
               children: [
@@ -92,44 +92,60 @@ class _MovieManagementScreenState extends State<MovieManagementScreen> {
           
           // Movie List
           Expanded(
-            child: BlocBuilder<MovieManagementCubit, MovieManagementState>(
-              builder: (context, state) {
-                if (state is MovieManagementLoading) {
-                  return const AppLoading();
-                }
-                
-                if (state is MovieManagementError) {
-                  return Center(child: Text(state.message, style: TextStyle(color: theme.error)));
-                }
-
-                if (state is MovieManagementLoaded) {
-                  final movies = state.movies;
-                  if (movies.isEmpty) {
-                    return const Center(child: Text('Không có phim nào.'));
+            child: RefreshIndicator(
+              onRefresh: () => context.read<MovieManagementCubit>().loadMovies(),
+              child: BlocBuilder<MovieManagementCubit, MovieManagementState>(
+                builder: (context, state) {
+                  if (state is MovieManagementLoading) {
+                    return const AppLoading();
                   }
-                  return ListView.separated(
-                    padding: EdgeInsets.all(theme.spacingLg),
-                    itemCount: movies.length,
-                    separatorBuilder: (_, __) => SizedBox(height: theme.spacingMd),
-                    itemBuilder: (context, index) {
-                      final movie = movies[index];
-                      return MovieListItem(
-                        movie: movie,
-                        onTap: () {
-                          // Navigate to detail
-                          context.push('/movies/${movie.id}');
-                        },
-                        onEdit: () {
-                          _reloadAfterPush(
-                            context.push('/movies/${movie.id}/edit', extra: movie),
-                          );
-                        },
+                  
+                  if (state is MovieManagementError) {
+                    return ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      children: [
+                        SizedBox(height: MediaQuery.of(context).size.height * 0.25),
+                        Center(child: Text(state.message, style: TextStyle(color: theme.error))),
+                      ],
+                    );
+                  }
+
+                  if (state is MovieManagementLoaded) {
+                    final movies = state.movies;
+                    if (movies.isEmpty) {
+                      return ListView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        children: [
+                          SizedBox(height: MediaQuery.of(context).size.height * 0.25),
+                          Center(child: Text(AppLocalizations.of(context)!.noData)),
+                        ],
                       );
-                    },
-                  );
-                }
-                return const SizedBox.shrink();
-              },
+                    }
+                    return ListView.separated(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      itemCount: movies.length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 6),
+                      itemBuilder: (context, index) {
+                        final movie = movies[index];
+                        return MovieListItem(
+                          movie: movie,
+                          onTap: () {
+                            // Navigate to detail
+                            context.push('/movies/${movie.id}');
+                          },
+                          onEdit: () {
+                            _reloadAfterPush(
+                              context.push('/movies/${movie.id}/edit', extra: movie),
+                            );
+                          },
+                        );
+                      },
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
             ),
           ),
         ],

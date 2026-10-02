@@ -45,18 +45,36 @@ class _TicketSaleScreenView extends StatelessWidget {
           }
 
           if (state is TicketSaleError) {
-            return AppErrorView(
-              message: state.message,
-              onRetry: () => context.read<TicketSaleCubit>().loadInitialData(),
+            return RefreshIndicator(
+              onRefresh: () => context.read<TicketSaleCubit>().loadInitialData(),
+              child: ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: [
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.25),
+                  AppErrorView(
+                    message: state.message,
+                    onRetry: () => context.read<TicketSaleCubit>().loadInitialData(),
+                  ),
+                ],
+              ),
             );
           }
 
           if (state is TicketSaleLoaded) {
             if (state.cinemas.isEmpty) {
-              return Center(
-                child: Text(
-                  l10n.noData,
-                  style: TextStyle(color: theme.textSecondary),
+              return RefreshIndicator(
+                onRefresh: () => context.read<TicketSaleCubit>().loadInitialData(),
+                child: ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  children: [
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.3),
+                    Center(
+                      child: Text(
+                        l10n.noData,
+                        style: TextStyle(color: theme.textSecondary),
+                      ),
+                    ),
+                  ],
                 ),
               );
             }
@@ -88,7 +106,16 @@ class _TicketSaleScreenView extends StatelessWidget {
                   Expanded(
                     flex: 65,
                     child: state.selectedMovieId == null
-                        ? Center(child: Text(l10n.noData, style: TextStyle(color: theme.textSecondary)))
+                        ? RefreshIndicator(
+                            onRefresh: () => context.read<TicketSaleCubit>().loadInitialData(),
+                            child: ListView(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              children: [
+                                const SizedBox(height: 100),
+                                Center(child: Text(l10n.noData, style: TextStyle(color: theme.textSecondary))),
+                              ],
+                            ),
+                          )
                         : _buildShowtimes(context, theme, l10n, state),
                   ),
                 ],
@@ -206,7 +233,16 @@ class _TicketSaleScreenView extends StatelessWidget {
   Widget _buildShowtimes(BuildContext context, CineplexColors theme, AppLocalizations l10n, TicketSaleLoaded state) {
     final movieShowtimes = state.cinemaShowtimes.where((st) => st.movie?.id == state.selectedMovieId).toList();
     if (movieShowtimes.isEmpty) {
-      return Center(child: Text(l10n.noData, style: TextStyle(color: theme.textSecondary)));
+      return RefreshIndicator(
+        onRefresh: () => context.read<TicketSaleCubit>().loadInitialData(),
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: [
+            const SizedBox(height: 100),
+            Center(child: Text(l10n.noData, style: TextStyle(color: theme.textSecondary))),
+          ],
+        ),
+      );
     }
 
     // Group by Date string
@@ -217,31 +253,35 @@ class _TicketSaleScreenView extends StatelessWidget {
       grouped[d]!.add(st);
     }
 
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(theme.spacingLg),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: grouped.entries.map((entry) {
-          final dateStr = entry.key;
-          final list = entry.value;
+    return RefreshIndicator(
+      onRefresh: () => context.read<TicketSaleCubit>().loadInitialData(),
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: grouped.entries.map((entry) {
+            final dateStr = entry.key;
+            final list = entry.value;
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                dateStr,
-                style: AppTextStyles.title.copyWith(color: theme.textPrimary),
-              ),
-              SizedBox(height: theme.spacingMd),
-              Wrap(
-                spacing: theme.spacingMd,
-                runSpacing: theme.spacingMd,
-                children: list.map((st) => _buildShowtimeCard(context, theme, st)).toList(),
-              ),
-              SizedBox(height: theme.spacingLg),
-            ],
-          );
-        }).toList(),
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  dateStr,
+                  style: AppTextStyles.title.copyWith(color: theme.textPrimary, fontSize: 14),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: list.map((st) => _buildShowtimeCard(context, theme, st)).toList(),
+                ),
+                const SizedBox(height: 12),
+              ],
+            );
+          }).toList(),
+        ),
       ),
     );
   }
@@ -253,14 +293,15 @@ class _TicketSaleScreenView extends StatelessWidget {
         context.push('/ticket-sale/seat-selection', extra: context.read<TicketSaleCubit>());
       },
       child: AppCard(
-        padding: EdgeInsets.symmetric(vertical: theme.spacingMd, horizontal: theme.spacingSm),
+        margin: EdgeInsets.zero,
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
         child: Column(
           children: [
             Text(
               FormatUtils.formatTime(st.publicStartTime),
               style: TextStyle(
                 color: theme.primary,
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),

@@ -1,7 +1,10 @@
 import {
   Controller, Get, Post, Put, Param, Body, Query,
   ParseIntPipe, UseGuards, HttpCode, HttpStatus, Request,
+  UploadedFile, UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import multer from 'multer';
 import { UsersService } from './users.service';
 import { CreateStaffDto, GetUsersQueryDto, UpdateProfileDto, UpdateUserStatusDto } from './dto/users.dto';
 import { JwtAuthGuard } from '../../core/security/jwt/jwt-auth.guard';
@@ -53,9 +56,19 @@ export class UsersController {
 
   @Put('profile')
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(
+    FileInterceptor('avatar', {
+      storage: multer.memoryStorage(),
+      limits: { fileSize: 5 * 1024 * 1024 },
+    }),
+  )
   @HttpCode(HttpStatus.OK)
-  async updateProfile(@Request() req, @Body() dto: UpdateProfileDto) {
-    return this.usersService.updateProfile(req.user.id, dto);
+  async updateProfile(
+    @Request() req,
+    @Body() dto: UpdateProfileDto,
+    @UploadedFile() avatar?: Express.Multer.File,
+  ) {
+    return this.usersService.updateProfile(req.user.id, dto, avatar);
   }
 
   @Put(':id/status')

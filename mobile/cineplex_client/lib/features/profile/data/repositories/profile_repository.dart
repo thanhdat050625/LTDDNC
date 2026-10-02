@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 
 class ProfileRepository {
@@ -17,8 +18,17 @@ class ProfileRepository {
     return {};
   }
 
-  Future<void> updateProfile(Map<String, dynamic> data) async {
-    await _dioClient.put('/users/profile', data: data);
+  Future<void> updateProfile(Map<String, dynamic> data, {String? avatarPath}) async {
+    if (avatarPath != null) {
+      final formData = FormData.fromMap(data);
+      formData.files.add(MapEntry(
+        'avatar',
+        await MultipartFile.fromFile(avatarPath),
+      ));
+      await _dioClient.put('/users/profile', data: formData);
+    } else {
+      await _dioClient.put('/users/profile', data: data);
+    }
   }
 
   Future<Map<String, dynamic>> getLoyaltyInfo() async {

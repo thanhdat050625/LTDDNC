@@ -253,20 +253,49 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
 
                         // Status Filter Chips (All, Active, Blocked)
                         _buildStatusChips(context, state, theme, l10n),
-                        const SizedBox(height: 14),
+                        const SizedBox(height: 6),
+
+                        // Inline loading bar during filter/search to prevent full-screen flashing
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 200),
+                          child: state.isFiltering
+                              ? Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 4),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(2),
+                                    child: LinearProgressIndicator(
+                                      minHeight: 3,
+                                      backgroundColor: theme.textSecondary.withValues(alpha: 0.1),
+                                      valueColor: AlwaysStoppedAnimation<Color>(theme.primary),
+                                    ),
+                                  ),
+                                )
+                              : const SizedBox(height: 11),
+                        ),
 
                         // List of Users / Staff
                         if (state.users.isEmpty)
-                          _buildEmptyState(context, state, theme, l10n)
+                          state.isFiltering
+                              ? const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 48),
+                                  child: Center(child: AppLoading()),
+                                )
+                              : _buildEmptyState(context, state, theme, l10n)
                         else ...[
-                          ...state.users.map((user) {
-                            return UserCardItem(
-                              user: user,
-                              isUpdating: state.updatingUserId == user.id,
-                              onToggleStatus: () => _confirmToggleStatus(context, user, l10n, theme),
-                              onTap: () => UserDetailBottomSheet.show(context, user),
-                            );
-                          }),
+                          AnimatedOpacity(
+                            opacity: state.isFiltering ? 0.5 : 1.0,
+                            duration: const Duration(milliseconds: 150),
+                            child: Column(
+                              children: state.users.map((user) {
+                                return UserCardItem(
+                                  user: user,
+                                  isUpdating: state.updatingUserId == user.id,
+                                  onToggleStatus: () => _confirmToggleStatus(context, user, l10n, theme),
+                                  onTap: () => UserDetailBottomSheet.show(context, user),
+                                );
+                              }).toList(),
+                            ),
+                          ),
 
                           // Pagination Controls
                           const SizedBox(height: 8),

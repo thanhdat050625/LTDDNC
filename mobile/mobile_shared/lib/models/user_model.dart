@@ -9,6 +9,7 @@ class UserModel extends Equatable {
   final String status;
   final int loyaltyPoints;
   final String? gender;
+  final String? avatar;
   final DateTime? dateOfBirth;
   final DateTime? createdAt;
 
@@ -21,6 +22,7 @@ class UserModel extends Equatable {
     required this.status,
     this.loyaltyPoints = 0,
     this.gender,
+    this.avatar,
     this.dateOfBirth,
     this.createdAt,
   });
@@ -43,6 +45,7 @@ class UserModel extends Equatable {
           ? json['loyaltyPoints']
           : int.tryParse(json['loyaltyPoints']?.toString() ?? '0') ?? 0,
       gender: json['gender']?.toString(),
+      avatar: json['avatar']?.toString(),
       dateOfBirth: json['dateOfBirth'] != null ? DateTime.tryParse(json['dateOfBirth'].toString()) : null,
       createdAt: json['createdAt'] != null ? DateTime.tryParse(json['createdAt'].toString()) : null,
     );
@@ -57,6 +60,7 @@ class UserModel extends Equatable {
         'status': status,
         'loyaltyPoints': loyaltyPoints,
         'gender': gender,
+        'avatar': avatar,
         'dateOfBirth': dateOfBirth?.toIso8601String(),
         'createdAt': createdAt?.toIso8601String(),
       };
@@ -71,6 +75,7 @@ class UserModel extends Equatable {
         status,
         loyaltyPoints,
         gender,
+        avatar,
         dateOfBirth,
         createdAt,
       ];

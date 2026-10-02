@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 
@@ -147,7 +146,12 @@ class _MovieFormScreenState extends State<MovieFormScreen> {
           final isLoading = state is MovieFormSubmitting;
 
           return SingleChildScrollView(
-            padding: EdgeInsets.all(theme.spacingLg),
+            padding: EdgeInsets.fromLTRB(
+              theme.spacingMd,
+              6,
+              theme.spacingMd,
+              theme.spacingLg,
+            ),
             child: Form(
               key: _formKey,
               child: Column(

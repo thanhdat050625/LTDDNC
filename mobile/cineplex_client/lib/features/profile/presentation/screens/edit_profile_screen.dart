@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -21,6 +22,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late final TextEditingController _dobController;
   late final TextEditingController _emailController;
 
+  File? _avatarFile;
+  String? _currentAvatarUrl;
   String? _selectedGender;
   DateTime? _selectedDate;
   bool _isSaving = false;
@@ -29,6 +32,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void initState() {
     super.initState();
     final user = widget.initialUser ?? _getCurrentUserFromCubit();
+    _currentAvatarUrl = user?['avatar']?.toString();
     _nameController = TextEditingController(text: user?['fullName'] ?? user?['name'] ?? '');
     _phoneController = TextEditingController(text: user?['phone'] ?? '');
     _emailController = TextEditingController(text: user?['email'] ?? '');
@@ -66,6 +70,59 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _dobController.dispose();
     _emailController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(source: source, imageQuality: 80, maxWidth: 1024);
+    if (picked != null) {
+      setState(() {
+        _avatarFile = File(picked.path);
+      });
+    }
+  }
+
+  void _showImageSourceDialog(AppLocalizations l10n) {
+    final colorScheme = Theme.of(context).colorScheme;
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Text(
+                  l10n.changeAvatar,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.camera_alt_outlined, color: colorScheme.primary),
+                title: Text(l10n.takePhoto),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _pickImage(ImageSource.camera);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.photo_library_outlined, color: colorScheme.primary),
+                title: Text(l10n.chooseFromGallery),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _pickImage(ImageSource.gallery);
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> _pickDateOfBirth(BuildContext context) async {
@@ -107,7 +164,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if (_selectedDate != null) 'dateOfBirth': DateFormat('yyyy-MM-dd').format(_selectedDate!),
     };
 
-    final success = await context.read<ProfileCubit>().updateProfile(payload);
+    final success = await context.read<ProfileCubit>().updateProfile(
+      payload,
+      avatarPath: _avatarFile?.path,
+    );
 
     if (!mounted) return;
     setState(() => _isSaving = false);
@@ -135,6 +195,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return AppScaffold(
       title: l10n.editProfile,
@@ -145,6 +206,55 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Avatar with camera button
+              Center(
+                child: Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: 50,
+                      backgroundColor: colorScheme.primaryContainer,
+                      backgroundImage: _avatarFile != null
+                          ? FileImage(_avatarFile!)
+                          : (_currentAvatarUrl != null && _currentAvatarUrl!.isNotEmpty
+                              ? NetworkImage(_currentAvatarUrl!) as ImageProvider
+                              : null),
+                      child: (_avatarFile == null && (_currentAvatarUrl == null || _currentAvatarUrl!.isEmpty))
+                          ? Text(
+                              _nameController.text.isNotEmpty ? _nameController.text[0].toUpperCase() : 'U',
+                              style: TextStyle(
+                                fontSize: 36,
+                                fontWeight: FontWeight.bold,
+                                color: colorScheme.onPrimaryContainer,
+                              ),
+                            )
+                          : null,
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Material(
+                        color: colorScheme.primary,
+                        shape: const CircleBorder(),
+                        elevation: 2,
+                        child: InkWell(
+                          customBorder: const CircleBorder(),
+                          onTap: () => _showImageSourceDialog(l10n),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Icon(
+                              Icons.camera_alt,
+                              size: 20,
+                              color: colorScheme.onPrimary,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+
               // Email (Read-only)
               IgnorePointer(
                 child: Opacity(
@@ -185,7 +295,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               InputDecorator(
                 decoration: InputDecoration(
                   labelText: l10n.gender,
-                  prefixIcon: const Icon(Icons.transgender_outlined),
+                  prefixIcon: const Icon(Icons.person_outline),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 ),

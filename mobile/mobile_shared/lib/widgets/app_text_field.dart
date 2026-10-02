@@ -12,6 +12,8 @@ class AppTextField extends StatefulWidget {
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
   final void Function(String)? onChanged;
+  final int? maxLines;
+  final int? minLines;
 
   const AppTextField({
     super.key,
@@ -25,6 +27,8 @@ class AppTextField extends StatefulWidget {
     this.keyboardType,
     this.textInputAction,
     this.onChanged,
+    this.maxLines = 1,
+    this.minLines,
   }) : label = label ?? hintText ?? '';
 
   @override
@@ -57,6 +61,8 @@ class _AppTextFieldState extends State<AppTextField> {
           controller: widget.controller,
           validator: widget.validator,
           obscureText: _obscureText,
+          maxLines: _obscureText ? 1 : widget.maxLines,
+          minLines: widget.minLines,
           keyboardType: widget.keyboardType,
           textInputAction: widget.textInputAction,
           onChanged: widget.onChanged,

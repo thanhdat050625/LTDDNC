@@ -37,55 +37,71 @@ class _PromotionManagementScreenState extends State<PromotionManagementScreen> {
         backgroundColor: theme.accent,
         child: const Icon(Icons.add, color: Colors.white),
       ),
-      body: BlocBuilder<PromotionManagementCubit, PromotionManagementState>(
-        builder: (context, state) {
-          if (state is PromotionManagementLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is PromotionManagementError) {
-            return Center(child: Text(state.message, style: TextStyle(color: theme.error)));
-          } else if (state is PromotionManagementLoaded) {
-            final promotions = state.promotions;
-            if (promotions.isEmpty) {
-              return Center(child: Text(AppLocalizations.of(context)!.noPromotions));
-            }
-            return ListView.separated(
-              padding: EdgeInsets.all(theme.spacingLg),
-              itemCount: promotions.length,
-              separatorBuilder: (_, __) => SizedBox(height: theme.spacingMd),
-              itemBuilder: (context, index) {
-                final p = promotions[index];
-                return PromotionListItem(
-                  promotion: p,
-                  onEdit: () => _reloadAfterPush(context.push('/promotions/${p.id}/edit', extra: p)),
-                  onDelete: () {
-                    showDialog(
-                      context: context,
-                      builder: (dCtx) => AlertDialog(
-                        backgroundColor: theme.surface,
-                        title: Text(AppLocalizations.of(context)!.confirmDelete),
-                        content: Text(AppLocalizations.of(context)!.confirmDeletePromotion),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(dCtx),
-                            child: Text(AppLocalizations.of(context)!.cancel),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(dCtx);
-                              context.read<PromotionManagementCubit>().deletePromotion(p.id);
-                            },
-                            child: Text(AppLocalizations.of(context)!.delete, style: TextStyle(color: theme.error)),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
+      body: RefreshIndicator(
+        onRefresh: () => context.read<PromotionManagementCubit>().loadPromotions(),
+        child: BlocBuilder<PromotionManagementCubit, PromotionManagementState>(
+          builder: (context, state) {
+            if (state is PromotionManagementLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is PromotionManagementError) {
+              return ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: [
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.3),
+                  Center(child: Text(state.message, style: TextStyle(color: theme.error))),
+                ],
+              );
+            } else if (state is PromotionManagementLoaded) {
+              final promotions = state.promotions;
+              if (promotions.isEmpty) {
+                return ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  children: [
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.3),
+                    Center(child: Text(AppLocalizations.of(context)!.noPromotions)),
+                  ],
                 );
-              },
-            );
-          }
-          return const SizedBox.shrink();
-        },
+              }
+              return ListView.separated(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                itemCount: promotions.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 6),
+                itemBuilder: (context, index) {
+                  final p = promotions[index];
+                  return PromotionListItem(
+                    promotion: p,
+                    onEdit: () => _reloadAfterPush(context.push('/promotions/${p.id}/edit', extra: p)),
+                    onDelete: () {
+                      showDialog(
+                        context: context,
+                        builder: (dCtx) => AlertDialog(
+                          backgroundColor: theme.surface,
+                          title: Text(AppLocalizations.of(context)!.confirmDelete),
+                          content: Text(AppLocalizations.of(context)!.confirmDeletePromotion),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(dCtx),
+                              child: Text(AppLocalizations.of(context)!.cancel),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(dCtx);
+                                context.read<PromotionManagementCubit>().deletePromotion(p.id);
+                              },
+                              child: Text(AppLocalizations.of(context)!.delete, style: TextStyle(color: theme.error)),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+              );
+            }
+            return const SizedBox.shrink();
+          },
+        ),
       ),
     );
   }

@@ -37,59 +37,75 @@ class _CinemaManagementScreenState extends State<CinemaManagementScreen> {
         backgroundColor: theme.accent,
         child: const Icon(Icons.add, color: Colors.white),
       ),
-      body: BlocBuilder<CinemaManagementCubit, CinemaManagementState>(
-        builder: (context, state) {
-          if (state is CinemaManagementLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is CinemaManagementError) {
-            return Center(child: Text(state.message, style: TextStyle(color: theme.error)));
-          } else if (state is CinemaManagementLoaded) {
-            final cinemas = state.cinemas;
-            if (cinemas.isEmpty) {
-              return Center(child: Text(AppLocalizations.of(context)!.noCinemas));
-            }
-            return ListView.separated(
-              padding: EdgeInsets.all(theme.spacingLg),
-              itemCount: cinemas.length,
-              separatorBuilder: (_, __) => SizedBox(height: theme.spacingMd),
-              itemBuilder: (context, index) {
-                final c = cinemas[index];
-                return CinemaListItem(
-                  cinema: c,
-                  onTap: () {
-                    // Navigate to Rooms of this cinema
-                    context.push('/cinemas/${c.id}/rooms', extra: c);
-                  },
-                  onEdit: () => _reloadAfterPush(context.push('/cinemas/${c.id}/edit', extra: c)),
-                  onDelete: () {
-                    showDialog(
-                      context: context,
-                      builder: (dCtx) => AlertDialog(
-                        backgroundColor: theme.surface,
-                        title: Text(AppLocalizations.of(context)!.confirmDelete),
-                        content: Text(AppLocalizations.of(context)!.confirmDeleteCinema),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(dCtx),
-                            child: Text(AppLocalizations.of(context)!.cancel),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(dCtx);
-                              context.read<CinemaManagementCubit>().deleteCinema(c.id);
-                            },
-                            child: Text(AppLocalizations.of(context)!.delete, style: TextStyle(color: theme.error)),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
+      body: RefreshIndicator(
+        onRefresh: () => context.read<CinemaManagementCubit>().loadCinemas(),
+        child: BlocBuilder<CinemaManagementCubit, CinemaManagementState>(
+          builder: (context, state) {
+            if (state is CinemaManagementLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is CinemaManagementError) {
+              return ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: [
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.3),
+                  Center(child: Text(state.message, style: TextStyle(color: theme.error))),
+                ],
+              );
+            } else if (state is CinemaManagementLoaded) {
+              final cinemas = state.cinemas;
+              if (cinemas.isEmpty) {
+                return ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  children: [
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.3),
+                    Center(child: Text(AppLocalizations.of(context)!.noCinemas)),
+                  ],
                 );
-              },
-            );
-          }
-          return const SizedBox.shrink();
-        },
+              }
+              return ListView.separated(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                itemCount: cinemas.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 6),
+                itemBuilder: (context, index) {
+                  final c = cinemas[index];
+                  return CinemaListItem(
+                    cinema: c,
+                    onTap: () {
+                      // Navigate to Rooms of this cinema
+                      context.push('/cinemas/${c.id}/rooms', extra: c);
+                    },
+                    onEdit: () => _reloadAfterPush(context.push('/cinemas/${c.id}/edit', extra: c)),
+                    onDelete: () {
+                      showDialog(
+                        context: context,
+                        builder: (dCtx) => AlertDialog(
+                          backgroundColor: theme.surface,
+                          title: Text(AppLocalizations.of(context)!.confirmDelete),
+                          content: Text(AppLocalizations.of(context)!.confirmDeleteCinema),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(dCtx),
+                              child: Text(AppLocalizations.of(context)!.cancel),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(dCtx);
+                                context.read<CinemaManagementCubit>().deleteCinema(c.id);
+                              },
+                              child: Text(AppLocalizations.of(context)!.delete, style: TextStyle(color: theme.error)),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+              );
+            }
+            return const SizedBox.shrink();
+          },
+        ),
       ),
     );
   }

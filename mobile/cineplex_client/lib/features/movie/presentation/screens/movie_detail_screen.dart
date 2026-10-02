@@ -25,7 +25,16 @@ class MovieDetailScreen extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             }
             if (state is MovieDetailError) {
-              return Center(child: Text(state.message));
+              return RefreshIndicator(
+                onRefresh: () => context.read<MovieDetailCubit>().loadMovie(movieId),
+                child: ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  children: [
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.4),
+                    Center(child: Text(state.message)),
+                  ],
+                ),
+              );
             }
             if (state is MovieDetailLoaded) {
               final movie = state.movie;
@@ -33,8 +42,11 @@ class MovieDetailScreen extends StatelessWidget {
               final releaseDate = movie.releaseDate != null ? DateFormat.yMMMd().format(movie.releaseDate!) : '';
               return Stack(
                 children: [
-                  CustomScrollView(
-                    slivers: [
+                  RefreshIndicator(
+                    onRefresh: () => context.read<MovieDetailCubit>().loadMovie(movieId),
+                    child: CustomScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      slivers: [
                       SliverAppBar(
                         expandedHeight: 400,
                         pinned: true,
@@ -107,6 +119,7 @@ class MovieDetailScreen extends StatelessWidget {
                       )
                     ],
                   ),
+                ),
                   Positioned(
                     bottom: 0,
                     left: 0,

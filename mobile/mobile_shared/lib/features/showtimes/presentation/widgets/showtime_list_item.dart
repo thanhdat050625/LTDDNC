@@ -24,7 +24,8 @@ class ShowtimeListItem extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: AppCard(
-        padding: EdgeInsets.all(theme.spacingMd),
+        margin: EdgeInsets.zero,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -34,12 +35,12 @@ class ShowtimeListItem extends StatelessWidget {
                 borderRadius: BorderRadius.circular(theme.radiusSm),
                 child: AppCachedImage(
                   imageUrl: showtime.movie!.posterUrl!,
-                  width: 60,
-                  height: 80,
+                  width: 52,
+                  height: 70,
                   fit: BoxFit.cover,
                 ),
               ),
-            SizedBox(width: theme.spacingMd),
+            const SizedBox(width: 10),
             
             // Info
             Expanded(

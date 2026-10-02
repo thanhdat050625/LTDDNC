@@ -10,6 +10,7 @@ import * as bcrypt from 'bcrypt';
 
 import { ENotificationType } from '../notification/enums/notification.enum';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Injectable()
 export class UsersService {
@@ -17,6 +18,7 @@ export class UsersService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly eventEmitter: EventEmitter2,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   async getAllUsers(query: GetUsersQueryDto = {}): Promise<ApiResponse<User[]>> {
@@ -126,13 +128,20 @@ export class UsersService {
     return new ApiResponse(true, 'Lấy thông tin cá nhân thành công', user);
   }
 
-  async updateProfile(userId: number, dto: UpdateProfileDto): Promise<ApiResponse<User>> {
+  async updateProfile(userId: number, dto: UpdateProfileDto, avatar?: Express.Multer.File): Promise<ApiResponse<User>> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
       throw new CustomException(HttpStatus.NOT_FOUND, 'USER_NOT_FOUND', 'Khong tim thay nguoi dung');
     }
 
     const updateData: Record<string, unknown> = {};
+
+    if (avatar) {
+      const uploadRes = await this.cloudinaryService.uploadImage(avatar);
+      updateData.avatar = uploadRes.secure_url;
+    } else if (dto.avatar !== undefined) {
+      updateData.avatar = dto.avatar?.trim() || null;
+    }
 
     if (dto.fullName !== undefined) {
       const fullName = dto.fullName.trim();

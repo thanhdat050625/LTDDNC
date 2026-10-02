@@ -46,21 +46,25 @@ class _ConcessionScreenState extends State<ConcessionScreen> {
             return Column(
               children: [
                 Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: state.products.length,
-                    itemBuilder: (context, index) {
-                      final product = state.products[index];
-                      final quantity = state.selectedItems[product.id] ?? 0;
-                      
-                      return ConcessionItemCard(
-                        product: product,
-                        quantity: quantity,
-                        onQuantityChanged: (newQuantity) {
-                          context.read<ConcessionCubit>().updateQuantity(product.id, newQuantity);
-                        },
-                      );
-                    },
+                  child: RefreshIndicator(
+                    onRefresh: () => context.read<ConcessionCubit>().loadConcessions(),
+                    child: ListView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.all(16),
+                      itemCount: state.products.length,
+                      itemBuilder: (context, index) {
+                        final product = state.products[index];
+                        final quantity = state.selectedItems[product.id] ?? 0;
+                        
+                        return ConcessionItemCard(
+                          product: product,
+                          quantity: quantity,
+                          onQuantityChanged: (newQuantity) {
+                            context.read<ConcessionCubit>().updateQuantity(product.id, newQuantity);
+                          },
+                        );
+                      },
+                    ),
                   ),
                 ),
                 Container(

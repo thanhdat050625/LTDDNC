@@ -68,4 +68,8 @@ export class UpdateProfileDto {
   @IsDateString()
   @IsOptional()
   dateOfBirth?: string | null;
+
+  @IsString()
+  @IsOptional()
+  avatar?: string | null;
 }

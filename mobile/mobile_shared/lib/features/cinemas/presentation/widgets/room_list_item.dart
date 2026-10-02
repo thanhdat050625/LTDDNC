@@ -19,7 +19,8 @@ class RoomListItem extends StatelessWidget {
     final theme = Theme.of(context).extension<CineplexColors>()!;
 
     return AppCard(
-      padding: EdgeInsets.all(theme.spacingMd),
+      margin: EdgeInsets.zero,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

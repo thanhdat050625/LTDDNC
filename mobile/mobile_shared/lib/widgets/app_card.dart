@@ -22,7 +22,7 @@ class AppCard extends StatelessWidget {
     final colors = Theme.of(context).extension<CineplexColors>()!;
     
     return Container(
-      margin: margin ?? const EdgeInsets.symmetric(vertical: 8),
+      margin: margin ?? EdgeInsets.zero,
       decoration: BoxDecoration(
         color: backgroundColor ?? colors.surface,
         borderRadius: BorderRadius.circular(colors.radiusMd),

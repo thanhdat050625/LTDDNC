@@ -1,9 +1,9 @@
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 
@@ -22,6 +22,7 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
   late TextEditingController _priceCtrl;
   late TextEditingController _stockCtrl;
   late TextEditingController _imageUrlCtrl;
+  late TextEditingController _descriptionCtrl;
 
   String? _pickedImagePath;
   bool _isImageRemoved = false;
@@ -35,6 +36,7 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
     _priceCtrl = TextEditingController(text: c?.price.toString() ?? '');
     _stockCtrl = TextEditingController(text: c?.stockQuantity.toString() ?? '');
     _imageUrlCtrl = TextEditingController(text: c?.imageUrl ?? '');
+    _descriptionCtrl = TextEditingController(text: c?.description ?? '');
   }
 
   @override
@@ -43,6 +45,7 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
     _priceCtrl.dispose();
     _stockCtrl.dispose();
     _imageUrlCtrl.dispose();
+    _descriptionCtrl.dispose();
     super.dispose();
   }
 
@@ -63,9 +66,9 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
     } catch (e) {
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${l10n.imageUploadError}: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('${l10n.imageUploadError}: $e')));
       }
     }
   }
@@ -78,7 +81,9 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
       context: context,
       backgroundColor: theme.surface,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(theme.radiusLg)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(theme.radiusLg),
+        ),
       ),
       builder: (bCtx) => SafeArea(
         child: Padding(
@@ -98,14 +103,17 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
               Text(
                 l10n.productImage,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: theme.textPrimary,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  color: theme.textPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               SizedBox(height: theme.spacingMd),
               ListTile(
                 leading: Icon(LucideIcons.camera, color: theme.accent),
-                title: Text(l10n.takePhoto, style: TextStyle(color: theme.textPrimary)),
+                title: Text(
+                  l10n.takePhoto,
+                  style: TextStyle(color: theme.textPrimary),
+                ),
                 onTap: () {
                   Navigator.pop(bCtx);
                   _pickImage(ImageSource.camera);
@@ -113,24 +121,22 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
               ),
               ListTile(
                 leading: Icon(LucideIcons.image, color: theme.accent),
-                title: Text(l10n.chooseFromGallery, style: TextStyle(color: theme.textPrimary)),
+                title: Text(
+                  l10n.chooseFromGallery,
+                  style: TextStyle(color: theme.textPrimary),
+                ),
                 onTap: () {
                   Navigator.pop(bCtx);
                   _pickImage(ImageSource.gallery);
                 },
               ),
-              ListTile(
-                leading: Icon(LucideIcons.link, color: theme.accent),
-                title: Text(l10n.imageUrlOptional, style: TextStyle(color: theme.textPrimary)),
-                onTap: () {
-                  Navigator.pop(bCtx);
-                  _showImageUrlDialog();
-                },
-              ),
               if (_hasImage())
                 ListTile(
                   leading: Icon(LucideIcons.trash2, color: theme.error),
-                  title: Text(l10n.removeImage, style: TextStyle(color: theme.error)),
+                  title: Text(
+                    l10n.removeImage,
+                    style: TextStyle(color: theme.error),
+                  ),
                   onTap: () {
                     Navigator.pop(bCtx);
                     setState(() {
@@ -147,45 +153,6 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
     );
   }
 
-  void _showImageUrlDialog() {
-    final theme = Theme.of(context).extension<CineplexColors>()!;
-    final l10n = AppLocalizations.of(context)!;
-    final ctrl = TextEditingController(text: _imageUrlCtrl.text);
-
-    showDialog(
-      context: context,
-      builder: (dCtx) => AlertDialog(
-        backgroundColor: theme.surface,
-        title: Text(l10n.enterImageUrl, style: TextStyle(color: theme.textPrimary)),
-        content: TextField(
-          controller: ctrl,
-          style: TextStyle(color: theme.textPrimary),
-          decoration: InputDecoration(
-            hintText: 'https://res.cloudinary.com/...',
-            hintStyle: TextStyle(color: theme.textSecondary),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dCtx),
-            child: Text(l10n.cancel, style: TextStyle(color: theme.textSecondary)),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                _imageUrlCtrl.text = ctrl.text.trim();
-                _pickedImagePath = null;
-                _isImageRemoved = ctrl.text.trim().isEmpty;
-              });
-              Navigator.pop(dCtx);
-            },
-            child: Text(l10n.save),
-          ),
-        ],
-      ),
-    );
-  }
-
   bool _hasImage() {
     if (_pickedImagePath != null) return true;
     if (!_isImageRemoved && _imageUrlCtrl.text.trim().isNotEmpty) return true;
@@ -198,6 +165,7 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
         'name': _nameCtrl.text.trim(),
         'price': num.parse(_priceCtrl.text.trim()),
         'stockQuantity': int.parse(_stockCtrl.text.trim()),
+        'description': _descriptionCtrl.text.trim(),
       };
 
       if (_pickedImagePath != null) {
@@ -209,11 +177,11 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
       }
 
       context.read<ConcessionFormCubit>().submit(
-            isEdit: widget.concession != null,
-            concessionId: widget.concession?.id,
-            data: data,
-            imageFilePath: _pickedImagePath,
-          );
+        isEdit: widget.concession != null,
+        concessionId: widget.concession?.id,
+        data: data,
+        imageFilePath: _pickedImagePath,
+      );
     }
   }
 
@@ -230,12 +198,19 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
         listener: (context, state) {
           if (state is ConcessionFormSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(isEdit ? l10n.updateSuccess : l10n.addSuccess)),
+              SnackBar(
+                content: Text(isEdit ? l10n.updateSuccess : l10n.addSuccess),
+              ),
             );
             context.pop();
           } else if (state is ConcessionFormError) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message, style: TextStyle(color: theme.error))),
+              SnackBar(
+                content: Text(
+                  state.message,
+                  style: TextStyle(color: theme.error),
+                ),
+              ),
             );
           }
         },
@@ -243,7 +218,12 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
           final isLoading = state is ConcessionFormSubmitting;
 
           return SingleChildScrollView(
-            padding: EdgeInsets.all(theme.spacingLg),
+            padding: EdgeInsets.fromLTRB(
+              theme.spacingMd,
+              6,
+              theme.spacingMd,
+              theme.spacingLg,
+            ),
             child: Form(
               key: _formKey,
               child: Column(
@@ -251,41 +231,28 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
                 children: [
                   // Image Picker Container
                   Center(
-                    child: Column(
-                      children: [
-                        GestureDetector(
-                          onTap: _showImageSourceActionSheet,
-                          child: Container(
-                            width: 140,
-                            height: 140,
-                            decoration: BoxDecoration(
-                              color: theme.surface,
-                              borderRadius: BorderRadius.circular(theme.radiusLg),
-                              border: Border.all(
-                                color: _hasImage() ? theme.accent : theme.textSecondary.withValues(alpha: 0.25),
-                                width: 1.5,
-                              ),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(theme.radiusLg - 1.5),
-                              child: _buildImagePreview(theme, l10n),
-                            ),
+                    child: GestureDetector(
+                      onTap: _showImageSourceActionSheet,
+                      child: Container(
+                        width: 140,
+                        height: 140,
+                        decoration: BoxDecoration(
+                          color: theme.surface,
+                          borderRadius: BorderRadius.circular(theme.radiusLg),
+                          border: Border.all(
+                            color: _hasImage()
+                                ? theme.accent
+                                : theme.textSecondary.withValues(alpha: 0.25),
+                            width: 1.5,
                           ),
                         ),
-                        SizedBox(height: theme.spacingSm),
-                        TextButton.icon(
-                          onPressed: _showImageSourceActionSheet,
-                          icon: Icon(
-                            _hasImage() ? LucideIcons.refreshCw : LucideIcons.camera,
-                            size: 16,
-                            color: theme.accent,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(
+                            theme.radiusLg - 1.5,
                           ),
-                          label: Text(
-                            _hasImage() ? l10n.changeImage : l10n.selectImage,
-                            style: TextStyle(color: theme.accent, fontWeight: FontWeight.bold),
-                          ),
+                          child: _buildImagePreview(theme, l10n),
                         ),
-                      ],
+                      ),
                     ),
                   ),
                   SizedBox(height: theme.spacingLg),
@@ -295,7 +262,9 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
                     controller: _nameCtrl,
                     label: '${l10n.productName} *',
                     hintText: l10n.productName,
-                    validator: (val) => val == null || val.trim().isEmpty ? l10n.fillRequiredFields : null,
+                    validator: (val) => val == null || val.trim().isEmpty
+                        ? l10n.fillRequiredFields
+                        : null,
                   ),
                   SizedBox(height: theme.spacingMd),
 
@@ -306,8 +275,10 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
                     hintText: '65000',
                     keyboardType: TextInputType.number,
                     validator: (val) {
-                      if (val == null || val.trim().isEmpty) return l10n.fillRequiredFields;
-                      if (num.tryParse(val.trim()) == null) return l10n.invalidAmount;
+                      if (val == null || val.trim().isEmpty)
+                        return l10n.fillRequiredFields;
+                      if (num.tryParse(val.trim()) == null)
+                        return l10n.invalidAmount;
                       return null;
                     },
                   ),
@@ -320,10 +291,23 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
                     hintText: '100',
                     keyboardType: TextInputType.number,
                     validator: (val) {
-                      if (val == null || val.trim().isEmpty) return l10n.fillRequiredFields;
-                      if (int.tryParse(val.trim()) == null) return l10n.invalidAmount;
+                      if (val == null || val.trim().isEmpty)
+                        return l10n.fillRequiredFields;
+                      if (int.tryParse(val.trim()) == null)
+                        return l10n.invalidAmount;
                       return null;
                     },
+                  ),
+                  SizedBox(height: theme.spacingMd),
+
+                  // Description Field
+                  AppTextField(
+                    controller: _descriptionCtrl,
+                    label: l10n.productDescription,
+                    hintText: l10n.productDescription,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: 4,
+                    minLines: 3,
                   ),
                   SizedBox(height: theme.spacingLg),
 
@@ -366,20 +350,12 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
       );
     }
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(LucideIcons.imagePlus, size: 36, color: theme.textSecondary),
-        const SizedBox(height: 8),
-        Text(
-          l10n.selectImage,
-          style: TextStyle(
-            color: theme.textSecondary,
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
+    return Center(
+      child: Icon(
+        LucideIcons.imagePlus,
+        size: 38,
+        color: theme.textSecondary.withValues(alpha: 0.6),
+      ),
     );
   }
 }

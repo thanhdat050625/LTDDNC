@@ -28,6 +28,7 @@ class UserManagementLoaded extends UserManagementState {
   final String keyword;
   final int? updatingUserId;
   final bool isCreatingStaff;
+  final bool isFiltering;
 
   const UserManagementLoaded({
     required this.users,
@@ -44,6 +45,7 @@ class UserManagementLoaded extends UserManagementState {
     this.keyword = '',
     this.updatingUserId,
     this.isCreatingStaff = false,
+    this.isFiltering = false,
   });
 
   @override
@@ -62,6 +64,7 @@ class UserManagementLoaded extends UserManagementState {
         keyword,
         updatingUserId,
         isCreatingStaff,
+        isFiltering,
       ];
 
   UserManagementLoaded copyWith({
@@ -82,6 +85,7 @@ class UserManagementLoaded extends UserManagementState {
     int? updatingUserId,
     bool clearUpdatingUser = false,
     bool? isCreatingStaff,
+    bool? isFiltering,
   }) {
     return UserManagementLoaded(
       users: users ?? this.users,
@@ -98,6 +102,7 @@ class UserManagementLoaded extends UserManagementState {
       keyword: keyword ?? this.keyword,
       updatingUserId: clearUpdatingUser ? null : (updatingUserId ?? this.updatingUserId),
       isCreatingStaff: isCreatingStaff ?? this.isCreatingStaff,
+      isFiltering: isFiltering ?? this.isFiltering,
     );
   }
 }
@@ -132,7 +137,20 @@ class UserManagementCubit extends Cubit<UserManagementState> {
         : (status ?? (currentState is UserManagementLoaded ? currentState.selectedStatus : null));
     final currentKeyword = keyword ?? (currentState is UserManagementLoaded ? currentState.keyword : '');
 
-    emit(UserManagementLoading());
+    if (currentState is UserManagementLoaded) {
+      emit(currentState.copyWith(
+        isFiltering: true,
+        page: currentPage,
+        selectedRole: currentRole,
+        clearRole: clearRole,
+        selectedStatus: currentStatus,
+        clearStatus: clearStatus,
+        keyword: currentKeyword,
+      ));
+    } else {
+      emit(UserManagementLoading());
+    }
+
     try {
       final result = await repository.getUsers(
         page: currentPage,
@@ -155,9 +173,14 @@ class UserManagementCubit extends Cubit<UserManagementState> {
         selectedRole: currentRole,
         selectedStatus: currentStatus,
         keyword: currentKeyword,
+        isFiltering: false,
       ));
     } catch (e) {
-      emit(UserManagementError(e.toString()));
+      if (currentState is UserManagementLoaded) {
+        emit(currentState.copyWith(isFiltering: false));
+      } else {
+        emit(UserManagementError(e.toString()));
+      }
     }
   }
 
