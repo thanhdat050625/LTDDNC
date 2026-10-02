@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 import '../features/auth/presentation/screens/staff_login_screen.dart';
@@ -54,7 +55,33 @@ GoRouter createStaffRouter(AuthBloc authBloc) {
       ),
       GoRoute(
         path: '/movies',
-        builder: (context, state) => const MovieManagementScreen(drawer: StaffDrawer()),
+        builder: (context, state) => BlocProvider(
+          create: (context) => MovieManagementCubit(
+            MovieManagementRepository(context.read<DioClient>()),
+          ),
+          child: const MovieManagementScreen(drawer: StaffDrawer()),
+        ),
+      ),
+      GoRoute(
+        path: '/movies/new',
+        builder: (context, state) => BlocProvider(
+          create: (context) => MovieFormCubit(
+            MovieManagementRepository(context.read<DioClient>()),
+          ),
+          child: const MovieFormScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/movies/:id/edit',
+        builder: (context, state) {
+          final extra = state.extra as MovieModel?;
+          return BlocProvider(
+            create: (context) => MovieFormCubit(
+              MovieManagementRepository(context.read<DioClient>()),
+            ),
+            child: MovieFormScreen(movie: extra),
+          );
+        },
       ),
     ],
   );

@@ -62,6 +62,10 @@ export 'features/ticket_sale/presentation/screens/ticket_sale_screen.dart';
 export 'features/ticket_sale/presentation/screens/seat_selection_screen.dart';
 export 'features/ticket_sale/presentation/screens/checkout_screen.dart';
 
-// Features (Management)
 export 'features/movies/presentation/widgets/movie_list_item.dart';
+export 'features/movies/data/repositories/movie_management_repository.dart';
+export 'features/movies/cubit/movie_management_cubit.dart';
+export 'features/movies/cubit/movie_management_state.dart';
+export 'features/movies/cubit/movie_form_cubit.dart';
 export 'features/movies/presentation/screens/movie_management_screen.dart';
+export 'features/movies/presentation/screens/movie_form_screen.dart';

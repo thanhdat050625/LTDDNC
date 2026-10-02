@@ -91,13 +91,13 @@ class MovieListItem extends StatelessWidget {
                         Container(
                           padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: (movie.status == 'SHOWING' ? theme.success : theme.textSecondary).withValues(alpha: 0.1),
+                            color: (movie.status == 'NOW_SHOWING' ? theme.success : (movie.status == 'COMING_SOON' ? theme.info : theme.textSecondary)).withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
-                            movie.status == 'SHOWING' ? 'Đang chiếu' : movie.status,
+                            movie.status == 'NOW_SHOWING' ? 'Đang chiếu' : (movie.status == 'COMING_SOON' ? 'Sắp chiếu' : 'Ngừng chiếu'),
                             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: movie.status == 'SHOWING' ? theme.success : theme.textSecondary,
+                              color: movie.status == 'NOW_SHOWING' ? theme.success : (movie.status == 'COMING_SOON' ? theme.info : theme.textSecondary),
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
                             ),

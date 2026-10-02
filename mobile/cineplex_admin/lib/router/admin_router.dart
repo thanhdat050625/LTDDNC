@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 import '../features/auth/presentation/screens/admin_login_screen.dart';
@@ -52,7 +53,34 @@ GoRouter createAdminRouter(AuthBloc authBloc) {
       ),
       GoRoute(
         path: '/movies',
-        builder: (context, state) => const MovieManagementScreen(drawer: AdminDrawer()),
+        builder: (context, state) => BlocProvider(
+          create: (context) => MovieManagementCubit(
+            MovieManagementRepository(context.read<DioClient>()),
+          ),
+          child: const MovieManagementScreen(drawer: AdminDrawer()),
+        ),
+      ),
+      GoRoute(
+        path: '/movies/new',
+        builder: (context, state) => BlocProvider(
+          create: (context) => MovieFormCubit(
+            MovieManagementRepository(context.read<DioClient>()),
+          ),
+          child: const MovieFormScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/movies/:id/edit',
+        builder: (context, state) {
+          // Ideally fetch the movie using the id, but for now we pass null or pass it via extra
+          final extra = state.extra as MovieModel?;
+          return BlocProvider(
+            create: (context) => MovieFormCubit(
+              MovieManagementRepository(context.read<DioClient>()),
+            ),
+            child: MovieFormScreen(movie: extra),
+          );
+        },
       ),
       GoRoute(
         path: '/ticket-sale',

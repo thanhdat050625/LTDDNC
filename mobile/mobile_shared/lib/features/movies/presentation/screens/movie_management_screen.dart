@@ -1,8 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mobile_shared/mobile_shared.dart';
-import 'package:mobile_shared/features/movies/presentation/widgets/movie_list_item.dart';
 
 class MovieManagementScreen extends StatefulWidget {
   final Widget? drawer;
@@ -14,37 +15,25 @@ class MovieManagementScreen extends StatefulWidget {
 
 class _MovieManagementScreenState extends State<MovieManagementScreen> {
   final TextEditingController _searchController = TextEditingController();
-  
-  // Dummy data for now. In reality, you'd use a Bloc/Cubit to fetch from MovieRepository.
-  final List<MovieModel> _movies = [
-    MovieModel(
-      id: 1,
-      title: 'Mai',
-      genre: 'Tâm lý, Tình cảm',
-      durationMinutes: 131,
-      posterUrl: 'https://image.tmdb.org/t/p/w500/1.jpg',
-      status: 'SHOWING',
-    ),
-    MovieModel(
-      id: 2,
-      title: 'Đào, Phở và Piano',
-      genre: 'Lịch sử, Chiến tranh',
-      durationMinutes: 120,
-      posterUrl: 'https://image.tmdb.org/t/p/w500/2.jpg',
-      status: 'SHOWING',
-    ),
-    MovieModel(
-      id: 3,
-      title: 'Dune: Part Two',
-      genre: 'Hành động, Viễn tưởng',
-      durationMinutes: 166,
-      posterUrl: 'https://image.tmdb.org/t/p/w500/3.jpg',
-      status: 'HIDDEN',
-    ),
-  ];
+  Timer? _debounce;
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<MovieManagementCubit>().loadMovies();
+  }
+
+  // Reload when returning from MovieFormScreen
+  Future<void> _reloadAfterPush(Future<Object?> future) async {
+    await future;
+    if (mounted) {
+      context.read<MovieManagementCubit>().loadMovies();
+    }
+  }
 
   @override
   void dispose() {
+    _debounce?.cancel();
     _searchController.dispose();
     super.dispose();
   }
@@ -58,8 +47,7 @@ class _MovieManagementScreenState extends State<MovieManagementScreen> {
       drawer: widget.drawer,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Navigate to add new movie form
-          context.push('/movies/new');
+          _reloadAfterPush(context.push('/movies/new'));
         },
         backgroundColor: theme.accent,
         child: const Icon(Icons.add, color: Colors.white),
@@ -78,7 +66,10 @@ class _MovieManagementScreenState extends State<MovieManagementScreen> {
                     hintText: 'Tìm kiếm tên phim...',
                     prefixIcon: LucideIcons.search,
                     onChanged: (val) {
-                      // Trigger search
+                      if (_debounce?.isActive ?? false) _debounce!.cancel();
+                      _debounce = Timer(const Duration(milliseconds: 500), () {
+                        context.read<MovieManagementCubit>().searchMovies(val);
+                      });
                     },
                   ),
                 ),
@@ -101,23 +92,43 @@ class _MovieManagementScreenState extends State<MovieManagementScreen> {
           
           // Movie List
           Expanded(
-            child: ListView.separated(
-              padding: EdgeInsets.all(theme.spacingLg),
-              itemCount: _movies.length,
-              separatorBuilder: (_, __) => SizedBox(height: theme.spacingMd),
-              itemBuilder: (context, index) {
-                final movie = _movies[index];
-                return MovieListItem(
-                  movie: movie,
-                  onTap: () {
-                    // Navigate to detail
-                    context.push('/movies/${movie.id}');
-                  },
-                  onEdit: () {
-                    // Navigate to edit form
-                    context.push('/movies/${movie.id}/edit');
-                  },
-                );
+            child: BlocBuilder<MovieManagementCubit, MovieManagementState>(
+              builder: (context, state) {
+                if (state is MovieManagementLoading) {
+                  return const AppLoading();
+                }
+                
+                if (state is MovieManagementError) {
+                  return Center(child: Text(state.message, style: TextStyle(color: theme.error)));
+                }
+
+                if (state is MovieManagementLoaded) {
+                  final movies = state.movies;
+                  if (movies.isEmpty) {
+                    return const Center(child: Text('Không có phim nào.'));
+                  }
+                  return ListView.separated(
+                    padding: EdgeInsets.all(theme.spacingLg),
+                    itemCount: movies.length,
+                    separatorBuilder: (_, __) => SizedBox(height: theme.spacingMd),
+                    itemBuilder: (context, index) {
+                      final movie = movies[index];
+                      return MovieListItem(
+                        movie: movie,
+                        onTap: () {
+                          // Navigate to detail
+                          context.push('/movies/${movie.id}');
+                        },
+                        onEdit: () {
+                          _reloadAfterPush(
+                            context.push('/movies/${movie.id}/edit', extra: movie),
+                          );
+                        },
+                      );
+                    },
+                  );
+                }
+                return const SizedBox.shrink();
               },
             ),
           ),
