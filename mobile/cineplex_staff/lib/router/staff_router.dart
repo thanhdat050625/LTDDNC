@@ -83,6 +83,40 @@ GoRouter createStaffRouter(AuthBloc authBloc) {
           );
         },
       ),
+      GoRoute(
+        path: '/showtimes',
+        builder: (context, state) => BlocProvider(
+          create: (context) => ShowtimeManagementCubit(
+            ShowtimeManagementRepository(context.read<DioClient>()),
+          ),
+          child: const ShowtimeManagementScreen(drawer: StaffDrawer()),
+        ),
+      ),
+      GoRoute(
+        path: '/showtimes/new',
+        builder: (context, state) => BlocProvider(
+          create: (context) => ShowtimeFormCubit(
+            ShowtimeManagementRepository(context.read<DioClient>()),
+            MovieManagementRepository(context.read<DioClient>()),
+            CinemaManagementRepository(context.read<DioClient>()),
+          ),
+          child: const ShowtimeFormScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/showtimes/:id/edit',
+        builder: (context, state) {
+          final extra = state.extra as ShowtimeModel?;
+          return BlocProvider(
+            create: (context) => ShowtimeFormCubit(
+              ShowtimeManagementRepository(context.read<DioClient>()),
+              MovieManagementRepository(context.read<DioClient>()),
+              CinemaManagementRepository(context.read<DioClient>()),
+            ),
+            child: ShowtimeFormScreen(showtime: extra),
+          );
+        },
+      ),
     ],
   );
 }

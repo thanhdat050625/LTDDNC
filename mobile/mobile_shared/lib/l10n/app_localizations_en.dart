@@ -896,4 +896,86 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get standard2D => 'Standard • 2D';
+
+  @override
+  String get manageShowtimes => 'Manage Showtimes';
+
+  @override
+  String get addShowtime => 'Add Showtime';
+
+  @override
+  String get editShowtime => 'Edit Showtime';
+
+  @override
+  String get filterByDate => 'Filter by date';
+
+  @override
+  String get noShowtimesFound => 'No showtimes found.';
+
+  @override
+  String get confirmDelete => 'Confirm Delete';
+
+  @override
+  String get confirmDeleteShowtimeDesc =>
+      'Are you sure you want to delete this showtime?';
+
+  @override
+  String get unknownMovie => 'Unknown Movie';
+
+  @override
+  String get emptyRoom => 'Empty Room';
+
+  @override
+  String get statusScheduled => 'Scheduled';
+
+  @override
+  String get statusBooking => 'Booking';
+
+  @override
+  String get statusFull => 'Full';
+
+  @override
+  String get statusCancelled => 'Cancelled';
+
+  @override
+  String get statusCompleted => 'Completed';
+
+  @override
+  String get updateSuccess => 'Updated successfully!';
+
+  @override
+  String get addSuccess => 'Showtime added successfully!';
+
+  @override
+  String get fillRequiredFields => 'Please fill all required fields';
+
+  @override
+  String get movieLabel => 'Movie';
+
+  @override
+  String get selectMovieReq => 'Please select a movie';
+
+  @override
+  String get cinemaLabel => 'Cinema';
+
+  @override
+  String get selectCinemaReq => 'Please select a cinema';
+
+  @override
+  String get roomLabel => 'Room';
+
+  @override
+  String get selectRoomReq => 'Please select a room';
+
+  @override
+  String get formatLabel => 'Format';
+
+  @override
+  String get statusLabel => 'Status';
+
+  @override
+  String get selectStartTimeReq => 'Please select start time';
+
+  @override
+  String get createShowtimeBtn => 'Create Showtime';
 }

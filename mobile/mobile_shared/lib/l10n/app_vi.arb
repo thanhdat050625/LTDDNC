@@ -121,8 +121,12 @@
   "availableSeatsCount": "{available}/{total} ghế",
   "@availableSeatsCount": {
     "placeholders": {
-      "available": {"type": "int"},
-      "total": {"type": "int"}
+      "available": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "concessionTotal": "Tổng bắp nước",
@@ -216,7 +220,6 @@
   "settings": "Cài đặt",
   "darkMode": "Chế độ tối",
   "lightMode": "Chế độ sáng",
-  "language": "Ngôn ngữ",
   "vietnamese": "Tiếng Việt",
   "english": "English",
   "appVersion": "Phiên bản ứng dụng",
@@ -435,5 +438,32 @@
       }
     }
   },
-  "standard2D": "Standard • 2D"
+  "standard2D": "Standard • 2D",
+  "manageShowtimes": "Quản lý Suất chiếu",
+  "addShowtime": "Thêm Suất chiếu",
+  "editShowtime": "Chỉnh sửa Suất chiếu",
+  "filterByDate": "Lọc theo ngày",
+  "noShowtimesFound": "Không có suất chiếu nào.",
+  "confirmDelete": "Xác nhận xóa",
+  "confirmDeleteShowtimeDesc": "Bạn có chắc muốn xóa suất chiếu này không?",
+  "unknownMovie": "Phim không xác định",
+  "emptyRoom": "Phòng trống",
+  "statusScheduled": "Sắp xếp",
+  "statusBooking": "Mở bán",
+  "statusFull": "Kín chỗ",
+  "statusCancelled": "Đã hủy",
+  "statusCompleted": "Hoàn thành",
+  "updateSuccess": "Cập nhật thành công!",
+  "addSuccess": "Thêm suất chiếu thành công!",
+  "fillRequiredFields": "Vui lòng điền đầy đủ thông tin bắt buộc",
+  "movieLabel": "Phim",
+  "selectMovieReq": "Vui lòng chọn phim",
+  "cinemaLabel": "Rạp",
+  "selectCinemaReq": "Vui lòng chọn rạp",
+  "roomLabel": "Phòng chiếu",
+  "selectRoomReq": "Vui lòng chọn phòng chiếu",
+  "formatLabel": "Định dạng",
+  "statusLabel": "Trạng thái",
+  "selectStartTimeReq": "Vui lòng chọn thời gian bắt đầu",
+  "createShowtimeBtn": "Tạo suất chiếu"
 }

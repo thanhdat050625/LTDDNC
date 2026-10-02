@@ -69,3 +69,14 @@ export 'features/movies/cubit/movie_management_state.dart';
 export 'features/movies/cubit/movie_form_cubit.dart';
 export 'features/movies/presentation/screens/movie_management_screen.dart';
 export 'features/movies/presentation/screens/movie_form_screen.dart';
+
+// Showtimes
+export 'features/showtimes/data/repositories/showtime_management_repository.dart';
+export 'features/showtimes/data/repositories/cinema_management_repository.dart';
+export 'features/showtimes/cubit/showtime_management_cubit.dart';
+export 'features/showtimes/cubit/showtime_management_state.dart';
+export 'features/showtimes/cubit/showtime_form_cubit.dart';
+export 'features/showtimes/cubit/showtime_form_state.dart';
+export 'features/showtimes/presentation/screens/showtime_management_screen.dart';
+export 'features/showtimes/presentation/widgets/showtime_list_item.dart';
+export 'features/showtimes/presentation/screens/showtime_form_screen.dart';

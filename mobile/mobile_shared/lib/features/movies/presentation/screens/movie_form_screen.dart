@@ -291,7 +291,7 @@ class _MovieFormScreenState extends State<MovieFormScreen> {
                   
                   // Status Dropdown
                   DropdownButtonFormField<String>(
-                    value: _status,
+                    initialValue: _status,
                     decoration: InputDecoration(
                       labelText: 'Trạng thái',
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),

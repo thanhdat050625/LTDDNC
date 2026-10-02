@@ -121,8 +121,12 @@
   "availableSeatsCount": "{available}/{total} seats",
   "@availableSeatsCount": {
     "placeholders": {
-      "available": {"type": "int"},
-      "total": {"type": "int"}
+      "available": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "concessionTotal": "Concession Total",
@@ -216,7 +220,6 @@
   "settings": "Settings",
   "darkMode": "Dark Mode",
   "lightMode": "Light Mode",
-  "language": "Language",
   "vietnamese": "Tiếng Việt",
   "english": "English",
   "appVersion": "App Version",
@@ -435,5 +438,32 @@
       }
     }
   },
-  "standard2D": "Standard • 2D"
+  "standard2D": "Standard • 2D",
+  "manageShowtimes": "Manage Showtimes",
+  "addShowtime": "Add Showtime",
+  "editShowtime": "Edit Showtime",
+  "filterByDate": "Filter by date",
+  "noShowtimesFound": "No showtimes found.",
+  "confirmDelete": "Confirm Delete",
+  "confirmDeleteShowtimeDesc": "Are you sure you want to delete this showtime?",
+  "unknownMovie": "Unknown Movie",
+  "emptyRoom": "Empty Room",
+  "statusScheduled": "Scheduled",
+  "statusBooking": "Booking",
+  "statusFull": "Full",
+  "statusCancelled": "Cancelled",
+  "statusCompleted": "Completed",
+  "updateSuccess": "Updated successfully!",
+  "addSuccess": "Showtime added successfully!",
+  "fillRequiredFields": "Please fill all required fields",
+  "movieLabel": "Movie",
+  "selectMovieReq": "Please select a movie",
+  "cinemaLabel": "Cinema",
+  "selectCinemaReq": "Please select a cinema",
+  "roomLabel": "Room",
+  "selectRoomReq": "Please select a room",
+  "formatLabel": "Format",
+  "statusLabel": "Status",
+  "selectStartTimeReq": "Please select start time",
+  "createShowtimeBtn": "Create Showtime"
 }

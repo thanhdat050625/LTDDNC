@@ -72,13 +72,46 @@ GoRouter createAdminRouter(AuthBloc authBloc) {
       GoRoute(
         path: '/movies/:id/edit',
         builder: (context, state) {
-          // Ideally fetch the movie using the id, but for now we pass null or pass it via extra
           final extra = state.extra as MovieModel?;
           return BlocProvider(
             create: (context) => MovieFormCubit(
               MovieManagementRepository(context.read<DioClient>()),
             ),
             child: MovieFormScreen(movie: extra),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/showtimes',
+        builder: (context, state) => BlocProvider(
+          create: (context) => ShowtimeManagementCubit(
+            ShowtimeManagementRepository(context.read<DioClient>()),
+          ),
+          child: const ShowtimeManagementScreen(drawer: AdminDrawer()),
+        ),
+      ),
+      GoRoute(
+        path: '/showtimes/new',
+        builder: (context, state) => BlocProvider(
+          create: (context) => ShowtimeFormCubit(
+            ShowtimeManagementRepository(context.read<DioClient>()),
+            MovieManagementRepository(context.read<DioClient>()),
+            CinemaManagementRepository(context.read<DioClient>()),
+          ),
+          child: const ShowtimeFormScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/showtimes/:id/edit',
+        builder: (context, state) {
+          final extra = state.extra as ShowtimeModel?;
+          return BlocProvider(
+            create: (context) => ShowtimeFormCubit(
+              ShowtimeManagementRepository(context.read<DioClient>()),
+              MovieManagementRepository(context.read<DioClient>()),
+              CinemaManagementRepository(context.read<DioClient>()),
+            ),
+            child: ShowtimeFormScreen(showtime: extra),
           );
         },
       ),

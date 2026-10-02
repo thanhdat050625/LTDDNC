@@ -1777,6 +1777,168 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Standard • 2D'**
   String get standard2D;
+
+  /// No description provided for @manageShowtimes.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quản lý Suất chiếu'**
+  String get manageShowtimes;
+
+  /// No description provided for @addShowtime.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thêm Suất chiếu'**
+  String get addShowtime;
+
+  /// No description provided for @editShowtime.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chỉnh sửa Suất chiếu'**
+  String get editShowtime;
+
+  /// No description provided for @filterByDate.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lọc theo ngày'**
+  String get filterByDate;
+
+  /// No description provided for @noShowtimesFound.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không có suất chiếu nào.'**
+  String get noShowtimesFound;
+
+  /// No description provided for @confirmDelete.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xác nhận xóa'**
+  String get confirmDelete;
+
+  /// No description provided for @confirmDeleteShowtimeDesc.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn có chắc muốn xóa suất chiếu này không?'**
+  String get confirmDeleteShowtimeDesc;
+
+  /// No description provided for @unknownMovie.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phim không xác định'**
+  String get unknownMovie;
+
+  /// No description provided for @emptyRoom.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phòng trống'**
+  String get emptyRoom;
+
+  /// No description provided for @statusScheduled.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sắp xếp'**
+  String get statusScheduled;
+
+  /// No description provided for @statusBooking.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mở bán'**
+  String get statusBooking;
+
+  /// No description provided for @statusFull.
+  ///
+  /// In vi, this message translates to:
+  /// **'Kín chỗ'**
+  String get statusFull;
+
+  /// No description provided for @statusCancelled.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã hủy'**
+  String get statusCancelled;
+
+  /// No description provided for @statusCompleted.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hoàn thành'**
+  String get statusCompleted;
+
+  /// No description provided for @updateSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cập nhật thành công!'**
+  String get updateSuccess;
+
+  /// No description provided for @addSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thêm suất chiếu thành công!'**
+  String get addSuccess;
+
+  /// No description provided for @fillRequiredFields.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vui lòng điền đầy đủ thông tin bắt buộc'**
+  String get fillRequiredFields;
+
+  /// No description provided for @movieLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phim'**
+  String get movieLabel;
+
+  /// No description provided for @selectMovieReq.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vui lòng chọn phim'**
+  String get selectMovieReq;
+
+  /// No description provided for @cinemaLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Rạp'**
+  String get cinemaLabel;
+
+  /// No description provided for @selectCinemaReq.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vui lòng chọn rạp'**
+  String get selectCinemaReq;
+
+  /// No description provided for @roomLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phòng chiếu'**
+  String get roomLabel;
+
+  /// No description provided for @selectRoomReq.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vui lòng chọn phòng chiếu'**
+  String get selectRoomReq;
+
+  /// No description provided for @formatLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Định dạng'**
+  String get formatLabel;
+
+  /// No description provided for @statusLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Trạng thái'**
+  String get statusLabel;
+
+  /// No description provided for @selectStartTimeReq.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vui lòng chọn thời gian bắt đầu'**
+  String get selectStartTimeReq;
+
+  /// No description provided for @createShowtimeBtn.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tạo suất chiếu'**
+  String get createShowtimeBtn;
 }
 
 class _AppLocalizationsDelegate

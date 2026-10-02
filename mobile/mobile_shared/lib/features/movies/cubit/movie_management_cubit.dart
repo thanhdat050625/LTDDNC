@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_shared/mobile_shared.dart';
-import 'movie_management_state.dart';
 
 class MovieManagementCubit extends Cubit<MovieManagementState> {
   final MovieManagementRepository _repository;

@@ -897,4 +897,86 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get standard2D => 'Standard • 2D';
+
+  @override
+  String get manageShowtimes => 'Quản lý Suất chiếu';
+
+  @override
+  String get addShowtime => 'Thêm Suất chiếu';
+
+  @override
+  String get editShowtime => 'Chỉnh sửa Suất chiếu';
+
+  @override
+  String get filterByDate => 'Lọc theo ngày';
+
+  @override
+  String get noShowtimesFound => 'Không có suất chiếu nào.';
+
+  @override
+  String get confirmDelete => 'Xác nhận xóa';
+
+  @override
+  String get confirmDeleteShowtimeDesc =>
+      'Bạn có chắc muốn xóa suất chiếu này không?';
+
+  @override
+  String get unknownMovie => 'Phim không xác định';
+
+  @override
+  String get emptyRoom => 'Phòng trống';
+
+  @override
+  String get statusScheduled => 'Sắp xếp';
+
+  @override
+  String get statusBooking => 'Mở bán';
+
+  @override
+  String get statusFull => 'Kín chỗ';
+
+  @override
+  String get statusCancelled => 'Đã hủy';
+
+  @override
+  String get statusCompleted => 'Hoàn thành';
+
+  @override
+  String get updateSuccess => 'Cập nhật thành công!';
+
+  @override
+  String get addSuccess => 'Thêm suất chiếu thành công!';
+
+  @override
+  String get fillRequiredFields => 'Vui lòng điền đầy đủ thông tin bắt buộc';
+
+  @override
+  String get movieLabel => 'Phim';
+
+  @override
+  String get selectMovieReq => 'Vui lòng chọn phim';
+
+  @override
+  String get cinemaLabel => 'Rạp';
+
+  @override
+  String get selectCinemaReq => 'Vui lòng chọn rạp';
+
+  @override
+  String get roomLabel => 'Phòng chiếu';
+
+  @override
+  String get selectRoomReq => 'Vui lòng chọn phòng chiếu';
+
+  @override
+  String get formatLabel => 'Định dạng';
+
+  @override
+  String get statusLabel => 'Trạng thái';
+
+  @override
+  String get selectStartTimeReq => 'Vui lòng chọn thời gian bắt đầu';
+
+  @override
+  String get createShowtimeBtn => 'Tạo suất chiếu';
 }
