@@ -600,5 +600,6 @@
   "totalAccounts": "Tổng tài khoản",
   "fieldRequired": "Vui lòng nhập trường này",
   "errorOccurred": "Có lỗi xảy ra. Vui lòng thử lại.",
-  "productDescription": "Mô tả sản phẩm"
+  "productDescription": "Mô tả sản phẩm",
+  "productDetail": "Chi tiết sản phẩm"
 }

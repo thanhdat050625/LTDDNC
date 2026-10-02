@@ -114,7 +114,12 @@ class _PromotionFormScreenState extends State<PromotionFormScreen> {
           final isLoading = state is PromotionFormSubmitting;
 
           return SingleChildScrollView(
-            padding: EdgeInsets.all(theme.spacingLg),
+            padding: EdgeInsets.fromLTRB(
+              theme.spacingMd,
+              6,
+              theme.spacingMd,
+              theme.spacingLg,
+            ),
             child: Form(
               key: _formKey,
               child: Column(
@@ -135,7 +140,7 @@ class _PromotionFormScreenState extends State<PromotionFormScreen> {
                   Text(AppLocalizations.of(context)!.discountType, style: TextStyle(color: theme.textSecondary, fontSize: 12)),
                   SizedBox(height: 8),
                   DropdownButtonFormField<String>(
-                    value: _discountType,
+                    initialValue: _discountType,
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: theme.surface,

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class AppCachedImage extends StatelessWidget {
@@ -18,28 +19,48 @@ class AppCachedImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (imageUrl.trim().isEmpty) {
+      return _buildFallback(context);
+    }
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(borderRadius),
-      child: Image.network(
-        imageUrl,
+      child: CachedNetworkImage(
+        imageUrl: imageUrl.trim(),
         width: width,
         height: height,
         fit: fit,
-        errorBuilder: (context, error, stackTrace) => Container(
+        placeholder: (context, url) => Container(
           width: width,
           height: height,
-          color: Theme.of(context).cardColor,
-          child: const Center(child: Icon(Icons.broken_image)),
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+          child: const Center(
+            child: SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          ),
         ),
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return Container(
-            width: width,
-            height: height,
-            color: Theme.of(context).cardColor,
-            child: const Center(child: CircularProgressIndicator()),
-          );
-        },
+        errorWidget: (context, url, error) => _buildFallback(context),
+      ),
+    );
+  }
+
+  Widget _buildFallback(BuildContext context) {
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(borderRadius),
+      ),
+      child: Center(
+        child: Icon(
+          Icons.movie_outlined,
+          size: (width != null && width! < 30) ? 14 : 20,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
       ),
     );
   }

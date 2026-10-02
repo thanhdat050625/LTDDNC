@@ -1279,4 +1279,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get productDescription => 'Mô tả sản phẩm';
+
+  @override
+  String get productDetail => 'Chi tiết sản phẩm';
 }

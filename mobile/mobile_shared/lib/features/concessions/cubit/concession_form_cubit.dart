@@ -15,7 +15,11 @@ class ConcessionFormCubit extends Cubit<ConcessionFormState> {
     try {
       emit(ConcessionFormSubmitting());
       if (isEdit && concessionId != null) {
-        await _repository.updateConcession(concessionId, data, imageFilePath: imageFilePath);
+        await _repository.updateConcession(
+          concessionId,
+          data,
+          imageFilePath: imageFilePath,
+        );
       } else {
         await _repository.createConcession(data, imageFilePath: imageFilePath);
       }

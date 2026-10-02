@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -65,9 +66,9 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
     } catch (e) {
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${l10n.imageUploadError}: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('${l10n.imageUploadError}: $e')));
       }
     }
   }
@@ -80,7 +81,9 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
       context: context,
       backgroundColor: theme.surface,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(theme.radiusLg)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(theme.radiusLg),
+        ),
       ),
       builder: (bCtx) => SafeArea(
         child: Padding(
@@ -100,14 +103,17 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
               Text(
                 l10n.productImage,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: theme.textPrimary,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  color: theme.textPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               SizedBox(height: theme.spacingMd),
               ListTile(
                 leading: Icon(LucideIcons.camera, color: theme.accent),
-                title: Text(l10n.takePhoto, style: TextStyle(color: theme.textPrimary)),
+                title: Text(
+                  l10n.takePhoto,
+                  style: TextStyle(color: theme.textPrimary),
+                ),
                 onTap: () {
                   Navigator.pop(bCtx);
                   _pickImage(ImageSource.camera);
@@ -115,7 +121,10 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
               ),
               ListTile(
                 leading: Icon(LucideIcons.image, color: theme.accent),
-                title: Text(l10n.chooseFromGallery, style: TextStyle(color: theme.textPrimary)),
+                title: Text(
+                  l10n.chooseFromGallery,
+                  style: TextStyle(color: theme.textPrimary),
+                ),
                 onTap: () {
                   Navigator.pop(bCtx);
                   _pickImage(ImageSource.gallery);
@@ -124,7 +133,10 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
               if (_hasImage())
                 ListTile(
                   leading: Icon(LucideIcons.trash2, color: theme.error),
-                  title: Text(l10n.removeImage, style: TextStyle(color: theme.error)),
+                  title: Text(
+                    l10n.removeImage,
+                    style: TextStyle(color: theme.error),
+                  ),
                   onTap: () {
                     Navigator.pop(bCtx);
                     setState(() {
@@ -165,11 +177,11 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
       }
 
       context.read<ConcessionFormCubit>().submit(
-            isEdit: widget.concession != null,
-            concessionId: widget.concession?.id,
-            data: data,
-            imageFilePath: _pickedImagePath,
-          );
+        isEdit: widget.concession != null,
+        concessionId: widget.concession?.id,
+        data: data,
+        imageFilePath: _pickedImagePath,
+      );
     }
   }
 
@@ -186,12 +198,19 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
         listener: (context, state) {
           if (state is ConcessionFormSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(isEdit ? l10n.updateSuccess : l10n.addSuccess)),
+              SnackBar(
+                content: Text(isEdit ? l10n.updateSuccess : l10n.addSuccess),
+              ),
             );
             context.pop();
           } else if (state is ConcessionFormError) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message, style: TextStyle(color: theme.error))),
+              SnackBar(
+                content: Text(
+                  state.message,
+                  style: TextStyle(color: theme.error),
+                ),
+              ),
             );
           }
         },
@@ -199,7 +218,12 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
           final isLoading = state is ConcessionFormSubmitting;
 
           return SingleChildScrollView(
-            padding: EdgeInsets.all(theme.spacingLg),
+            padding: EdgeInsets.fromLTRB(
+              theme.spacingMd,
+              6,
+              theme.spacingMd,
+              theme.spacingLg,
+            ),
             child: Form(
               key: _formKey,
               child: Column(
@@ -216,12 +240,16 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
                           color: theme.surface,
                           borderRadius: BorderRadius.circular(theme.radiusLg),
                           border: Border.all(
-                            color: _hasImage() ? theme.accent : theme.textSecondary.withValues(alpha: 0.25),
+                            color: _hasImage()
+                                ? theme.accent
+                                : theme.textSecondary.withValues(alpha: 0.25),
                             width: 1.5,
                           ),
                         ),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(theme.radiusLg - 1.5),
+                          borderRadius: BorderRadius.circular(
+                            theme.radiusLg - 1.5,
+                          ),
                           child: _buildImagePreview(theme, l10n),
                         ),
                       ),
@@ -234,7 +262,9 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
                     controller: _nameCtrl,
                     label: '${l10n.productName} *',
                     hintText: l10n.productName,
-                    validator: (val) => val == null || val.trim().isEmpty ? l10n.fillRequiredFields : null,
+                    validator: (val) => val == null || val.trim().isEmpty
+                        ? l10n.fillRequiredFields
+                        : null,
                   ),
                   SizedBox(height: theme.spacingMd),
 
@@ -245,8 +275,10 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
                     hintText: '65000',
                     keyboardType: TextInputType.number,
                     validator: (val) {
-                      if (val == null || val.trim().isEmpty) return l10n.fillRequiredFields;
-                      if (num.tryParse(val.trim()) == null) return l10n.invalidAmount;
+                      if (val == null || val.trim().isEmpty)
+                        return l10n.fillRequiredFields;
+                      if (num.tryParse(val.trim()) == null)
+                        return l10n.invalidAmount;
                       return null;
                     },
                   ),
@@ -259,8 +291,10 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
                     hintText: '100',
                     keyboardType: TextInputType.number,
                     validator: (val) {
-                      if (val == null || val.trim().isEmpty) return l10n.fillRequiredFields;
-                      if (int.tryParse(val.trim()) == null) return l10n.invalidAmount;
+                      if (val == null || val.trim().isEmpty)
+                        return l10n.fillRequiredFields;
+                      if (int.tryParse(val.trim()) == null)
+                        return l10n.invalidAmount;
                       return null;
                     },
                   ),

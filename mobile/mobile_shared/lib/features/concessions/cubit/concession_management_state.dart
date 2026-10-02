@@ -8,7 +8,9 @@ abstract class ConcessionManagementState extends Equatable {
 }
 
 class ConcessionManagementInitial extends ConcessionManagementState {}
+
 class ConcessionManagementLoading extends ConcessionManagementState {}
+
 class ConcessionManagementLoaded extends ConcessionManagementState {
   final List<ConcessionProductModel> concessions;
   final Map<String, int> summary;
@@ -16,6 +18,7 @@ class ConcessionManagementLoaded extends ConcessionManagementState {
   @override
   List<Object?> get props => [concessions, summary];
 }
+
 class ConcessionManagementError extends ConcessionManagementState {
   final String message;
   const ConcessionManagementError(this.message);

@@ -371,14 +371,29 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 ),
                 child: Row(
                   children: [
-                    Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color: colorScheme.primaryContainer,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(Icons.movie, size: 20, color: colorScheme.primary),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: (m.poster != null && m.poster!.trim().isNotEmpty)
+                          ? AppCachedImage(
+                              imageUrl: m.poster!.trim(),
+                              width: 40,
+                              height: 54,
+                              borderRadius: 8,
+                              fit: BoxFit.cover,
+                            )
+                          : Container(
+                              width: 40,
+                              height: 54,
+                              decoration: BoxDecoration(
+                                color: colorScheme.surfaceContainerHighest,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Icon(
+                                Icons.movie_outlined,
+                                size: 22,
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(

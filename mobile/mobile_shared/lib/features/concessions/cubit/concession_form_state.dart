@@ -7,8 +7,11 @@ abstract class ConcessionFormState extends Equatable {
 }
 
 class ConcessionFormInitial extends ConcessionFormState {}
+
 class ConcessionFormSubmitting extends ConcessionFormState {}
+
 class ConcessionFormSuccess extends ConcessionFormState {}
+
 class ConcessionFormError extends ConcessionFormState {
   final String message;
   const ConcessionFormError(this.message);

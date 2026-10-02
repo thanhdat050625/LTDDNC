@@ -2511,6 +2511,12 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Mô tả sản phẩm'**
   String get productDescription;
+
+  /// No description provided for @productDetail.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chi tiết sản phẩm'**
+  String get productDetail;
 }
 
 class _AppLocalizationsDelegate
