@@ -8,6 +8,7 @@ class CinemaModel extends Equatable {
   final String email;
   final String status;
   final List<RoomModel>? rooms;
+  final int? roomsCount;
 
   const CinemaModel({
     required this.id,
@@ -17,6 +18,7 @@ class CinemaModel extends Equatable {
     required this.email,
     required this.status,
     this.rooms,
+    this.roomsCount,
   });
 
   factory CinemaModel.fromJson(Map<String, dynamic> json) {
@@ -28,11 +30,12 @@ class CinemaModel extends Equatable {
       email: json['email'] as String? ?? '',
       status: json['status'] as String? ?? 'ACTIVE',
       rooms: (json['rooms'] as List<dynamic>?)?.map((e) => RoomModel.fromJson(e as Map<String, dynamic>)).toList(),
+      roomsCount: json['roomsCount'] as int?,
     );
   }
 
   @override
-  List<Object?> get props => [id, name, address, phone, email, status, rooms];
+  List<Object?> get props => [id, name, address, phone, email, status, rooms, roomsCount];
 }
 
 class RoomModel extends Equatable {

@@ -36,7 +36,7 @@ class MovieModel extends Equatable {
   factory MovieModel.fromJson(Map<String, dynamic> json) {
     return MovieModel(
       id: json['id'] as int? ?? 0,
-      title: json['title'] as String? ?? '',
+      title: (json['title'] ?? json['name']) as String? ?? '',
       genre: json['genre'] as String? ?? '',
       durationMinutes: json['durationMinutes'] as int? ?? 0,
       director: json['director'] as String?,

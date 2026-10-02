@@ -4,7 +4,8 @@ import 'package:mobile_shared/mobile_shared.dart';
 import '../cubit/user_management_cubit.dart';
 
 class UserManagementScreen extends StatefulWidget {
-  const UserManagementScreen({super.key});
+  final Widget? drawer;
+  const UserManagementScreen({super.key, this.drawer});
 
   @override
   State<UserManagementScreen> createState() => _UserManagementScreenState();
@@ -83,6 +84,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
 
     return AppScaffold(
       title: l10n.userManagement,
+      drawer: widget.drawer,
       body: Column(
         children: [
           // Search Bar

@@ -847,4 +847,257 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get adminPortal => 'Cổng Quản trị Hệ thống';
+
+  @override
+  String get counterSaleDesc => 'Bán vé & Thanh toán';
+
+  @override
+  String get screen => 'MÀN HÌNH';
+
+  @override
+  String get popcornOnly => 'Bắp rang bơ';
+
+  @override
+  String get largeDrinkOnly => 'Nước ngọt lớn';
+
+  @override
+  String get combo1Popcorn2Drinks => 'Combo 1 bắp 2 nước';
+
+  @override
+  String movieTicket(int count) {
+    return 'Vé xem phim ($count ghế)';
+  }
+
+  @override
+  String get discountPointsTitle => 'Giảm giá (Điểm)';
+
+  @override
+  String get enterPoints => 'Nhập số điểm';
+
+  @override
+  String loyaltyPrompt(String points) {
+    return 'Khách hàng có $points điểm. Dùng điểm để giảm giá?';
+  }
+
+  @override
+  String paymentSuccessPrompt(String code) {
+    return 'Thanh toán thành công. Đã tạo mã vé $code.';
+  }
+
+  @override
+  String get cineplexDistrict1 => 'Cineplex Quận 1';
+
+  @override
+  String get today => 'Hôm nay';
+
+  @override
+  String roomPrefix(String id) {
+    return 'Phòng $id';
+  }
+
+  @override
+  String get standard2D => 'Standard • 2D';
+
+  @override
+  String get manageShowtimes => 'Quản lý Suất chiếu';
+
+  @override
+  String get addShowtime => 'Thêm Suất chiếu';
+
+  @override
+  String get editShowtime => 'Chỉnh sửa Suất chiếu';
+
+  @override
+  String get filterByDate => 'Lọc theo ngày';
+
+  @override
+  String get noShowtimesFound => 'Không có suất chiếu nào.';
+
+  @override
+  String get confirmDelete => 'Xác nhận xóa';
+
+  @override
+  String get confirmDeleteShowtimeDesc =>
+      'Bạn có chắc muốn xóa suất chiếu này không?';
+
+  @override
+  String get unknownMovie => 'Phim không xác định';
+
+  @override
+  String get emptyRoom => 'Phòng trống';
+
+  @override
+  String get statusScheduled => 'Sắp xếp';
+
+  @override
+  String get statusBooking => 'Mở bán';
+
+  @override
+  String get statusFull => 'Kín chỗ';
+
+  @override
+  String get statusCancelled => 'Đã hủy';
+
+  @override
+  String get statusCompleted => 'Hoàn thành';
+
+  @override
+  String get updateSuccess => 'Cập nhật thành công!';
+
+  @override
+  String get addSuccess => 'Thêm suất chiếu thành công!';
+
+  @override
+  String get fillRequiredFields => 'Vui lòng điền đầy đủ thông tin bắt buộc';
+
+  @override
+  String get movieLabel => 'Phim';
+
+  @override
+  String get selectMovieReq => 'Vui lòng chọn phim';
+
+  @override
+  String get cinemaLabel => 'Rạp';
+
+  @override
+  String get selectCinemaReq => 'Vui lòng chọn rạp';
+
+  @override
+  String get roomLabel => 'Phòng chiếu';
+
+  @override
+  String get selectRoomReq => 'Vui lòng chọn phòng chiếu';
+
+  @override
+  String get formatLabel => 'Định dạng';
+
+  @override
+  String get statusLabel => 'Trạng thái';
+
+  @override
+  String get selectStartTimeReq => 'Vui lòng chọn thời gian bắt đầu';
+
+  @override
+  String get createShowtimeBtn => 'Tạo suất chiếu';
+
+  @override
+  String get manageCinemas => 'Quản lý Rạp';
+
+  @override
+  String get addCinema => 'Thêm Rạp';
+
+  @override
+  String get editCinema => 'Sửa Rạp';
+
+  @override
+  String get cinemaName => 'Tên rạp';
+
+  @override
+  String get address => 'Địa chỉ';
+
+  @override
+  String get roomCount => 'Số phòng';
+
+  @override
+  String get manageRooms => 'Phòng chiếu';
+
+  @override
+  String get addRoom => 'Thêm phòng';
+
+  @override
+  String get editRoom => 'Sửa phòng';
+
+  @override
+  String get roomName => 'Tên phòng';
+
+  @override
+  String get roomType => 'Loại phòng';
+
+  @override
+  String get noCinemas => 'Chưa có rạp nào.';
+
+  @override
+  String get noRooms => 'Chưa có phòng nào.';
+
+  @override
+  String get confirmDeleteCinema => 'Bạn có chắc muốn xóa rạp này không?';
+
+  @override
+  String get confirmDeleteRoom => 'Bạn có chắc muốn xóa phòng chiếu này không?';
+
+  @override
+  String get managePromotions => 'Quản lý Khuyến mãi';
+
+  @override
+  String get addPromotion => 'Thêm Khuyến mãi';
+
+  @override
+  String get editPromotion => 'Sửa Khuyến mãi';
+
+  @override
+  String get promoCode => 'Mã khuyến mãi';
+
+  @override
+  String get promoDescription => 'Mô tả';
+
+  @override
+  String get discountType => 'Loại giảm giá';
+
+  @override
+  String get discountValue => 'Mức giảm';
+
+  @override
+  String get percentage => 'Phần trăm (%)';
+
+  @override
+  String get fixedAmount => 'Số tiền cố định';
+
+  @override
+  String get maxUsage => 'Số lần dùng tối đa';
+
+  @override
+  String get noPromotions => 'Chưa có khuyến mãi nào.';
+
+  @override
+  String get confirmDeletePromotion =>
+      'Bạn có chắc chắn muốn xóa mã khuyến mãi này không?';
+
+  @override
+  String get startDate => 'Ngày bắt đầu';
+
+  @override
+  String get endDate => 'Ngày kết thúc';
+
+  @override
+  String get manageConcessions => 'Quản lý Bắp nước';
+
+  @override
+  String get addProduct => 'Thêm sản phẩm';
+
+  @override
+  String get editProduct => 'Sửa sản phẩm';
+
+  @override
+  String get productName => 'Tên sản phẩm';
+
+  @override
+  String get stockQuantity => 'Tồn kho';
+
+  @override
+  String get lowStock => 'Sắp hết';
+
+  @override
+  String get outOfStock => 'Hết hàng';
+
+  @override
+  String get totalProducts => 'Tổng sản phẩm';
+
+  @override
+  String get noConcessions => 'Chưa có sản phẩm nào.';
+
+  @override
+  String get confirmDeleteProduct => 'Bạn có chắc muốn xóa sản phẩm này không?';
+
+  @override
+  String get priceLabel => 'Giá';
 }

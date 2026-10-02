@@ -4,7 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 
 class AdminDashboardScreen extends StatelessWidget {
-  const AdminDashboardScreen({super.key});
+  final Widget? drawer;
+  const AdminDashboardScreen({super.key, this.drawer});
 
   @override
   Widget build(BuildContext context) {
@@ -12,6 +13,7 @@ class AdminDashboardScreen extends StatelessWidget {
 
     return AppScaffold(
       title: l10n.adminDashboard,
+      drawer: drawer,
       actions: [
         IconButton(
           icon: const Icon(Icons.logout),
@@ -76,6 +78,14 @@ class AdminDashboardScreen extends StatelessWidget {
                   icon: Icons.bar_chart_rounded,
                   color: AppColors.accent,
                   onTap: () => context.push('/statistics'),
+                ),
+                _buildModuleCard(
+                  context: context,
+                  title: l10n.counterSale,
+                  subtitle: l10n.counterSaleDesc,
+                  icon: Icons.point_of_sale_rounded, // Assuming Lucide is not imported here, fallback to material or use LucideIcons if imported. I'll use LucideIcons.monitorSmartphone if I import it. Let's just use LucideIcons.
+                  color: AppColors.primary,
+                  onTap: () => context.push('/ticket-sale'),
                 ),
               ],
             ),

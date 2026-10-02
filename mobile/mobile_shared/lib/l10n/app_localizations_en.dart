@@ -846,4 +846,259 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adminPortal => 'Admin Management Portal';
+
+  @override
+  String get counterSaleDesc => 'Ticket Sales & Payment';
+
+  @override
+  String get screen => 'SCREEN';
+
+  @override
+  String get popcornOnly => 'Popcorn';
+
+  @override
+  String get largeDrinkOnly => 'Large Drink';
+
+  @override
+  String get combo1Popcorn2Drinks => 'Combo 1 Popcorn 2 Drinks';
+
+  @override
+  String movieTicket(int count) {
+    return 'Movie Ticket ($count seats)';
+  }
+
+  @override
+  String get discountPointsTitle => 'Discount (Points)';
+
+  @override
+  String get enterPoints => 'Enter points';
+
+  @override
+  String loyaltyPrompt(String points) {
+    return 'Customer has $points points. Use points for discount?';
+  }
+
+  @override
+  String paymentSuccessPrompt(String code) {
+    return 'Payment successful. Booking code $code generated.';
+  }
+
+  @override
+  String get cineplexDistrict1 => 'Cineplex District 1';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String roomPrefix(String id) {
+    return 'Room $id';
+  }
+
+  @override
+  String get standard2D => 'Standard • 2D';
+
+  @override
+  String get manageShowtimes => 'Manage Showtimes';
+
+  @override
+  String get addShowtime => 'Add Showtime';
+
+  @override
+  String get editShowtime => 'Edit Showtime';
+
+  @override
+  String get filterByDate => 'Filter by date';
+
+  @override
+  String get noShowtimesFound => 'No showtimes found.';
+
+  @override
+  String get confirmDelete => 'Confirm Delete';
+
+  @override
+  String get confirmDeleteShowtimeDesc =>
+      'Are you sure you want to delete this showtime?';
+
+  @override
+  String get unknownMovie => 'Unknown Movie';
+
+  @override
+  String get emptyRoom => 'Empty Room';
+
+  @override
+  String get statusScheduled => 'Scheduled';
+
+  @override
+  String get statusBooking => 'Booking';
+
+  @override
+  String get statusFull => 'Full';
+
+  @override
+  String get statusCancelled => 'Cancelled';
+
+  @override
+  String get statusCompleted => 'Completed';
+
+  @override
+  String get updateSuccess => 'Updated successfully!';
+
+  @override
+  String get addSuccess => 'Showtime added successfully!';
+
+  @override
+  String get fillRequiredFields => 'Please fill all required fields';
+
+  @override
+  String get movieLabel => 'Movie';
+
+  @override
+  String get selectMovieReq => 'Please select a movie';
+
+  @override
+  String get cinemaLabel => 'Cinema';
+
+  @override
+  String get selectCinemaReq => 'Please select a cinema';
+
+  @override
+  String get roomLabel => 'Room';
+
+  @override
+  String get selectRoomReq => 'Please select a room';
+
+  @override
+  String get formatLabel => 'Format';
+
+  @override
+  String get statusLabel => 'Status';
+
+  @override
+  String get selectStartTimeReq => 'Please select start time';
+
+  @override
+  String get createShowtimeBtn => 'Create Showtime';
+
+  @override
+  String get manageCinemas => 'Manage Cinemas';
+
+  @override
+  String get addCinema => 'Add Cinema';
+
+  @override
+  String get editCinema => 'Edit Cinema';
+
+  @override
+  String get cinemaName => 'Cinema Name';
+
+  @override
+  String get address => 'Address';
+
+  @override
+  String get roomCount => 'Rooms';
+
+  @override
+  String get manageRooms => 'Rooms';
+
+  @override
+  String get addRoom => 'Add Room';
+
+  @override
+  String get editRoom => 'Edit Room';
+
+  @override
+  String get roomName => 'Room Name';
+
+  @override
+  String get roomType => 'Room Type';
+
+  @override
+  String get noCinemas => 'No cinemas found.';
+
+  @override
+  String get noRooms => 'No rooms found.';
+
+  @override
+  String get confirmDeleteCinema =>
+      'Are you sure you want to delete this cinema?';
+
+  @override
+  String get confirmDeleteRoom => 'Are you sure you want to delete this room?';
+
+  @override
+  String get managePromotions => 'Manage Promotions';
+
+  @override
+  String get addPromotion => 'Add Promotion';
+
+  @override
+  String get editPromotion => 'Edit Promotion';
+
+  @override
+  String get promoCode => 'Promo Code';
+
+  @override
+  String get promoDescription => 'Description';
+
+  @override
+  String get discountType => 'Discount Type';
+
+  @override
+  String get discountValue => 'Discount Value';
+
+  @override
+  String get percentage => 'Percentage (%)';
+
+  @override
+  String get fixedAmount => 'Fixed Amount';
+
+  @override
+  String get maxUsage => 'Max Usage';
+
+  @override
+  String get noPromotions => 'No promotions found.';
+
+  @override
+  String get confirmDeletePromotion =>
+      'Are you sure you want to delete this promotion?';
+
+  @override
+  String get startDate => 'Start Date';
+
+  @override
+  String get endDate => 'End Date';
+
+  @override
+  String get manageConcessions => 'Manage Concessions';
+
+  @override
+  String get addProduct => 'Add Product';
+
+  @override
+  String get editProduct => 'Edit Product';
+
+  @override
+  String get productName => 'Product Name';
+
+  @override
+  String get stockQuantity => 'Stock Quantity';
+
+  @override
+  String get lowStock => 'Low Stock';
+
+  @override
+  String get outOfStock => 'Out of Stock';
+
+  @override
+  String get totalProducts => 'Total Products';
+
+  @override
+  String get noConcessions => 'No products found.';
+
+  @override
+  String get confirmDeleteProduct =>
+      'Are you sure you want to delete this product?';
+
+  @override
+  String get priceLabel => 'Price';
 }
