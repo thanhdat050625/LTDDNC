@@ -2029,6 +2029,90 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Bạn có chắc muốn xóa phòng chiếu này không?'**
   String get confirmDeleteRoom;
+
+  /// No description provided for @managePromotions.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quản lý Khuyến mãi'**
+  String get managePromotions;
+
+  /// No description provided for @addPromotion.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thêm Khuyến mãi'**
+  String get addPromotion;
+
+  /// No description provided for @editPromotion.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sửa Khuyến mãi'**
+  String get editPromotion;
+
+  /// No description provided for @promoCode.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mã khuyến mãi'**
+  String get promoCode;
+
+  /// No description provided for @promoDescription.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mô tả'**
+  String get promoDescription;
+
+  /// No description provided for @discountType.
+  ///
+  /// In vi, this message translates to:
+  /// **'Loại giảm giá'**
+  String get discountType;
+
+  /// No description provided for @discountValue.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mức giảm'**
+  String get discountValue;
+
+  /// No description provided for @percentage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phần trăm (%)'**
+  String get percentage;
+
+  /// No description provided for @fixedAmount.
+  ///
+  /// In vi, this message translates to:
+  /// **'Số tiền cố định'**
+  String get fixedAmount;
+
+  /// No description provided for @maxUsage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Số lần dùng tối đa'**
+  String get maxUsage;
+
+  /// No description provided for @noPromotions.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có khuyến mãi nào.'**
+  String get noPromotions;
+
+  /// No description provided for @confirmDeletePromotion.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn có chắc chắn muốn xóa mã khuyến mãi này không?'**
+  String get confirmDeletePromotion;
+
+  /// No description provided for @startDate.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ngày bắt đầu'**
+  String get startDate;
+
+  /// No description provided for @endDate.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ngày kết thúc'**
+  String get endDate;
 }
 
 class _AppLocalizationsDelegate

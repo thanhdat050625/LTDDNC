@@ -97,3 +97,14 @@ export 'features/cinemas/presentation/screens/room_management_screen.dart';
 export 'features/cinemas/presentation/screens/room_form_screen.dart';
 export 'features/cinemas/presentation/widgets/cinema_list_item.dart';
 export 'features/cinemas/presentation/widgets/room_list_item.dart';
+
+// Promotions
+export 'features/promotions/data/repositories/promotion_management_repository.dart';
+export 'features/promotions/cubit/promotion_management_cubit.dart';
+export 'features/promotions/cubit/promotion_management_state.dart';
+export 'features/promotions/cubit/promotion_form_cubit.dart';
+export 'features/promotions/cubit/promotion_form_state.dart';
+export 'features/promotions/presentation/widgets/promotion_list_item.dart';
+export 'features/promotions/presentation/screens/promotion_management_screen.dart';
+export 'features/promotions/presentation/screens/promotion_form_screen.dart';
+export 'models/promotion_model.dart';

@@ -480,5 +480,19 @@
   "noCinemas": "No cinemas found.",
   "noRooms": "No rooms found.",
   "confirmDeleteCinema": "Are you sure you want to delete this cinema?",
-  "confirmDeleteRoom": "Are you sure you want to delete this room?"
+  "confirmDeleteRoom": "Are you sure you want to delete this room?",
+  "managePromotions": "Manage Promotions",
+  "addPromotion": "Add Promotion",
+  "editPromotion": "Edit Promotion",
+  "promoCode": "Promo Code",
+  "promoDescription": "Description",
+  "discountType": "Discount Type",
+  "discountValue": "Discount Value",
+  "percentage": "Percentage (%)",
+  "fixedAmount": "Fixed Amount",
+  "maxUsage": "Max Usage",
+  "noPromotions": "No promotions found.",
+  "confirmDeletePromotion": "Are you sure you want to delete this promotion?",
+  "startDate": "Start Date",
+  "endDate": "End Date"
 }

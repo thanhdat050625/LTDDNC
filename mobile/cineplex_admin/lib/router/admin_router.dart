@@ -194,6 +194,41 @@ GoRouter createAdminRouter(AuthBloc authBloc) {
           );
         },
       ),
+      // Promotions
+      GoRoute(
+        path: '/promotions',
+        builder: (context, state) {
+          return BlocProvider(
+            create: (context) => PromotionManagementCubit(
+              PromotionManagementRepository(context.read<DioClient>()),
+            ),
+            child: const PromotionManagementScreen(drawer: AdminDrawer()),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/promotions/new',
+        builder: (context, state) {
+          return BlocProvider(
+            create: (context) => PromotionFormCubit(
+              PromotionManagementRepository(context.read<DioClient>()),
+            ),
+            child: const PromotionFormScreen(),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/promotions/:id/edit',
+        builder: (context, state) {
+          final promotion = state.extra as PromotionModel?;
+          return BlocProvider(
+            create: (context) => PromotionFormCubit(
+              PromotionManagementRepository(context.read<DioClient>()),
+            ),
+            child: PromotionFormScreen(promotion: promotion),
+          );
+        },
+      ),
     ],
   );
 }

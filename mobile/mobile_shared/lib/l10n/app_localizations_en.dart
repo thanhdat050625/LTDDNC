@@ -1024,4 +1024,47 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get confirmDeleteRoom => 'Are you sure you want to delete this room?';
+
+  @override
+  String get managePromotions => 'Manage Promotions';
+
+  @override
+  String get addPromotion => 'Add Promotion';
+
+  @override
+  String get editPromotion => 'Edit Promotion';
+
+  @override
+  String get promoCode => 'Promo Code';
+
+  @override
+  String get promoDescription => 'Description';
+
+  @override
+  String get discountType => 'Discount Type';
+
+  @override
+  String get discountValue => 'Discount Value';
+
+  @override
+  String get percentage => 'Percentage (%)';
+
+  @override
+  String get fixedAmount => 'Fixed Amount';
+
+  @override
+  String get maxUsage => 'Max Usage';
+
+  @override
+  String get noPromotions => 'No promotions found.';
+
+  @override
+  String get confirmDeletePromotion =>
+      'Are you sure you want to delete this promotion?';
+
+  @override
+  String get startDate => 'Start Date';
+
+  @override
+  String get endDate => 'End Date';
 }

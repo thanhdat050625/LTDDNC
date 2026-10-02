@@ -75,6 +75,13 @@ class StaffDrawer extends StatelessWidget {
                   route: '/showtimes',
                   theme: theme,
                 ),
+                _buildDrawerItem(
+                  context,
+                  icon: LucideIcons.tag,
+                  title: AppLocalizations.of(context)!.managePromotions,
+                  route: '/promotions',
+                  theme: theme,
+                ),
               ],
             ),
           ),

@@ -480,5 +480,19 @@
   "noCinemas": "Chưa có rạp nào.",
   "noRooms": "Chưa có phòng nào.",
   "confirmDeleteCinema": "Bạn có chắc muốn xóa rạp này không?",
-  "confirmDeleteRoom": "Bạn có chắc muốn xóa phòng chiếu này không?"
+  "confirmDeleteRoom": "Bạn có chắc muốn xóa phòng chiếu này không?",
+  "managePromotions": "Quản lý Khuyến mãi",
+  "addPromotion": "Thêm Khuyến mãi",
+  "editPromotion": "Sửa Khuyến mãi",
+  "promoCode": "Mã khuyến mãi",
+  "promoDescription": "Mô tả",
+  "discountType": "Loại giảm giá",
+  "discountValue": "Mức giảm",
+  "percentage": "Phần trăm (%)",
+  "fixedAmount": "Số tiền cố định",
+  "maxUsage": "Số lần dùng tối đa",
+  "noPromotions": "Chưa có khuyến mãi nào.",
+  "confirmDeletePromotion": "Bạn có chắc chắn muốn xóa mã khuyến mãi này không?",
+  "startDate": "Ngày bắt đầu",
+  "endDate": "Ngày kết thúc"
 }

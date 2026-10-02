@@ -1024,4 +1024,47 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get confirmDeleteRoom => 'Bạn có chắc muốn xóa phòng chiếu này không?';
+
+  @override
+  String get managePromotions => 'Quản lý Khuyến mãi';
+
+  @override
+  String get addPromotion => 'Thêm Khuyến mãi';
+
+  @override
+  String get editPromotion => 'Sửa Khuyến mãi';
+
+  @override
+  String get promoCode => 'Mã khuyến mãi';
+
+  @override
+  String get promoDescription => 'Mô tả';
+
+  @override
+  String get discountType => 'Loại giảm giá';
+
+  @override
+  String get discountValue => 'Mức giảm';
+
+  @override
+  String get percentage => 'Phần trăm (%)';
+
+  @override
+  String get fixedAmount => 'Số tiền cố định';
+
+  @override
+  String get maxUsage => 'Số lần dùng tối đa';
+
+  @override
+  String get noPromotions => 'Chưa có khuyến mãi nào.';
+
+  @override
+  String get confirmDeletePromotion =>
+      'Bạn có chắc chắn muốn xóa mã khuyến mãi này không?';
+
+  @override
+  String get startDate => 'Ngày bắt đầu';
+
+  @override
+  String get endDate => 'Ngày kết thúc';
 }
