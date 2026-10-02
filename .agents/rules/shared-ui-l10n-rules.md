@@ -25,12 +25,14 @@ Mọi UI được tạo mới hoặc chỉnh sửa MUST hỗ trợ đúng cả h
 
 ## 2. LANGUAGE / LOCALIZATION (L10N)
 
-Toàn bộ text hiển thị cho người dùng (user-facing text) MUST sử dụng hệ thống L10n/localization của project.
+Toàn bộ project (cả 3 app: Client, Staff, Admin) chỉ sử dụng duy nhất **1 ngôn ngữ chuẩn: Tiếng Việt (`vi`)**, không dùng đa ngôn ngữ (`en`, v.v.).
 
-- **MUST NOT** hardcode UI text. Không được viết trực tiếp string vào code như `Text("Đăng nhập")` hoặc `Text("Login")`.
-- **MUST** sử dụng cơ chế L10n hiện có của project cho mọi user-facing text (bao gồm: Text widget/component, Button label, AppBar title, Dialog, Snackbar/Toast, Error message, Validation message, Empty state, Loading state, Tooltip, Placeholder, Form label, Confirmation message, Permission message, Notification text, Accessibility/semantic label, và bất kỳ text nào sinh ra trong các state khác nhau).
-- **Phân biệt String**: User-facing text MUST được L10n. Internal technical string, log, debug string không hiển thị cho user thì không bắt buộc L10n.
-- **MUST** tìm kiếm và sử dụng localization key hiện có trước khi tạo key mới (để tránh tạo duplicate localization key).
-- **MUST** bổ sung đầy đủ text mới vào hệ thống L10n theo convention hiện tại của project khi cần text mới.
-- **MUST** đảm bảo text mới có đầy đủ translation theo các locale mà project đang hỗ trợ.
-- **Khi code review / PR review**: Agent MUST kiểm tra và phát hiện các hardcoded user-facing strings. Nếu phát hiện hardcoded user-facing text, Agent MUST coi đó là lỗi cần fix.
+Toàn bộ text hiển thị cho người dùng (user-facing text) MUST được quản lý tập trung qua file L10n của project (`app_vi.arb`).
+
+- **MUST NOT** hardcode UI text. Không được viết trực tiếp string vào code như `Text("Đăng nhập")`.
+- **MUST** sử dụng cơ chế `AppLocalizations` hiện có của project (`mobile/mobile_shared/lib/l10n/app_vi.arb`) cho mọi user-facing text (bao gồm: Text widget/component, Button label, AppBar title, Dialog, Snackbar/Toast, Error message, Validation message, Empty state, Loading state, Tooltip, Placeholder, Form label, Confirmation message, Permission message, Notification text, Accessibility/semantic label, và bất kỳ text nào sinh ra trong các state khác nhau).
+- **Phân biệt String**: User-facing text MUST được khai báo trong `app_vi.arb`. Internal technical string, log, debug string không hiển thị cho user thì không bắt buộc.
+- **MUST** tìm kiếm và sử dụng localization key hiện có trong `app_vi.arb` trước khi tạo key mới (để tránh tạo duplicate localization key).
+- **MUST** chỉ bổ sung text mới vào duy nhất file `mobile/mobile_shared/lib/l10n/app_vi.arb` bằng Tiếng Việt khi cần text mới, sau đó chạy `flutter gen-l10n` trong `mobile_shared`.
+- **MUST NOT** tạo thêm file ngôn ngữ khác (như `app_en.arb`), không hỗ trợ đa ngôn ngữ hay tính năng chuyển đổi ngôn ngữ.
+- **Khi code review / PR review**: Agent MUST kiểm tra và phát hiện các hardcoded user-facing strings hoặc việc thêm file đa ngôn ngữ không cần thiết. Nếu phát hiện hardcoded user-facing text, Agent MUST coi đó là lỗi cần fix.

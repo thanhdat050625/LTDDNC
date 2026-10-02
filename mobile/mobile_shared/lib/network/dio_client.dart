@@ -31,13 +31,6 @@ class DioClient {
         }
         return handler.next(e);
       },
-      onResponse: (response, handler) {
-        final d = response.data;
-        if (d is Map && d.containsKey('data') && d.containsKey('success')) {
-          response.data = d['data'];
-        }
-        return handler.next(response);
-      },
     ));
   }
 

@@ -20,8 +20,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return AppScaffold(
-      title: 'Notifications',
+      title: l10n.notifications,
+      bottomSafeArea: false,
       actions: [
         IconButton(
           icon: const Icon(Icons.done_all),
@@ -32,10 +34,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
         builder: (context, state) {
           if (state is NotificationLoading) return const AppLoading();
           if (state is NotificationLoaded) {
-            if (state.notifications.isEmpty) return const Center(child: Text('No notifications'));
+            if (state.notifications.isEmpty) return Center(child: Text(l10n.noNotifications));
             return RefreshIndicator(
               onRefresh: () => context.read<NotificationCubit>().loadNotifications(),
               child: ListView.builder(
+                padding: EdgeInsets.fromLTRB(0, 0, 0, MediaQuery.of(context).padding.bottom + 16),
                 itemCount: state.notifications.length,
                 itemBuilder: (context, index) {
                   return NotificationItem(notification: state.notifications[index]);

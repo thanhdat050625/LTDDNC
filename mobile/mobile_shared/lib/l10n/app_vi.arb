@@ -505,5 +505,98 @@
   "totalProducts": "Tổng sản phẩm",
   "noConcessions": "Chưa có sản phẩm nào.",
   "confirmDeleteProduct": "Bạn có chắc muốn xóa sản phẩm này không?",
-  "priceLabel": "Giá"
+  "priceLabel": "Giá",
+  "productImage": "Ảnh sản phẩm",
+  "selectImage": "Chọn ảnh",
+  "changeImage": "Đổi ảnh",
+  "removeImage": "Xóa ảnh",
+  "takePhoto": "Chụp ảnh",
+  "chooseFromGallery": "Chọn từ thư viện",
+  "imageUrlOptional": "Hoặc dán URL ảnh",
+  "enterImageUrl": "Nhập đường dẫn ảnh (URL)",
+  "searchConcessionPlaceholder": "Tìm kiếm bắp nước...",
+  "inStockCount": "Còn {count}",
+  "@inStockCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lowStockCount": "Sắp hết: {count}",
+  "@lowStockCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "manageMovies": "Quản lý Phim",
+  "ticketSaleAtCounter": "Bán vé tại quầy",
+  "staffRole": "Nhân viên",
+  "adminRole": "Quản trị viên",
+  "filterAll": "Tất cả",
+  "imageUploadError": "Không thể tải ảnh lên",
+  "noResultsFound": "Không tìm thấy kết quả",
+  "invalidAmount": "Giá trị không hợp lệ",
+  "customerRole": "Khách hàng",
+  "tabAll": "Tất cả",
+  "tabCustomers": "Khách hàng",
+  "tabStaff": "Nhân viên",
+  "statusAll": "Tất cả",
+  "statusActive": "Hoạt động",
+  "statusBlocked": "Đã khóa",
+  "totalCustomersCount": "Khách hàng: {count}",
+  "@totalCustomersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "totalStaffCount": "Nhân viên: {count}",
+  "@totalStaffCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addStaff": "Thêm nhân viên",
+  "createStaffTitle": "Tạo tài khoản nhân viên",
+  "createStaffSubtitle": "Cấp tài khoản truy cập hệ thống cho nhân viên rạp",
+  "staffCreatedSuccess": "Tạo tài khoản nhân viên thành công",
+  "fullNameLabel": "Họ và tên",
+  "emailLabel": "Email",
+  "phoneLabel": "Số điện thoại",
+  "passwordLabel": "Mật khẩu",
+  "confirmPasswordLabel": "Xác nhận mật khẩu",
+  "saveStaffButton": "Tạo nhân viên",
+  "accountDetailsTitle": "Chi tiết tài khoản",
+  "joinedDateLabel": "Ngày tham gia",
+  "loyaltyPointsTitle": "Điểm tích lũy",
+  "cannotBlockSelf": "Bạn không thể khóa tài khoản của chính mình",
+  "pageIndicator": "Trang {current} / {total}",
+  "@pageIndicator": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "nextPage": "Trang sau",
+  "prevPage": "Trang trước",
+  "passwordMinLength": "Mật khẩu phải có ít nhất 6 ký tự",
+  "confirmPasswordMismatch": "Mật khẩu xác nhận không khớp",
+  "notProvided": "Chưa cập nhật",
+  "genderLabel": "Giới tính",
+  "dobLabel": "Ngày sinh",
+  "accountInfo": "Thông tin tài khoản",
+  "resetFilters": "Đặt lại bộ lọc",
+  "totalAccounts": "Tổng tài khoản",
+  "fieldRequired": "Vui lòng nhập trường này",
+  "errorOccurred": "Có lỗi xảy ra. Vui lòng thử lại."
 }

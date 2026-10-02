@@ -15,6 +15,9 @@ export class ConcessionProduct {
   @Column({ default: 0 })
   stockQuantity: number;
 
+  @Column({ nullable: true })
+  imageUrl?: string;
+
   @OneToMany(() => BookingConcession, (bookingConcession) => bookingConcession.product)
   bookingConcessions: BookingConcession[];
 }

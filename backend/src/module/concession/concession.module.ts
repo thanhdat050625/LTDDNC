@@ -4,11 +4,13 @@ import { ConcessionProduct } from './entities/concession-product.entity';
 import { ConcessionService } from './concession.service';
 import { ConcessionController } from './concession.controller';
 import { AuthModule } from '../auth/auth.module';
+import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([ConcessionProduct]),
     AuthModule,
+    CloudinaryModule,
   ],
   controllers: [ConcessionController],
   providers: [ConcessionService],

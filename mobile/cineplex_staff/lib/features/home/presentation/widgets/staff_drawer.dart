@@ -10,26 +10,112 @@ class StaffDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).extension<CineplexColors>()!;
+    final l10n = AppLocalizations.of(context)!;
     final user = context.select((AuthBloc bloc) {
       final state = bloc.state;
       return state is AuthAuthenticated ? state.user : null;
     });
 
+    final firstLetter = (user?.fullName != null && user!.fullName.trim().isNotEmpty)
+        ? user.fullName.trim()[0].toUpperCase()
+        : 'S';
+
     return Drawer(
       backgroundColor: theme.surface,
       child: Column(
         children: [
-          // Drawer Header
-          UserAccountsDrawerHeader(
-            decoration: BoxDecoration(color: theme.primary),
-            accountName: Text(user?.fullName ?? 'Nhân viên'),
-            accountEmail: Text(user?.email ?? ''),
-            currentAccountPicture: CircleAvatar(
-              backgroundColor: theme.accent,
-              child: const Icon(
-                LucideIcons.user,
-                color: Colors.white,
-                size: 30,
+          // Sleek, Compact Horizontal Header
+          SafeArea(
+            bottom: false,
+            child: Container(
+              padding: EdgeInsets.fromLTRB(theme.spacingMd, theme.spacingMd, theme.spacingMd, theme.spacingSm),
+              decoration: BoxDecoration(
+                color: theme.surface,
+                border: Border(
+                  bottom: BorderSide(
+                    color: theme.textSecondary.withValues(alpha: 0.1),
+                    width: 1,
+                  ),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [theme.primary, theme.accent],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      shape: BoxShape.circle,
+                    ),
+                    padding: const EdgeInsets.all(2),
+                    child: CircleAvatar(
+                      backgroundColor: theme.surface,
+                      child: Text(
+                        firstLetter,
+                        style: TextStyle(
+                          color: theme.accent,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: theme.spacingMd),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                user?.fullName ?? l10n.staffRole,
+                                style: TextStyle(
+                                  color: theme.textPrimary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: theme.primary.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                'STAFF',
+                                style: TextStyle(
+                                  color: theme.primary,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          user?.email ?? '',
+                          style: TextStyle(
+                            color: theme.textSecondary,
+                            fontSize: 12,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -37,19 +123,19 @@ class StaffDrawer extends StatelessWidget {
           // Drawer Items
           Expanded(
             child: ListView(
-              padding: EdgeInsets.zero,
+              padding: EdgeInsets.symmetric(vertical: theme.spacingSm),
               children: [
                 _buildDrawerItem(
                   context,
                   icon: LucideIcons.scanLine,
-                  title: 'Quét vé',
+                  title: l10n.scanTicket,
                   route: '/scanner',
                   theme: theme,
                 ),
                 _buildDrawerItem(
                   context,
                   icon: LucideIcons.ticket,
-                  title: 'Bán vé tại quầy',
+                  title: l10n.ticketSaleAtCounter,
                   route: '/ticket-sale',
                   theme: theme,
                 ),
@@ -57,35 +143,35 @@ class StaffDrawer extends StatelessWidget {
                 _buildDrawerItem(
                   context,
                   icon: LucideIcons.film,
-                  title: 'Quản lý Phim',
+                  title: l10n.manageMovies,
                   route: '/movies',
                   theme: theme,
                 ),
                 _buildDrawerItem(
                   context,
                   icon: LucideIcons.mapPin,
-                  title: AppLocalizations.of(context)!.manageCinemas,
+                  title: l10n.manageCinemas,
                   route: '/cinemas',
                   theme: theme,
                 ),
                 _buildDrawerItem(
                   context,
                   icon: LucideIcons.calendarDays,
-                  title: 'Quản lý Suất chiếu',
+                  title: l10n.manageShowtimes,
                   route: '/showtimes',
                   theme: theme,
                 ),
                 _buildDrawerItem(
                   context,
                   icon: LucideIcons.tag,
-                  title: AppLocalizations.of(context)!.managePromotions,
+                  title: l10n.managePromotions,
                   route: '/promotions',
                   theme: theme,
                 ),
                 _buildDrawerItem(
                   context,
                   icon: LucideIcons.coffee,
-                  title: AppLocalizations.of(context)!.manageConcessions,
+                  title: l10n.manageConcessions,
                   route: '/concessions',
                   theme: theme,
                 ),
@@ -97,7 +183,7 @@ class StaffDrawer extends StatelessWidget {
           Divider(color: theme.textSecondary.withValues(alpha: 0.1)),
           ListTile(
             leading: Icon(LucideIcons.logOut, color: theme.error),
-            title: Text('Đăng xuất', style: TextStyle(color: theme.error)),
+            title: Text(l10n.logout, style: TextStyle(color: theme.error)),
             onTap: () {
               context.pop(); // Close drawer
               context.read<AuthBloc>().add(LogoutRequested());

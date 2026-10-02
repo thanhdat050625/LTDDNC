@@ -110,7 +110,7 @@ class _AppState extends State<App> {
           darkTheme: AppTheme.darkTheme,
           themeMode: ThemeMode.dark,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
+          supportedLocales: const [Locale('vi')],
           locale: const Locale('vi'),
           debugShowCheckedModeBanner: false,
         ),

@@ -19,12 +19,12 @@ class NotificationModel extends Equatable {
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
     return NotificationModel(
-      id: json['id'] ?? '',
-      subject: json['subject'] ?? '',
-      content: json['content'] ?? '',
-      type: json['type'] ?? 'SYSTEM',
-      isRead: json['isRead'] ?? false,
-      createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
+      id: json['id']?.toString() ?? '',
+      subject: json['subject']?.toString() ?? '',
+      content: json['content']?.toString() ?? '',
+      type: json['type']?.toString() ?? 'SYSTEM',
+      isRead: json['isRead'] == true,
+      createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? '') ?? DateTime.now(),
     );
   }
 

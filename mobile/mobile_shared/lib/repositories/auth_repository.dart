@@ -14,7 +14,7 @@ class AuthRepository {
       'password': password,
       'rememberMe': rememberMe,
     });
-    final data = response.data;
+    final data = (response.data is Map && response.data.containsKey('data')) ? response.data['data'] : response.data;
     final token = data['accessToken'] as String;
     await _storage.saveToken(token);
     final user = UserModel.fromJson(data['user'] as Map<String, dynamic>);
@@ -33,7 +33,7 @@ class AuthRepository {
       'password': password,
       'confirmPassword': confirmPassword,
     });
-    final data = response.data;
+    final data = (response.data is Map && response.data.containsKey('data')) ? response.data['data'] : response.data;
     final token = data['accessToken'] as String;
     await _storage.saveToken(token);
     final user = UserModel.fromJson(data['user'] as Map<String, dynamic>);
@@ -70,7 +70,8 @@ class AuthRepository {
     if (token == null) return null;
     try {
       final response = await _dio.get('/users/profile');
-      return UserModel.fromJson(response.data as Map<String, dynamic>);
+      final data = (response.data is Map && response.data.containsKey('data')) ? response.data['data'] : response.data;
+      return UserModel.fromJson(data as Map<String, dynamic>);
     } catch (_) {
       await _storage.clearAll();
       return null;

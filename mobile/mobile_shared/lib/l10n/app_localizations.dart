@@ -5,7 +5,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
-import 'app_localizations_en.dart';
 import 'app_localizations_vi.dart';
 
 // ignore_for_file: type=lint
@@ -93,10 +92,7 @@ abstract class AppLocalizations {
       ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[
-    Locale('en'),
-    Locale('vi'),
-  ];
+  static const List<Locale> supportedLocales = <Locale>[Locale('vi')];
 
   /// No description provided for @appTitle.
   ///
@@ -2179,6 +2175,330 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Giá'**
   String get priceLabel;
+
+  /// No description provided for @productImage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ảnh sản phẩm'**
+  String get productImage;
+
+  /// No description provided for @selectImage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn ảnh'**
+  String get selectImage;
+
+  /// No description provided for @changeImage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đổi ảnh'**
+  String get changeImage;
+
+  /// No description provided for @removeImage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xóa ảnh'**
+  String get removeImage;
+
+  /// No description provided for @takePhoto.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chụp ảnh'**
+  String get takePhoto;
+
+  /// No description provided for @chooseFromGallery.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn từ thư viện'**
+  String get chooseFromGallery;
+
+  /// No description provided for @imageUrlOptional.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hoặc dán URL ảnh'**
+  String get imageUrlOptional;
+
+  /// No description provided for @enterImageUrl.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhập đường dẫn ảnh (URL)'**
+  String get enterImageUrl;
+
+  /// No description provided for @searchConcessionPlaceholder.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tìm kiếm bắp nước...'**
+  String get searchConcessionPlaceholder;
+
+  /// No description provided for @inStockCount.
+  ///
+  /// In vi, this message translates to:
+  /// **'Còn {count}'**
+  String inStockCount(int count);
+
+  /// No description provided for @lowStockCount.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sắp hết: {count}'**
+  String lowStockCount(int count);
+
+  /// No description provided for @manageMovies.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quản lý Phim'**
+  String get manageMovies;
+
+  /// No description provided for @ticketSaleAtCounter.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bán vé tại quầy'**
+  String get ticketSaleAtCounter;
+
+  /// No description provided for @staffRole.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhân viên'**
+  String get staffRole;
+
+  /// No description provided for @adminRole.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quản trị viên'**
+  String get adminRole;
+
+  /// No description provided for @filterAll.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tất cả'**
+  String get filterAll;
+
+  /// No description provided for @imageUploadError.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể tải ảnh lên'**
+  String get imageUploadError;
+
+  /// No description provided for @noResultsFound.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không tìm thấy kết quả'**
+  String get noResultsFound;
+
+  /// No description provided for @invalidAmount.
+  ///
+  /// In vi, this message translates to:
+  /// **'Giá trị không hợp lệ'**
+  String get invalidAmount;
+
+  /// No description provided for @customerRole.
+  ///
+  /// In vi, this message translates to:
+  /// **'Khách hàng'**
+  String get customerRole;
+
+  /// No description provided for @tabAll.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tất cả'**
+  String get tabAll;
+
+  /// No description provided for @tabCustomers.
+  ///
+  /// In vi, this message translates to:
+  /// **'Khách hàng'**
+  String get tabCustomers;
+
+  /// No description provided for @tabStaff.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhân viên'**
+  String get tabStaff;
+
+  /// No description provided for @statusAll.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tất cả'**
+  String get statusAll;
+
+  /// No description provided for @statusActive.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hoạt động'**
+  String get statusActive;
+
+  /// No description provided for @statusBlocked.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã khóa'**
+  String get statusBlocked;
+
+  /// No description provided for @totalCustomersCount.
+  ///
+  /// In vi, this message translates to:
+  /// **'Khách hàng: {count}'**
+  String totalCustomersCount(int count);
+
+  /// No description provided for @totalStaffCount.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhân viên: {count}'**
+  String totalStaffCount(int count);
+
+  /// No description provided for @addStaff.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thêm nhân viên'**
+  String get addStaff;
+
+  /// No description provided for @createStaffTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tạo tài khoản nhân viên'**
+  String get createStaffTitle;
+
+  /// No description provided for @createStaffSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cấp tài khoản truy cập hệ thống cho nhân viên rạp'**
+  String get createStaffSubtitle;
+
+  /// No description provided for @staffCreatedSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tạo tài khoản nhân viên thành công'**
+  String get staffCreatedSuccess;
+
+  /// No description provided for @fullNameLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Họ và tên'**
+  String get fullNameLabel;
+
+  /// No description provided for @emailLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Email'**
+  String get emailLabel;
+
+  /// No description provided for @phoneLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Số điện thoại'**
+  String get phoneLabel;
+
+  /// No description provided for @passwordLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mật khẩu'**
+  String get passwordLabel;
+
+  /// No description provided for @confirmPasswordLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xác nhận mật khẩu'**
+  String get confirmPasswordLabel;
+
+  /// No description provided for @saveStaffButton.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tạo nhân viên'**
+  String get saveStaffButton;
+
+  /// No description provided for @accountDetailsTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chi tiết tài khoản'**
+  String get accountDetailsTitle;
+
+  /// No description provided for @joinedDateLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ngày tham gia'**
+  String get joinedDateLabel;
+
+  /// No description provided for @loyaltyPointsTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Điểm tích lũy'**
+  String get loyaltyPointsTitle;
+
+  /// No description provided for @cannotBlockSelf.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn không thể khóa tài khoản của chính mình'**
+  String get cannotBlockSelf;
+
+  /// No description provided for @pageIndicator.
+  ///
+  /// In vi, this message translates to:
+  /// **'Trang {current} / {total}'**
+  String pageIndicator(int current, int total);
+
+  /// No description provided for @nextPage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Trang sau'**
+  String get nextPage;
+
+  /// No description provided for @prevPage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Trang trước'**
+  String get prevPage;
+
+  /// No description provided for @confirmPasswordMismatch.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mật khẩu xác nhận không khớp'**
+  String get confirmPasswordMismatch;
+
+  /// No description provided for @notProvided.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa cập nhật'**
+  String get notProvided;
+
+  /// No description provided for @genderLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Giới tính'**
+  String get genderLabel;
+
+  /// No description provided for @dobLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ngày sinh'**
+  String get dobLabel;
+
+  /// No description provided for @accountInfo.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thông tin tài khoản'**
+  String get accountInfo;
+
+  /// No description provided for @resetFilters.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đặt lại bộ lọc'**
+  String get resetFilters;
+
+  /// No description provided for @totalAccounts.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tổng tài khoản'**
+  String get totalAccounts;
+
+  /// No description provided for @fieldRequired.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vui lòng nhập trường này'**
+  String get fieldRequired;
+
+  /// No description provided for @errorOccurred.
+  ///
+  /// In vi, this message translates to:
+  /// **'Có lỗi xảy ra. Vui lòng thử lại.'**
+  String get errorOccurred;
 }
 
 class _AppLocalizationsDelegate
@@ -2192,7 +2512,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['en', 'vi'].contains(locale.languageCode);
+      <String>['vi'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -2201,8 +2521,6 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'en':
-      return AppLocalizationsEn();
     case 'vi':
       return AppLocalizationsVi();
   }

@@ -1,7 +1,10 @@
 import {
   Controller, Get, Post, Put, Delete, Body, Param,
   ParseIntPipe, Query, UseGuards, HttpCode, HttpStatus,
+  UploadedFile, UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import multer from 'multer';
 import { ConcessionService } from './concession.service';
 import { CreateConcessionProductDto, UpdateConcessionProductDto } from './dto/concession.dto';
 import { JwtAuthGuard } from '../../core/security/jwt/jwt-auth.guard';
@@ -16,9 +19,18 @@ export class ConcessionController {
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(EUserRole.ADMIN, EUserRole.STAFF)
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: multer.memoryStorage(),
+      limits: { fileSize: 5 * 1024 * 1024 },
+    }),
+  )
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() dto: CreateConcessionProductDto) {
-    return this.concessionService.create(dto);
+  async create(
+    @Body() dto: CreateConcessionProductDto,
+    @UploadedFile() image?: Express.Multer.File,
+  ) {
+    return this.concessionService.create(dto, image);
   }
 
   @Get()
@@ -39,12 +51,19 @@ export class ConcessionController {
   @Put(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(EUserRole.ADMIN, EUserRole.STAFF)
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: multer.memoryStorage(),
+      limits: { fileSize: 5 * 1024 * 1024 },
+    }),
+  )
   @HttpCode(HttpStatus.OK)
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateConcessionProductDto,
+    @UploadedFile() image?: Express.Multer.File,
   ) {
-    return this.concessionService.update(id, dto);
+    return this.concessionService.update(id, dto, image);
   }
 
   @Delete(':id')

@@ -23,7 +23,7 @@ class ConcessionItemCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 5,
             offset: const Offset(0, 2),
           ),
@@ -35,10 +35,21 @@ class ConcessionItemCard extends StatelessWidget {
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(0.2),
+              color: Colors.grey.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Icon(Icons.fastfood, size: 40, color: Colors.grey),
+            child: (product.imageUrl != null && product.imageUrl!.trim().isNotEmpty)
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: AppCachedImage(
+                      imageUrl: product.imageUrl!,
+                      width: 80,
+                      height: 80,
+                      borderRadius: 8,
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                : const Icon(Icons.fastfood, size: 40, color: Colors.grey),
           ),
           const SizedBox(width: 16),
           Expanded(

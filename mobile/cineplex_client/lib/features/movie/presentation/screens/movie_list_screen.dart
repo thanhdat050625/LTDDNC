@@ -92,7 +92,7 @@ class _MovieListScreenContentState extends State<_MovieListScreenContent> {
                     ? Center(child: Text((state).message))
                     : isLoading && movies.isEmpty
                         ? GridView.builder(
-                            padding: const EdgeInsets.all(16),
+                            padding: EdgeInsets.fromLTRB(16, 16, 16, MediaQuery.of(context).padding.bottom + 16),
                             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
                               childAspectRatio: 0.65,
@@ -104,7 +104,7 @@ class _MovieListScreenContentState extends State<_MovieListScreenContent> {
                           )
                         : GridView.builder(
                             controller: _scrollController,
-                            padding: const EdgeInsets.all(16),
+                            padding: EdgeInsets.fromLTRB(16, 16, 16, MediaQuery.of(context).padding.bottom + 16),
                             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
                               childAspectRatio: 0.65,

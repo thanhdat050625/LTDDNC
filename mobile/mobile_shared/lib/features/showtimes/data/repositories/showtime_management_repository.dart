@@ -16,7 +16,9 @@ class ShowtimeManagementRepository {
     
     final data = response.data;
     List<dynamic> items = [];
-    if (data is Map && data.containsKey('items')) {
+    if (data is Map && data.containsKey('data')) {
+      items = data['data'] is List ? data['data'] : [];
+    } else if (data is Map && data.containsKey('items')) {
       items = data['items'];
     } else if (data is List) {
       items = data;
@@ -29,7 +31,9 @@ class ShowtimeManagementRepository {
     final response = await _dioClient.get('/showtimes/by-movie/$movieId');
     final data = response.data;
     List<dynamic> items = [];
-    if (data is Map && data.containsKey('items')) {
+    if (data is Map && data.containsKey('data')) {
+      items = data['data'] is List ? data['data'] : [];
+    } else if (data is Map && data.containsKey('items')) {
       items = data['items'];
     } else if (data is List) {
       items = data;
@@ -40,22 +44,26 @@ class ShowtimeManagementRepository {
   Future<Map<String, dynamic>> getByCinemaId(int cinemaId) async {
     final response = await _dioClient.get('/showtimes/by-cinema/$cinemaId');
     // Backend returns Map<String, List<Showtime>> where keys are dates YYYY-MM-DD
-    return response.data as Map<String, dynamic>;
+    final data = (response.data is Map && response.data.containsKey('data')) ? response.data['data'] : response.data;
+    return data as Map<String, dynamic>;
   }
 
   Future<ShowtimeModel> createShowtime(Map<String, dynamic> data) async {
     final response = await _dioClient.post('/showtimes', data: data);
-    return ShowtimeModel.fromJson(response.data);
+    final payload = (response.data is Map && response.data.containsKey('data')) ? response.data['data'] : response.data;
+    return ShowtimeModel.fromJson(payload as Map<String, dynamic>);
   }
 
   Future<ShowtimeModel> updateShowtime(int id, Map<String, dynamic> data) async {
     final response = await _dioClient.put('/showtimes/$id', data: data);
-    return ShowtimeModel.fromJson(response.data);
+    final payload = (response.data is Map && response.data.containsKey('data')) ? response.data['data'] : response.data;
+    return ShowtimeModel.fromJson(payload as Map<String, dynamic>);
   }
 
   Future<Map<String, dynamic>> bulkCreateShowtime(Map<String, dynamic> data) async {
     final response = await _dioClient.post('/showtimes/bulk', data: data);
-    return response.data as Map<String, dynamic>;
+    final payload = (response.data is Map && response.data.containsKey('data')) ? response.data['data'] : response.data;
+    return payload as Map<String, dynamic>;
   }
 
   Future<void> deleteShowtime(int id) async {

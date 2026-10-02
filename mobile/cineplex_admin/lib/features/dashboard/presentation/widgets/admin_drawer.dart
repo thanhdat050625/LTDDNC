@@ -10,6 +10,7 @@ class AdminDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).extension<CineplexColors>()!;
+    final l10n = AppLocalizations.of(context)!;
     final user = context.select((AuthBloc bloc) {
       final state = bloc.state;
       return state is AuthAuthenticated ? state.user : null;
@@ -21,15 +22,98 @@ class AdminDrawer extends StatelessWidget {
         bottom: false,
         child: Column(
           children: [
-            // Drawer Header
-            UserAccountsDrawerHeader(
-              margin: EdgeInsets.zero,
-              decoration: BoxDecoration(color: theme.primary),
-              accountName: Text(user?.fullName ?? 'Quản trị viên'),
-              accountEmail: Text(user?.email ?? ''),
-              currentAccountPicture: CircleAvatar(
-                backgroundColor: theme.accent,
-                child: const Icon(LucideIcons.user, color: Colors.white, size: 30),
+            // Compact Horizontal Header
+            Container(
+              padding: EdgeInsets.fromLTRB(theme.spacingMd, theme.spacingMd, theme.spacingMd, theme.spacingSm),
+              decoration: BoxDecoration(
+                color: theme.surface,
+                border: Border(
+                  bottom: BorderSide(
+                    color: theme.textSecondary.withValues(alpha: 0.1),
+                    width: 1,
+                  ),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [theme.primary, theme.accent],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      shape: BoxShape.circle,
+                    ),
+                    padding: const EdgeInsets.all(2),
+                    child: CircleAvatar(
+                      backgroundColor: theme.surface,
+                      child: Text(
+                        (user?.fullName != null && user!.fullName.trim().isNotEmpty)
+                            ? user.fullName.trim()[0].toUpperCase()
+                            : 'A',
+                        style: TextStyle(
+                          color: theme.accent,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: theme.spacingMd),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                user?.fullName ?? AppLocalizations.of(context)!.adminRole,
+                                style: TextStyle(
+                                  color: theme.textPrimary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: theme.primary.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                'ADMIN',
+                                style: TextStyle(
+                                  color: theme.primary,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          user?.email ?? '',
+                          style: TextStyle(
+                            color: theme.textSecondary,
+                            fontSize: 12,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
             
@@ -48,7 +132,7 @@ class AdminDrawer extends StatelessWidget {
                   _buildDrawerItem(
                     context,
                     icon: LucideIcons.users,
-                    title: 'Quản lý Người dùng',
+                    title: l10n.userManagement,
                     route: '/users',
                     theme: theme,
                   ),

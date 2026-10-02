@@ -8,14 +8,24 @@ class NotificationRepository {
 
   Future<List<NotificationModel>> getNotifications({int page = 1}) async {
     final response = await _dioClient.get('/notifications', queryParameters: {'page': page, 'pageSize': 20});
-    final apiResponse = ApiResponse.fromJson(response.data);
-    return (apiResponse.data as List).map((e) => NotificationModel.fromJson(e)).toList();
+    final raw = response.data;
+    final List<dynamic> list = (raw is Map && raw['data'] is List)
+        ? raw['data'] as List<dynamic>
+        : (raw is List ? raw : []);
+    return list.map((e) => NotificationModel.fromJson(e as Map<String, dynamic>)).toList();
   }
 
   Future<int> getUnreadCount() async {
     final response = await _dioClient.get('/notifications/unread-count');
-    final apiResponse = ApiResponse.fromJson(response.data);
-    return apiResponse.data['unreadCount'] ?? 0;
+    final raw = response.data;
+    if (raw is Map<String, dynamic>) {
+      final payload = raw['data'] ?? raw;
+      if (payload is Map<String, dynamic>) return (payload['unreadCount'] as int?) ?? 0;
+      if (payload is int) return payload;
+    } else if (raw is int) {
+      return raw;
+    }
+    return 0;
   }
 
   Future<void> markAsRead(String id) async {

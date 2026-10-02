@@ -1,4 +1,5 @@
-import { Injectable, HttpStatus, Inject } from '@nestjs/common';
+import { Injectable, HttpStatus, Inject, OnModuleInit, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { ApiResponse } from '../../core/dto/ApiResponse.dto';
 import { CustomException } from '../../core/exceptions/custom.exception';
@@ -9,7 +10,7 @@ import { User } from '../users/entities/user.entity';
 import { LoginDto } from './dto/login.dto';
 import { SendOtpDto } from './dto/otp.dto';
 import { RegisterDto } from './dto/register.dto';
-import { EUserRole } from '../users/enums/user.enum';
+import { EUserRole, EUserStatus } from '../users/enums/user.enum';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ChangePasswordDto, ResetPasswordDto } from './dto/password.dto';
 import { OtpPurpose } from './enums/otp.enum';
@@ -17,18 +18,53 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ENotificationType } from '../notification/enums/notification.enum';
+import { ENV_VARS } from '../../constants/env.constants';
 
 const OTP_TTL = 10 * 60 * 1000;
 
 @Injectable()
-export class AuthService {
+export class AuthService implements OnModuleInit {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private jwtService: JwtService,
     @InjectRepository(User) private userRepository: Repository<User>,
     private readonly mailerService: MailerService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly eventEmitter: EventEmitter2,
+    private readonly configService: ConfigService,
   ) { }
+
+  async onModuleInit() {
+    await this.seedAdminAccount();
+  }
+
+  private async seedAdminAccount() {
+    const adminEmail = (this.configService.get<string>(ENV_VARS.ADMIN_MAIL) || process.env.ADMIN_MAIL || 'admin@example.com').trim().toLowerCase();
+    const adminPassword = this.configService.get<string>(ENV_VARS.ADMIN_PASSWORD) || process.env.ADMIN_PASSWORD || '123456';
+
+    try {
+      const existingAdmin = await this.userRepository.findOne({
+        where: { email: adminEmail },
+      });
+
+      if (!existingAdmin) {
+        const hashedPassword = await bcrypt.hash(adminPassword, 10);
+        const adminUser = this.userRepository.create({
+          fullName: 'Administrator',
+          email: adminEmail,
+          password: hashedPassword,
+          role: EUserRole.ADMIN,
+          status: EUserStatus.ACTIVE,
+          tokenVersion: 0,
+        });
+        await this.userRepository.save(adminUser);
+        this.logger.log(`Đã tự động khởi tạo tài khoản Admin mặc định: ${adminEmail}`);
+      }
+    } catch (error) {
+      this.logger.error('Lỗi khi seed tài khoản Admin mặc định:', error);
+    }
+  }
 
   async login(loginDto: LoginDto): Promise<ApiResponse<any>> {
     const { email, password } = loginDto;

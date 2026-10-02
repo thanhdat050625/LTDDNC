@@ -5,17 +5,25 @@ import { ConcessionProduct } from './entities/concession-product.entity';
 import { CreateConcessionProductDto, UpdateConcessionProductDto } from './dto/concession.dto';
 import { ApiResponse } from '../../core/dto/ApiResponse.dto';
 import { CustomException } from '../../core/exceptions/custom.exception';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Injectable()
 export class ConcessionService {
   constructor(
     @InjectRepository(ConcessionProduct)
     private readonly productRepository: Repository<ConcessionProduct>,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
-  async create(dto: CreateConcessionProductDto): Promise<ApiResponse<ConcessionProduct>> {
+  async create(dto: CreateConcessionProductDto, image?: Express.Multer.File): Promise<ApiResponse<ConcessionProduct>> {
+    let imageUrl = dto.imageUrl;
+    if (image) {
+      const uploaded = await this.cloudinaryService.uploadImage(image);
+      imageUrl = uploaded.secure_url;
+    }
     const product = this.productRepository.create({
       ...dto,
+      imageUrl,
       stockQuantity: dto.stockQuantity ?? 0,
     });
     const saved = await this.productRepository.save(product);
@@ -43,12 +51,20 @@ export class ConcessionService {
     return new ApiResponse(true, 'Lấy thông tin sản phẩm thành công', product);
   }
 
-  async update(id: number, dto: UpdateConcessionProductDto): Promise<ApiResponse<ConcessionProduct>> {
+  async update(id: number, dto: UpdateConcessionProductDto, image?: Express.Multer.File): Promise<ApiResponse<ConcessionProduct>> {
     const product = await this.productRepository.findOne({ where: { id } });
     if (!product) {
       throw new CustomException(HttpStatus.NOT_FOUND, 'PRODUCT_NOT_FOUND', 'Không tìm thấy sản phẩm');
     }
-    Object.assign(product, dto);
+    let imageUrl = dto.imageUrl !== undefined ? dto.imageUrl : product.imageUrl;
+    if (image) {
+      const uploaded = await this.cloudinaryService.uploadImage(image);
+      imageUrl = uploaded.secure_url;
+    }
+    Object.assign(product, {
+      ...dto,
+      imageUrl,
+    });
     const updated = await this.productRepository.save(product);
     return new ApiResponse(true, 'Cập nhật sản phẩm thành công', updated);
   }

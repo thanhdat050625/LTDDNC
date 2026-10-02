@@ -1100,4 +1100,177 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get priceLabel => 'Giá';
+
+  @override
+  String get productImage => 'Ảnh sản phẩm';
+
+  @override
+  String get selectImage => 'Chọn ảnh';
+
+  @override
+  String get changeImage => 'Đổi ảnh';
+
+  @override
+  String get removeImage => 'Xóa ảnh';
+
+  @override
+  String get takePhoto => 'Chụp ảnh';
+
+  @override
+  String get chooseFromGallery => 'Chọn từ thư viện';
+
+  @override
+  String get imageUrlOptional => 'Hoặc dán URL ảnh';
+
+  @override
+  String get enterImageUrl => 'Nhập đường dẫn ảnh (URL)';
+
+  @override
+  String get searchConcessionPlaceholder => 'Tìm kiếm bắp nước...';
+
+  @override
+  String inStockCount(int count) {
+    return 'Còn $count';
+  }
+
+  @override
+  String lowStockCount(int count) {
+    return 'Sắp hết: $count';
+  }
+
+  @override
+  String get manageMovies => 'Quản lý Phim';
+
+  @override
+  String get ticketSaleAtCounter => 'Bán vé tại quầy';
+
+  @override
+  String get staffRole => 'Nhân viên';
+
+  @override
+  String get adminRole => 'Quản trị viên';
+
+  @override
+  String get filterAll => 'Tất cả';
+
+  @override
+  String get imageUploadError => 'Không thể tải ảnh lên';
+
+  @override
+  String get noResultsFound => 'Không tìm thấy kết quả';
+
+  @override
+  String get invalidAmount => 'Giá trị không hợp lệ';
+
+  @override
+  String get customerRole => 'Khách hàng';
+
+  @override
+  String get tabAll => 'Tất cả';
+
+  @override
+  String get tabCustomers => 'Khách hàng';
+
+  @override
+  String get tabStaff => 'Nhân viên';
+
+  @override
+  String get statusAll => 'Tất cả';
+
+  @override
+  String get statusActive => 'Hoạt động';
+
+  @override
+  String get statusBlocked => 'Đã khóa';
+
+  @override
+  String totalCustomersCount(int count) {
+    return 'Khách hàng: $count';
+  }
+
+  @override
+  String totalStaffCount(int count) {
+    return 'Nhân viên: $count';
+  }
+
+  @override
+  String get addStaff => 'Thêm nhân viên';
+
+  @override
+  String get createStaffTitle => 'Tạo tài khoản nhân viên';
+
+  @override
+  String get createStaffSubtitle =>
+      'Cấp tài khoản truy cập hệ thống cho nhân viên rạp';
+
+  @override
+  String get staffCreatedSuccess => 'Tạo tài khoản nhân viên thành công';
+
+  @override
+  String get fullNameLabel => 'Họ và tên';
+
+  @override
+  String get emailLabel => 'Email';
+
+  @override
+  String get phoneLabel => 'Số điện thoại';
+
+  @override
+  String get passwordLabel => 'Mật khẩu';
+
+  @override
+  String get confirmPasswordLabel => 'Xác nhận mật khẩu';
+
+  @override
+  String get saveStaffButton => 'Tạo nhân viên';
+
+  @override
+  String get accountDetailsTitle => 'Chi tiết tài khoản';
+
+  @override
+  String get joinedDateLabel => 'Ngày tham gia';
+
+  @override
+  String get loyaltyPointsTitle => 'Điểm tích lũy';
+
+  @override
+  String get cannotBlockSelf => 'Bạn không thể khóa tài khoản của chính mình';
+
+  @override
+  String pageIndicator(int current, int total) {
+    return 'Trang $current / $total';
+  }
+
+  @override
+  String get nextPage => 'Trang sau';
+
+  @override
+  String get prevPage => 'Trang trước';
+
+  @override
+  String get confirmPasswordMismatch => 'Mật khẩu xác nhận không khớp';
+
+  @override
+  String get notProvided => 'Chưa cập nhật';
+
+  @override
+  String get genderLabel => 'Giới tính';
+
+  @override
+  String get dobLabel => 'Ngày sinh';
+
+  @override
+  String get accountInfo => 'Thông tin tài khoản';
+
+  @override
+  String get resetFilters => 'Đặt lại bộ lọc';
+
+  @override
+  String get totalAccounts => 'Tổng tài khoản';
+
+  @override
+  String get fieldRequired => 'Vui lòng nhập trường này';
+
+  @override
+  String get errorOccurred => 'Có lỗi xảy ra. Vui lòng thử lại.';
 }
