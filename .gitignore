@@ -13,6 +13,7 @@ logs/
 .env.prod
 .env.*
 !.env.example
+!.env.prod.example
 
 # OS files
 .DS_Store
@@ -27,3 +28,9 @@ Thumbs.db
 # Testing & Coverage
 coverage/
 .nyc_output/
+
+# Keystore & Android signing properties
+*.jks
+*.keystore
+key.properties
+
