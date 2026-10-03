@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 import '../features/auth/presentation/screens/admin_login_screen.dart';
-import '../features/dashboard/presentation/screens/admin_dashboard_screen.dart';
 import '../features/users/presentation/screens/user_management_screen.dart';
 import '../features/statistics/presentation/screens/statistics_screen.dart';
 import '../features/dashboard/presentation/widgets/admin_drawer.dart';
@@ -14,7 +13,7 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>();
 GoRouter createAdminRouter(AuthBloc authBloc) {
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: '/dashboard',
+    initialLocation: '/statistics',
     refreshListenable: _AdminAuthRefreshNotifier(authBloc),
     redirect: (context, state) {
       final authState = authBloc.state;
@@ -28,7 +27,7 @@ GoRouter createAdminRouter(AuthBloc authBloc) {
       if (isAuth && isOnLogin) {
         final role = authState.user.role.toUpperCase();
         if (role == 'ADMIN') {
-          return '/dashboard';
+          return '/statistics';
         }
       }
 
@@ -41,7 +40,7 @@ GoRouter createAdminRouter(AuthBloc authBloc) {
       ),
       GoRoute(
         path: '/dashboard',
-        builder: (context, state) => const AdminDashboardScreen(drawer: AdminDrawer()),
+        redirect: (_, __) => '/statistics',
       ),
       GoRoute(
         path: '/users',

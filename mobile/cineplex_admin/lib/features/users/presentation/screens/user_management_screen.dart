@@ -56,6 +56,9 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: theme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        titlePadding: const EdgeInsets.fromLTRB(16, 14, 16, 6),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        actionsPadding: const EdgeInsets.fromLTRB(12, 4, 12, 10),
         title: Text(
           isBlocked ? l10n.unblockUser : l10n.blockUser,
           style: TextStyle(color: theme.textPrimary, fontWeight: FontWeight.bold),

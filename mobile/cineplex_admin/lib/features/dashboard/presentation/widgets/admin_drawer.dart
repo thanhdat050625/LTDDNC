@@ -124,9 +124,9 @@ class AdminDrawer extends StatelessWidget {
                 children: [
                   _buildDrawerItem(
                     context,
-                    icon: LucideIcons.layoutDashboard,
-                    title: 'Dashboard',
-                    route: '/dashboard',
+                    icon: LucideIcons.barChart3,
+                    title: l10n.revenueStatistics,
+                    route: '/statistics',
                     theme: theme,
                   ),
                   _buildDrawerItem(
@@ -139,51 +139,36 @@ class AdminDrawer extends StatelessWidget {
                   _buildDrawerItem(
                     context,
                     icon: LucideIcons.film,
-                    title: 'Quản lý Phim',
+                    title: l10n.manageMovies,
                     route: '/movies',
                     theme: theme,
                   ),
                   _buildDrawerItem(
                     context,
                     icon: LucideIcons.mapPin,
-                    title: AppLocalizations.of(context)!.manageCinemas,
+                    title: l10n.manageCinemas,
                     route: '/cinemas',
                     theme: theme,
                   ),
                   _buildDrawerItem(
                     context,
                     icon: LucideIcons.calendarDays,
-                    title: 'Quản lý Suất chiếu',
+                    title: l10n.manageShowtimes,
                     route: '/showtimes',
                     theme: theme,
                   ),
                   _buildDrawerItem(
                     context,
                     icon: LucideIcons.tag,
-                    title: AppLocalizations.of(context)!.managePromotions,
+                    title: l10n.managePromotions,
                     route: '/promotions',
                     theme: theme,
                   ),
                   _buildDrawerItem(
                     context,
                     icon: LucideIcons.coffee,
-                    title: AppLocalizations.of(context)!.manageConcessions,
+                    title: l10n.manageConcessions,
                     route: '/concessions',
-                    theme: theme,
-                  ),
-                  _buildDrawerItem(
-                    context,
-                    icon: LucideIcons.barChart3,
-                    title: 'Thống kê Doanh thu',
-                    route: '/statistics',
-                    theme: theme,
-                  ),
-                  Divider(color: theme.textSecondary.withValues(alpha: 0.1)),
-                  _buildDrawerItem(
-                    context,
-                    icon: LucideIcons.ticket,
-                    title: 'Bán vé tại quầy',
-                    route: '/ticket-sale',
                     theme: theme,
                   ),
                 ],
@@ -194,7 +179,7 @@ class AdminDrawer extends StatelessWidget {
             Divider(color: theme.textSecondary.withValues(alpha: 0.1)),
             ListTile(
               leading: Icon(LucideIcons.logOut, color: theme.error),
-              title: Text('Đăng xuất', style: TextStyle(color: theme.error)),
+              title: Text(l10n.logout, style: TextStyle(color: theme.error)),
               onTap: () {
                 context.pop(); // Close drawer
                 context.read<AuthBloc>().add(LogoutRequested());
@@ -234,7 +219,7 @@ class AdminDrawer extends StatelessWidget {
       onTap: () {
         context.pop(); // Close drawer
         if (!isSelected) {
-          context.push(route);
+          context.go(route);
         }
       },
     );

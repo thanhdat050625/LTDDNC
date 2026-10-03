@@ -30,6 +30,9 @@ class UserDetailBottomSheet extends StatelessWidget {
       builder: (ctx) => AlertDialog(
         backgroundColor: theme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        titlePadding: const EdgeInsets.fromLTRB(16, 14, 16, 6),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        actionsPadding: const EdgeInsets.fromLTRB(12, 4, 12, 10),
         title: Text(
           isBlocked ? l10n.unblockUser : l10n.blockUser,
           style: TextStyle(color: theme.textPrimary, fontWeight: FontWeight.bold),
@@ -104,10 +107,10 @@ class UserDetailBottomSheet extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
       decoration: BoxDecoration(
         color: theme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         border: Border(
           top: BorderSide(
             color: theme.textSecondary.withValues(alpha: 0.15),
@@ -120,9 +123,9 @@ class UserDetailBottomSheet extends StatelessWidget {
         children: [
           // Drag handle
           Container(
-            width: 40,
+            width: 36,
             height: 4,
-            margin: const EdgeInsets.only(bottom: 16),
+            margin: const EdgeInsets.only(bottom: 8),
             decoration: BoxDecoration(
               color: theme.textSecondary.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(2),
@@ -136,7 +139,7 @@ class UserDetailBottomSheet extends StatelessWidget {
               Text(
                 l10n.accountDetailsTitle,
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: theme.textPrimary,
                 ),
@@ -144,17 +147,19 @@ class UserDetailBottomSheet extends StatelessWidget {
               IconButton(
                 onPressed: () => Navigator.of(context).pop(),
                 icon: Icon(LucideIcons.x, color: theme.textSecondary, size: 20),
+                constraints: const BoxConstraints(),
+                padding: EdgeInsets.zero,
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
 
           // Avatar & Basic Info Card
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: theme.surface,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: theme.textSecondary.withValues(alpha: 0.12),
               ),
@@ -162,24 +167,24 @@ class UserDetailBottomSheet extends StatelessWidget {
             child: Row(
               children: [
                 Container(
-                  width: 56,
-                  height: 56,
+                  width: 44,
+                  height: 44,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: roleColor, width: 2.5),
+                    border: Border.all(color: roleColor, width: 2),
                     color: roleColor.withValues(alpha: 0.15),
                   ),
                   alignment: Alignment.center,
                   child: Text(
                     firstLetter,
                     style: TextStyle(
-                      fontSize: 22,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: roleColor,
                     ),
                   ),
                 ),
-                const SizedBox(width: 14),
+                const SizedBox(width: 10),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -187,38 +192,38 @@ class UserDetailBottomSheet extends StatelessWidget {
                       Text(
                         name,
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: theme.textPrimary,
                         ),
                       ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: 1),
                       Text(
                         user.email,
                         style: TextStyle(
-                          fontSize: 13,
+                          fontSize: 12,
                           color: theme.textSecondary,
                         ),
                       ),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 4),
                       Row(
                         children: [
                           // Role Badge
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
                               color: roleColor.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(6),
+                              borderRadius: BorderRadius.circular(4),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(roleIcon, size: 11, color: roleColor),
+                                Icon(roleIcon, size: 10, color: roleColor),
                                 const SizedBox(width: 3),
                                 Text(
                                   roleLabel,
                                   style: TextStyle(
-                                    fontSize: 10,
+                                    fontSize: 9,
                                     fontWeight: FontWeight.bold,
                                     color: roleColor,
                                   ),
@@ -226,20 +231,20 @@ class UserDetailBottomSheet extends StatelessWidget {
                               ],
                             ),
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: 6),
                           // Status Badge
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
                               color: isBlocked
                                   ? theme.error.withValues(alpha: 0.15)
                                   : theme.success.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(6),
+                              borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
                               isBlocked ? l10n.statusBlocked : l10n.statusActive,
                               style: TextStyle(
-                                fontSize: 10,
+                                fontSize: 9,
                                 fontWeight: FontWeight.bold,
                                 color: isBlocked ? theme.error : theme.success,
                               ),
@@ -253,14 +258,14 @@ class UserDetailBottomSheet extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 8),
 
           // Details List
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
               color: theme.surface,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: theme.textSecondary.withValues(alpha: 0.12),
               ),
@@ -318,7 +323,7 @@ class UserDetailBottomSheet extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 12),
 
           // Bottom Action: Toggle Status
           SizedBox(
@@ -329,14 +334,14 @@ class UserDetailBottomSheet extends StatelessWidget {
                     ? theme.success
                     : theme.error,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 13),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
               onPressed: () => _confirmToggle(context, l10n, theme),
-              icon: Icon(isBlocked ? LucideIcons.unlock : LucideIcons.lock, size: 16),
+              icon: Icon(isBlocked ? LucideIcons.unlock : LucideIcons.lock, size: 15),
               label: Text(
                 isBlocked ? l10n.unblockUser : l10n.blockUser,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
               ),
             ),
           ),
@@ -353,15 +358,15 @@ class UserDetailBottomSheet extends StatelessWidget {
     Color? valueColor,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 4),
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
       child: Row(
         children: [
-          Icon(icon, size: 15, color: theme.textSecondary),
-          const SizedBox(width: 10),
+          Icon(icon, size: 14, color: theme.textSecondary),
+          const SizedBox(width: 8),
           Text(
             label,
             style: TextStyle(
-              fontSize: 13,
+              fontSize: 12,
               color: theme.textSecondary,
             ),
           ),
@@ -369,7 +374,7 @@ class UserDetailBottomSheet extends StatelessWidget {
           Text(
             value,
             style: TextStyle(
-              fontSize: 13,
+              fontSize: 12,
               fontWeight: FontWeight.w600,
               color: valueColor ?? theme.textPrimary,
             ),

@@ -12,14 +12,19 @@ class StatisticsRepository {
   }
 
   Future<List<RevenuePeriodModel>> getRevenueStatistics({
-    String timeFrame = 'month',
+    String filterType = 'year',
     int? year,
     int? month,
+    String? startDate,
+    String? endDate,
   }) async {
     final queryParameters = <String, dynamic>{
-      'timeFrame': timeFrame,
+      'filterType': filterType,
+      'timeFrame': filterType,
       if (year != null) 'year': year,
       if (month != null) 'month': month,
+      if (startDate != null) 'startDate': startDate,
+      if (endDate != null) 'endDate': endDate,
     };
     final response = await _dioClient.get('/statistics/revenue', queryParameters: queryParameters);
     final apiResponse = ApiResponse.fromJson(response.data);

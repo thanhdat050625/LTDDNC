@@ -26,61 +26,129 @@ export class StatisticsService {
   ) {}
 
   async getRevenueStatistics(
-    timeFrame: 'day' | 'week' | 'month' | 'year',
+    filterType: string = 'year',
     year?: number,
     month?: number,
+    startDate?: string,
+    endDate?: string,
   ): Promise<ApiResponse<any>> {
     try {
+      const now = new Date();
+      const targetYear = year || now.getFullYear();
+      const targetMonth = month || (now.getMonth() + 1);
+
       const queryBuilder = this.bookingRepository.createQueryBuilder('booking')
         .select('SUM(booking.totalAmount)', 'totalRevenue')
         .where('booking.status = :status', { status: EBookingStatus.PAID });
 
-      if (year) {
-        queryBuilder.andWhere('YEAR(booking.createdAt) = :year', { year });
+      const revenueMap = new Map<string, number>();
+
+      if (filterType === 'year') {
+        // Mode 1: Theo năm -> 12 tháng (01 đến 12)
+        queryBuilder
+          .andWhere('YEAR(booking.createdAt) = :year', { year: targetYear })
+          .addSelect("DATE_FORMAT(booking.createdAt, '%Y-%m')", 'period')
+          .groupBy("DATE_FORMAT(booking.createdAt, '%Y-%m')")
+          .orderBy('period', 'ASC');
+
+        const rawData = await queryBuilder.getRawMany();
+        rawData.forEach((item) => {
+          revenueMap.set(item.period, Number(item.totalRevenue) || 0);
+        });
+
+        const formattedData: { period: string; revenue: number }[] = [];
+        for (let m = 1; m <= 12; m++) {
+          const mStr = m < 10 ? `0${m}` : `${m}`;
+          const period = `${targetYear}-${mStr}`;
+          formattedData.push({
+            period,
+            revenue: revenueMap.get(period) || 0,
+          });
+        }
+        return new ApiResponse(true, 'Lấy thống kê doanh thu theo năm thành công', formattedData);
+
+      } else if (filterType === 'month') {
+        // Mode 2: Theo tháng -> các ngày trong tháng (01 đến 28/29/30/31)
+        queryBuilder
+          .andWhere('YEAR(booking.createdAt) = :year', { year: targetYear })
+          .andWhere('MONTH(booking.createdAt) = :month', { month: targetMonth })
+          .addSelect("DATE_FORMAT(booking.createdAt, '%Y-%m-%d')", 'period')
+          .groupBy("DATE_FORMAT(booking.createdAt, '%Y-%m-%d')")
+          .orderBy('period', 'ASC');
+
+        const rawData = await queryBuilder.getRawMany();
+        rawData.forEach((item) => {
+          revenueMap.set(item.period, Number(item.totalRevenue) || 0);
+        });
+
+        const daysInMonth = new Date(targetYear, targetMonth, 0).getDate();
+        const mStr = targetMonth < 10 ? `0${targetMonth}` : `${targetMonth}`;
+        const formattedData: { period: string; revenue: number }[] = [];
+        for (let d = 1; d <= daysInMonth; d++) {
+          const dStr = d < 10 ? `0${d}` : `${d}`;
+          const period = `${targetYear}-${mStr}-${dStr}`;
+          formattedData.push({
+            period,
+            revenue: revenueMap.get(period) || 0,
+          });
+        }
+        return new ApiResponse(true, 'Lấy thống kê doanh thu theo tháng thành công', formattedData);
+
+      } else {
+        // Mode 3: Khoảng ngày từ startDate đến endDate
+        let start = startDate ? new Date(startDate) : new Date(now.getTime() - 13 * 24 * 60 * 60 * 1000);
+        let end = endDate ? new Date(endDate) : now;
+
+        if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+          start = new Date(now.getTime() - 13 * 24 * 60 * 60 * 1000);
+          end = now;
+        }
+        if (start > end) {
+          const temp = start;
+          start = end;
+          end = temp;
+        }
+
+        const formatIsoDate = (d: Date) => {
+          const y = d.getFullYear();
+          const m = String(d.getMonth() + 1).padStart(2, '0');
+          const day = String(d.getDate()).padStart(2, '0');
+          return `${y}-${m}-${day}`;
+        };
+
+        const startStr = formatIsoDate(start);
+        const endStr = formatIsoDate(end);
+
+        queryBuilder
+          .andWhere('booking.createdAt >= :startDateTime', { startDateTime: `${startStr} 00:00:00` })
+          .andWhere('booking.createdAt <= :endDateTime', { endDateTime: `${endStr} 23:59:59` })
+          .addSelect("DATE_FORMAT(booking.createdAt, '%Y-%m-%d')", 'period')
+          .groupBy("DATE_FORMAT(booking.createdAt, '%Y-%m-%d')")
+          .orderBy('period', 'ASC');
+
+        const rawData = await queryBuilder.getRawMany();
+        rawData.forEach((item) => {
+          revenueMap.set(item.period, Number(item.totalRevenue) || 0);
+        });
+
+        const formattedData: { period: string; revenue: number }[] = [];
+        const curr = new Date(start);
+        curr.setHours(0, 0, 0, 0);
+        const endBoundary = new Date(end);
+        endBoundary.setHours(0, 0, 0, 0);
+
+        while (curr <= endBoundary) {
+          const period = formatIsoDate(curr);
+          formattedData.push({
+            period,
+            revenue: revenueMap.get(period) || 0,
+          });
+          curr.setDate(curr.getDate() + 1);
+        }
+        return new ApiResponse(true, 'Lấy thống kê doanh thu theo khoảng ngày thành công', formattedData);
       }
-      if (month) {
-        queryBuilder.andWhere('MONTH(booking.createdAt) = :month', { month });
-      }
-
-      let groupByFormat = '';
-      let selectFormat = '';
-
-      // Dựa trên timeFrame để thiết lập cách lấy ngày tháng (MySQL syntax)
-      switch (timeFrame) {
-        case 'day':
-          groupByFormat = '%Y-%m-%d';
-          selectFormat = '%Y-%m-%d';
-          break;
-        case 'week':
-          groupByFormat = '%x-%v'; // Năm-Tuần
-          selectFormat = '%x-%v';
-          break;
-        case 'month':
-          groupByFormat = '%Y-%m';
-          selectFormat = '%Y-%m';
-          break;
-        case 'year':
-          groupByFormat = '%Y';
-          selectFormat = '%Y';
-          break;
-        default:
-          groupByFormat = '%Y-%m';
-          selectFormat = '%Y-%m';
-      }
-
-      queryBuilder.addSelect(`DATE_FORMAT(booking.createdAt, '${selectFormat}')`, 'period');
-      queryBuilder.groupBy(`DATE_FORMAT(booking.createdAt, '${groupByFormat}')`);
-      queryBuilder.orderBy('period', 'ASC');
-
-      const rawData = await queryBuilder.getRawMany();
-
-      const formattedData = rawData.map(item => ({
-        period: item.period,
-        revenue: Number(item.totalRevenue) || 0,
-      }));
-
-      return new ApiResponse(true, 'Lấy thống kê doanh thu thành công', formattedData);
     } catch (error) {
+      console.error('getRevenueStatistics Error:', error);
       throw new CustomException(
         HttpStatus.INTERNAL_SERVER_ERROR,
         'STATISTICS_ERROR',
