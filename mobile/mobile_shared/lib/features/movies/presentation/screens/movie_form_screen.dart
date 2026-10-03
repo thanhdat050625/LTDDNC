@@ -125,15 +125,16 @@ class _MovieFormScreenState extends State<MovieFormScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).extension<CineplexColors>()!;
+    final l10n = AppLocalizations.of(context)!;
     final isEdit = widget.movie != null;
 
     return AppScaffold(
-      title: isEdit ? 'Cập nhật phim' : 'Thêm phim mới',
+      title: isEdit ? l10n.updateMovie : l10n.addMovie,
       body: BlocConsumer<MovieFormCubit, MovieFormState>(
         listener: (context, state) {
           if (state is MovieFormSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(isEdit ? 'Cập nhật thành công!' : 'Thêm phim thành công!')),
+              SnackBar(content: Text(isEdit ? l10n.movieUpdatedSuccess : l10n.movieCreatedSuccess)),
             );
             context.pop();
           } else if (state is MovieFormError) {
@@ -184,20 +185,20 @@ class _MovieFormScreenState extends State<MovieFormScreen> {
                                     children: [
                                       Icon(LucideIcons.imagePlus, size: 40, color: theme.textSecondary),
                                       SizedBox(height: theme.spacingSm),
-                                      Text('Chọn poster', style: TextStyle(color: theme.textSecondary, fontSize: 12)),
+                                      Text(l10n.selectImage, style: TextStyle(color: theme.textSecondary, fontSize: 12)),
                                     ],
                                   ),
                       ),
                     ),
                   ),
-                  SizedBox(height: 32.0),
+                  const SizedBox(height: 32.0),
 
                   // Basic Info
                   AppTextField(
                     controller: _titleCtrl,
-                    label: 'Tên phim *',
-                    hintText: 'Nhập tên phim',
-                    validator: (val) => val == null || val.isEmpty ? 'Vui lòng nhập tên phim' : null,
+                    label: '${l10n.movieLabel} *',
+                    hintText: l10n.searchMovies,
+                    validator: (val) => val == null || val.isEmpty ? l10n.fieldRequired : null,
                   ),
                   SizedBox(height: theme.spacingMd),
                   Row(
@@ -205,19 +206,19 @@ class _MovieFormScreenState extends State<MovieFormScreen> {
                       Expanded(
                         child: AppTextField(
                           controller: _genreCtrl,
-                          label: 'Thể loại *',
-                          hintText: 'Hành động, Hài...',
-                          validator: (val) => val == null || val.isEmpty ? 'Bắt buộc' : null,
+                          label: '${l10n.genre} *',
+                          hintText: 'Action, Comedy...',
+                          validator: (val) => val == null || val.isEmpty ? l10n.fieldRequired : null,
                         ),
                       ),
                       SizedBox(width: theme.spacingMd),
                       Expanded(
                         child: AppTextField(
                           controller: _durationCtrl,
-                          label: 'Thời lượng (phút) *',
+                          label: '${l10n.duration} (phút) *',
                           hintText: '120',
                           keyboardType: TextInputType.number,
-                          validator: (val) => val == null || val.isEmpty ? 'Bắt buộc' : null,
+                          validator: (val) => val == null || val.isEmpty ? l10n.fieldRequired : null,
                         ),
                       ),
                     ],
@@ -225,14 +226,14 @@ class _MovieFormScreenState extends State<MovieFormScreen> {
                   SizedBox(height: theme.spacingMd),
                   AppTextField(
                     controller: _directorCtrl,
-                    label: 'Đạo diễn',
-                    hintText: 'Tên đạo diễn',
+                    label: l10n.director,
+                    hintText: l10n.director,
                   ),
                   SizedBox(height: theme.spacingMd),
                   AppTextField(
                     controller: _castCtrl,
-                    label: 'Diễn viên',
-                    hintText: 'Tên diễn viên...',
+                    label: l10n.cast,
+                    hintText: l10n.cast,
                   ),
                   SizedBox(height: theme.spacingMd),
                   Row(
@@ -240,15 +241,15 @@ class _MovieFormScreenState extends State<MovieFormScreen> {
                       Expanded(
                         child: AppTextField(
                           controller: _langCtrl,
-                          label: 'Ngôn ngữ',
-                          hintText: 'Tiếng Anh, Tiếng Việt...',
+                          label: l10n.language,
+                          hintText: 'Tiếng Việt, Tiếng Anh...',
                         ),
                       ),
                       SizedBox(width: theme.spacingMd),
                       Expanded(
                         child: AppTextField(
                           controller: _ageLimitCtrl,
-                          label: 'Độ tuổi',
+                          label: l10n.ageLimit,
                           hintText: '13, 16, 18...',
                           keyboardType: TextInputType.number,
                         ),
@@ -265,11 +266,12 @@ class _MovieFormScreenState extends State<MovieFormScreen> {
                           onTap: isLoading ? null : () => _selectDate(context, true),
                           child: InputDecorator(
                             decoration: InputDecoration(
-                              labelText: 'Ngày phát hành',
+                              labelText: l10n.releaseDate,
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
                             ),
                             child: Text(
-                              _releaseDate != null ? '${_releaseDate!.day}/${_releaseDate!.month}/${_releaseDate!.year}' : 'Chọn ngày',
+                              _releaseDate != null ? '${_releaseDate!.day}/${_releaseDate!.month}/${_releaseDate!.year}' : l10n.selectDate,
+                              style: TextStyle(color: theme.textPrimary),
                             ),
                           ),
                         ),
@@ -280,11 +282,12 @@ class _MovieFormScreenState extends State<MovieFormScreen> {
                           onTap: isLoading ? null : () => _selectDate(context, false),
                           child: InputDecorator(
                             decoration: InputDecoration(
-                              labelText: 'Ngày kết thúc',
+                              labelText: l10n.screeningEndDate,
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
                             ),
                             child: Text(
-                              _screeningEndDate != null ? '${_screeningEndDate!.day}/${_screeningEndDate!.month}/${_screeningEndDate!.year}' : 'Chọn ngày',
+                              _screeningEndDate != null ? '${_screeningEndDate!.day}/${_screeningEndDate!.month}/${_screeningEndDate!.year}' : l10n.selectDate,
+                              style: TextStyle(color: theme.textPrimary),
                             ),
                           ),
                         ),
@@ -296,14 +299,16 @@ class _MovieFormScreenState extends State<MovieFormScreen> {
                   // Status Dropdown
                   DropdownButtonFormField<String>(
                     initialValue: _status,
+                    dropdownColor: theme.surface,
+                    style: TextStyle(color: theme.textPrimary),
                     decoration: InputDecoration(
-                      labelText: 'Trạng thái',
+                      labelText: l10n.status,
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
                     ),
-                    items: const [
-                      DropdownMenuItem(value: 'NOW_SHOWING', child: Text('Đang chiếu')),
-                      DropdownMenuItem(value: 'COMING_SOON', child: Text('Sắp chiếu')),
-                      DropdownMenuItem(value: 'STOPPED', child: Text('Ngừng chiếu')),
+                    items: [
+                      DropdownMenuItem(value: 'NOW_SHOWING', child: Text(l10n.nowShowing)),
+                      DropdownMenuItem(value: 'COMING_SOON', child: Text(l10n.comingSoon)),
+                      DropdownMenuItem(value: 'STOPPED', child: Text(l10n.stoppedShowing)),
                     ],
                     onChanged: isLoading ? null : (val) {
                       if (val != null) setState(() => _status = val);
@@ -313,17 +318,22 @@ class _MovieFormScreenState extends State<MovieFormScreen> {
                   
                   AppTextField(
                     controller: _trailerCtrl,
-                    label: 'Trailer URL',
+                    label: l10n.trailer,
                     hintText: 'https://youtube.com/...',
                   ),
                   SizedBox(height: theme.spacingMd),
                   
+                  // Multiline Description Field
                   AppTextField(
                     controller: _descCtrl,
-                    label: 'Mô tả',
-                    hintText: 'Nội dung phim...',
+                    label: l10n.movieDescription,
+                    hintText: l10n.enterMovieDescription,
+                    minLines: 4,
+                    maxLines: 8,
+                    keyboardType: TextInputType.multiline,
+                    textInputAction: TextInputAction.newline,
                   ),
-                  SizedBox(height: 32.0),
+                  const SizedBox(height: 32.0),
 
                   // Submit Button
                   SizedBox(
@@ -338,10 +348,10 @@ class _MovieFormScreenState extends State<MovieFormScreen> {
                       onPressed: isLoading ? null : _submit,
                       child: isLoading
                           ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                          : Text(isEdit ? 'Lưu thay đổi' : 'Tạo phim'),
+                          : Text(isEdit ? l10n.save : l10n.addMovie),
                     ),
                   ),
-                  SizedBox(height: 40),
+                  const SizedBox(height: 40),
                 ],
               ),
             ),

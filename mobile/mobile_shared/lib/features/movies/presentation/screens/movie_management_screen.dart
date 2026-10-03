@@ -41,9 +41,10 @@ class _MovieManagementScreenState extends State<MovieManagementScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).extension<CineplexColors>()!;
+    final l10n = AppLocalizations.of(context)!;
 
     return AppScaffold(
-      title: 'Quản lý Phim', // Should use l10n.movieManagement in real implementation
+      title: l10n.manageMovies,
       drawer: widget.drawer,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -63,7 +64,7 @@ class _MovieManagementScreenState extends State<MovieManagementScreen> {
                 Expanded(
                   child: AppTextField(
                     controller: _searchController,
-                    hintText: 'Tìm kiếm tên phim...',
+                    hintText: '${l10n.searchMovies}...',
                     prefixIcon: LucideIcons.search,
                     onChanged: (val) {
                       if (_debounce?.isActive ?? false) _debounce!.cancel();
@@ -132,7 +133,9 @@ class _MovieManagementScreenState extends State<MovieManagementScreen> {
                           movie: movie,
                           onTap: () {
                             // Navigate to detail
-                            context.push('/movies/${movie.id}');
+                            _reloadAfterPush(
+                              context.push('/movies/${movie.id}', extra: movie),
+                            );
                           },
                           onEdit: () {
                             _reloadAfterPush(

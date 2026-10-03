@@ -1311,4 +1311,55 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get cameraUnsupported =>
       'Thiết bị không hỗ trợ máy ảnh hoặc đang chạy giả lập. Vui lòng nhập mã vé thủ công.';
+
+  @override
+  String get addMovie => 'Thêm phim mới';
+
+  @override
+  String get updateMovie => 'Cập nhật phim';
+
+  @override
+  String get movieCreatedSuccess => 'Thêm phim thành công!';
+
+  @override
+  String get movieUpdatedSuccess => 'Cập nhật phim thành công!';
+
+  @override
+  String get movieDescription => 'Mô tả phim';
+
+  @override
+  String get enterMovieDescription => 'Nhập nội dung tóm tắt phim...';
+
+  @override
+  String get screeningEndDate => 'Ngày kết thúc';
+
+  @override
+  String get status => 'Trạng thái';
+
+  @override
+  String get stoppedShowing => 'Ngừng chiếu';
+
+  @override
+  String get editMovie => 'Chỉnh sửa phim';
+
+  @override
+  String get watchTrailer => 'Xem trailer';
+
+  @override
+  String get noTrailer => 'Chưa có trailer';
+
+  @override
+  String get movieInfo => 'Thông tin phim';
+
+  @override
+  String get copy => 'Sao chép';
+
+  @override
+  String get trailerCopied => 'Đã sao chép liên kết trailer';
+
+  @override
+  String get openInBrowser => 'Mở liên kết';
+
+  @override
+  String get cannotOpenTrailer => 'Không thể mở liên kết trailer';
 }

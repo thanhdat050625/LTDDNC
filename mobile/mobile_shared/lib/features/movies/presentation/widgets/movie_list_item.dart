@@ -74,7 +74,7 @@ class MovieListItem extends StatelessWidget {
                     ),
                     SizedBox(height: 4),
                     Text(
-                      movie.genre ?? '',
+                      movie.genre,
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
                             color: theme.textSecondary,
                             fontWeight: FontWeight.w500,

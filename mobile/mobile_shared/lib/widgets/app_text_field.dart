@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import '../theme/app_colors.dart';
+import '../theme/cineplex_colors.dart';
 
 class AppTextField extends StatefulWidget {
   final String label;
@@ -46,6 +47,16 @@ class _AppTextFieldState extends State<AppTextField> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<CineplexColors>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = colors?.textPrimary ?? (isDark ? Colors.white : const Color(0xFF111827));
+    final labelColor = colors?.textSecondary ?? (isDark ? Colors.white70 : const Color(0xFF4B5563));
+    final hintColor = colors?.textSecondary.withValues(alpha: 0.6) ?? (isDark ? Colors.white54 : const Color(0xFF9CA3AF));
+    final borderColor = colors?.textSecondary.withValues(alpha: 0.2) ?? (isDark ? Colors.white24 : const Color(0xFFE5E7EB));
+    final enabledBorderColor = colors?.textSecondary.withValues(alpha: 0.12) ?? (isDark ? Colors.white12 : const Color(0xFFE5E7EB));
+    final primaryColor = colors?.primary ?? AppColors.primary;
+    final bgColor = isDark ? AppColors.glassmorphismColor : (colors?.surface.withValues(alpha: 0.9) ?? Colors.white);
+
     return Stack(
       children: [
         Positioned.fill(
@@ -53,7 +64,7 @@ class _AppTextFieldState extends State<AppTextField> {
             borderRadius: BorderRadius.circular(12),
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-              child: Container(color: AppColors.glassmorphismColor),
+              child: Container(color: bgColor),
             ),
           ),
         ),
@@ -66,31 +77,31 @@ class _AppTextFieldState extends State<AppTextField> {
           keyboardType: widget.keyboardType,
           textInputAction: widget.textInputAction,
           onChanged: widget.onChanged,
-          style: const TextStyle(color: Colors.white),
+          style: TextStyle(color: textColor),
           decoration: InputDecoration(
             labelText: widget.label.isNotEmpty ? widget.label : null,
-            labelStyle: const TextStyle(color: Colors.white70),
-            floatingLabelStyle: const TextStyle(color: AppColors.primary),
+            labelStyle: TextStyle(color: labelColor),
+            floatingLabelStyle: TextStyle(color: primaryColor),
             hintText: widget.hint,
-            hintStyle: const TextStyle(color: Colors.white54),
+            hintStyle: TextStyle(color: hintColor),
             filled: true,
             fillColor: Colors.transparent, // Let the Stack background show through
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Colors.white24, width: 1),
+              borderSide: BorderSide(color: borderColor, width: 1),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Colors.white12, width: 1),
+              borderSide: BorderSide(color: enabledBorderColor, width: 1),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+              borderSide: BorderSide(color: primaryColor, width: 1.5),
             ),
-            prefixIcon: widget.prefixIcon != null ? Icon(widget.prefixIcon, color: Colors.white70) : null,
+            prefixIcon: widget.prefixIcon != null ? Icon(widget.prefixIcon, color: labelColor) : null,
             suffixIcon: widget.obscureText
                 ? IconButton(
-                    icon: Icon(_obscureText ? Icons.visibility_off : Icons.visibility, color: Colors.white70),
+                    icon: Icon(_obscureText ? Icons.visibility_off : Icons.visibility, color: labelColor),
                     onPressed: () => setState(() => _obscureText = !_obscureText),
                   )
                 : null,

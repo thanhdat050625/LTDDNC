@@ -69,6 +69,17 @@ GoRouter createAdminRouter(AuthBloc authBloc) {
         ),
       ),
       GoRoute(
+        path: '/movies/:id',
+        builder: (context, state) {
+          final movieId = int.parse(state.pathParameters['id']!);
+          final extra = state.extra as MovieModel?;
+          return MovieManagementDetailScreen(
+            movieId: movieId,
+            initialMovie: extra,
+          );
+        },
+      ),
+      GoRoute(
         path: '/movies/:id/edit',
         builder: (context, state) {
           final extra = state.extra as MovieModel?;

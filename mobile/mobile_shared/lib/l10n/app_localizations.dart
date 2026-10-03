@@ -2571,6 +2571,108 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Thiết bị không hỗ trợ máy ảnh hoặc đang chạy giả lập. Vui lòng nhập mã vé thủ công.'**
   String get cameraUnsupported;
+
+  /// No description provided for @addMovie.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thêm phim mới'**
+  String get addMovie;
+
+  /// No description provided for @updateMovie.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cập nhật phim'**
+  String get updateMovie;
+
+  /// No description provided for @movieCreatedSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thêm phim thành công!'**
+  String get movieCreatedSuccess;
+
+  /// No description provided for @movieUpdatedSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cập nhật phim thành công!'**
+  String get movieUpdatedSuccess;
+
+  /// No description provided for @movieDescription.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mô tả phim'**
+  String get movieDescription;
+
+  /// No description provided for @enterMovieDescription.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhập nội dung tóm tắt phim...'**
+  String get enterMovieDescription;
+
+  /// No description provided for @screeningEndDate.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ngày kết thúc'**
+  String get screeningEndDate;
+
+  /// No description provided for @status.
+  ///
+  /// In vi, this message translates to:
+  /// **'Trạng thái'**
+  String get status;
+
+  /// No description provided for @stoppedShowing.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ngừng chiếu'**
+  String get stoppedShowing;
+
+  /// No description provided for @editMovie.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chỉnh sửa phim'**
+  String get editMovie;
+
+  /// No description provided for @watchTrailer.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem trailer'**
+  String get watchTrailer;
+
+  /// No description provided for @noTrailer.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có trailer'**
+  String get noTrailer;
+
+  /// No description provided for @movieInfo.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thông tin phim'**
+  String get movieInfo;
+
+  /// No description provided for @copy.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sao chép'**
+  String get copy;
+
+  /// No description provided for @trailerCopied.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã sao chép liên kết trailer'**
+  String get trailerCopied;
+
+  /// No description provided for @openInBrowser.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mở liên kết'**
+  String get openInBrowser;
+
+  /// No description provided for @cannotOpenTrailer.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể mở liên kết trailer'**
+  String get cannotOpenTrailer;
 }
 
 class _AppLocalizationsDelegate

@@ -10,7 +10,6 @@ import '../features/ticket_sale/presentation/screens/ticket_sale_screen.dart';
 import '../features/ticket_sale/presentation/screens/seat_selection_screen.dart';
 import '../features/ticket_sale/presentation/screens/checkout_screen.dart';
 import '../features/ticket_sale/presentation/cubit/ticket_sale_cubit.dart';
-import '../features/ticket_sale/presentation/cubit/ticket_sale_state.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -81,6 +80,17 @@ GoRouter createStaffRouter(AuthBloc authBloc) {
           ),
           child: const MovieFormScreen(),
         ),
+      ),
+      GoRoute(
+        path: '/movies/:id',
+        builder: (context, state) {
+          final movieId = int.parse(state.pathParameters['id']!);
+          final extra = state.extra as MovieModel?;
+          return MovieManagementDetailScreen(
+            movieId: movieId,
+            initialMovie: extra,
+          );
+        },
       ),
       GoRoute(
         path: '/movies/:id/edit',
