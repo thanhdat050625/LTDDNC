@@ -1300,4 +1300,15 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get totalRevenueLabel => 'Tổng doanh thu kỳ này';
+
+  @override
+  String get cameraPermissionRequired =>
+      'Ứng dụng cần quyền truy cập máy ảnh để quét vé';
+
+  @override
+  String get grantPermission => 'Cấp quyền máy ảnh';
+
+  @override
+  String get cameraUnsupported =>
+      'Thiết bị không hỗ trợ máy ảnh hoặc đang chạy giả lập. Vui lòng nhập mã vé thủ công.';
 }

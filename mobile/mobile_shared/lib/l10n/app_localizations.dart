@@ -2553,6 +2553,24 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Tổng doanh thu kỳ này'**
   String get totalRevenueLabel;
+
+  /// No description provided for @cameraPermissionRequired.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ứng dụng cần quyền truy cập máy ảnh để quét vé'**
+  String get cameraPermissionRequired;
+
+  /// No description provided for @grantPermission.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cấp quyền máy ảnh'**
+  String get grantPermission;
+
+  /// No description provided for @cameraUnsupported.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thiết bị không hỗ trợ máy ảnh hoặc đang chạy giả lập. Vui lòng nhập mã vé thủ công.'**
+  String get cameraUnsupported;
 }
 
 class _AppLocalizationsDelegate
