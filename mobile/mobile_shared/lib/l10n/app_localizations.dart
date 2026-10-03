@@ -2101,13 +2101,13 @@ abstract class AppLocalizations {
   /// No description provided for @startDate.
   ///
   /// In vi, this message translates to:
-  /// **'Ngày bắt đầu'**
+  /// **'Từ ngày'**
   String get startDate;
 
   /// No description provided for @endDate.
   ///
   /// In vi, this message translates to:
-  /// **'Ngày kết thúc'**
+  /// **'Đến ngày'**
   String get endDate;
 
   /// No description provided for @manageConcessions.
@@ -2517,6 +2517,42 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Chi tiết sản phẩm'**
   String get productDetail;
+
+  /// No description provided for @revenueStatistics.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thống kê Doanh thu'**
+  String get revenueStatistics;
+
+  /// No description provided for @filterByYear.
+  ///
+  /// In vi, this message translates to:
+  /// **'Theo năm'**
+  String get filterByYear;
+
+  /// No description provided for @filterByMonth.
+  ///
+  /// In vi, this message translates to:
+  /// **'Theo tháng'**
+  String get filterByMonth;
+
+  /// No description provided for @filterByDateRange.
+  ///
+  /// In vi, this message translates to:
+  /// **'Khoảng ngày'**
+  String get filterByDateRange;
+
+  /// No description provided for @selectDateRange.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn khoảng ngày'**
+  String get selectDateRange;
+
+  /// No description provided for @totalRevenueLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tổng doanh thu kỳ này'**
+  String get totalRevenueLabel;
 }
 
 class _AppLocalizationsDelegate

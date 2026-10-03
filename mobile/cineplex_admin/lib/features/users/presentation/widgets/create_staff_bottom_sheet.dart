@@ -81,10 +81,10 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
     return Container(
-      padding: EdgeInsets.fromLTRB(20, 12, 20, 20 + bottomInset),
+      padding: EdgeInsets.fromLTRB(16, 8, 16, 14 + bottomInset),
       decoration: BoxDecoration(
         color: theme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         border: Border(
           top: BorderSide(
             color: theme.textSecondary.withValues(alpha: 0.15),
@@ -102,9 +102,9 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
               // Drag Handle
               Center(
                 child: Container(
-                  width: 40,
+                  width: 36,
                   height: 4,
-                  margin: const EdgeInsets.only(bottom: 16),
+                  margin: const EdgeInsets.only(bottom: 8),
                   decoration: BoxDecoration(
                     color: theme.textSecondary.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(2),
@@ -116,19 +116,19 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
               Row(
                 children: [
                   Container(
-                    width: 40,
-                    height: 40,
+                    width: 34,
+                    height: 34,
                     decoration: BoxDecoration(
                       color: const Color(0xFF3A86FF).withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Icon(
                       LucideIcons.userPlus,
                       color: Color(0xFF3A86FF),
-                      size: 20,
+                      size: 18,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,16 +136,15 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
                         Text(
                           l10n.createStaffTitle,
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                             color: theme.textPrimary,
                           ),
                         ),
-                        const SizedBox(height: 2),
                         Text(
                           l10n.createStaffSubtitle,
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 11,
                             color: theme.textSecondary,
                           ),
                         ),
@@ -155,19 +154,21 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: Icon(LucideIcons.x, color: theme.textSecondary, size: 20),
+                    constraints: const BoxConstraints(),
+                    padding: EdgeInsets.zero,
                   ),
                 ],
               ),
-              const SizedBox(height: 18),
+              const SizedBox(height: 10),
 
               // Error display if any
               if (_errorMessage != null) ...[
                 Container(
-                  padding: const EdgeInsets.all(10),
-                  margin: const EdgeInsets.only(bottom: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  margin: const EdgeInsets.only(bottom: 8),
                   decoration: BoxDecoration(
                     color: theme.error.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(8),
                     border: Border.all(
                       color: theme.error.withValues(alpha: 0.3),
                     ),
@@ -200,7 +201,7 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
                   return null;
                 },
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
 
               // Email
               AppTextField(
@@ -220,7 +221,7 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
                   return null;
                 },
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
 
               // Phone
               AppTextField(
@@ -230,7 +231,7 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
                 prefixIcon: LucideIcons.phone,
                 keyboardType: TextInputType.phone,
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
 
               // Password
               AppTextField(
@@ -245,7 +246,7 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
                   return null;
                 },
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
 
               // Confirm Password
               AppTextField(
@@ -262,7 +263,7 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
                   return null;
                 },
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 14),
 
               // Submit Button
               AppButton(

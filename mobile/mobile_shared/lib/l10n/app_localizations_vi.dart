@@ -1063,10 +1063,10 @@ class AppLocalizationsVi extends AppLocalizations {
       'Bạn có chắc chắn muốn xóa mã khuyến mãi này không?';
 
   @override
-  String get startDate => 'Ngày bắt đầu';
+  String get startDate => 'Từ ngày';
 
   @override
-  String get endDate => 'Ngày kết thúc';
+  String get endDate => 'Đến ngày';
 
   @override
   String get manageConcessions => 'Quản lý Bắp nước';
@@ -1282,4 +1282,22 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get productDetail => 'Chi tiết sản phẩm';
+
+  @override
+  String get revenueStatistics => 'Thống kê Doanh thu';
+
+  @override
+  String get filterByYear => 'Theo năm';
+
+  @override
+  String get filterByMonth => 'Theo tháng';
+
+  @override
+  String get filterByDateRange => 'Khoảng ngày';
+
+  @override
+  String get selectDateRange => 'Chọn khoảng ngày';
+
+  @override
+  String get totalRevenueLabel => 'Tổng doanh thu kỳ này';
 }

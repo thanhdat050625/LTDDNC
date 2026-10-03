@@ -601,5 +601,13 @@
   "fieldRequired": "Vui lòng nhập trường này",
   "errorOccurred": "Có lỗi xảy ra. Vui lòng thử lại.",
   "productDescription": "Mô tả sản phẩm",
-  "productDetail": "Chi tiết sản phẩm"
+  "productDetail": "Chi tiết sản phẩm",
+  "revenueStatistics": "Thống kê Doanh thu",
+  "filterByYear": "Theo năm",
+  "filterByMonth": "Theo tháng",
+  "filterByDateRange": "Khoảng ngày",
+  "selectDateRange": "Chọn khoảng ngày",
+  "startDate": "Từ ngày",
+  "endDate": "Đến ngày",
+  "totalRevenueLabel": "Tổng doanh thu kỳ này"
 }

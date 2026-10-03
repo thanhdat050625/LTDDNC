@@ -14,13 +14,23 @@ export class StatisticsController {
 
   @Get('revenue')
   async getRevenueStatistics(
-    @Query('timeFrame') timeFrame: 'day' | 'week' | 'month' | 'year' = 'month',
+    @Query('filterType') filterType?: string,
+    @Query('timeFrame') timeFrame?: string,
     @Query('year') year?: string,
     @Query('month') month?: string,
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string,
   ) {
     const parsedYear = year ? parseInt(year, 10) : undefined;
     const parsedMonth = month ? parseInt(month, 10) : undefined;
-    return this.statisticsService.getRevenueStatistics(timeFrame, parsedYear, parsedMonth);
+    const type = (startDate && endDate && !filterType) ? 'custom' : (filterType || timeFrame || 'year');
+    return this.statisticsService.getRevenueStatistics(
+      type,
+      parsedYear,
+      parsedMonth,
+      startDate,
+      endDate,
+    );
   }
 
   @Get('movies')
