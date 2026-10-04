@@ -18,6 +18,7 @@ class SeatSelectionScreen extends StatefulWidget {
 class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
   final Map<int, int> _concessions = {};
   bool _isHoldingSeats = false;
+  List<ConcessionProductModel> _concessionProducts = [];
 
   static const List<Map<String, dynamic>> _catalogConcessions = [
     {'id': 1, 'price': 55000},
@@ -44,6 +45,23 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
     for (final item in _catalogConcessions) {
       _concessions[item['id'] as int] = 0;
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadRealConcessions());
+  }
+
+  Future<void> _loadRealConcessions() async {
+    try {
+      final dio = context.read<DioClient>();
+      final repo = ConcessionManagementRepository(dio);
+      final products = await repo.getAllConcessions();
+      if (mounted && products.isNotEmpty) {
+        setState(() {
+          _concessionProducts = products;
+          for (final p in products) {
+            _concessions.putIfAbsent(p.id, () => 0);
+          }
+        });
+      }
+    } catch (_) {}
   }
 
   @override
@@ -190,7 +208,8 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: rows.map((r) {
-                        final rowSeats = rowMap[r]!..sort((a, b) => a.column.compareTo(b.column));
+                        final rowSeats = rowMap[r]!
+                          ..sort((a, b) => a.column.compareTo(b.column));
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -206,8 +225,12 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
                               ),
                             ),
                             ...rowSeats.map((seat) {
-                              final isSelected = state.selectedSeats.any((s) => s.seatId == seat.seatId);
-                              final isBooked = seat.status == SeatStatus.booked || seat.status == SeatStatus.held;
+                              final isSelected = state.selectedSeats.any(
+                                (s) => s.seatId == seat.seatId,
+                              );
+                              final isBooked =
+                                  seat.status == SeatStatus.booked ||
+                                  seat.status == SeatStatus.held;
 
                               Color seatColor = theme.seatStandard;
                               if (isBooked) {
@@ -220,12 +243,16 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
 
                               final textColor = isBooked
                                   ? theme.seatBookedText
-                                  : (isSelected ? Colors.white : theme.seatText);
+                                  : (isSelected
+                                        ? Colors.white
+                                        : theme.seatText);
 
                               return GestureDetector(
                                 onTap: isBooked
                                     ? null
-                                    : () => context.read<TicketSaleCubit>().toggleSeat(seat),
+                                    : () => context
+                                          .read<TicketSaleCubit>()
+                                          .toggleSeat(seat),
                                 child: Container(
                                   width: seat.isCouple ? 70 : 34,
                                   height: 34,
@@ -308,21 +335,34 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
           ),
         ),
         SizedBox(height: theme.spacingSm),
-        ..._catalogConcessions.map((item) {
-          final id = item['id'] as int;
-          final name = _getConcessionName(id, l10n);
-          final price = item['price'] as int;
-          return _buildConcessionItem(theme, id, name, price);
-        }),
+        if (_concessionProducts.isNotEmpty)
+          ..._concessionProducts.map((p) {
+            return _buildConcessionItem(theme, p.id, p.name, p.price.toInt());
+          })
+        else
+          ..._catalogConcessions.map((item) {
+            final id = item['id'] as int;
+            final name = _getConcessionName(id, l10n);
+            final price = item['price'] as int;
+            return _buildConcessionItem(theme, id, name, price);
+          }),
       ],
     );
   }
 
-  Widget _buildConcessionItem(CineplexColors theme, int id, String name, int price) {
+  Widget _buildConcessionItem(
+    CineplexColors theme,
+    int id,
+    String name,
+    int price,
+  ) {
     final qty = _concessions[id] ?? 0;
     return Container(
       margin: EdgeInsets.only(bottom: theme.spacingSm),
-      padding: EdgeInsets.symmetric(horizontal: theme.spacingMd, vertical: theme.spacingSm),
+      padding: EdgeInsets.symmetric(
+        horizontal: theme.spacingMd,
+        vertical: theme.spacingSm,
+      ),
       decoration: BoxDecoration(
         color: theme.background,
         borderRadius: BorderRadius.circular(theme.radiusMd),
@@ -356,8 +396,14 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
           Row(
             children: [
               IconButton(
-                icon: Icon(LucideIcons.minusCircle, color: theme.textSecondary, size: 20),
-                onPressed: qty > 0 ? () => setState(() => _concessions[id] = qty - 1) : null,
+                icon: Icon(
+                  LucideIcons.minusCircle,
+                  color: theme.textSecondary,
+                  size: 20,
+                ),
+                onPressed: qty > 0
+                    ? () => setState(() => _concessions[id] = qty - 1)
+                    : null,
               ),
               Text(
                 '$qty',
@@ -368,11 +414,15 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
                 ),
               ),
               IconButton(
-                icon: Icon(LucideIcons.plusCircle, color: theme.primary, size: 20),
+                icon: Icon(
+                  LucideIcons.plusCircle,
+                  color: theme.primary,
+                  size: 20,
+                ),
                 onPressed: () => setState(() => _concessions[id] = qty + 1),
               ),
             ],
-          )
+          ),
         ],
       ),
     );
@@ -387,11 +437,18 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
     final totalTickets = selectedSeats.length * pricePerSeat;
 
     int totalConcessions = 0;
-    for (final item in _catalogConcessions) {
-      final id = item['id'] as int;
-      final price = item['price'] as int;
-      final qty = _concessions[id] ?? 0;
-      totalConcessions += qty * price;
+    if (_concessionProducts.isNotEmpty) {
+      for (final p in _concessionProducts) {
+        final qty = _concessions[p.id] ?? 0;
+        totalConcessions += qty * p.price.toInt();
+      }
+    } else {
+      for (final item in _catalogConcessions) {
+        final id = item['id'] as int;
+        final price = item['price'] as int;
+        final qty = _concessions[id] ?? 0;
+        totalConcessions += qty * price;
+      }
     }
 
     final grandTotal = totalTickets + totalConcessions;
@@ -525,12 +582,15 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
             child: AppButton(
               text: l10n.continueBtn,
               isLoading: _isHoldingSeats,
-              onPressed: (selectedSeats.isEmpty || state?.selectedShowtime == null)
+              onPressed:
+                  (selectedSeats.isEmpty || state?.selectedShowtime == null)
                   ? null
                   : () async {
                       setState(() => _isHoldingSeats = true);
                       try {
-                        final success = await context.read<TicketSaleCubit>().holdSelectedSeats();
+                        final success = await context
+                            .read<TicketSaleCubit>()
+                            .holdSelectedSeats();
                         if (!context.mounted) return;
 
                         if (!success) {
@@ -545,16 +605,34 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
 
                         // Collect selected concessions
                         final List<SelectedConcession> concessionsList = [];
-                        for (final item in _catalogConcessions) {
-                          final id = item['id'] as int;
-                          final qty = _concessions[id] ?? 0;
-                          if (qty > 0) {
-                            concessionsList.add(SelectedConcession(
-                              name: _getConcessionName(id, l10n),
-                              productId: item['id'] as int,
-                              price: item['price'] as int,
-                              quantity: qty,
-                            ));
+                        if (_concessionProducts.isNotEmpty) {
+                          for (final p in _concessionProducts) {
+                            final qty = _concessions[p.id] ?? 0;
+                            if (qty > 0) {
+                              concessionsList.add(
+                                SelectedConcession(
+                                  name: p.name,
+                                  productId: p.id,
+                                  price: p.price.toInt(),
+                                  quantity: qty,
+                                ),
+                              );
+                            }
+                          }
+                        } else {
+                          for (final item in _catalogConcessions) {
+                            final id = item['id'] as int;
+                            final qty = _concessions[id] ?? 0;
+                            if (qty > 0) {
+                              concessionsList.add(
+                                SelectedConcession(
+                                  name: _getConcessionName(id, l10n),
+                                  productId: item['id'] as int,
+                                  price: item['price'] as int,
+                                  quantity: qty,
+                                ),
+                              );
+                            }
                           }
                         }
 

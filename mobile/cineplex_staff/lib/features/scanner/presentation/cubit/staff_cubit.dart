@@ -50,7 +50,9 @@ class StaffCubit extends Cubit<StaffState> {
       emit(StaffCheckinSuccess(ticket));
     } catch (e) {
       if (e is ServerException) {
-        final isWarning = e.code == 'BOOKING_CODE_SCANNED' || e.code == 'TICKET_ALREADY_CHECKED_IN';
+        final isWarning =
+            e.code == 'BOOKING_CODE_SCANNED' ||
+            e.code == 'TICKET_ALREADY_CHECKED_IN';
         emit(StaffCheckinError(e.message, code: e.code, isWarning: isWarning));
       } else {
         emit(StaffCheckinError(e.toString()));

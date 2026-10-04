@@ -8,7 +8,7 @@ import { EUserRole } from '../users/enums/user.enum';
 
 @Controller('statistics')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(EUserRole.ADMIN)
+@Roles(EUserRole.ADMIN, EUserRole.STAFF)
 export class StatisticsController {
   constructor(private readonly statisticsService: StatisticsService) {}
 

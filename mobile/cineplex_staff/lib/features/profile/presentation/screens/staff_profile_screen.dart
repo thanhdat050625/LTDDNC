@@ -15,6 +15,23 @@ class StaffProfileScreen extends StatefulWidget {
 class _StaffProfileScreenState extends State<StaffProfileScreen> {
   bool _soundEnabled = true;
   bool _hapticEnabled = true;
+  String _cinemaName = '';
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadCinema());
+  }
+
+  Future<void> _loadCinema() async {
+    try {
+      final dio = context.read<DioClient>();
+      final cinemas = await CinemaManagementRepository(dio).getAllCinemas();
+      if (mounted && cinemas.isNotEmpty) {
+        setState(() => _cinemaName = cinemas.first.name);
+      }
+    } catch (_) {}
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +44,7 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
         ? user!.fullName
         : l10n.staffRole;
     final staffEmail = user?.email ?? 'staff@cineplex.vn';
-    const cinemaName = 'Cineplex Flagship';
+    final cinemaDisplayName = _cinemaName;
 
     return AppScaffold(
       title: l10n.staffProfile,
@@ -115,28 +132,30 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Icon(
-                              LucideIcons.mapPin,
-                              size: 12,
-                              color: theme.textSecondary,
-                            ),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                cinemaName,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: theme.textSecondary,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                        if (cinemaDisplayName.isNotEmpty) ...[
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              Icon(
+                                LucideIcons.mapPin,
+                                size: 12,
+                                color: theme.textSecondary,
                               ),
-                            ),
-                          ],
-                        ),
+                              const SizedBox(width: 4),
+                              Expanded(
+                                child: Text(
+                                  cinemaDisplayName,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: theme.textSecondary,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ],
                     ),
                   ),

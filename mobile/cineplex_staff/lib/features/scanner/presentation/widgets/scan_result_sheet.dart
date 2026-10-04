@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 
-enum ScanStatusType {
-  valid,
-  alreadyUsed,
-  invalid,
-}
+enum ScanStatusType { valid, alreadyUsed, invalid }
 
 class ScanResultSheet extends StatelessWidget {
   final ScanStatusType status;
@@ -102,10 +98,14 @@ class ScanResultSheet extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
             decoration: BoxDecoration(
-              color: status == ScanStatusType.alreadyUsed ? statusColor : statusColor.withValues(alpha: 0.14),
+              color: status == ScanStatusType.alreadyUsed
+                  ? statusColor
+                  : statusColor.withValues(alpha: 0.14),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: status == ScanStatusType.alreadyUsed ? statusColor : statusColor.withValues(alpha: 0.35),
+                color: status == ScanStatusType.alreadyUsed
+                    ? statusColor
+                    : statusColor.withValues(alpha: 0.35),
               ),
             ),
             child: Row(
@@ -113,7 +113,9 @@ class ScanResultSheet extends StatelessWidget {
               children: [
                 Icon(
                   statusIcon,
-                  color: status == ScanStatusType.alreadyUsed ? const Color(0xFF111827) : statusColor,
+                  color: status == ScanStatusType.alreadyUsed
+                      ? const Color(0xFF111827)
+                      : statusColor,
                   size: 20,
                 ),
                 const SizedBox(width: 8),
@@ -121,7 +123,9 @@ class ScanResultSheet extends StatelessWidget {
                   child: Text(
                     statusBadgeText,
                     style: TextStyle(
-                      color: status == ScanStatusType.alreadyUsed ? const Color(0xFF111827) : statusColor,
+                      color: status == ScanStatusType.alreadyUsed
+                          ? const Color(0xFF111827)
+                          : statusColor,
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
                       letterSpacing: 0.5,
@@ -143,7 +147,9 @@ class ScanResultSheet extends StatelessWidget {
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
-                color: status == ScanStatusType.alreadyUsed ? theme.textPrimary : theme.error,
+                color: status == ScanStatusType.alreadyUsed
+                    ? theme.textPrimary
+                    : theme.error,
               ),
             ),
             const SizedBox(height: 12),
@@ -175,12 +181,19 @@ class ScanResultSheet extends StatelessWidget {
                   const SizedBox(height: 6),
                   Row(
                     children: [
-                      Icon(LucideIcons.film, size: 14, color: theme.textSecondary),
+                      Icon(
+                        LucideIcons.film,
+                        size: 14,
+                        color: theme.textSecondary,
+                      ),
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
                           '${roomName != null ? l10n.roomPrefix(roomName!) : l10n.defaultRoom} • ${cinemaName ?? 'Cineplex'}',
-                          style: TextStyle(fontSize: 12, color: theme.textSecondary),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: theme.textSecondary,
+                          ),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -190,12 +203,19 @@ class ScanResultSheet extends StatelessWidget {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        Icon(LucideIcons.clock, size: 14, color: theme.textSecondary),
+                        Icon(
+                          LucideIcons.clock,
+                          size: 14,
+                          color: theme.textSecondary,
+                        ),
                         const SizedBox(width: 6),
                         Expanded(
                           child: Text(
                             showtime!,
-                            style: TextStyle(fontSize: 12, color: theme.textSecondary),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: theme.textSecondary,
+                            ),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
@@ -215,11 +235,17 @@ class ScanResultSheet extends StatelessWidget {
                         children: [
                           Text(
                             l10n.seatNumber,
-                            style: TextStyle(fontSize: 11, color: theme.textSecondary),
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: theme.textSecondary,
+                            ),
                           ),
                           const SizedBox(height: 2),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 3,
+                            ),
                             decoration: BoxDecoration(
                               color: theme.primary.withValues(alpha: 0.12),
                               borderRadius: BorderRadius.circular(6),
@@ -244,7 +270,10 @@ class ScanResultSheet extends StatelessWidget {
                             children: [
                               Text(
                                 l10n.customer,
-                                style: TextStyle(fontSize: 11, color: theme.textSecondary),
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: theme.textSecondary,
+                                ),
                               ),
                               const SizedBox(height: 2),
                               Text(
@@ -279,7 +308,10 @@ class ScanResultSheet extends StatelessWidget {
                   Expanded(
                     child: Text(
                       '${l10n.ticketNumber}: $ticketCode',
-                      style: TextStyle(fontSize: 11, color: theme.textSecondary),
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: theme.textSecondary,
+                      ),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),

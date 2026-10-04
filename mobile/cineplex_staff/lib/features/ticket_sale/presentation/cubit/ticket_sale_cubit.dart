@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_shared/mobile_shared.dart';
+
 import 'ticket_sale_state.dart';
 
 class TicketSaleCubit extends Cubit<TicketSaleState> {
@@ -7,7 +8,8 @@ class TicketSaleCubit extends Cubit<TicketSaleState> {
   final ShowtimeManagementRepository _showtimeRepo;
   final BookingManagementRepository _bookingRepo;
 
-  TicketSaleCubit(this._cinemaRepo, this._showtimeRepo, this._bookingRepo) : super(TicketSaleInitial());
+  TicketSaleCubit(this._cinemaRepo, this._showtimeRepo, this._bookingRepo)
+    : super(TicketSaleInitial());
 
   Future<void> loadInitialData() async {
     emit(TicketSaleLoading());
@@ -17,19 +19,21 @@ class TicketSaleCubit extends Cubit<TicketSaleState> {
         emit(TicketSaleLoaded(cinemas: [], selectedCinemaId: null));
         return;
       }
-      
+
       final firstCinema = cinemas.first;
       final showtimesData = await _showtimeRepo.getByCinemaId(firstCinema.id);
       final List<ShowtimeModel> showtimes = _parseShowtimes(showtimesData);
-      
+
       final movies = _extractMovies(showtimes);
 
-      emit(TicketSaleLoaded(
-        cinemas: cinemas,
-        selectedCinemaId: firstCinema.id,
-        cinemaShowtimes: showtimes,
-        moviesForCinema: movies,
-      ));
+      emit(
+        TicketSaleLoaded(
+          cinemas: cinemas,
+          selectedCinemaId: firstCinema.id,
+          cinemaShowtimes: showtimes,
+          moviesForCinema: movies,
+        ),
+      );
     } catch (e) {
       emit(TicketSaleError(e.toString()));
     }
@@ -44,13 +48,15 @@ class TicketSaleCubit extends Cubit<TicketSaleState> {
         final List<ShowtimeModel> showtimes = _parseShowtimes(showtimesData);
         final movies = _extractMovies(showtimes);
 
-        emit(TicketSaleLoaded(
-          cinemas: currentState.cinemas,
-          selectedCinemaId: cinemaId,
-          cinemaShowtimes: showtimes,
-          moviesForCinema: movies,
-          selectedMovieId: null, // Reset movie selection
-        ));
+        emit(
+          TicketSaleLoaded(
+            cinemas: currentState.cinemas,
+            selectedCinemaId: cinemaId,
+            cinemaShowtimes: showtimes,
+            moviesForCinema: movies,
+            selectedMovieId: null, // Reset movie selection
+          ),
+        );
       } catch (e) {
         emit(TicketSaleError(e.toString()));
       }
@@ -67,8 +73,14 @@ class TicketSaleCubit extends Cubit<TicketSaleState> {
   Future<void> selectShowtime(ShowtimeModel showtime) async {
     if (state is TicketSaleLoaded) {
       final currentState = state as TicketSaleLoaded;
-      emit(currentState.copyWith(selectedShowtime: showtime, seats: [], selectedSeats: []));
-      
+      emit(
+        currentState.copyWith(
+          selectedShowtime: showtime,
+          seats: [],
+          selectedSeats: [],
+        ),
+      );
+
       try {
         final seats = await _bookingRepo.getShowtimeSeats(showtime.id);
         if (state is TicketSaleLoaded) {
@@ -84,7 +96,7 @@ class TicketSaleCubit extends Cubit<TicketSaleState> {
     if (state is TicketSaleLoaded) {
       final currentState = state as TicketSaleLoaded;
       final selected = List<SeatModel>.from(currentState.selectedSeats);
-      
+
       if (selected.any((s) => s.seatId == seat.seatId)) {
         selected.removeWhere((s) => s.seatId == seat.seatId);
       } else {
@@ -97,11 +109,19 @@ class TicketSaleCubit extends Cubit<TicketSaleState> {
   Future<bool> holdSelectedSeats() async {
     if (state is TicketSaleLoaded) {
       final currentState = state as TicketSaleLoaded;
-      if (currentState.selectedShowtime == null || currentState.selectedSeats.isEmpty) return false;
-      
+      if (currentState.selectedShowtime == null ||
+          currentState.selectedSeats.isEmpty) {
+        return false;
+      }
+
       try {
-        final seatIds = currentState.selectedSeats.map((s) => s.seatId).toList();
-        return await _bookingRepo.holdSeats(currentState.selectedShowtime!.id, seatIds);
+        final seatIds = currentState.selectedSeats
+            .map((s) => s.seatId)
+            .toList();
+        return await _bookingRepo.holdSeats(
+          currentState.selectedShowtime!.id,
+          seatIds,
+        );
       } catch (e) {
         return false;
       }
@@ -111,7 +131,7 @@ class TicketSaleCubit extends Cubit<TicketSaleState> {
 
   List<ShowtimeModel> _parseShowtimes(Map<String, dynamic> data) {
     final List<ShowtimeModel> allShowtimes = [];
-    
+
     // The backend returns a map keyed by YYYY-MM-DD
     data.forEach((dateString, list) {
       if (list is List) {
@@ -119,7 +139,7 @@ class TicketSaleCubit extends Cubit<TicketSaleState> {
           final st = ShowtimeModel.fromJson(item as Map<String, dynamic>);
           // Filter out past showtimes or completed/cancelled
           if (st.status != 'COMPLETED' && st.status != 'CANCELLED') {
-             allShowtimes.add(st);
+            allShowtimes.add(st);
           }
         }
       }
