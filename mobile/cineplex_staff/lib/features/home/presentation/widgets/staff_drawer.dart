@@ -170,6 +170,13 @@ class StaffDrawer extends StatelessWidget {
                   Divider(color: theme.borderSubtle, height: 1),
                   _buildDrawerItem(
                     context,
+                    icon: LucideIcons.ticket,
+                    title: l10n.manageTickets,
+                    route: '/ticket-management',
+                    theme: theme,
+                  ),
+                  _buildDrawerItem(
+                    context,
                     icon: LucideIcons.film,
                     title: l10n.manageMovies,
                     route: '/movies',

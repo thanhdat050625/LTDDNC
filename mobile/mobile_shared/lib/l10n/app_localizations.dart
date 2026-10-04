@@ -4125,6 +4125,162 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Không thể mở liên kết trailer'**
   String get cannotOpenTrailer;
+
+  /// No description provided for @manageTickets.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quản lý vé'**
+  String get manageTickets;
+
+  /// No description provided for @ticketManagement.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quản lý toàn bộ vé'**
+  String get ticketManagement;
+
+  /// No description provided for @ticketBookingList.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đơn đặt vé'**
+  String get ticketBookingList;
+
+  /// No description provided for @ticketPriceConfig.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cấu hình giá vé'**
+  String get ticketPriceConfig;
+
+  /// No description provided for @ticketBookingCode.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mã đơn'**
+  String get ticketBookingCode;
+
+  /// No description provided for @ticketCustomerName.
+  ///
+  /// In vi, this message translates to:
+  /// **'Khách hàng'**
+  String get ticketCustomerName;
+
+  /// No description provided for @ticketShowtimeLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Suất chiếu'**
+  String get ticketShowtimeLabel;
+
+  /// No description provided for @ticketSeatLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ghế ngồi'**
+  String get ticketSeatLabel;
+
+  /// No description provided for @ticketPaymentStatus.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thanh toán'**
+  String get ticketPaymentStatus;
+
+  /// No description provided for @ticketCheckedInStatus.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã soát vé'**
+  String get ticketCheckedInStatus;
+
+  /// No description provided for @ticketNotCheckedInStatus.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa soát vé'**
+  String get ticketNotCheckedInStatus;
+
+  /// No description provided for @ticketSearchHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tìm theo mã BK, tên, SĐT...'**
+  String get ticketSearchHint;
+
+  /// No description provided for @ticketPriceWeekday.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ngày thường'**
+  String get ticketPriceWeekday;
+
+  /// No description provided for @ticketPriceWeekend.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cuối tuần'**
+  String get ticketPriceWeekend;
+
+  /// No description provided for @ticketEditPrice.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cập nhật giá vé'**
+  String get ticketEditPrice;
+
+  /// No description provided for @ticketPriceUpdateSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cập nhật giá vé thành công'**
+  String get ticketPriceUpdateSuccess;
+
+  /// No description provided for @ticketStatusConfirmed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã xác nhận'**
+  String get ticketStatusConfirmed;
+
+  /// No description provided for @ticketStatusPending.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chờ thanh toán'**
+  String get ticketStatusPending;
+
+  /// No description provided for @ticketStatusCancelled.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã hủy'**
+  String get ticketStatusCancelled;
+
+  /// No description provided for @ticketFilterAll.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tất cả'**
+  String get ticketFilterAll;
+
+  /// No description provided for @ticketConcessionsLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bắp nước'**
+  String get ticketConcessionsLabel;
+
+  /// No description provided for @ticketDetailTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chi tiết đơn vé'**
+  String get ticketDetailTitle;
+
+  /// No description provided for @ticketOpenScanner.
+  ///
+  /// In vi, this message translates to:
+  /// **'Soát vé QR'**
+  String get ticketOpenScanner;
+
+  /// No description provided for @ticketEmptyList.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có đơn vé nào'**
+  String get ticketEmptyList;
+
+  /// No description provided for @ticketPriceEmpty.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có cấu hình giá vé'**
+  String get ticketPriceEmpty;
+
+  /// No description provided for @ticketPriceEnterNew.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhập giá vé mới (VNĐ)'**
+  String get ticketPriceEnterNew;
 }
 
 class _AppLocalizationsDelegate

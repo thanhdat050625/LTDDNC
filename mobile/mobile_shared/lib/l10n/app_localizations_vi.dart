@@ -2127,4 +2127,82 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get cannotOpenTrailer => 'Không thể mở liên kết trailer';
+
+  @override
+  String get manageTickets => 'Quản lý vé';
+
+  @override
+  String get ticketManagement => 'Quản lý toàn bộ vé';
+
+  @override
+  String get ticketBookingList => 'Đơn đặt vé';
+
+  @override
+  String get ticketPriceConfig => 'Cấu hình giá vé';
+
+  @override
+  String get ticketBookingCode => 'Mã đơn';
+
+  @override
+  String get ticketCustomerName => 'Khách hàng';
+
+  @override
+  String get ticketShowtimeLabel => 'Suất chiếu';
+
+  @override
+  String get ticketSeatLabel => 'Ghế ngồi';
+
+  @override
+  String get ticketPaymentStatus => 'Thanh toán';
+
+  @override
+  String get ticketCheckedInStatus => 'Đã soát vé';
+
+  @override
+  String get ticketNotCheckedInStatus => 'Chưa soát vé';
+
+  @override
+  String get ticketSearchHint => 'Tìm theo mã BK, tên, SĐT...';
+
+  @override
+  String get ticketPriceWeekday => 'Ngày thường';
+
+  @override
+  String get ticketPriceWeekend => 'Cuối tuần';
+
+  @override
+  String get ticketEditPrice => 'Cập nhật giá vé';
+
+  @override
+  String get ticketPriceUpdateSuccess => 'Cập nhật giá vé thành công';
+
+  @override
+  String get ticketStatusConfirmed => 'Đã xác nhận';
+
+  @override
+  String get ticketStatusPending => 'Chờ thanh toán';
+
+  @override
+  String get ticketStatusCancelled => 'Đã hủy';
+
+  @override
+  String get ticketFilterAll => 'Tất cả';
+
+  @override
+  String get ticketConcessionsLabel => 'Bắp nước';
+
+  @override
+  String get ticketDetailTitle => 'Chi tiết đơn vé';
+
+  @override
+  String get ticketOpenScanner => 'Soát vé QR';
+
+  @override
+  String get ticketEmptyList => 'Chưa có đơn vé nào';
+
+  @override
+  String get ticketPriceEmpty => 'Chưa có cấu hình giá vé';
+
+  @override
+  String get ticketPriceEnterNew => 'Nhập giá vé mới (VNĐ)';
 }
