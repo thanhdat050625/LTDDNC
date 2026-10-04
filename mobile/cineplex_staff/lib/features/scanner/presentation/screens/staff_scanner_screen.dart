@@ -401,57 +401,37 @@ class _StaffScannerScreenState extends State<StaffScannerScreen>
                       ),
                     ],
                   ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Row(
                     children: [
-                      Text(
-                        l10n.manualTicketInput,
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: colors.textSecondary,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: _manualCodeController,
-                              textCapitalization: TextCapitalization.characters,
-                              style: TextStyle(color: colors.textPrimary),
-                              decoration: InputDecoration(
-                                hintText: l10n.manualCodeHint,
-                                hintStyle: TextStyle(color: colors.textMuted),
-                                isDense: true,
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 14,
-                                  vertical: 12,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(
-                                    color: colors.borderSubtle,
-                                  ),
-                                ),
-                                prefixIcon: Icon(
-                                  Icons.keyboard_outlined,
-                                  size: 20,
-                                  color: colors.iconSecondary,
-                                ),
+                      Expanded(
+                        child: TextField(
+                          controller: _manualCodeController,
+                          textCapitalization: TextCapitalization.characters,
+                          style: TextStyle(color: colors.textPrimary),
+                          decoration: InputDecoration(
+                            hintText: l10n.manualCodeHint,
+                            hintStyle: TextStyle(color: colors.textMuted),
+                            isDense: true,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 12,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(
+                                color: colors.borderSubtle,
                               ),
-                              onSubmitted: (_) => _submitManualCode(),
                             ),
                           ),
-                          const SizedBox(width: 10),
-                          AppButton(
-                            text: l10n.verifyTicket,
-                            onPressed: _submitManualCode,
-                            width: 105,
-                            backgroundColor: colorScheme.primary,
-                          ),
-                        ],
+                          onSubmitted: (_) => _submitManualCode(),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      AppButton(
+                        text: l10n.verifyTicket,
+                        onPressed: _submitManualCode,
+                        width: 105,
+                        backgroundColor: colorScheme.primary,
                       ),
                     ],
                   ),

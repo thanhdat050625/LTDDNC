@@ -44,6 +44,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     final base = _ticketTotal + _concessionTotal - _usedPoints;
     return base > 0 ? base : 0;
   }
+
   int get _cashChange {
     final diff = _receivedAmount - _grandTotal;
     return diff > 0 ? diff : 0;
@@ -94,7 +95,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 children: [
                   Text(
                     l10n.paymentMethod,
-                    style: AppTextStyles.title.copyWith(color: theme.textPrimary),
+                    style: AppTextStyles.title.copyWith(
+                      color: theme.textPrimary,
+                    ),
                   ),
                   SizedBox(height: theme.spacingMd),
                   ...methods.map((m) => _buildMethodCard(theme, m)),
@@ -128,7 +131,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         children: [
                           Text(
                             l10n.orderSummary,
-                            style: AppTextStyles.title.copyWith(color: theme.textPrimary),
+                            style: AppTextStyles.title.copyWith(
+                              color: theme.textPrimary,
+                            ),
                           ),
                           SizedBox(height: theme.spacingMd),
 
@@ -282,7 +287,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
     return AppCard(
       onTap: () => setState(() => _selectedMethod = method['id'] as String),
-      backgroundColor: isSelected ? color.withValues(alpha: 0.1) : theme.surface,
+      backgroundColor: isSelected
+          ? color.withValues(alpha: 0.1)
+          : theme.surface,
       margin: EdgeInsets.only(bottom: theme.spacingSm),
       child: Row(
         children: [
@@ -362,7 +369,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             hintText: l10n.enterCashReceivedHint,
             keyboardType: TextInputType.number,
             onChanged: (val) {
-              final parsed = int.tryParse(val.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
+              final parsed =
+                  int.tryParse(val.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
               setState(() => _receivedAmount = parsed);
             },
           ),
@@ -426,7 +434,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               const SizedBox(width: 8),
               Text(
                 l10n.loyaltyPoints,
-                style: TextStyle(color: theme.textPrimary, fontWeight: FontWeight.bold, fontSize: 13),
+                style: TextStyle(
+                  color: theme.textPrimary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                ),
               ),
             ],
           ),
@@ -562,17 +574,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
       if (!context.mounted) return;
 
-      final bookingCode = booking.bookingCode.isNotEmpty ? booking.bookingCode : 'BK-${booking.id}';
+      final bookingCode = booking.bookingCode.isNotEmpty
+          ? booking.bookingCode
+          : 'BK-${booking.id}';
 
       // Step 3: Show receipt confirmation dialog
       _showSuccessDialog(context, bookingCode, theme, l10n);
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-            backgroundColor: theme.error,
-          ),
+          SnackBar(content: Text(e.toString()), backgroundColor: theme.error),
         );
       }
     } finally {

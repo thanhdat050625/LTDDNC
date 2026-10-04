@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_shared/mobile_shared.dart';
+
 import 'app.dart';
 import 'features/scanner/data/repositories/staff_repository.dart';
 

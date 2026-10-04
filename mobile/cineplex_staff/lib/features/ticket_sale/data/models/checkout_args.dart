@@ -38,5 +38,6 @@ class CheckoutArgs {
 
   int get concessionTotal => concessions.fold(0, (sum, c) => sum + c.subtotal);
   int get discountTotal => pointsToUse;
-  int get grandTotal => (ticketTotal + concessionTotal - discountTotal).clamp(0, 999999999);
+  int get grandTotal =>
+      (ticketTotal + concessionTotal - discountTotal).clamp(0, 999999999);
 }

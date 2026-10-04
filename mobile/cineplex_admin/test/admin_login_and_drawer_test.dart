@@ -81,8 +81,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(AdminLoginScreen), findsOneWidget);
-      expect(find.text('Cổng Quản trị Hệ thống'), findsOneWidget);
-      expect(find.text('Bảng điều khiển Quản trị'), findsOneWidget);
+      expect(find.text('Quản Trị Hệ Thống'), findsOneWidget);
+      expect(find.text('Admin'), findsOneWidget);
       expect(find.text('Đăng nhập'), findsOneWidget);
       expect(find.text('Ghi nhớ đăng nhập'), findsOneWidget);
     });
@@ -97,8 +97,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(AdminLoginScreen), findsOneWidget);
-      expect(find.text('Cổng Quản trị Hệ thống'), findsOneWidget);
-      expect(find.text('Bảng điều khiển Quản trị'), findsOneWidget);
+      expect(find.text('Quản Trị Hệ Thống'), findsOneWidget);
+      expect(find.text('Admin'), findsOneWidget);
     });
 
     testWidgets('Submitting empty login form displays validation errors', (tester) async {

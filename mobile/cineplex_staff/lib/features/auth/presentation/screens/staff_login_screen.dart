@@ -77,28 +77,33 @@ class _StaffLoginScreenState extends State<StaffLoginScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       // Staff Logo / Icon
-                      Icon(
-                        Icons.qr_code_scanner_rounded,
-                        size: 72,
-                        color: colors.primary,
+                      Image.asset(
+                        'assets/images/app_icon.png',
+                        width: 72,
+                        height: 72,
                       ),
                       const SizedBox(height: 16),
-                      Text(
-                        l10n.staffDashboard,
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: colors.textPrimary,
-                          letterSpacing: 1.2,
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          l10n.staffLoginTitle,
+                          textAlign: TextAlign.center,
+                          maxLines: 1,
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: colors.textPrimary,
+                                letterSpacing: 1.1,
+                              ),
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 4),
                       Text(
-                        l10n.scanTicketSubtitle,
+                        l10n.staffLoginSubtitle,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: colors.textSecondary,
-                          fontSize: 14,
+                          fontSize: 13.5,
                         ),
                       ),
                       const SizedBox(height: 40),

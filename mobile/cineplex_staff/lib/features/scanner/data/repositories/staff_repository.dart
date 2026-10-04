@@ -6,7 +6,10 @@ class StaffRepository {
   StaffRepository(this._dioClient);
 
   Future<TicketModel> checkinTicket(String qrCode) async {
-    final response = await _dioClient.post('/tickets/$qrCode/checkin', data: {});
+    final response = await _dioClient.post(
+      '/tickets/$qrCode/checkin',
+      data: {},
+    );
     final payload = (response.data is Map && response.data.containsKey('data'))
         ? response.data['data']
         : response.data;

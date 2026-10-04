@@ -512,7 +512,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get about => 'Về chúng tôi';
 
   @override
-  String get staffDashboard => 'Bảng điều khiển nhân viên';
+  String get staffDashboard => 'Tổng quan';
 
   @override
   String get qrScanner => 'Quét mã QR';
@@ -834,6 +834,18 @@ class AppLocalizationsVi extends AppLocalizations {
   String get scanTicketSubtitle => 'Soát vé vào phòng chiếu';
 
   @override
+  String get staffLoginTitle => 'Quản Lý Rạp';
+
+  @override
+  String get staffLoginSubtitle => 'Nhân Viên';
+
+  @override
+  String get adminLoginTitle => 'Quản Trị Hệ Thống';
+
+  @override
+  String get adminLoginSubtitle => 'Admin';
+
+  @override
   String get userManagementSubtitle => 'Danh sách & Quản lý tài khoản';
 
   @override
@@ -841,12 +853,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get accessDenied => 'Truy cập bị từ chối. Không đủ quyền hạn.';
-
-  @override
-  String get adminDashboard => 'Bảng điều khiển Quản trị';
-
-  @override
-  String get adminPortal => 'Cổng Quản trị Hệ thống';
 
   @override
   String get counterSaleDesc => 'Bán vé & Thanh toán';
@@ -1860,6 +1866,21 @@ class AppLocalizationsVi extends AppLocalizations {
       'Vui lòng kiểm tra quyền truy cập hoặc sử dụng tính năng nhập mã thủ công bên dưới.';
 
   @override
+  String get cameraRetake => 'Chụp lại';
+
+  @override
+  String get cameraUsePhoto => 'Sử dụng ảnh';
+
+  @override
+  String get cameraCapture => 'Chụp ảnh';
+
+  @override
+  String get cameraNoCameras => 'Không tìm thấy máy ảnh trên thiết bị';
+
+  @override
+  String get cameraCircleHint => 'Căn chỉnh khuôn mặt vào giữa khung tròn';
+
+  @override
   String get staffProfile => 'Hồ sơ nhân viên';
 
   @override
@@ -2106,4 +2127,82 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get cannotOpenTrailer => 'Không thể mở liên kết trailer';
+
+  @override
+  String get manageTickets => 'Quản lý vé';
+
+  @override
+  String get ticketManagement => 'Quản lý toàn bộ vé';
+
+  @override
+  String get ticketBookingList => 'Đơn đặt vé';
+
+  @override
+  String get ticketPriceConfig => 'Cấu hình giá vé';
+
+  @override
+  String get ticketBookingCode => 'Mã đơn';
+
+  @override
+  String get ticketCustomerName => 'Khách hàng';
+
+  @override
+  String get ticketShowtimeLabel => 'Suất chiếu';
+
+  @override
+  String get ticketSeatLabel => 'Ghế ngồi';
+
+  @override
+  String get ticketPaymentStatus => 'Thanh toán';
+
+  @override
+  String get ticketCheckedInStatus => 'Đã soát vé';
+
+  @override
+  String get ticketNotCheckedInStatus => 'Chưa soát vé';
+
+  @override
+  String get ticketSearchHint => 'Tìm theo mã BK, tên, SĐT...';
+
+  @override
+  String get ticketPriceWeekday => 'Ngày thường';
+
+  @override
+  String get ticketPriceWeekend => 'Cuối tuần';
+
+  @override
+  String get ticketEditPrice => 'Cập nhật giá vé';
+
+  @override
+  String get ticketPriceUpdateSuccess => 'Cập nhật giá vé thành công';
+
+  @override
+  String get ticketStatusConfirmed => 'Đã xác nhận';
+
+  @override
+  String get ticketStatusPending => 'Chờ thanh toán';
+
+  @override
+  String get ticketStatusCancelled => 'Đã hủy';
+
+  @override
+  String get ticketFilterAll => 'Tất cả';
+
+  @override
+  String get ticketConcessionsLabel => 'Bắp nước';
+
+  @override
+  String get ticketDetailTitle => 'Chi tiết đơn vé';
+
+  @override
+  String get ticketOpenScanner => 'Soát vé QR';
+
+  @override
+  String get ticketEmptyList => 'Chưa có đơn vé nào';
+
+  @override
+  String get ticketPriceEmpty => 'Chưa có cấu hình giá vé';
+
+  @override
+  String get ticketPriceEnterNew => 'Nhập giá vé mới (VNĐ)';
 }

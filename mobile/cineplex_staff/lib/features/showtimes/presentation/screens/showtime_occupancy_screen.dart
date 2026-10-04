@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 
@@ -14,144 +15,282 @@ class ShowtimeOccupancyScreen extends StatefulWidget {
 
 class _ShowtimeOccupancyScreenState extends State<ShowtimeOccupancyScreen> {
   int _selectedDateIndex = 0;
+  List<CinemaModel> _cinemas = [];
+  int? _selectedCinemaId;
+  Map<String, dynamic> _showtimesMap = {};
+  bool _isLoading = false;
+
+  late final List<DateTime> _dates;
+
+  @override
+  void initState() {
+    super.initState();
+    final now = DateTime.now();
+    _dates = List.generate(
+      7,
+      (i) => DateTime(now.year, now.month, now.day + i),
+    );
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadData());
+  }
+
+  DioClient? _getDioClient() {
+    try {
+      return context.read<DioClient>();
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> _loadData() async {
+    final dio = _getDioClient();
+    if (dio == null) return;
+
+    if (mounted) setState(() => _isLoading = true);
+
+    try {
+      final cinemaRepo = CinemaManagementRepository(dio);
+      final cinemas = await cinemaRepo.getAllCinemas();
+
+      if (cinemas.isNotEmpty) {
+        final currentCinemaId = _selectedCinemaId ?? cinemas.first.id;
+        final showtimeRepo = ShowtimeManagementRepository(dio);
+        final map = await showtimeRepo.getByCinemaId(currentCinemaId);
+
+        if (mounted) {
+          setState(() {
+            _cinemas = cinemas;
+            _selectedCinemaId = currentCinemaId;
+            _showtimesMap = map;
+            _isLoading = false;
+          });
+        }
+      } else {
+        if (mounted) {
+          setState(() {
+            _cinemas = [];
+            _isLoading = false;
+          });
+        }
+      }
+    } catch (_) {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _onCinemaChanged(int newCinemaId) async {
+    final dio = _getDioClient();
+    if (dio == null) return;
+
+    setState(() {
+      _selectedCinemaId = newCinemaId;
+      _isLoading = true;
+    });
+
+    try {
+      final showtimeRepo = ShowtimeManagementRepository(dio);
+      final map = await showtimeRepo.getByCinemaId(newCinemaId);
+      if (mounted) {
+        setState(() {
+          _showtimesMap = map;
+          _isLoading = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  String _formatDateChip(int index, AppLocalizations l10n) {
+    if (index == 0) return l10n.today;
+    if (index == 1) return l10n.tomorrow;
+    final d = _dates[index];
+    return '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}';
+  }
+
+  String _getDateKey(int index) {
+    final d = _dates[index];
+    return '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+  }
+
+  List<ShowtimeModel> _getCurrentShowtimes() {
+    final key = _getDateKey(_selectedDateIndex);
+    final rawList = _showtimesMap[key];
+    if (rawList is! List) return [];
+
+    final list = <ShowtimeModel>[];
+    for (final item in rawList) {
+      if (item is Map<String, dynamic>) {
+        final st = ShowtimeModel.fromJson(item);
+        if (st.status != 'CANCELLED') {
+          list.add(st);
+        }
+      }
+    }
+    list.sort((a, b) => a.publicStartTime.compareTo(b.publicStartTime));
+    return list;
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = CineplexColors.of(context);
-
-    final dates = [l10n.today, l10n.tomorrow, '05/10', '06/10', '07/10'];
+    final showtimes = _getCurrentShowtimes();
 
     return AppScaffold(
       title: l10n.showtimesAndOccupancy,
       drawer: const StaffDrawer(),
-      body: Column(
-        children: [
-          // Horizontal Date Picker
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-            decoration: BoxDecoration(
-              color: theme.surface,
-              border: Border(bottom: BorderSide(color: theme.borderSubtle)),
-            ),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: List.generate(dates.length, (index) {
-                  final isSelected = index == _selectedDateIndex;
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: ChoiceChip(
-                      label: Text(dates[index]),
-                      selected: isSelected,
-                      onSelected: (selected) {
-                        if (selected) {
-                          setState(() => _selectedDateIndex = index);
-                        }
-                      },
-                      selectedColor: theme.primary,
-                      backgroundColor: theme.surface,
-                      labelStyle: TextStyle(
-                        fontSize: 12,
-                        fontWeight: isSelected
-                            ? FontWeight.bold
-                            : FontWeight.w500,
-                        color: isSelected ? Colors.white : theme.textSecondary,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        side: BorderSide(
+      body: RefreshIndicator(
+        onRefresh: _loadData,
+        color: theme.primary,
+        child: Column(
+          children: [
+            // Cinema selector bar if multiple cinemas exist
+            if (_cinemas.length > 1)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                color: theme.surface,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: _cinemas.map((cinema) {
+                      final isSelected = cinema.id == _selectedCinemaId;
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: ChoiceChip(
+                          label: Text(cinema.name),
+                          selected: isSelected,
+                          onSelected: (selected) {
+                            if (selected && cinema.id != _selectedCinemaId) {
+                              _onCinemaChanged(cinema.id);
+                            }
+                          },
+                          selectedColor: theme.primary.withValues(alpha: 0.15),
+                          backgroundColor: theme.background,
+                          labelStyle: TextStyle(
+                            fontSize: 12,
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                            color: isSelected
+                                ? theme.primary
+                                : theme.textSecondary,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            side: BorderSide(
+                              color: isSelected
+                                  ? theme.primary
+                                  : theme.borderSubtle,
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
+
+            // Horizontal Date Picker
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+              decoration: BoxDecoration(
+                color: theme.surface,
+                border: Border(bottom: BorderSide(color: theme.borderSubtle)),
+              ),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: List.generate(_dates.length, (index) {
+                    final isSelected = index == _selectedDateIndex;
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: ChoiceChip(
+                        label: Text(_formatDateChip(index, l10n)),
+                        selected: isSelected,
+                        onSelected: (selected) {
+                          if (selected) {
+                            setState(() => _selectedDateIndex = index);
+                          }
+                        },
+                        selectedColor: theme.primary,
+                        backgroundColor: theme.surface,
+                        labelStyle: TextStyle(
+                          fontSize: 12,
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.w500,
                           color: isSelected
-                              ? theme.primary
-                              : theme.borderSubtle,
+                              ? Colors.white
+                              : theme.textSecondary,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          side: BorderSide(
+                            color: isSelected
+                                ? theme.primary
+                                : theme.borderSubtle,
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                }),
+                    );
+                  }),
+                ),
               ),
             ),
-          ),
 
-          // Room Timeline Cards
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-              children: [
-                _buildRoomCard(
-                  context: context,
-                  theme: theme,
-                  l10n: l10n,
-                  roomName: '${l10n.roomPrefix('01')} (IMAX)',
-                  capacity: 120,
-                  booked: 92,
-                  movie: 'Mai',
-                  format: 'IMAX 2D',
-                  time: '14:30 - 16:45',
-                  status: l10n.roomStatusScreening,
-                  statusColor: theme.success,
-                  progress: 0.65,
-                ),
-                _buildRoomCard(
-                  context: context,
-                  theme: theme,
-                  l10n: l10n,
-                  roomName: '${l10n.roomPrefix('02')} (Standard)',
-                  capacity: 100,
-                  booked: 63,
-                  movie: 'Dune: Part Two',
-                  format: l10n.format2DSubtitle,
-                  time: '15:15 - 18:00',
-                  status: l10n.roomStatusPreparing,
-                  statusColor: theme.warning,
-                  progress: 0.15,
-                ),
-                _buildRoomCard(
-                  context: context,
-                  theme: theme,
-                  l10n: l10n,
-                  roomName: '${l10n.roomPrefix('03')} (VIP)',
-                  capacity: 48,
-                  booked: 40,
-                  movie: 'Kung Fu Panda 4',
-                  format: l10n.format3DDubbed,
-                  time: '16:00 - 17:35',
-                  status: l10n.roomStatusReady,
-                  statusColor: theme.info,
-                  progress: 0.0,
-                ),
-                _buildRoomCard(
-                  context: context,
-                  theme: theme,
-                  l10n: l10n,
-                  roomName: '${l10n.roomPrefix('04')} (Standard)',
-                  capacity: 90,
-                  booked: 15,
-                  movie: 'Godzilla x Kong',
-                  format: l10n.format2DDubbed,
-                  time: '18:15 - 20:10',
-                  status: l10n.roomStatusReady,
-                  statusColor: theme.info,
-                  progress: 0.0,
-                ),
-                _buildRoomCard(
-                  context: context,
-                  theme: theme,
-                  l10n: l10n,
-                  roomName: '${l10n.roomPrefix('05')} (VIP)',
-                  capacity: 36,
-                  booked: 36,
-                  movie: l10n.movieExhuma,
-                  format: l10n.format2DSubtitle,
-                  time: '13:00 - 15:15',
-                  status: l10n.roomStatusCleaning,
-                  statusColor: theme.textSecondary,
-                  progress: 1.0,
-                ),
-              ],
+            // Room Timeline Cards
+            Expanded(
+              child: _isLoading && showtimes.isEmpty
+                  ? Center(
+                      child: CircularProgressIndicator(color: theme.primary),
+                    )
+                  : showtimes.isEmpty
+                  ? ListView(
+                      padding: const EdgeInsets.fromLTRB(16, 40, 16, 24),
+                      children: [
+                        Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                LucideIcons.calendarOff,
+                                size: 48,
+                                color: theme.textSecondary,
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                l10n.noShowtimes,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: theme.textSecondary,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+                      itemCount: showtimes.length,
+                      itemBuilder: (context, index) {
+                        final st = showtimes[index];
+                        return _buildRoomCard(
+                          context: context,
+                          theme: theme,
+                          l10n: l10n,
+                          showtime: st,
+                        );
+                      },
+                    ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -160,20 +299,68 @@ class _ShowtimeOccupancyScreenState extends State<ShowtimeOccupancyScreen> {
     required BuildContext context,
     required CineplexColors theme,
     required AppLocalizations l10n,
-    required String roomName,
-    required int capacity,
-    required int booked,
-    required String movie,
-    required String format,
-    required String time,
-    required String status,
-    required Color statusColor,
-    required double progress,
+    required ShowtimeModel showtime,
   }) {
-    final occupancyPercent = ((booked / capacity) * 100).round();
+    final now = DateTime.now();
+    final durationMinutes = showtime.movie?.durationMinutes ?? 120;
+    final endTime = showtime.publicStartTime.add(
+      Duration(minutes: durationMinutes),
+    );
+    final isPast = now.isAfter(endTime);
+    final isScreening =
+        now.isAfter(showtime.publicStartTime) && now.isBefore(endTime);
+    final isPreparing =
+        !isScreening &&
+        !isPast &&
+        now.isAfter(
+          showtime.publicStartTime.subtract(const Duration(minutes: 15)),
+        );
+
+    final String status;
+    final Color statusColor;
+    final double progress;
+
+    if (isPast) {
+      status = l10n.roomStatusCleaning;
+      statusColor = theme.textSecondary;
+      progress = 1.0;
+    } else if (isScreening) {
+      status = l10n.roomStatusScreening;
+      statusColor = theme.success;
+      final totalSec = endTime.difference(showtime.publicStartTime).inSeconds;
+      progress = totalSec > 0
+          ? (now.difference(showtime.publicStartTime).inSeconds / totalSec)
+                .clamp(0.0, 1.0)
+          : 0.5;
+    } else if (isPreparing) {
+      status = l10n.roomStatusPreparing;
+      statusColor = theme.warning;
+      progress = 0.0;
+    } else {
+      status = l10n.roomStatusReady;
+      statusColor = theme.info;
+      progress = 0.0;
+    }
+
+    final capacity = showtime.totalSeats > 0
+        ? showtime.totalSeats
+        : (showtime.room?.totalSeats ?? 0);
+    final booked = capacity > 0
+        ? (capacity - showtime.availableSeats).clamp(0, capacity)
+        : 0;
+    final occupancyPercent = capacity > 0
+        ? ((booked / capacity) * 100).round()
+        : 0;
     final occupancyColor = occupancyPercent >= 90
         ? theme.error
         : (occupancyPercent >= 70 ? theme.warning : theme.success);
+
+    final roomName =
+        showtime.room?.name ?? l10n.roomPrefix(showtime.roomId.toString());
+    final formatStr = showtime.format.replaceAll('FORMAT_', '');
+    final timeStr =
+        '${FormatUtils.formatTime(showtime.publicStartTime)} - ${FormatUtils.formatTime(endTime)}';
+    final movieTitle = showtime.movie?.title ?? '';
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -199,7 +386,7 @@ class _ShowtimeOccupancyScreenState extends State<ShowtimeOccupancyScreen> {
             children: [
               Expanded(
                 child: Text(
-                  roomName,
+                  '$roomName ($formatStr)',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -236,7 +423,7 @@ class _ShowtimeOccupancyScreenState extends State<ShowtimeOccupancyScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      movie,
+                      movieTitle,
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
@@ -245,7 +432,7 @@ class _ShowtimeOccupancyScreenState extends State<ShowtimeOccupancyScreen> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      '$format • $time',
+                      '$formatStr • $timeStr',
                       style: TextStyle(
                         fontSize: 12,
                         color: theme.textSecondary,
@@ -300,8 +487,9 @@ class _ShowtimeOccupancyScreenState extends State<ShowtimeOccupancyScreen> {
               OutlinedButton.icon(
                 onPressed: () => _showQuickSeatMap(
                   context,
+                  showtime,
                   roomName,
-                  movie,
+                  movieTitle,
                   capacity,
                   booked,
                 ),
@@ -333,6 +521,7 @@ class _ShowtimeOccupancyScreenState extends State<ShowtimeOccupancyScreen> {
 
   void _showQuickSeatMap(
     BuildContext context,
+    ShowtimeModel showtime,
     String roomName,
     String movie,
     int capacity,
@@ -343,6 +532,7 @@ class _ShowtimeOccupancyScreenState extends State<ShowtimeOccupancyScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (c) => _QuickSeatMapModal(
+        showtime: showtime,
         roomName: roomName,
         movie: movie,
         capacity: capacity,
@@ -352,13 +542,15 @@ class _ShowtimeOccupancyScreenState extends State<ShowtimeOccupancyScreen> {
   }
 }
 
-class _QuickSeatMapModal extends StatelessWidget {
+class _QuickSeatMapModal extends StatefulWidget {
+  final ShowtimeModel showtime;
   final String roomName;
   final String movie;
   final int capacity;
   final int booked;
 
   const _QuickSeatMapModal({
+    required this.showtime,
     required this.roomName,
     required this.movie,
     required this.capacity,
@@ -366,10 +558,58 @@ class _QuickSeatMapModal extends StatelessWidget {
   });
 
   @override
+  State<_QuickSeatMapModal> createState() => _QuickSeatMapModalState();
+}
+
+class _QuickSeatMapModalState extends State<_QuickSeatMapModal> {
+  List<SeatModel> _seats = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadSeats());
+  }
+
+  Future<void> _loadSeats() async {
+    try {
+      final dio = context.read<DioClient>();
+      final repo = BookingManagementRepository(dio);
+      final seats = await repo.getShowtimeSeats(widget.showtime.id);
+      if (mounted) {
+        setState(() {
+          _seats = seats;
+          _isLoading = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = CineplexColors.of(context);
     final l10n = AppLocalizations.of(context)!;
-    final available = capacity - booked;
+
+    final actualTotal = _seats.isNotEmpty ? _seats.length : widget.capacity;
+    final actualBooked = _seats.isNotEmpty
+        ? _seats
+              .where(
+                (s) =>
+                    s.status == SeatStatus.booked ||
+                    s.status == SeatStatus.held,
+              )
+              .length
+        : widget.booked;
+    final actualAvailable = (actualTotal - actualBooked).clamp(0, actualTotal);
+
+    // Group seats by row
+    final Map<String, List<SeatModel>> rowMap = {};
+    for (final s in _seats) {
+      rowMap.putIfAbsent(s.row, () => []).add(s);
+    }
+    final rows = rowMap.keys.toList()..sort();
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.75,
@@ -401,7 +641,7 @@ class _QuickSeatMapModal extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      roomName,
+                      widget.roomName,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -409,7 +649,7 @@ class _QuickSeatMapModal extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      movie,
+                      widget.movie,
                       style: TextStyle(
                         fontSize: 13,
                         color: theme.primary,
@@ -447,69 +687,87 @@ class _QuickSeatMapModal extends StatelessWidget {
           ),
           const SizedBox(height: 16),
 
-          // Seat Grid Preview (8 rows x 10 cols)
+          // Seat Grid
           Expanded(
-            child: Center(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: List.generate(8, (rowIndex) {
-                    final rowLetter = String.fromCharCode(65 + rowIndex);
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 3),
-                      child: Row(
+            child: _isLoading
+                ? Center(child: CircularProgressIndicator(color: theme.primary))
+                : _seats.isEmpty
+                ? Center(
+                    child: Text(
+                      l10n.noData,
+                      style: TextStyle(color: theme.textSecondary),
+                    ),
+                  )
+                : InteractiveViewer(
+                    minScale: 0.5,
+                    maxScale: 2.5,
+                    constrained: false,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: 18,
-                            child: Text(
-                              rowLetter,
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                                color: theme.textSecondary,
-                              ),
-                            ),
-                          ),
-                          ...List.generate(10, (colIndex) {
-                            final seatNum = rowIndex * 10 + colIndex;
-                            final isBooked = seatNum < booked;
-                            final isVIP = rowIndex >= 4 && rowIndex <= 6;
-
-                            final seatColor = isBooked
-                                ? theme.seatBooked
-                                : (isVIP ? theme.seatVIP : theme.seatStandard);
-
-                            return Container(
-                              width: 24,
-                              height: 24,
-                              margin: const EdgeInsets.symmetric(
-                                horizontal: 2.5,
-                              ),
-                              decoration: BoxDecoration(
-                                color: seatColor,
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  '${colIndex + 1}',
-                                  style: TextStyle(
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.bold,
-                                    color: isBooked
-                                        ? theme.seatBookedText
-                                        : theme.seatText,
+                        children: rows.map((r) {
+                          final rowSeats = rowMap[r]!
+                            ..sort((a, b) => a.column.compareTo(b.column));
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 3),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  width: 20,
+                                  child: Text(
+                                    r,
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold,
+                                      color: theme.textSecondary,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            );
-                          }),
-                        ],
+                                ...rowSeats.map((seat) {
+                                  final isBooked =
+                                      seat.status == SeatStatus.booked ||
+                                      seat.status == SeatStatus.held;
+                                  final isVIP = seat.isCouple;
+
+                                  final seatColor = isBooked
+                                      ? theme.seatBooked
+                                      : (isVIP
+                                            ? theme.seatVIP
+                                            : theme.seatStandard);
+
+                                  return Container(
+                                    width: isVIP ? 52 : 26,
+                                    height: 26,
+                                    margin: const EdgeInsets.symmetric(
+                                      horizontal: 2.5,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: seatColor,
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        '${seat.column}',
+                                        style: TextStyle(
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.bold,
+                                          color: isBooked
+                                              ? theme.seatBookedText
+                                              : theme.seatText,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }),
+                              ],
+                            ),
+                          );
+                        }).toList(),
                       ),
-                    );
-                  }),
-                ),
-              ),
-            ),
+                    ),
+                  ),
           ),
 
           const SizedBox(height: 12),
@@ -538,7 +796,7 @@ class _QuickSeatMapModal extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Text(
-                  l10n.availableCountLabel(available),
+                  l10n.availableCountLabel(actualAvailable),
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
@@ -546,7 +804,7 @@ class _QuickSeatMapModal extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  l10n.bookedCountLabel(booked),
+                  l10n.bookedCountLabel(actualBooked),
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
@@ -554,7 +812,7 @@ class _QuickSeatMapModal extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  l10n.totalCountLabel(capacity),
+                  l10n.totalCountLabel(actualTotal),
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,

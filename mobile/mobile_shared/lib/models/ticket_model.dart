@@ -37,7 +37,9 @@ class TicketModel extends Equatable {
     String? label;
     if (json['seat'] is Map) {
       final seat = json['seat'] as Map<String, dynamic>;
-      label = seat['label']?.toString() ?? '${seat['row'] ?? ''}${seat['column'] ?? seat['number'] ?? ''}';
+      label =
+          seat['label']?.toString() ??
+          '${seat['row'] ?? ''}${seat['column'] ?? seat['number'] ?? ''}';
     }
 
     final showtime = json['showtime'] as Map<String, dynamic>?;
@@ -59,29 +61,32 @@ class TicketModel extends Equatable {
       movieTitle: movie?['title']?.toString(),
       roomName: room?['name']?.toString(),
       cinemaName: cinema?['name']?.toString(),
-      startTime: showtime?['publicStartTime']?.toString() ?? showtime?['startTime']?.toString(),
-      customerName: customer?['fullName']?.toString() ?? customer?['name']?.toString(),
+      startTime:
+          showtime?['publicStartTime']?.toString() ??
+          showtime?['startTime']?.toString(),
+      customerName:
+          customer?['fullName']?.toString() ?? customer?['name']?.toString(),
       bookingCode: booking?['bookingCode']?.toString(),
     );
   }
 
   @override
   List<Object?> get props => [
-        id,
-        bookingId,
-        seatId,
-        qrCode,
-        price,
-        isCheckedIn,
-        status,
-        seatLabel,
-        movieTitle,
-        roomName,
-        cinemaName,
-        startTime,
-        customerName,
-        bookingCode,
-      ];
+    id,
+    bookingId,
+    seatId,
+    qrCode,
+    price,
+    isCheckedIn,
+    status,
+    seatLabel,
+    movieTitle,
+    roomName,
+    cinemaName,
+    startTime,
+    customerName,
+    bookingCode,
+  ];
 }
 
 class BookingDetailModel extends Equatable {
@@ -97,6 +102,13 @@ class BookingDetailModel extends Equatable {
   final String? format;
   final List<TicketModel> tickets;
   final List<Map<String, dynamic>> concessions;
+  final String? customerName;
+  final String? customerPhone;
+  final String? staffName;
+  final String? createdAt;
+  final String? paymentMethod;
+  final num discountAmount;
+  final String? source;
 
   const BookingDetailModel({
     required this.id,
@@ -111,12 +123,22 @@ class BookingDetailModel extends Equatable {
     this.format,
     required this.tickets,
     this.concessions = const [],
+    this.customerName,
+    this.customerPhone,
+    this.staffName,
+    this.createdAt,
+    this.paymentMethod,
+    this.discountAmount = 0,
+    this.source,
   });
 
   factory BookingDetailModel.fromJson(Map<String, dynamic> json) {
     final showtime = json['showtime'] as Map<String, dynamic>?;
     final movie = showtime?['movie'] as Map<String, dynamic>?;
     final room = showtime?['room'] as Map<String, dynamic>?;
+    final user = json['user'] as Map<String, dynamic>?;
+    final staff = json['staff'] as Map<String, dynamic>?;
+    final payment = json['payment'] as Map<String, dynamic>?;
 
     return BookingDetailModel(
       id: json['id']?.toString() ?? '',
@@ -127,26 +149,79 @@ class BookingDetailModel extends Equatable {
       posterUrl: movie?['posterUrl']?.toString(),
       cinemaName: room?['cinema']?['name']?.toString() ?? 'Cineplex',
       roomName: room?['name']?.toString(),
-      startTime: showtime?['publicStartTime']?.toString() ?? showtime?['startTime']?.toString(),
+      startTime:
+          showtime?['publicStartTime']?.toString() ??
+          showtime?['startTime']?.toString(),
       format: showtime?['format']?.toString() ?? '2D',
-      tickets: (json['tickets'] as List?)?.map((e) => TicketModel.fromJson(e as Map<String, dynamic>)).toList() ?? [],
-      concessions: (json['bookingConcessions'] as List?)?.cast<Map<String, dynamic>>() ?? [],
+      tickets:
+          (json['tickets'] as List?)
+              ?.map((e) => TicketModel.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      concessions:
+          (json['bookingConcessions'] as List?)?.cast<Map<String, dynamic>>() ??
+          [],
+      customerName: user?['fullName']?.toString() ?? user?['name']?.toString(),
+      customerPhone:
+          user?['phone']?.toString() ?? user?['phoneNumber']?.toString(),
+      staffName: staff?['fullName']?.toString() ?? staff?['name']?.toString(),
+      createdAt: json['createdAt']?.toString(),
+      paymentMethod: payment?['method']?.toString(),
+      discountAmount: json['discountAmount'] ?? 0,
+      source: json['source']?.toString(),
     );
   }
 
   @override
   List<Object?> get props => [
-        id,
-        bookingCode,
-        totalAmount,
-        status,
-        movieTitle,
-        posterUrl,
-        cinemaName,
-        roomName,
-        startTime,
-        format,
-        tickets,
-        concessions,
-      ];
+    id,
+    bookingCode,
+    totalAmount,
+    status,
+    movieTitle,
+    posterUrl,
+    cinemaName,
+    roomName,
+    startTime,
+    format,
+    tickets,
+    concessions,
+    customerName,
+    customerPhone,
+    staffName,
+    createdAt,
+    paymentMethod,
+    discountAmount,
+    source,
+  ];
+}
+
+class TicketPriceModel extends Equatable {
+  final int id;
+  final String roomType;
+  final String dayType;
+  final num price;
+
+  const TicketPriceModel({
+    required this.id,
+    required this.roomType,
+    required this.dayType,
+    required this.price,
+  });
+
+  factory TicketPriceModel.fromJson(Map<String, dynamic> json) {
+    return TicketPriceModel(
+      id: json['id'] is int
+          ? json['id'] as int
+          : int.tryParse(json['id']?.toString() ?? '0') ?? 0,
+      roomType: json['roomType']?.toString() ?? 'STANDARD',
+      dayType: json['dayType']?.toString() ?? 'WEEKDAY',
+      price: json['price'] is num
+          ? json['price'] as num
+          : num.tryParse(json['price']?.toString() ?? '0') ?? 0,
+    );
+  }
+
+  @override
+  List<Object?> get props => [id, roomType, dayType, price];
 }

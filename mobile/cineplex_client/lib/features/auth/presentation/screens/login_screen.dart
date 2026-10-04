@@ -56,29 +56,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   // Brand Icon & Title Badge
                   Center(
-                    child: Container(
+                    child: Image.asset(
+                      'assets/images/app_icon.png',
                       width: 64,
                       height: 64,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [colors.primary, colors.secondary],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: colors.primary.withValues(alpha: 0.35),
-                            blurRadius: 14,
-                            offset: const Offset(0, 6),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.movie_filter_rounded,
-                        color: Colors.white,
-                        size: 36,
-                      ),
                     ),
                   ),
                   const SizedBox(height: 16),

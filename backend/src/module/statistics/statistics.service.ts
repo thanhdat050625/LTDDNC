@@ -235,6 +235,10 @@ export class StatisticsService {
         relations: ['booking'],
       });
 
+      const checkedInTickets = await this.ticketRepository.count({
+        where: { isCheckedIn: true },
+      });
+
       const totalCinemas = await this.cinemaRepository.count();
 
       const activeMovies = await this.movieRepository.createQueryBuilder('movie')
@@ -244,6 +248,7 @@ export class StatisticsService {
       return new ApiResponse(true, 'Lấy tổng quan thành công', {
         revenue: Number(totalRevenue) || 0,
         tickets: totalTickets,
+        checkedInTickets,
         cinemas: totalCinemas,
         activeMovies,
       });

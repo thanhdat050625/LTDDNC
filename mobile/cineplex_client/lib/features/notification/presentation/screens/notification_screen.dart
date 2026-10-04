@@ -22,7 +22,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final colors = CineplexColors.of(context);
-    final bottomPadding = 100 + MediaQuery.of(context).padding.bottom;
+    final bottomPadding = MediaQuery.of(context).padding.bottom + 16;
 
     return AppScaffold(
       title: l10n.notifications,

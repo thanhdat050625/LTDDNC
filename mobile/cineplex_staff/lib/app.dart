@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_shared/mobile_shared.dart';
+
 import 'features/scanner/data/repositories/staff_repository.dart';
 import 'features/scanner/presentation/cubit/staff_cubit.dart';
 import 'router/staff_router.dart';

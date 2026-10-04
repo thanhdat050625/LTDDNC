@@ -6,7 +6,6 @@ import 'package:cineplex_client/features/home/presentation/cubit/home_cubit.dart
 import 'package:cineplex_client/features/home/presentation/widgets/movie_carousel.dart';
 import 'package:cineplex_client/features/home/presentation/widgets/now_showing_section.dart';
 import 'package:cineplex_client/features/home/presentation/widgets/coming_soon_section.dart';
-import 'package:cineplex_client/features/home/presentation/widgets/promotion_banner.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -87,11 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       NowShowingSection(movies: data.nowShowing),
                       const SizedBox(height: 24),
                       ComingSoonSection(movies: data.comingSoon),
-                      if (data.activePromotions.isNotEmpty) ...[
-                        const SizedBox(height: 24),
-                        PromotionBanner(promotions: data.activePromotions),
-                      ],
-                      SizedBox(height: 100 + MediaQuery.of(context).padding.bottom),
+                      SizedBox(height: MediaQuery.of(context).padding.bottom + 16),
                     ],
                   ),
                 ),

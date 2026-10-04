@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 
 import '../cubit/profile_cubit.dart';
@@ -117,6 +118,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
+    final colors = CineplexColors.of(context);
 
     return BlocBuilder<ProfileCubit, ProfileState>(
       builder: (context, state) {
@@ -162,34 +164,61 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     16,
                     16,
                     16,
-                    100 + MediaQuery.of(context).padding.bottom,
+                    MediaQuery.of(context).padding.bottom + 16,
                   ),
                   children: [
                     // Header Avatar & Name (Avatar qua trái, thông tin qua phải)
                     Row(
                       children: [
-                        CircleAvatar(
-                          radius: 36,
-                          backgroundColor: colorScheme.primaryContainer,
-                          backgroundImage:
-                              (user['avatar'] != null &&
-                                  user['avatar'].toString().isNotEmpty)
-                              ? NetworkImage(user['avatar'].toString())
-                              : null,
-                          child:
-                              (user['avatar'] != null &&
-                                  user['avatar'].toString().isNotEmpty)
-                              ? null
-                              : Text(
-                                  fullName.isNotEmpty
-                                      ? fullName[0].toUpperCase()
-                                      : 'U',
-                                  style: TextStyle(
-                                    fontSize: 28,
-                                    fontWeight: FontWeight.bold,
-                                    color: colorScheme.onPrimaryContainer,
+                        Container(
+                          width: 72,
+                          height: 72,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: colors.surfaceVariant,
+                            border: Border.all(color: colors.primary, width: 2),
+                          ),
+                          child: ClipOval(
+                            child: (user['avatar'] != null &&
+                                    user['avatar'].toString().isNotEmpty)
+                                ? CachedNetworkImage(
+                                    imageUrl: user['avatar'].toString(),
+                                    width: 72,
+                                    height: 72,
+                                    fit: BoxFit.cover,
+                                    placeholder: (_, __) => const Center(
+                                      child: SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: CircularProgressIndicator(strokeWidth: 2),
+                                      ),
+                                    ),
+                                    errorWidget: (_, __, ___) => Center(
+                                      child: Text(
+                                        fullName.isNotEmpty
+                                            ? fullName[0].toUpperCase()
+                                            : 'U',
+                                        style: TextStyle(
+                                          fontSize: 28,
+                                          fontWeight: FontWeight.bold,
+                                          color: colors.primary,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Center(
+                                    child: Text(
+                                      fullName.isNotEmpty
+                                          ? fullName[0].toUpperCase()
+                                          : 'U',
+                                      style: TextStyle(
+                                        fontSize: 28,
+                                        fontWeight: FontWeight.bold,
+                                        color: colors.primary,
+                                      ),
+                                    ),
                                   ),
-                                ),
+                          ),
                         ),
                         const SizedBox(width: 16),
                         Expanded(

@@ -17,6 +17,8 @@ import '../features/ticket_sale/presentation/cubit/ticket_sale_cubit.dart';
 import '../features/ticket_sale/presentation/screens/checkout_screen.dart';
 import '../features/ticket_sale/presentation/screens/seat_selection_screen.dart';
 import '../features/ticket_sale/presentation/screens/ticket_sale_screen.dart';
+import '../features/tickets/presentation/cubit/ticket_management_cubit.dart';
+import '../features/tickets/presentation/screens/ticket_management_screen.dart';
 
 final staffRootNavigatorKey = GlobalKey<NavigatorState>();
 final staffShellNavigatorKey = GlobalKey<NavigatorState>();
@@ -119,6 +121,15 @@ GoRouter createStaffRouter(
       ),
 
       // Admin / Managerial CRUD routes
+      GoRoute(
+        path: '/ticket-management',
+        builder: (context, state) => BlocProvider(
+          create: (context) => TicketManagementCubit(
+            BookingManagementRepository(context.read<DioClient>()),
+          ),
+          child: const TicketManagementScreen(drawer: StaffDrawer()),
+        ),
+      ),
       GoRoute(
         path: '/movies',
         builder: (context, state) => BlocProvider(
