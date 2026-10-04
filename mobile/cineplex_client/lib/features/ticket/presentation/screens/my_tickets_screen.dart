@@ -31,7 +31,7 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> with SingleTickerProv
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final colorScheme = Theme.of(context).colorScheme;
+    final colors = CineplexColors.of(context);
 
     return AppScaffold(
       title: l10n.myTickets,
@@ -40,9 +40,9 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> with SingleTickerProv
         children: [
           TabBar(
             controller: _tabController,
-            labelColor: colorScheme.primary,
-            unselectedLabelColor: colorScheme.onSurfaceVariant,
-            indicatorColor: colorScheme.primary,
+            labelColor: colors.primary,
+            unselectedLabelColor: colors.textSecondary,
+            indicatorColor: colors.primary,
             tabs: [
               Tab(text: l10n.upcomingTickets),
               Tab(text: l10n.pastTickets),
@@ -56,24 +56,15 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> with SingleTickerProv
                   return TabBarView(
                     controller: _tabController,
                     children: [
-                      _buildList(state.upcoming, l10n, colorScheme),
-                      _buildList(state.past, l10n, colorScheme),
+                      _buildList(state.upcoming, l10n, colors),
+                      _buildList(state.past, l10n, colors),
                     ],
                   );
                 }
                 if (state is MyTicketsError) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(state.message, textAlign: TextAlign.center),
-                        const SizedBox(height: 12),
-                        ElevatedButton(
-                          onPressed: () => context.read<MyTicketsCubit>().loadMyTickets(),
-                          child: Text(l10n.retry),
-                        ),
-                      ],
-                    ),
+                  return AppErrorView(
+                    message: state.message,
+                    onRetry: () => context.read<MyTicketsCubit>().loadMyTickets(),
                   );
                 }
                 return const SizedBox.shrink();
@@ -85,32 +76,35 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> with SingleTickerProv
     );
   }
 
-  Widget _buildList(List bookings, AppLocalizations l10n, ColorScheme colorScheme) {
+  Widget _buildList(List bookings, AppLocalizations l10n, CineplexColors colors) {
+    final bottomPadding = 100 + MediaQuery.of(context).padding.bottom;
+
     if (bookings.isEmpty) {
       return Center(
         child: Padding(
-          padding: EdgeInsets.fromLTRB(24, 24, 24, MediaQuery.of(context).padding.bottom + 16),
+          padding: EdgeInsets.fromLTRB(24, 24, 24, bottomPadding),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.confirmation_number_outlined, size: 64, color: colorScheme.onSurfaceVariant.withOpacity(0.5)),
+              Icon(
+                Icons.confirmation_number_outlined,
+                size: 64,
+                color: colors.iconMuted,
+              ),
               const SizedBox(height: 16),
               Text(
                 l10n.ticketListEmptyPrompt,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: colorScheme.onSurfaceVariant),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: colors.textSecondary,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
-              ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: colorScheme.primary,
-                  foregroundColor: colorScheme.onPrimary,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                ),
+              AppButton(
+                text: l10n.bookNow,
                 onPressed: () => context.go('/movies'),
-                icon: const Icon(Icons.movie_outlined, size: 18),
-                label: Text(l10n.bookNow),
               ),
             ],
           ),
@@ -119,8 +113,9 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> with SingleTickerProv
     }
     return RefreshIndicator(
       onRefresh: () => context.read<MyTicketsCubit>().loadMyTickets(),
+      color: colors.primary,
       child: ListView.builder(
-        padding: EdgeInsets.fromLTRB(16, 16, 16, MediaQuery.of(context).padding.bottom + 16),
+        padding: EdgeInsets.fromLTRB(16, 16, 16, bottomPadding),
         itemCount: bookings.length,
         itemBuilder: (context, index) {
           return TicketCard(booking: bookings[index]);

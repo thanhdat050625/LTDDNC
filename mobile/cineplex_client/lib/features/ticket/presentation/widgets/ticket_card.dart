@@ -7,19 +7,37 @@ class TicketCard extends StatelessWidget {
 
   const TicketCard({super.key, required this.booking});
 
+  String _localizeStatus(String status, AppLocalizations l10n) {
+    switch (status.toUpperCase()) {
+      case 'PAID':
+        return l10n.bookingStatusPaid;
+      case 'PENDING':
+        return l10n.bookingStatusPending;
+      case 'CANCELLED':
+      case 'CANCELED':
+        return l10n.bookingStatusCancelled;
+      case 'EXPIRED':
+        return l10n.bookingStatusExpired;
+      case 'CONFIRMED':
+        return l10n.bookingStatusConfirmed;
+      default:
+        return status;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final colorScheme = Theme.of(context).colorScheme;
-    final isPaid = booking.status == 'PAID';
+    final colors = CineplexColors.of(context);
+    final isPaid = booking.status.toUpperCase() == 'PAID';
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 0,
-      color: colorScheme.surfaceContainerLow,
+      color: colors.card,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: colorScheme.outlineVariant.withOpacity(0.4)),
+        side: BorderSide(color: colors.cardBorder),
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
@@ -35,12 +53,12 @@ class TicketCard extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: isPaid ? colorScheme.primaryContainer : colorScheme.surfaceContainerHighest,
+                  color: isPaid ? colors.primary.withValues(alpha: 0.12) : colors.surfaceVariant,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   Icons.confirmation_number_outlined,
-                  color: isPaid ? colorScheme.primary : colorScheme.onSurfaceVariant,
+                  color: isPaid ? colors.primary : colors.iconSecondary,
                 ),
               ),
               const SizedBox(width: 14),
@@ -52,12 +70,16 @@ class TicketCard extends StatelessWidget {
                       booking.movieTitle ?? '${l10n.orderCode}: ${booking.bookingCode}',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: colors.textPrimary,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${booking.cinemaName ?? 'Cineplex'} • ${booking.roomName ?? l10n.screeningRoom}',
-                      style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant),
+                      '${booking.cinemaName ?? l10n.appName} • ${booking.roomName ?? l10n.screeningRoom}',
+                      style: TextStyle(fontSize: 12, color: colors.textSecondary),
                     ),
                     const SizedBox(height: 6),
                     Row(
@@ -68,21 +90,28 @@ class TicketCard extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
-                            color: colorScheme.primary,
+                            color: colors.primary,
                           ),
                         ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: isPaid ? colorScheme.secondaryContainer : colorScheme.errorContainer,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            booking.status,
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                              color: isPaid ? colorScheme.onSecondaryContainer : colorScheme.onErrorContainer,
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: isPaid
+                                  ? colors.success.withValues(alpha: 0.12)
+                                  : colors.error.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              _localizeStatus(booking.status, l10n),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: isPaid ? colors.success : colors.error,
+                              ),
                             ),
                           ),
                         ),
@@ -92,7 +121,7 @@ class TicketCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              Icon(Icons.chevron_right, size: 20, color: colorScheme.onSurfaceVariant),
+              Icon(Icons.chevron_right, size: 20, color: colors.iconSecondary),
             ],
           ),
         ),

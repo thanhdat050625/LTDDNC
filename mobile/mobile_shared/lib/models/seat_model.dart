@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 enum SeatStatus { available, selected, held, booked, maintenance }
+enum SeatType { standard, vip, couple }
 
 class SeatModel extends Equatable {
   final int seatId;
@@ -9,6 +10,8 @@ class SeatModel extends Equatable {
   final String label;
   final SeatStatus status;
   final bool isCouple;
+  final bool isVip;
+  final SeatType type;
 
   const SeatModel({
     required this.seatId,
@@ -17,11 +20,14 @@ class SeatModel extends Equatable {
     required this.label,
     required this.status,
     required this.isCouple,
-  });
+    this.isVip = false,
+    SeatType? type,
+  }) : type = type ?? (isCouple ? SeatType.couple : (isVip ? SeatType.vip : SeatType.standard));
 
   factory SeatModel.fromJson(Map<String, dynamic> json) {
     SeatStatus parsedStatus = SeatStatus.available;
-    switch (json['status']) {
+    final rawStatus = (json['status'] as String?)?.toLowerCase();
+    switch (rawStatus) {
       case 'booked':
         parsedStatus = SeatStatus.booked;
         break;
@@ -30,22 +36,32 @@ class SeatModel extends Equatable {
         parsedStatus = SeatStatus.held;
         break;
       case 'maintenance':
+      case 'blocked':
         parsedStatus = SeatStatus.maintenance;
         break;
       default:
         parsedStatus = SeatStatus.available;
     }
 
-    final String row = json['row'] as String;
-    final int column = json['column'] as int;
-    
+    final String row = json['row'] as String? ?? 'A';
+    final int column = (json['column'] ?? json['number'] ?? 0) as int;
+    final int seatId = (json['seatId'] ?? json['id'] ?? 0) as int;
+    final String label = (json['label'] ?? '$row$column') as String;
+    final bool isCouple = json['isCouple'] as bool? ?? false;
+    final bool isVip = json['isVip'] as bool? ?? (json['type'] == 'VIP');
+    final SeatType type = isCouple
+        ? SeatType.couple
+        : (isVip ? SeatType.vip : SeatType.standard);
+
     return SeatModel(
-      seatId: json['seatId'] as int,
+      seatId: seatId,
       row: row,
       column: column,
-      label: '$row$column',
+      label: label,
       status: parsedStatus,
-      isCouple: json['isCouple'] as bool? ?? false,
+      isCouple: isCouple,
+      isVip: isVip,
+      type: type,
     );
   }
 
@@ -56,6 +72,8 @@ class SeatModel extends Equatable {
     String? label,
     SeatStatus? status,
     bool? isCouple,
+    bool? isVip,
+    SeatType? type,
   }) {
     return SeatModel(
       seatId: seatId ?? this.seatId,
@@ -64,9 +82,11 @@ class SeatModel extends Equatable {
       label: label ?? this.label,
       status: status ?? this.status,
       isCouple: isCouple ?? this.isCouple,
+      isVip: isVip ?? this.isVip,
+      type: type ?? this.type,
     );
   }
 
   @override
-  List<Object?> get props => [seatId, row, column, label, status, isCouple];
+  List<Object?> get props => [seatId, row, column, label, status, isCouple, isVip, type];
 }

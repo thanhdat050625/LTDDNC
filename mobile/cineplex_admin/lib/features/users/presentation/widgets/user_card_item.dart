@@ -18,7 +18,7 @@ class UserCardItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context).extension<CineplexColors>()!;
+    final theme = CineplexColors.of(context);
     final l10n = AppLocalizations.of(context)!;
 
     final isBlocked = user.isBlocked;
@@ -97,49 +97,46 @@ class UserCardItem extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Flexible(
-                              child: Text(
-                                name,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
-                                  color: theme.textPrimary,
-                                ),
-                              ),
+                        Text(
+                          name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                            color: theme.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 3),
+                        // Role Badge
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: roleColor.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(
+                              color: roleColor.withValues(alpha: 0.3),
+                              width: 0.5,
                             ),
-                            const SizedBox(width: 6),
-                            // Role Badge
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: roleColor.withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(6),
-                                border: Border.all(
-                                  color: roleColor.withValues(alpha: 0.3),
-                                  width: 0.5,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(roleIcon, size: 11, color: roleColor),
-                                  const SizedBox(width: 3),
-                                  Text(
-                                    roleLabel,
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.bold,
-                                      color: roleColor,
-                                    ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(roleIcon, size: 11, color: roleColor),
+                              const SizedBox(width: 3),
+                              Flexible(
+                                child: Text(
+                                  roleLabel,
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    color: roleColor,
                                   ),
-                                ],
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                         const SizedBox(height: 3),
 
@@ -177,11 +174,15 @@ class UserCardItem extends StatelessWidget {
                                 color: theme.textSecondary.withValues(alpha: 0.7),
                               ),
                               const SizedBox(width: 5),
-                              Text(
-                                user.phone!,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: theme.textSecondary,
+                              Flexible(
+                                child: Text(
+                                  user.phone!,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: theme.textSecondary,
+                                  ),
                                 ),
                               ),
                             ],
@@ -246,38 +247,57 @@ class UserCardItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // Extra info (Points or Created Date)
-                  Row(
-                    children: [
-                      if (user.isCustomer && user.loyaltyPoints > 0) ...[
-                        const Icon(LucideIcons.star, size: 13, color: Color(0xFFE58E26)),
-                        const SizedBox(width: 4),
-                        Text(
-                          '${user.loyaltyPoints} ${l10n.pointsSuffix}',
-                          style: const TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFFE58E26),
+                  Expanded(
+                    child: Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 8,
+                      runSpacing: 4,
+                      children: [
+                        if (user.isCustomer && user.loyaltyPoints > 0)
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(LucideIcons.star, size: 13, color: Color(0xFFE58E26)),
+                              const SizedBox(width: 4),
+                              Flexible(
+                                child: Text(
+                                  '${user.loyaltyPoints} ${l10n.pointsSuffix}',
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFFE58E26),
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                      ],
-                      if (user.createdAt != null) ...[
-                        Icon(
-                          LucideIcons.calendar,
-                          size: 12,
-                          color: theme.textSecondary.withValues(alpha: 0.6),
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          FormatUtils.formatDate(user.createdAt!),
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: theme.textSecondary.withValues(alpha: 0.8),
+                        if (user.createdAt != null)
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                LucideIcons.calendar,
+                                size: 12,
+                                color: theme.textSecondary.withValues(alpha: 0.6),
+                              ),
+                              const SizedBox(width: 4),
+                              Flexible(
+                                child: Text(
+                                  FormatUtils.formatDate(user.createdAt!),
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: theme.textSecondary.withValues(alpha: 0.8),
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
                       ],
-                    ],
+                    ),
                   ),
+                  const SizedBox(width: 8),
 
                   // Toggle Status Button
                   if (isUpdating)
@@ -294,7 +314,9 @@ class UserCardItem extends StatelessWidget {
                       onTap: onToggleStatus,
                       borderRadius: BorderRadius.circular(8),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        constraints: const BoxConstraints(minHeight: 36, minWidth: 44),
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                         decoration: BoxDecoration(
                           color: isBlocked
                               ? theme.success.withValues(alpha: 0.1)
@@ -312,7 +334,7 @@ class UserCardItem extends StatelessWidget {
                           children: [
                             Icon(
                               isBlocked ? LucideIcons.unlock : LucideIcons.lock,
-                              size: 12,
+                              size: 13,
                               color: isBlocked ? theme.success : theme.error,
                             ),
                             const SizedBox(width: 4),

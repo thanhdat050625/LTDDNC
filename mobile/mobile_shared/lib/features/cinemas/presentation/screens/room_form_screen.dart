@@ -53,22 +53,26 @@ class _RoomFormScreenState extends State<RoomFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context).extension<CineplexColors>()!;
+    final theme = CineplexColors.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final isEdit = widget.room != null;
 
     return AppScaffold(
-      title: isEdit ? AppLocalizations.of(context)!.editRoom : AppLocalizations.of(context)!.addRoom,
+      title: isEdit ? l10n.editRoom : l10n.addRoom,
       showBackButton: true,
       body: BlocConsumer<RoomFormCubit, RoomFormState>(
         listener: (context, state) {
           if (state is RoomFormSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(isEdit ? AppLocalizations.of(context)!.updateSuccess : AppLocalizations.of(context)!.addSuccess)),
+              SnackBar(
+                content: Text(isEdit ? l10n.updateSuccess : l10n.addSuccess),
+                backgroundColor: theme.success,
+              ),
             );
             context.pop();
           } else if (state is RoomFormError) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message, style: TextStyle(color: theme.error))),
+              SnackBar(content: Text(state.message), backgroundColor: theme.error),
             );
           }
         },
@@ -76,53 +80,66 @@ class _RoomFormScreenState extends State<RoomFormScreen> {
           final isLoading = state is RoomFormSubmitting;
 
           return SingleChildScrollView(
-            padding: EdgeInsets.all(theme.spacingLg),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Form(
               key: _formKey,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  AppTextField(
-                    controller: _nameCtrl,
-                    label: '${AppLocalizations.of(context)!.roomName} *',
-                    validator: (val) => val == null || val.isEmpty ? AppLocalizations.of(context)!.fillRequiredFields : null,
-                  ),
-                  SizedBox(height: theme.spacingMd),
-                  DropdownButtonFormField<String>(
-                    isExpanded: true,
-                    initialValue: _roomType,
-                    decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context)!.roomType,
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
+                  AppCard(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AppTextField(
+                          controller: _nameCtrl,
+                          label: '${l10n.roomName} *',
+                          hintText: l10n.roomName,
+                          validator: (val) => val == null || val.trim().isEmpty ? l10n.fillRequiredFields : null,
+                        ),
+                        const SizedBox(height: 14),
+                        DropdownButtonFormField<String>(
+                          isExpanded: true,
+                          initialValue: _roomType,
+                          decoration: InputDecoration(
+                            labelText: l10n.roomType,
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                          ),
+                          items: [
+                            DropdownMenuItem(value: 'STANDARD', child: Text(l10n.roomTypeStandard)),
+                            DropdownMenuItem(value: 'VIP', child: Text(l10n.roomTypeVIP)),
+                            DropdownMenuItem(value: 'IMAX', child: Text(l10n.roomTypeIMAX)),
+                            DropdownMenuItem(value: '4DX', child: Text(l10n.roomType4DX)),
+                          ],
+                          onChanged: isLoading ? null : (val) => setState(() => _roomType = val!),
+                        ),
+                        const SizedBox(height: 14),
+                        DropdownButtonFormField<String>(
+                          isExpanded: true,
+                          initialValue: _status,
+                          decoration: InputDecoration(
+                            labelText: l10n.statusLabel,
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                          ),
+                          items: [
+                            DropdownMenuItem(value: 'ACTIVE', child: Text(l10n.roomStatusActive)),
+                            DropdownMenuItem(value: 'INACTIVE', child: Text(l10n.roomStatusInactive)),
+                            DropdownMenuItem(value: 'MAINTENANCE', child: Text(l10n.roomStatusMaintenance)),
+                          ],
+                          onChanged: isLoading ? null : (val) => setState(() => _status = val!),
+                        ),
+                      ],
                     ),
-                    items: ['STANDARD', 'VIP', 'IMAX', '4DX']
-                        .map((s) => DropdownMenuItem(value: s, child: Text(s)))
-                        .toList(),
-                    onChanged: isLoading ? null : (val) => setState(() => _roomType = val!),
                   ),
-                  SizedBox(height: theme.spacingMd),
-                  DropdownButtonFormField<String>(
-                    isExpanded: true,
-                    initialValue: _status,
-                    decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context)!.statusLabel,
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
-                    ),
-                    items: ['ACTIVE', 'INACTIVE', 'MAINTENANCE']
-                        .map((s) => DropdownMenuItem(value: s, child: Text(s)))
-                        .toList(),
-                    onChanged: isLoading ? null : (val) => setState(() => _status = val!),
+                  const SizedBox(height: 16),
+                  AppButton(
+                    text: isEdit ? l10n.saveChanges : l10n.addRoom,
+                    onPressed: isLoading ? null : _submit,
+                    isLoading: isLoading,
                   ),
-                  SizedBox(height: 32),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: AppButton(
-                      text: isEdit ? AppLocalizations.of(context)!.saveChanges : AppLocalizations.of(context)!.addRoom,
-                      onPressed: isLoading ? null : _submit,
-                      isLoading: isLoading,
-                    ),
-                  ),
+                  const SizedBox(height: 16),
                 ],
               ),
             ),

@@ -149,7 +149,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onRefresh: () => context.read<ProfileCubit>().loadProfile(),
                 child: ListView(
                   physics: const AlwaysScrollableScrollPhysics(),
-                  padding: EdgeInsets.fromLTRB(16, 16, 16, MediaQuery.of(context).padding.bottom + 16),
+                  padding: EdgeInsets.fromLTRB(16, 16, 16, 100 + MediaQuery.of(context).padding.bottom),
                   children: [
                   // Header Avatar & Name (Avatar qua trái, thông tin qua phải)
                   Row(
@@ -197,7 +197,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
-                                role,
+                                role == 'STAFF'
+                                    ? l10n.staffRole
+                                    : (role == 'ADMIN' ? l10n.adminRole : l10n.customerRole),
                                 style: TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
@@ -304,6 +306,69 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ],
                       ),
                     ),
+
+                  const SizedBox(height: 16),
+
+                  // Theme Toggle Settings Card
+                  Card(
+                    elevation: 0,
+                    color: colorScheme.surfaceContainerLow,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      side: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.4)),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.palette_outlined, size: 20, color: colorScheme.primary),
+                              const SizedBox(width: 8),
+                              Text(
+                                l10n.themeModeSetting,
+                                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          BlocBuilder<ThemeCubit, ThemeMode>(
+                            builder: (context, currentMode) {
+                              return SizedBox(
+                                width: double.infinity,
+                                child: SegmentedButton<ThemeMode>(
+                                  segments: [
+                                    ButtonSegment<ThemeMode>(
+                                      value: ThemeMode.dark,
+                                      icon: const Icon(Icons.dark_mode_outlined, size: 16),
+                                      label: Text(l10n.themeModeDark, style: const TextStyle(fontSize: 12)),
+                                    ),
+                                    ButtonSegment<ThemeMode>(
+                                      value: ThemeMode.light,
+                                      icon: const Icon(Icons.light_mode_outlined, size: 16),
+                                      label: Text(l10n.themeModeLight, style: const TextStyle(fontSize: 12)),
+                                    ),
+                                    ButtonSegment<ThemeMode>(
+                                      value: ThemeMode.system,
+                                      icon: const Icon(Icons.phone_android_outlined, size: 16),
+                                      label: Text(l10n.themeModeSystem, style: const TextStyle(fontSize: 12)),
+                                    ),
+                                  ],
+                                  selected: {currentMode},
+                                  onSelectionChanged: (selected) {
+                                    if (selected.isNotEmpty) {
+                                      context.read<ThemeCubit>().setThemeMode(selected.first);
+                                    }
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
 
                   const SizedBox(height: 20),
 

@@ -32,6 +32,7 @@ class _CineplexAdminAppState extends State<CineplexAdminApp> {
   late final AuthBloc _authBloc;
   late final StatisticsCubit _statisticsCubit;
   late final UserManagementCubit _userManagementCubit;
+  late final ThemeCubit _themeCubit;
   late final GoRouter _router;
 
   @override
@@ -40,6 +41,7 @@ class _CineplexAdminAppState extends State<CineplexAdminApp> {
     _authBloc = AuthBloc(widget.authRepo)..add(CheckAuthStatus());
     _statisticsCubit = StatisticsCubit(widget.statisticsRepo);
     _userManagementCubit = UserManagementCubit(widget.userManagementRepo);
+    _themeCubit = ThemeCubit(widget.storageService);
     _router = createAdminRouter(_authBloc);
   }
 
@@ -48,6 +50,7 @@ class _CineplexAdminAppState extends State<CineplexAdminApp> {
     _authBloc.close();
     _statisticsCubit.close();
     _userManagementCubit.close();
+    _themeCubit.close();
     super.dispose();
   }
 
@@ -66,17 +69,22 @@ class _CineplexAdminAppState extends State<CineplexAdminApp> {
           BlocProvider.value(value: _authBloc),
           BlocProvider.value(value: _statisticsCubit),
           BlocProvider.value(value: _userManagementCubit),
+          BlocProvider.value(value: _themeCubit),
         ],
-        child: MaterialApp.router(
-          title: 'Cineplex Admin',
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme.lightTheme,
-          darkTheme: AppTheme.darkTheme,
-          themeMode: ThemeMode.dark,
-          routerConfig: _router,
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: const [Locale('vi')],
-          locale: const Locale('vi'),
+        child: BlocBuilder<ThemeCubit, ThemeMode>(
+          builder: (context, themeMode) {
+            return MaterialApp.router(
+              title: 'Cineplex Admin',
+              debugShowCheckedModeBanner: false,
+              theme: AppTheme.lightTheme,
+              darkTheme: AppTheme.darkTheme,
+              themeMode: themeMode,
+              routerConfig: _router,
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: const [Locale('vi')],
+              locale: const Locale('vi'),
+            );
+          },
         ),
       ),
     );

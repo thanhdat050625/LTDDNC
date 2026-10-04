@@ -6,83 +6,177 @@ class RoomListItem extends StatelessWidget {
   final RoomModel room;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
+  final VoidCallback? onViewSeats;
 
   const RoomListItem({
     super.key,
     required this.room,
     required this.onEdit,
     required this.onDelete,
+    this.onViewSeats,
   });
+
+  String _getRoomTypeLabel(String type, AppLocalizations l10n) {
+    switch (type.toUpperCase()) {
+      case 'STANDARD':
+        return l10n.roomTypeStandard;
+      case 'VIP':
+        return l10n.roomTypeVIP;
+      case 'IMAX':
+        return l10n.roomTypeIMAX;
+      case '4DX':
+        return l10n.roomType4DX;
+      default:
+        return type;
+    }
+  }
+
+  String _getStatusLabel(String status, AppLocalizations l10n) {
+    switch (status.toUpperCase()) {
+      case 'ACTIVE':
+        return l10n.roomStatusActive;
+      case 'INACTIVE':
+        return l10n.roomStatusInactive;
+      case 'MAINTENANCE':
+        return l10n.roomStatusMaintenance;
+      default:
+        return status;
+    }
+  }
+
+  Color _getStatusColor(String status, CineplexColors theme) {
+    switch (status.toUpperCase()) {
+      case 'ACTIVE':
+        return theme.success;
+      case 'INACTIVE':
+        return theme.textSecondary;
+      case 'MAINTENANCE':
+        return theme.warning;
+      default:
+        return theme.textSecondary;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context).extension<CineplexColors>()!;
+    final theme = CineplexColors.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final statusColor = _getStatusColor(room.status, theme);
 
     return AppCard(
       margin: EdgeInsets.zero,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
                   room.name,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: theme.textPrimary,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  style: TextStyle(
+                    color: theme.textPrimary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                 ),
-                SizedBox(height: 4),
-                Row(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: theme.primary.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        room.roomType,
-                        style: TextStyle(color: theme.primary, fontSize: 10, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    SizedBox(width: 8),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: (room.status == 'ACTIVE' ? theme.success : theme.textSecondary).withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        room.status,
-                        style: TextStyle(
-                          color: room.status == 'ACTIVE' ? theme.success : theme.textSecondary,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
+              ),
+              // Status Badge
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: statusColor.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(
+                    color: statusColor.withValues(alpha: 0.3),
+                    width: 0.8,
+                  ),
                 ),
-              ],
-            ),
+                child: Text(
+                  _getStatusLabel(room.status, l10n),
+                  style: TextStyle(
+                    color: statusColor,
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
           ),
+          const SizedBox(height: 6),
+          // Room Type & Seat Matrix Info
           Row(
             children: [
-              IconButton(
-                icon: Icon(LucideIcons.edit3, size: 20, color: theme.accent),
-                onPressed: onEdit,
-                constraints: const BoxConstraints(),
-                padding: EdgeInsets.all(4),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: theme.primary.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  _getRoomTypeLabel(room.roomType, l10n),
+                  style: TextStyle(
+                    color: theme.primary,
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
-              IconButton(
-                icon: Icon(LucideIcons.trash2, size: 20, color: theme.error),
-                onPressed: onDelete,
-                constraints: const BoxConstraints(),
-                padding: EdgeInsets.all(4),
+              const SizedBox(width: 8),
+              Text(
+                '${room.totalSeats} ${l10n.seatUnit} • ${room.rows}x${room.columns}',
+                style: TextStyle(
+                  color: theme.textSecondary,
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Divider(color: theme.borderSubtle, height: 1),
+          const SizedBox(height: 4),
+          // Actions Row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              if (onViewSeats != null)
+                TextButton.icon(
+                  onPressed: onViewSeats,
+                  icon: Icon(LucideIcons.layoutGrid, size: 15, color: theme.accent),
+                  label: Text(
+                    l10n.viewSeatMap,
+                    style: TextStyle(
+                      color: theme.accent,
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  style: TextButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                  ),
+                )
+              else
+                const SizedBox.shrink(),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: Icon(LucideIcons.edit3, size: 18, color: theme.accent),
+                    onPressed: onEdit,
+                    tooltip: l10n.editRoom,
+                    constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                    padding: const EdgeInsets.all(8),
+                  ),
+                  IconButton(
+                    icon: Icon(LucideIcons.trash2, size: 18, color: theme.error),
+                    onPressed: onDelete,
+                    tooltip: l10n.delete,
+                    constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                    padding: const EdgeInsets.all(8),
+                  ),
+                ],
               ),
             ],
           ),

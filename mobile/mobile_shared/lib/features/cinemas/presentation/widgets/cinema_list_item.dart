@@ -16,15 +16,44 @@ class CinemaListItem extends StatelessWidget {
     required this.onDelete,
   });
 
+  String _getStatusLabel(String status, AppLocalizations l10n) {
+    switch (status.toUpperCase()) {
+      case 'ACTIVE':
+        return l10n.cinemaStatusActive;
+      case 'INACTIVE':
+        return l10n.cinemaStatusInactive;
+      case 'MAINTENANCE':
+        return l10n.cinemaStatusMaintenance;
+      default:
+        return status;
+    }
+  }
+
+  Color _getStatusColor(String status, CineplexColors theme) {
+    switch (status.toUpperCase()) {
+      case 'ACTIVE':
+        return theme.success;
+      case 'INACTIVE':
+        return theme.textSecondary;
+      case 'MAINTENANCE':
+        return theme.warning;
+      default:
+        return theme.textSecondary;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context).extension<CineplexColors>()!;
+    final theme = CineplexColors.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final statusColor = _getStatusColor(cinema.status, theme);
 
-    return GestureDetector(
+    return InkWell(
       onTap: onTap,
+      borderRadius: BorderRadius.circular(theme.radiusMd),
       child: AppCard(
         margin: EdgeInsets.zero,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -34,78 +63,85 @@ class CinemaListItem extends StatelessWidget {
                 Expanded(
                   child: Text(
                     cinema.name,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: theme.textPrimary,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    style: TextStyle(
+                      color: theme.textPrimary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: (cinema.status == 'ACTIVE' ? theme.success : theme.error).withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(4),
+                    color: statusColor.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(
+                      color: statusColor.withValues(alpha: 0.3),
+                      width: 0.8,
+                    ),
                   ),
                   child: Text(
-                    cinema.status,
+                    _getStatusLabel(cinema.status, l10n),
                     style: TextStyle(
-                      color: cinema.status == 'ACTIVE' ? theme.success : theme.error,
-                      fontSize: 10,
+                      color: statusColor,
+                      fontSize: 10.5,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
               ],
             ),
-            SizedBox(height: theme.spacingSm),
+            const SizedBox(height: 8),
             Row(
               children: [
                 Icon(LucideIcons.mapPin, size: 14, color: theme.textSecondary),
-                SizedBox(width: 4),
+                const SizedBox(width: 4),
                 Expanded(
                   child: Text(
-                    cinema.address ?? '-',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: theme.textSecondary),
+                    cinema.address.isNotEmpty ? cinema.address : '-',
+                    style: TextStyle(color: theme.textSecondary, fontSize: 12.5),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             Row(
               children: [
                 Icon(LucideIcons.phone, size: 14, color: theme.textSecondary),
-                SizedBox(width: 4),
+                const SizedBox(width: 4),
                 Text(
-                  cinema.phone ?? '-',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(color: theme.textSecondary),
+                  cinema.phone.isNotEmpty ? cinema.phone : '-',
+                  style: TextStyle(color: theme.textSecondary, fontSize: 12.5),
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 14),
                 Icon(LucideIcons.monitorPlay, size: 14, color: theme.textSecondary),
-                SizedBox(width: 4),
+                const SizedBox(width: 4),
                 Text(
-                  '${cinema.roomsCount ?? 0} ${AppLocalizations.of(context)!.roomCount.toLowerCase()}',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(color: theme.textSecondary),
+                  '${cinema.roomsCount} ${l10n.roomCount.toLowerCase()}',
+                  style: TextStyle(color: theme.textSecondary, fontSize: 12.5),
                 ),
               ],
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 4),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 IconButton(
-                  icon: Icon(LucideIcons.edit3, size: 20, color: theme.accent),
+                  icon: Icon(LucideIcons.edit3, size: 18, color: theme.accent),
                   onPressed: onEdit,
-                  constraints: const BoxConstraints(),
-                  padding: EdgeInsets.all(4),
+                  tooltip: l10n.editCinema,
+                  constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                  padding: const EdgeInsets.all(8),
                 ),
-                SizedBox(width: theme.spacingSm),
+                const SizedBox(width: 4),
                 IconButton(
-                  icon: Icon(LucideIcons.trash2, size: 20, color: theme.error),
+                  icon: Icon(LucideIcons.trash2, size: 18, color: theme.error),
                   onPressed: onDelete,
-                  constraints: const BoxConstraints(),
-                  padding: EdgeInsets.all(4),
+                  tooltip: l10n.delete,
+                  constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                  padding: const EdgeInsets.all(8),
                 ),
               ],
             ),

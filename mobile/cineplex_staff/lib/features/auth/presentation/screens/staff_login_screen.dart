@@ -37,16 +37,17 @@ class _StaffLoginScreenState extends State<StaffLoginScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final colors = CineplexColors.of(context);
 
     return Scaffold(
-      backgroundColor: AppColors.darkBackground,
+      backgroundColor: colors.background,
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
-                backgroundColor: AppColors.error,
+                backgroundColor: colors.error,
               ),
             );
           } else if (state is AuthAuthenticated) {
@@ -55,7 +56,7 @@ class _StaffLoginScreenState extends State<StaffLoginScreen> {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(l10n.accessDenied),
-                  backgroundColor: AppColors.error,
+                  backgroundColor: colors.error,
                 ),
               );
               context.read<AuthBloc>().add(LogoutRequested());
@@ -76,10 +77,10 @@ class _StaffLoginScreenState extends State<StaffLoginScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       // Staff Logo / Icon
-                      const Icon(
+                      Icon(
                         Icons.qr_code_scanner_rounded,
                         size: 72,
-                        color: AppColors.primary,
+                        color: colors.primary,
                       ),
                       const SizedBox(height: 16),
                       Text(
@@ -87,7 +88,7 @@ class _StaffLoginScreenState extends State<StaffLoginScreen> {
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: AppColors.darkText,
+                          color: colors.textPrimary,
                           letterSpacing: 1.2,
                         ),
                       ),
@@ -95,8 +96,8 @@ class _StaffLoginScreenState extends State<StaffLoginScreen> {
                       Text(
                         l10n.scanTicketSubtitle,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: AppColors.darkTextSecondary,
+                        style: TextStyle(
+                          color: colors.textSecondary,
                           fontSize: 14,
                         ),
                       ),
@@ -137,16 +138,19 @@ class _StaffLoginScreenState extends State<StaffLoginScreen> {
                         children: [
                           Checkbox(
                             value: _rememberMe,
-                            activeColor: AppColors.primary,
+                            activeColor: colors.primary,
                             onChanged: (val) {
                               setState(() {
                                 _rememberMe = val ?? false;
                               });
                             },
                           ),
-                          Text(
-                            l10n.rememberMe,
-                            style: const TextStyle(color: AppColors.darkText),
+                          Expanded(
+                            child: Text(
+                              l10n.rememberMe,
+                              style: TextStyle(color: colors.textPrimary),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                         ],
                       ),

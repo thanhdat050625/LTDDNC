@@ -43,6 +43,13 @@ class NotificationCubit extends Cubit<NotificationState> {
     }
   }
 
+  Future<void> markAsRead(String id) async {
+    try {
+      await repository.markAsRead(id);
+      loadNotifications();
+    } catch (_) {}
+  }
+
   Future<void> markAllRead() async {
     try {
       await repository.markAllAsRead();

@@ -92,10 +92,11 @@ class _PromotionFormScreenState extends State<PromotionFormScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).extension<CineplexColors>()!;
+    final l10n = AppLocalizations.of(context)!;
     final isEdit = widget.promotion != null;
 
     return AppScaffold(
-      title: isEdit ? AppLocalizations.of(context)!.editPromotion : AppLocalizations.of(context)!.addPromotion,
+      title: isEdit ? l10n.editPromotion : l10n.addPromotion,
       showBackButton: true,
       body: BlocConsumer<PromotionFormCubit, PromotionFormState>(
         listener: (context, state) {
@@ -198,8 +199,22 @@ class _PromotionFormScreenState extends State<PromotionFormScreen> {
                   ),
                   SizedBox(height: theme.spacingMd),
                   SwitchListTile(
-                    title: const Text('Trạng thái'),
+                    title: Text(
+                      l10n.statusLabel,
+                      style: TextStyle(
+                        color: theme.textPrimary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    subtitle: Text(
+                      _isActive ? l10n.statusActive : l10n.statusInactive,
+                      style: TextStyle(
+                        color: _isActive ? theme.success : theme.textSecondary,
+                        fontSize: 13,
+                      ),
+                    ),
                     value: _isActive,
+                    activeTrackColor: theme.primary,
                     onChanged: (val) => setState(() => _isActive = val),
                     contentPadding: EdgeInsets.zero,
                   ),

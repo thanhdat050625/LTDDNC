@@ -69,7 +69,14 @@ class _AppButtonState extends State<AppButton> with SingleTickerProviderStateMix
         else if (widget.icon != null)
           Icon(widget.icon, size: 20),
         if (widget.isLoading || widget.icon != null) const SizedBox(width: 8),
-        Text(widget.text),
+        Flexible(
+          child: Text(
+            widget.text,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+          ),
+        ),
       ],
     );
 
@@ -94,6 +101,7 @@ class _AppButtonState extends State<AppButton> with SingleTickerProviderStateMix
               style: OutlinedButton.styleFrom(
                 foregroundColor: widget.textColor ?? theme.primaryColor,
                 side: BorderSide(color: widget.textColor ?? theme.primaryColor),
+                padding: EdgeInsets.symmetric(horizontal: widget.width != null ? 8 : 24),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
               ),
               child: child,
@@ -103,6 +111,7 @@ class _AppButtonState extends State<AppButton> with SingleTickerProviderStateMix
               style: ElevatedButton.styleFrom(
                 backgroundColor: widget.backgroundColor ?? theme.primaryColor,
                 foregroundColor: widget.textColor ?? Colors.white,
+                padding: EdgeInsets.symmetric(horizontal: widget.width != null ? 8 : 24),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
               ),
               child: child,

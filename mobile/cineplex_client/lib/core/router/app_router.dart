@@ -24,6 +24,12 @@ import 'package:cineplex_client/features/profile/presentation/screens/profile_sc
 import 'package:cineplex_client/features/profile/presentation/screens/edit_profile_screen.dart';
 import 'package:cineplex_client/features/showtime/presentation/cubit/showtime_cubit.dart';
 import 'package:cineplex_client/features/showtime/data/repositories/showtime_repository.dart';
+import 'package:cineplex_client/features/booking/presentation/bloc/seat_booking_bloc.dart';
+import 'package:cineplex_client/features/booking/data/repositories/booking_repository.dart';
+import 'package:cineplex_client/features/concession/presentation/cubit/concession_cubit.dart';
+import 'package:cineplex_client/features/concession/data/repositories/concession_repository.dart';
+import 'package:cineplex_client/features/payment/presentation/cubit/payment_cubit.dart';
+import 'package:cineplex_client/features/payment/data/repositories/payment_repository.dart';
 import 'package:cineplex_client/core/router/main_shell.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -102,21 +108,40 @@ GoRouter createRouter(AuthBloc authBloc) {
       ),
       GoRoute(
         path: '/booking/:showtimeId',
-        builder: (_, state) => SeatSelectionScreen(
-          showtimeId: int.parse(state.pathParameters['showtimeId']!),
-        ),
+        builder: (context, state) {
+          final showtimeId = int.parse(state.pathParameters['showtimeId']!);
+          return BlocProvider(
+            create: (ctx) => SeatBookingBloc(
+              ctx.read<BookingRepository>(),
+              ctx.read<SocketService>(),
+            )..add(LoadSeatMap(showtimeId)),
+            child: SeatSelectionScreen(showtimeId: showtimeId),
+          );
+        },
       ),
       GoRoute(
         path: '/concessions/:bookingId',
-        builder: (_, state) => ConcessionScreen(
-          bookingId: int.parse(state.pathParameters['bookingId']!),
-        ),
+        builder: (context, state) {
+          final bookingId = int.parse(state.pathParameters['bookingId']!);
+          return BlocProvider(
+            create: (ctx) => ConcessionCubit(
+              ctx.read<ConcessionRepository>(),
+            )..loadConcessions(),
+            child: ConcessionScreen(bookingId: bookingId),
+          );
+        },
       ),
       GoRoute(
         path: '/checkout/:bookingId',
-        builder: (_, state) => CheckoutScreen(
-          bookingId: state.pathParameters['bookingId']!,
-        ),
+        builder: (context, state) {
+          final bookingId = state.pathParameters['bookingId']!;
+          return BlocProvider(
+            create: (ctx) => PaymentCubit(
+              ctx.read<PaymentRepository>(),
+            )..prepareCheckout(bookingId),
+            child: CheckoutScreen(bookingId: bookingId),
+          );
+        },
       ),
       GoRoute(
         path: '/payment-webview',
@@ -127,9 +152,15 @@ GoRouter createRouter(AuthBloc authBloc) {
       ),
       GoRoute(
         path: '/payment-result/:bookingId',
-        builder: (_, state) => PaymentResultScreen(
-          bookingId: state.pathParameters['bookingId']!,
-        ),
+        builder: (context, state) {
+          final bookingId = state.pathParameters['bookingId']!;
+          return BlocProvider(
+            create: (ctx) => PaymentCubit(
+              ctx.read<PaymentRepository>(),
+            )..checkStatus(bookingId),
+            child: PaymentResultScreen(bookingId: bookingId),
+          );
+        },
       ),
       GoRoute(
         path: '/my-tickets/:id',

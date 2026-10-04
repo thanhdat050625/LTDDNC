@@ -3,21 +3,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_shared/mobile_shared.dart';
+
+import '../core/widgets/staff_shell_scaffold.dart';
 import '../features/auth/presentation/screens/staff_login_screen.dart';
+import '../features/dashboard/presentation/screens/staff_dashboard_screen.dart';
+import '../features/profile/presentation/screens/staff_profile_screen.dart';
 import '../features/scanner/presentation/screens/staff_scanner_screen.dart';
-import '../features/home/presentation/widgets/staff_drawer.dart';
-import '../features/ticket_sale/presentation/screens/ticket_sale_screen.dart';
-import '../features/ticket_sale/presentation/screens/seat_selection_screen.dart';
-import '../features/ticket_sale/presentation/screens/checkout_screen.dart';
+import '../features/showtimes/presentation/screens/showtime_occupancy_screen.dart';
+import '../features/ticket_sale/data/models/checkout_args.dart';
 import '../features/ticket_sale/presentation/cubit/ticket_sale_cubit.dart';
-import '../features/ticket_sale/presentation/cubit/ticket_sale_state.dart';
+import '../features/ticket_sale/presentation/screens/checkout_screen.dart';
+import '../features/ticket_sale/presentation/screens/seat_selection_screen.dart';
+import '../features/ticket_sale/presentation/screens/ticket_sale_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
+final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
 GoRouter createStaffRouter(AuthBloc authBloc) {
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: '/scanner',
+    initialLocation: '/dashboard',
     refreshListenable: _StaffAuthRefreshNotifier(authBloc),
     redirect: (context, state) {
       final authState = authBloc.state;
@@ -31,8 +36,12 @@ GoRouter createStaffRouter(AuthBloc authBloc) {
       if (isAuth && isOnLogin) {
         final role = authState.user.role.toUpperCase();
         if (role == 'STAFF' || role == 'ADMIN') {
-          return '/scanner';
+          return '/dashboard';
         }
+      }
+
+      if (state.matchedLocation == '/ticket-sale') {
+        return '/pos';
       }
 
       return null;
@@ -42,35 +51,73 @@ GoRouter createStaffRouter(AuthBloc authBloc) {
         path: '/login',
         builder: (context, state) => const StaffLoginScreen(),
       ),
-      GoRoute(
-        path: '/scanner',
-        builder: (context, state) => const StaffScannerScreen(),
+
+      // 5 Core Staff Destinations hosted in ShellRoute
+      ShellRoute(
+        navigatorKey: _shellNavigatorKey,
+        builder: (context, state, child) => StaffShellScaffold(child: child),
+        routes: [
+          GoRoute(
+            path: '/dashboard',
+            builder: (context, state) => const StaffDashboardScreen(),
+          ),
+          GoRoute(
+            path: '/scanner',
+            builder: (context, state) => const StaffScannerScreen(),
+          ),
+          GoRoute(
+            path: '/pos',
+            builder: (context, state) => const TicketSaleScreen(),
+          ),
+          GoRoute(
+            path: '/showtimes-occupancy',
+            builder: (context, state) => const ShowtimeOccupancyScreen(),
+          ),
+          GoRoute(
+            path: '/profile',
+            builder: (context, state) => const StaffProfileScreen(),
+          ),
+        ],
       ),
-      GoRoute(
-        path: '/ticket-sale',
-        builder: (context, state) => const TicketSaleScreen(drawer: StaffDrawer()),
-      ),
+
+      // Fullscreen Ticket Sale Flow
       GoRoute(
         path: '/ticket-sale/seat-selection',
         builder: (context, state) {
-          final cubit = state.extra as TicketSaleCubit;
-          return BlocProvider.value(
-            value: cubit,
+          final extra = state.extra;
+          if (extra is TicketSaleCubit) {
+            return BlocProvider.value(
+              value: extra,
+              child: const SeatSelectionScreen(),
+            );
+          }
+          final dioClient = context.read<DioClient>();
+          return BlocProvider(
+            create: (_) => TicketSaleCubit(
+              CinemaManagementRepository(dioClient),
+              ShowtimeManagementRepository(dioClient),
+              BookingManagementRepository(dioClient),
+            )..loadInitialData(),
             child: const SeatSelectionScreen(),
           );
         },
       ),
       GoRoute(
         path: '/ticket-sale/checkout',
-        builder: (context, state) => const CheckoutScreen(),
+        builder: (context, state) {
+          final args = state.extra as CheckoutArgs?;
+          return CheckoutScreen(args: args);
+        },
       ),
+
+      // Admin / Managerial CRUD routes
       GoRoute(
         path: '/movies',
         builder: (context, state) => BlocProvider(
           create: (context) => MovieManagementCubit(
             MovieManagementRepository(context.read<DioClient>()),
           ),
-          child: const MovieManagementScreen(drawer: StaffDrawer()),
+          child: const MovieManagementScreen(),
         ),
       ),
       GoRoute(
@@ -100,7 +147,7 @@ GoRouter createStaffRouter(AuthBloc authBloc) {
           create: (context) => ShowtimeManagementCubit(
             ShowtimeManagementRepository(context.read<DioClient>()),
           ),
-          child: const ShowtimeManagementScreen(drawer: StaffDrawer()),
+          child: const ShowtimeManagementScreen(),
         ),
       ),
       GoRoute(
@@ -134,7 +181,7 @@ GoRouter createStaffRouter(AuthBloc authBloc) {
           create: (context) => CinemaManagementCubit(
             CinemaManagementRepository(context.read<DioClient>()),
           ),
-          child: const CinemaManagementScreen(drawer: StaffDrawer()),
+          child: const CinemaManagementScreen(),
         ),
       ),
       GoRoute(
@@ -195,7 +242,6 @@ GoRouter createStaffRouter(AuthBloc authBloc) {
           );
         },
       ),
-      // Promotions
       GoRoute(
         path: '/promotions',
         builder: (context, state) {
@@ -203,7 +249,7 @@ GoRouter createStaffRouter(AuthBloc authBloc) {
             create: (context) => PromotionManagementCubit(
               PromotionManagementRepository(context.read<DioClient>()),
             ),
-            child: const PromotionManagementScreen(drawer: StaffDrawer()),
+            child: const PromotionManagementScreen(),
           );
         },
       ),
@@ -230,7 +276,6 @@ GoRouter createStaffRouter(AuthBloc authBloc) {
           );
         },
       ),
-      // Concessions
       GoRoute(
         path: '/concessions',
         builder: (context, state) {
@@ -238,7 +283,7 @@ GoRouter createStaffRouter(AuthBloc authBloc) {
             create: (context) => ConcessionManagementCubit(
               ConcessionManagementRepository(context.read<DioClient>()),
             ),
-            child: const ConcessionManagementScreen(drawer: StaffDrawer()),
+            child: const ConcessionManagementScreen(),
           );
         },
       ),

@@ -7,8 +7,9 @@ import 'package:mobile_shared/mobile_shared.dart';
 
 class MovieFormScreen extends StatefulWidget {
   final MovieModel? movie;
+  final int? movieId;
 
-  const MovieFormScreen({super.key, this.movie});
+  const MovieFormScreen({super.key, this.movie, this.movieId});
 
   @override
   State<MovieFormScreen> createState() => _MovieFormScreenState();
@@ -114,9 +115,12 @@ class _MovieFormScreenState extends State<MovieFormScreen> {
       if (_screeningEndDate != null) 'screeningEndDate': _screeningEndDate!.toIso8601String(),
     };
 
+    final isEdit = widget.movie != null || widget.movieId != null;
+    final effectiveId = widget.movie?.id ?? widget.movieId;
+
     context.read<MovieFormCubit>().submit(
-      isEdit: widget.movie != null,
-      movieId: widget.movie?.id,
+      isEdit: isEdit,
+      movieId: effectiveId,
       data: data,
       posterPath: _posterFile?.path,
     );
@@ -124,16 +128,20 @@ class _MovieFormScreenState extends State<MovieFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context).extension<CineplexColors>()!;
-    final isEdit = widget.movie != null;
+    final theme = CineplexColors.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final isEdit = widget.movie != null || widget.movieId != null;
 
     return AppScaffold(
-      title: isEdit ? 'Cập nhật phim' : 'Thêm phim mới',
+      title: isEdit ? l10n.editMovieTitle : l10n.addMovieTitle,
       body: BlocConsumer<MovieFormCubit, MovieFormState>(
         listener: (context, state) {
           if (state is MovieFormSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(isEdit ? 'Cập nhật thành công!' : 'Thêm phim thành công!')),
+              SnackBar(
+                content: Text(isEdit ? l10n.updateMovieSuccess : l10n.addMovieSuccess),
+                backgroundColor: theme.success,
+              ),
             );
             context.pop();
           } else if (state is MovieFormError) {
@@ -146,202 +154,241 @@ class _MovieFormScreenState extends State<MovieFormScreen> {
           final isLoading = state is MovieFormSubmitting;
 
           return SingleChildScrollView(
-            padding: EdgeInsets.fromLTRB(
-              theme.spacingMd,
-              6,
-              theme.spacingMd,
-              theme.spacingLg,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Form(
               key: _formKey,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Poster Section
+                  // Poster Section Card
                   Center(
                     child: GestureDetector(
                       onTap: isLoading ? null : _pickImage,
                       child: Container(
-                        width: 140,
-                        height: 200,
+                        width: 120,
+                        height: 168,
                         decoration: BoxDecoration(
                           color: theme.surface,
-                          borderRadius: BorderRadius.circular(theme.radiusMd),
-                          border: Border.all(color: theme.textSecondary.withValues(alpha: 0.3)),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: theme.cardBorder),
+                          boxShadow: [
+                            BoxShadow(
+                              color: theme.shadowColor.withValues(alpha: 0.04),
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
                         child: _posterFile != null
                             ? ClipRRect(
-                                borderRadius: BorderRadius.circular(theme.radiusMd),
+                                borderRadius: BorderRadius.circular(12),
                                 child: Image.file(_posterFile!, fit: BoxFit.cover),
                               )
                             : (widget.movie?.posterUrl != null && widget.movie!.posterUrl!.isNotEmpty)
                                 ? ClipRRect(
-                                    borderRadius: BorderRadius.circular(theme.radiusMd),
+                                    borderRadius: BorderRadius.circular(12),
                                     child: AppCachedImage(imageUrl: widget.movie!.posterUrl!, fit: BoxFit.cover),
                                   )
                                 : Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Icon(LucideIcons.imagePlus, size: 40, color: theme.textSecondary),
-                                      SizedBox(height: theme.spacingSm),
-                                      Text('Chọn poster', style: TextStyle(color: theme.textSecondary, fontSize: 12)),
+                                      Icon(LucideIcons.imagePlus, size: 36, color: theme.accent),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        l10n.selectPoster,
+                                        style: TextStyle(color: theme.textSecondary, fontSize: 12),
+                                      ),
                                     ],
                                   ),
                       ),
                     ),
                   ),
-                  SizedBox(height: 32.0),
+                  const SizedBox(height: 14),
 
-                  // Basic Info
-                  AppTextField(
-                    controller: _titleCtrl,
-                    label: 'Tên phim *',
-                    hintText: 'Nhập tên phim',
-                    validator: (val) => val == null || val.isEmpty ? 'Vui lòng nhập tên phim' : null,
-                  ),
-                  SizedBox(height: theme.spacingMd),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: AppTextField(
-                          controller: _genreCtrl,
-                          label: 'Thể loại *',
-                          hintText: 'Hành động, Hài...',
-                          validator: (val) => val == null || val.isEmpty ? 'Bắt buộc' : null,
+                  // Section 1: Basic Info
+                  AppCard(
+                    padding: const EdgeInsets.all(14),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AppTextField(
+                          controller: _titleCtrl,
+                          label: l10n.movieTitleLabel,
+                          hintText: l10n.enterMovieTitle,
+                          validator: (val) => val == null || val.trim().isEmpty ? l10n.movieTitleRequired : null,
                         ),
-                      ),
-                      SizedBox(width: theme.spacingMd),
-                      Expanded(
-                        child: AppTextField(
-                          controller: _durationCtrl,
-                          label: 'Thời lượng (phút) *',
-                          hintText: '120',
-                          keyboardType: TextInputType.number,
-                          validator: (val) => val == null || val.isEmpty ? 'Bắt buộc' : null,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: theme.spacingMd),
-                  AppTextField(
-                    controller: _directorCtrl,
-                    label: 'Đạo diễn',
-                    hintText: 'Tên đạo diễn',
-                  ),
-                  SizedBox(height: theme.spacingMd),
-                  AppTextField(
-                    controller: _castCtrl,
-                    label: 'Diễn viên',
-                    hintText: 'Tên diễn viên...',
-                  ),
-                  SizedBox(height: theme.spacingMd),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: AppTextField(
-                          controller: _langCtrl,
-                          label: 'Ngôn ngữ',
-                          hintText: 'Tiếng Anh, Tiếng Việt...',
-                        ),
-                      ),
-                      SizedBox(width: theme.spacingMd),
-                      Expanded(
-                        child: AppTextField(
-                          controller: _ageLimitCtrl,
-                          label: 'Độ tuổi',
-                          hintText: '13, 16, 18...',
-                          keyboardType: TextInputType.number,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: theme.spacingMd),
-                  
-                  // Dates
-                  Row(
-                    children: [
-                      Expanded(
-                        child: InkWell(
-                          onTap: isLoading ? null : () => _selectDate(context, true),
-                          child: InputDecorator(
-                            decoration: InputDecoration(
-                              labelText: 'Ngày phát hành',
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: AppTextField(
+                                controller: _genreCtrl,
+                                label: l10n.genreLabel,
+                                hintText: l10n.genrePlaceholder,
+                                validator: (val) => val == null || val.trim().isEmpty ? l10n.fillRequiredFields : null,
+                              ),
                             ),
-                            child: Text(
-                              _releaseDate != null ? '${_releaseDate!.day}/${_releaseDate!.month}/${_releaseDate!.year}' : 'Chọn ngày',
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: AppTextField(
+                                controller: _durationCtrl,
+                                label: l10n.durationMinutesLabel,
+                                hintText: '120',
+                                keyboardType: TextInputType.number,
+                                validator: (val) => val == null || val.trim().isEmpty ? l10n.fillRequiredFields : null,
+                              ),
                             ),
-                          ),
+                          ],
                         ),
-                      ),
-                      SizedBox(width: theme.spacingMd),
-                      Expanded(
-                        child: InkWell(
-                          onTap: isLoading ? null : () => _selectDate(context, false),
-                          child: InputDecorator(
-                            decoration: InputDecoration(
-                              labelText: 'Ngày kết thúc',
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: AppTextField(
+                                controller: _langCtrl,
+                                label: l10n.language,
+                                hintText: l10n.languagePlaceholder,
+                              ),
                             ),
-                            child: Text(
-                              _screeningEndDate != null ? '${_screeningEndDate!.day}/${_screeningEndDate!.month}/${_screeningEndDate!.year}' : 'Chọn ngày',
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: AppTextField(
+                                controller: _ageLimitCtrl,
+                                label: l10n.ageLimit,
+                                hintText: l10n.ageLimitPlaceholder,
+                                keyboardType: TextInputType.number,
+                              ),
                             ),
-                          ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: theme.spacingMd),
-                  
-                  // Status Dropdown
-                  DropdownButtonFormField<String>(
-                    initialValue: _status,
-                    decoration: InputDecoration(
-                      labelText: 'Trạng thái',
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
+                      ],
                     ),
-                    items: const [
-                      DropdownMenuItem(value: 'NOW_SHOWING', child: Text('Đang chiếu')),
-                      DropdownMenuItem(value: 'COMING_SOON', child: Text('Sắp chiếu')),
-                      DropdownMenuItem(value: 'STOPPED', child: Text('Ngừng chiếu')),
-                    ],
-                    onChanged: isLoading ? null : (val) {
-                      if (val != null) setState(() => _status = val);
-                    },
                   ),
-                  SizedBox(height: theme.spacingMd),
-                  
-                  AppTextField(
-                    controller: _trailerCtrl,
-                    label: 'Trailer URL',
-                    hintText: 'https://youtube.com/...',
+                  const SizedBox(height: 12),
+
+                  // Section 2: Production Crew
+                  AppCard(
+                    padding: const EdgeInsets.all(14),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AppTextField(
+                          controller: _directorCtrl,
+                          label: l10n.director,
+                          hintText: l10n.directorPlaceholder,
+                        ),
+                        const SizedBox(height: 12),
+                        AppTextField(
+                          controller: _castCtrl,
+                          label: l10n.cast,
+                          hintText: l10n.castPlaceholder,
+                        ),
+                      ],
+                    ),
                   ),
-                  SizedBox(height: theme.spacingMd),
-                  
-                  AppTextField(
-                    controller: _descCtrl,
-                    label: 'Mô tả',
-                    hintText: 'Nội dung phim...',
+                  const SizedBox(height: 12),
+
+                  // Section 3: Schedule & Status
+                  AppCard(
+                    padding: const EdgeInsets.all(14),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: InkWell(
+                                onTap: isLoading ? null : () => _selectDate(context, true),
+                                child: InputDecorator(
+                                  decoration: InputDecoration(
+                                    labelText: l10n.releaseDateLabel,
+                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                  ),
+                                  child: Text(
+                                    _releaseDate != null ? '${_releaseDate!.day}/${_releaseDate!.month}/${_releaseDate!.year}' : l10n.selectDatePrompt,
+                                    style: TextStyle(
+                                      color: _releaseDate != null ? theme.textPrimary : theme.textSecondary,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: InkWell(
+                                onTap: isLoading ? null : () => _selectDate(context, false),
+                                child: InputDecorator(
+                                  decoration: InputDecoration(
+                                    labelText: l10n.screeningEndDate,
+                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                  ),
+                                  child: Text(
+                                    _screeningEndDate != null ? '${_screeningEndDate!.day}/${_screeningEndDate!.month}/${_screeningEndDate!.year}' : l10n.selectDatePrompt,
+                                    style: TextStyle(
+                                      color: _screeningEndDate != null ? theme.textPrimary : theme.textSecondary,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        DropdownButtonFormField<String>(
+                          initialValue: _status,
+                          decoration: InputDecoration(
+                            labelText: l10n.statusLabel,
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                          ),
+                          items: [
+                            DropdownMenuItem(value: 'NOW_SHOWING', child: Text(l10n.statusNowShowing)),
+                            DropdownMenuItem(value: 'COMING_SOON', child: Text(l10n.statusComingSoon)),
+                            DropdownMenuItem(value: 'STOPPED', child: Text(l10n.statusStopped)),
+                          ],
+                          onChanged: isLoading ? null : (val) {
+                            if (val != null) setState(() => _status = val);
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                  SizedBox(height: 32.0),
+                  const SizedBox(height: 12),
+
+                  // Section 4: Media & Synopsis
+                  AppCard(
+                    padding: const EdgeInsets.all(14),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AppTextField(
+                          controller: _trailerCtrl,
+                          label: l10n.trailerUrl,
+                          hintText: l10n.trailerUrlPlaceholder,
+                        ),
+                        const SizedBox(height: 12),
+                        AppTextField(
+                          controller: _descCtrl,
+                          label: l10n.description,
+                          hintText: l10n.movieDescriptionPlaceholder,
+                          maxLines: 3,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
 
                   // Submit Button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 48,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: theme.primary,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
-                      ),
-                      onPressed: isLoading ? null : _submit,
-                      child: isLoading
-                          ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                          : Text(isEdit ? 'Lưu thay đổi' : 'Tạo phim'),
-                    ),
+                  AppButton(
+                    text: isEdit ? l10n.saveChanges : l10n.createMovieBtn,
+                    isLoading: isLoading,
+                    onPressed: _submit,
                   ),
-                  SizedBox(height: 40),
+                  const SizedBox(height: 16),
                 ],
               ),
             ),

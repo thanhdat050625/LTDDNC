@@ -116,7 +116,7 @@ class _ConcessionManagementScreenState
                             title: l10n.lowStock,
                             value: '${summary['lowStock']}',
                             icon: LucideIcons.alertTriangle,
-                            color: Colors.orange,
+                            color: theme.warning,
                             theme: theme,
                           ),
                           const SizedBox(width: 6),
@@ -286,38 +286,44 @@ class _ConcessionManagementScreenState
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.12),
-                    shape: BoxShape.circle,
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: color.withValues(alpha: 0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(icon, size: 13, color: color),
                   ),
-                  child: Icon(icon, size: 13, color: color),
-                ),
-                const SizedBox(width: 5),
-                Text(
-                  value,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: theme.textPrimary,
-                    fontWeight: FontWeight.bold,
+                  const SizedBox(width: 5),
+                  Text(
+                    value,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: theme.textPrimary,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             const SizedBox(height: 3),
-            Text(
-              title,
-              style: TextStyle(
-                color: theme.textSecondary,
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                title,
+                style: TextStyle(
+                  color: theme.textSecondary,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

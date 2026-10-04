@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 
 class ShowtimeFormScreen extends StatefulWidget {
-  final ShowtimeModel? showtime; // If null, create mode
+  final ShowtimeModel? showtime;
 
   const ShowtimeFormScreen({super.key, this.showtime});
 
@@ -22,8 +23,8 @@ class _ShowtimeFormScreenState extends State<ShowtimeFormScreen> {
   String _format = 'FORMAT_2D';
   String _status = 'SCHEDULED';
   DateTime? _publicStartTime;
-  int _preShowMinutes = 15;
-  int _postMovieBufferMinutes = 15;
+  final int _preShowMinutes = 15;
+  final int _postMovieBufferMinutes = 15;
 
   @override
   void initState() {
@@ -35,18 +36,17 @@ class _ShowtimeFormScreenState extends State<ShowtimeFormScreen> {
       _format = st.format;
       _status = st.status;
       _publicStartTime = st.publicStartTime;
-      // We assume cinemaId can be derived from room, but backend doesn't give it directly in ShowtimeModel.
-      // We might need a separate way or let the user re-select.
       _cinemaId = st.room?.cinemaId; 
     }
     context.read<ShowtimeFormCubit>().loadDependencies(initialCinemaId: _cinemaId);
   }
 
   void _submit() {
+    final l10n = AppLocalizations.of(context)!;
     if (_formKey.currentState!.validate()) {
       if (_movieId == null || _roomId == null || _publicStartTime == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.fillRequiredFields)),
+          SnackBar(content: Text(l10n.fillRequiredFields)),
         );
         return;
       }
@@ -97,27 +97,32 @@ class _ShowtimeFormScreenState extends State<ShowtimeFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context).extension<CineplexColors>()!;
+    final theme = CineplexColors.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final isEditMode = widget.showtime != null;
 
     return AppScaffold(
-      title: isEditMode ? AppLocalizations.of(context)!.editShowtime : AppLocalizations.of(context)!.addShowtime,
+      title: isEditMode ? l10n.editShowtime : l10n.addShowtime,
+      showBackButton: true,
       body: BlocConsumer<ShowtimeFormCubit, ShowtimeFormState>(
         listener: (context, state) {
           if (state is ShowtimeFormSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(isEditMode ? AppLocalizations.of(context)!.updateSuccess : AppLocalizations.of(context)!.addSuccess)),
+              SnackBar(
+                content: Text(isEditMode ? l10n.updateSuccess : l10n.addSuccess),
+                backgroundColor: theme.success,
+              ),
             );
             context.pop();
           } else if (state is ShowtimeFormError) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
+              SnackBar(content: Text(state.message), backgroundColor: theme.error),
             );
           }
         },
         builder: (context, state) {
           if (state is ShowtimeFormLoadingDeps) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: AppLoading());
           }
 
           List<MovieModel> movies = [];
@@ -131,137 +136,155 @@ class _ShowtimeFormScreenState extends State<ShowtimeFormScreen> {
           }
 
           return SingleChildScrollView(
-            padding: EdgeInsets.all(theme.spacingLg),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Form(
               key: _formKey,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Movie Dropdown
-                  DropdownButtonFormField<int>(
-                    isExpanded: true,
-                    initialValue: _movieId,
-                    decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context)!.movieLabel,
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
-                    ),
-                    items: movies.map((m) => DropdownMenuItem(value: m.id, child: Text(m.title, overflow: TextOverflow.ellipsis))).toList(),
-                    onChanged: isEditMode ? null : (val) => setState(() => _movieId = val),
-                    validator: (val) => val == null ? AppLocalizations.of(context)!.selectMovieReq : null,
-                  ),
-                  SizedBox(height: theme.spacingMd),
+                  AppCard(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Movie Dropdown
+                        DropdownButtonFormField<int>(
+                          isExpanded: true,
+                          initialValue: _movieId,
+                          decoration: InputDecoration(
+                            labelText: l10n.movieLabel,
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                          ),
+                          items: movies.map((m) => DropdownMenuItem(
+                            value: m.id,
+                            child: Text(m.title, overflow: TextOverflow.ellipsis),
+                          )).toList(),
+                          onChanged: isEditMode ? null : (val) => setState(() => _movieId = val),
+                          validator: (val) => val == null ? l10n.selectMovieReq : null,
+                        ),
+                        const SizedBox(height: 14),
 
-                  // Cinema Dropdown
-                  DropdownButtonFormField<int>(
-                    isExpanded: true,
-                    initialValue: _cinemaId,
-                    decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context)!.cinemaLabel,
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
-                    ),
-                    items: cinemas.map((c) => DropdownMenuItem(value: c.id, child: Text(c.name, overflow: TextOverflow.ellipsis))).toList(),
-                    onChanged: isEditMode
-                        ? null
-                        : (val) {
-                            setState(() {
-                              _cinemaId = val;
-                              _roomId = null; // Reset room
-                            });
-                            if (val != null) {
-                              context.read<ShowtimeFormCubit>().selectCinema(val);
-                            }
-                          },
-                    validator: (val) => val == null ? AppLocalizations.of(context)!.selectCinemaReq : null,
-                  ),
-                  SizedBox(height: theme.spacingMd),
+                        // Cinema Dropdown
+                        DropdownButtonFormField<int>(
+                          isExpanded: true,
+                          initialValue: _cinemaId,
+                          decoration: InputDecoration(
+                            labelText: l10n.cinemaLabel,
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                          ),
+                          items: cinemas.map((c) => DropdownMenuItem(
+                            value: c.id,
+                            child: Text(c.name, overflow: TextOverflow.ellipsis),
+                          )).toList(),
+                          onChanged: isEditMode
+                              ? null
+                              : (val) {
+                                  setState(() {
+                                    _cinemaId = val;
+                                    _roomId = null;
+                                  });
+                                  if (val != null) {
+                                    context.read<ShowtimeFormCubit>().selectCinema(val);
+                                  }
+                                },
+                          validator: (val) => val == null ? l10n.selectCinemaReq : null,
+                        ),
+                        const SizedBox(height: 14),
 
-                  // Room Dropdown
-                  DropdownButtonFormField<int>(
-                    isExpanded: true,
-                    initialValue: _roomId,
-                    decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context)!.roomLabel,
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
-                    ),
-                    items: rooms.map((r) => DropdownMenuItem(value: r.id, child: Text('${r.name} (${r.roomType})', overflow: TextOverflow.ellipsis))).toList(),
-                    onChanged: isEditMode || _cinemaId == null
-                        ? null
-                        : (val) => setState(() => _roomId = val),
-                    validator: (val) => val == null ? AppLocalizations.of(context)!.selectRoomReq : null,
-                  ),
-                  SizedBox(height: theme.spacingMd),
+                        // Room Dropdown
+                        DropdownButtonFormField<int>(
+                          isExpanded: true,
+                          initialValue: _roomId,
+                          decoration: InputDecoration(
+                            labelText: l10n.roomLabel,
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                          ),
+                          items: rooms.map((r) => DropdownMenuItem(
+                            value: r.id,
+                            child: Text('${r.name} (${r.roomType})', overflow: TextOverflow.ellipsis),
+                          )).toList(),
+                          onChanged: isEditMode || _cinemaId == null
+                              ? null
+                              : (val) => setState(() => _roomId = val),
+                          validator: (val) => val == null ? l10n.selectRoomReq : null,
+                        ),
+                        const SizedBox(height: 14),
 
-                  // Time Selection
-                  GestureDetector(
-                    onTap: () => _selectDateTime(context),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: theme.textSecondary.withValues(alpha: 0.5)),
-                        borderRadius: BorderRadius.circular(theme.radiusMd),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            _publicStartTime != null
-                                ? DateFormat('dd/MM/yyyy HH:mm').format(_publicStartTime!)
-                                : AppLocalizations.of(context)!.selectStartTimeReq,
-                            style: TextStyle(
-                              color: _publicStartTime != null ? theme.textPrimary : theme.textSecondary,
-                              fontSize: 16,
+                        // Time Selection
+                        InkWell(
+                          onTap: () => _selectDateTime(context),
+                          borderRadius: BorderRadius.circular(theme.radiusMd),
+                          child: InputDecorator(
+                            decoration: InputDecoration(
+                              labelText: l10n.startTime,
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                              suffixIcon: Icon(LucideIcons.calendar, color: theme.textSecondary, size: 20),
+                            ),
+                            child: Text(
+                              _publicStartTime != null
+                                  ? DateFormat('dd/MM/yyyy • HH:mm').format(_publicStartTime!)
+                                  : l10n.selectStartTimeReq,
+                              style: TextStyle(
+                                color: _publicStartTime != null ? theme.textPrimary : theme.textSecondary,
+                                fontSize: 14,
+                              ),
                             ),
                           ),
-                          Icon(Icons.calendar_today, color: theme.textSecondary, size: 20),
-                        ],
-                      ),
-                    ),
-                  ),
-                  if (_publicStartTime == null)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8, left: 12),
-                      child: Text(AppLocalizations.of(context)!.selectStartTimeReq, style: TextStyle(color: theme.error, fontSize: 12)),
-                    ),
-                  SizedBox(height: theme.spacingMd),
+                        ),
+                        const SizedBox(height: 14),
 
-                  // Format
-                  DropdownButtonFormField<String>(
-                    initialValue: _format,
-                    decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context)!.formatLabel,
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
-                    ),
-                    items: ['FORMAT_2D', 'FORMAT_3D', 'IMAX']
-                        .map((f) => DropdownMenuItem(value: f, child: Text(f)))
-                        .toList(),
-                    onChanged: (val) => setState(() => _format = val!),
-                  ),
-                  SizedBox(height: theme.spacingMd),
+                        // Format
+                        DropdownButtonFormField<String>(
+                          isExpanded: true,
+                          initialValue: _format,
+                          decoration: InputDecoration(
+                            labelText: l10n.formatLabel,
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                          ),
+                          items: [
+                            DropdownMenuItem(value: 'FORMAT_2D', child: Text(l10n.format2D)),
+                            DropdownMenuItem(value: 'FORMAT_3D', child: Text(l10n.format3D)),
+                            DropdownMenuItem(value: 'IMAX', child: Text(l10n.formatIMAX)),
+                          ],
+                          onChanged: (val) => setState(() => _format = val!),
+                        ),
+                        const SizedBox(height: 14),
 
-                  // Status
-                  DropdownButtonFormField<String>(
-                    initialValue: _status,
-                    decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context)!.statusLabel,
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
+                        // Status
+                        DropdownButtonFormField<String>(
+                          isExpanded: true,
+                          initialValue: _status,
+                          decoration: InputDecoration(
+                            labelText: l10n.statusLabel,
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                          ),
+                          items: [
+                            DropdownMenuItem(value: 'SCHEDULED', child: Text(l10n.statusScheduled)),
+                            DropdownMenuItem(value: 'BOOKING', child: Text(l10n.statusBooking)),
+                            DropdownMenuItem(value: 'FULL', child: Text(l10n.statusFull)),
+                            DropdownMenuItem(value: 'CANCELLED', child: Text(l10n.statusCancelled)),
+                            DropdownMenuItem(value: 'COMPLETED', child: Text(l10n.statusCompleted)),
+                          ],
+                          onChanged: (val) => setState(() => _status = val!),
+                        ),
+                      ],
                     ),
-                    items: ['SCHEDULED', 'BOOKING', 'FULL', 'CANCELLED', 'COMPLETED']
-                        .map((s) => DropdownMenuItem(value: s, child: Text(s)))
-                        .toList(),
-                    onChanged: (val) => setState(() => _status = val!),
                   ),
-                  SizedBox(height: theme.spacingLg),
+                  const SizedBox(height: 16),
 
                   // Submit Button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: AppButton(
-                      text: isEditMode ? AppLocalizations.of(context)!.saveChanges : AppLocalizations.of(context)!.createShowtimeBtn,
-                      onPressed: state is ShowtimeFormSubmitting ? null : _submit,
-                      isLoading: state is ShowtimeFormSubmitting,
-                    ),
+                  AppButton(
+                    text: isEditMode ? l10n.saveChanges : l10n.createShowtimeBtn,
+                    onPressed: _submit,
+                    isLoading: state is ShowtimeFormSubmitting,
                   ),
+                  const SizedBox(height: 16),
                 ],
               ),
             ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 
 class PromotionManagementScreen extends StatefulWidget {
@@ -28,38 +29,42 @@ class _PromotionManagementScreenState extends State<PromotionManagementScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).extension<CineplexColors>()!;
+    final l10n = AppLocalizations.of(context)!;
     
     return AppScaffold(
-      title: AppLocalizations.of(context)!.managePromotions,
+      title: l10n.managePromotions,
       drawer: widget.drawer,
       floatingActionButton: FloatingActionButton(
         onPressed: () => _reloadAfterPush(context.push('/promotions/new')),
         backgroundColor: theme.accent,
-        child: const Icon(Icons.add, color: Colors.white),
+        tooltip: l10n.addPromotion,
+        child: const Icon(LucideIcons.plus, color: Colors.white),
       ),
       body: RefreshIndicator(
         onRefresh: () => context.read<PromotionManagementCubit>().loadPromotions(),
         child: BlocBuilder<PromotionManagementCubit, PromotionManagementState>(
           builder: (context, state) {
             if (state is PromotionManagementLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: AppLoading());
             } else if (state is PromotionManagementError) {
-              return ListView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                children: [
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.3),
-                  Center(child: Text(state.message, style: TextStyle(color: theme.error))),
-                ],
+              return AppErrorView(
+                message: state.message,
+                onRetry: () => context.read<PromotionManagementCubit>().loadPromotions(),
               );
             } else if (state is PromotionManagementLoaded) {
               final promotions = state.promotions;
               if (promotions.isEmpty) {
-                return ListView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  children: [
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.3),
-                    Center(child: Text(AppLocalizations.of(context)!.noPromotions)),
-                  ],
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: AppEmptyView(
+                      icon: LucideIcons.ticketPercent,
+                      title: l10n.noPromotions,
+                      message: l10n.noPromotionsSubtitle,
+                      actionLabel: l10n.addPromotion,
+                      onAction: () => _reloadAfterPush(context.push('/promotions/new')),
+                    ),
+                  ),
                 );
               }
               return ListView.separated(

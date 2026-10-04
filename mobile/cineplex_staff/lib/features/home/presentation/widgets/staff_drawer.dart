@@ -16,7 +16,8 @@ class StaffDrawer extends StatelessWidget {
       return state is AuthAuthenticated ? state.user : null;
     });
 
-    final firstLetter = (user?.fullName != null && user!.fullName.trim().isNotEmpty)
+    final firstLetter =
+        (user?.fullName != null && user!.fullName.trim().isNotEmpty)
         ? user.fullName.trim()[0].toUpperCase()
         : 'S';
 
@@ -28,7 +29,12 @@ class StaffDrawer extends StatelessWidget {
           SafeArea(
             bottom: false,
             child: Container(
-              padding: EdgeInsets.fromLTRB(theme.spacingMd, theme.spacingMd, theme.spacingMd, theme.spacingSm),
+              padding: EdgeInsets.fromLTRB(
+                theme.spacingMd,
+                theme.spacingMd,
+                theme.spacingMd,
+                theme.spacingSm,
+              ),
               decoration: BoxDecoration(
                 color: theme.surface,
                 border: Border(
@@ -85,7 +91,10 @@ class StaffDrawer extends StatelessWidget {
                               ),
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
                                 color: theme.primary.withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(4),
@@ -222,7 +231,7 @@ class StaffDrawer extends StatelessWidget {
       onTap: () {
         context.pop(); // Close drawer
         if (!isSelected) {
-          context.push(route);
+          context.go(route);
         }
       },
     );

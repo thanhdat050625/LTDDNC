@@ -1063,10 +1063,10 @@ class AppLocalizationsVi extends AppLocalizations {
       'Bạn có chắc chắn muốn xóa mã khuyến mãi này không?';
 
   @override
-  String get startDate => 'Từ ngày';
+  String get startDate => 'Ngày bắt đầu';
 
   @override
-  String get endDate => 'Đến ngày';
+  String get endDate => 'Ngày kết thúc';
 
   @override
   String get manageConcessions => 'Quản lý Bắp nước';
@@ -1299,5 +1299,743 @@ class AppLocalizationsVi extends AppLocalizations {
   String get selectDateRange => 'Chọn khoảng ngày';
 
   @override
+  String get dateFrom => 'Từ ngày';
+
+  @override
+  String get dateTo => 'Đến ngày';
+
+  @override
   String get totalRevenueLabel => 'Tổng doanh thu kỳ này';
+
+  @override
+  String get genreAll => 'Tất cả';
+
+  @override
+  String get genreAction => 'Hành động';
+
+  @override
+  String get genreComedy => 'Hài hước';
+
+  @override
+  String get genreDrama => 'Chính kịch';
+
+  @override
+  String get genreHorror => 'Kinh dị';
+
+  @override
+  String get genreSciFi => 'Khoa học viễn tưởng';
+
+  @override
+  String get genreRomance => 'Lãng mạn';
+
+  @override
+  String get genreAnimation => 'Hoạt hình';
+
+  @override
+  String get genreAdventure => 'Phiêu lưu';
+
+  @override
+  String get genreThriller => 'Giật gân';
+
+  @override
+  String get genreFantasy => 'Giả tưởng';
+
+  @override
+  String get genreDocumentary => 'Tài liệu';
+
+  @override
+  String get bookingStatusPending => 'Chờ thanh toán';
+
+  @override
+  String get bookingStatusPaid => 'Đã thanh toán';
+
+  @override
+  String get bookingStatusCancelled => 'Đã hủy';
+
+  @override
+  String get bookingStatusExpired => 'Hết hạn';
+
+  @override
+  String get bookingStatusConfirmed => 'Đã xác nhận';
+
+  @override
+  String get paymentStatusPending => 'Đang xử lý';
+
+  @override
+  String get paymentStatusSuccess => 'Thành công';
+
+  @override
+  String get paymentStatusFailed => 'Thất bại';
+
+  @override
+  String get paymentStatusCancelled => 'Đã hủy';
+
+  @override
+  String get paymentResult => 'Kết quả thanh toán';
+
+  @override
+  String get paymentSuccessful => 'Thanh toán thành công!';
+
+  @override
+  String get viewTickets => 'Xem vé của tôi';
+
+  @override
+  String bookingCodeWithParam(String code) {
+    return 'Mã đặt vé: $code';
+  }
+
+  @override
+  String get simulateSuccess => 'Mô phỏng thanh toán thành công';
+
+  @override
+  String get webviewPlaceholder => 'Cổng thanh toán trực tuyến';
+
+  @override
+  String get specialDiscount => 'Khuyến mãi đặc biệt';
+
+  @override
+  String get unknownCinema => 'Rạp không xác định';
+
+  @override
+  String get defaultMovieTitle => 'Phim Cineplex';
+
+  @override
+  String get concessionCombo => 'Combo bắp nước';
+
+  @override
+  String get paymentMethodMomo => 'Ví MoMo';
+
+  @override
+  String get paymentMethodVnpay => 'Cổng VNPAY';
+
+  @override
+  String get paymentMethodZaloPay => 'Ví ZaloPay';
+
+  @override
+  String get paymentMethodCard => 'Thẻ ATM / Thẻ quốc tế';
+
+  @override
+  String get paymentMethodCash => 'Tiền mặt tại quầy';
+
+  @override
+  String get epassTitle => 'Vé điện tử (E-Pass)';
+
+  @override
+  String get epassInstruction =>
+      'Vui lòng xuất trình mã QR này tại cửa kiểm soát để vào rạp';
+
+  @override
+  String get ticketFormat2D => '2D';
+
+  @override
+  String get ticketFormat3D => '3D';
+
+  @override
+  String get ticketFormatIMAX => 'IMAX';
+
+  @override
+  String get checkinStatusValid => 'HỢP LỆ';
+
+  @override
+  String get checkinStatusAlreadyUsed => 'ĐÃ SOÁT TRƯỚC ĐÓ';
+
+  @override
+  String get checkinStatusInvalid => 'KHÔNG HỢP LỆ';
+
+  @override
+  String get checkinSuccessBanner => 'Soát vé thành công - Mời khách vào rạp';
+
+  @override
+  String get checkinWarningBanner => 'Cảnh báo: Vé đã được sử dụng trước đó!';
+
+  @override
+  String get checkinErrorBanner => 'Từ chối: Vé không hợp lệ hoặc đã bị hủy!';
+
+  @override
+  String get checkinTimeLabel => 'Thời gian soát vé';
+
+  @override
+  String get checkinStaffLabel => 'Nhân viên soát vé';
+
+  @override
+  String get customerNameLabel => 'Tên khách hàng';
+
+  @override
+  String get ticketCodeLabel => 'Mã vé';
+
+  @override
+  String get flashToggle => 'Bật/Tắt đèn Flash';
+
+  @override
+  String get switchCamera => 'Đổi camera';
+
+  @override
+  String get scannerPrompt => 'Hướng camera về phía mã QR trên vé của khách';
+
+  @override
+  String get scanNextTicket => 'Quét vé tiếp theo';
+
+  @override
+  String get manualCodeHint => 'Nhập mã vé (VD: TKT-12345)';
+
+  @override
+  String verifySuccessPrompt(String code) {
+    return 'Vé $code đã được xác nhận thành công!';
+  }
+
+  @override
+  String get shiftDashboard => 'Bảng điều khiển ca trực';
+
+  @override
+  String get shiftInfo => 'Thông tin ca trực';
+
+  @override
+  String get currentShift => 'Ca trực hiện tại';
+
+  @override
+  String get assignedCinema => 'Rạp làm việc';
+
+  @override
+  String get staffName => 'Nhân viên trực';
+
+  @override
+  String get ticketsScannedToday => 'Số vé đã soát hôm nay';
+
+  @override
+  String get counterRevenueToday => 'Doanh thu tại quầy';
+
+  @override
+  String get upcomingShowtimesCount => 'Suất chiếu sắp tới';
+
+  @override
+  String get quickActions => 'Thao tác nhanh';
+
+  @override
+  String get actionScanTicket => 'Soát vé vào rạp';
+
+  @override
+  String get actionCounterSale => 'Bán vé tại quầy';
+
+  @override
+  String get actionFastPOS => 'Bán bắp nước nhanh';
+
+  @override
+  String get actionRoomStatus => 'Tình trạng phòng chiếu';
+
+  @override
+  String get endShift => 'Kết thúc ca trực';
+
+  @override
+  String get shiftSummary => 'Tổng kết ca trực';
+
+  @override
+  String get fastPosTitle => 'Bán bắp nước nhanh';
+
+  @override
+  String get posCategoryAll => 'Tất cả';
+
+  @override
+  String get posCategoryPopcorn => 'Bắp rang bơ';
+
+  @override
+  String get posCategoryDrink => 'Nước giải khát';
+
+  @override
+  String get posCategoryCombo => 'Combo bắp nước';
+
+  @override
+  String get posCategorySnack => 'Đồ ăn nhẹ';
+
+  @override
+  String get quickOrder => 'Đơn hàng nhanh';
+
+  @override
+  String cartItemsCount(int count) {
+    return '$count món';
+  }
+
+  @override
+  String get clearCart => 'Xóa giỏ hàng';
+
+  @override
+  String get confirmOrder => 'Xác nhận đơn hàng';
+
+  @override
+  String get customerPhoneLookup => 'Tra cứu SĐT khách hàng';
+
+  @override
+  String get searchCustomerHint => 'Nhập số điện thoại khách hàng...';
+
+  @override
+  String customerPointsDisplay(int points) {
+    return 'Điểm tích lũy: $points';
+  }
+
+  @override
+  String customerNameDisplay(String name) {
+    return 'Khách hàng: $name';
+  }
+
+  @override
+  String get payWithCash => 'Thanh toán tiền mặt';
+
+  @override
+  String get printReceipt => 'In hóa đơn / Vé';
+
+  @override
+  String get defaultPopcorn => 'Bắp rang bơ lớn';
+
+  @override
+  String get defaultDrink => 'Nước ngọt lớn';
+
+  @override
+  String get defaultCombo => 'Combo 1 bắp 2 nước';
+
+  @override
+  String occupancyPercent(int percent) {
+    return '$percent% lấp đầy';
+  }
+
+  @override
+  String get roomStatusScreening => 'Đang chiếu';
+
+  @override
+  String get roomStatusPreparing => 'Chuẩn bị chiếu';
+
+  @override
+  String get roomStatusCleaning => 'Dọn dẹp';
+
+  @override
+  String get roomStatusReady => 'Sẵn sàng';
+
+  @override
+  String get roomStatusEnded => 'Đã kết thúc';
+
+  @override
+  String get showtimesAndOccupancy => 'Lịch chiếu & Tình trạng phòng';
+
+  @override
+  String get viewRoomLayout => 'Xem sơ đồ phòng';
+
+  @override
+  String totalSeatsInRoom(int total) {
+    return '$total ghế';
+  }
+
+  @override
+  String bookedSeatsCount(int booked, int total) {
+    return '$booked/$total ghế đã đặt';
+  }
+
+  @override
+  String get addMovieTitle => 'Thêm phim mới';
+
+  @override
+  String get editMovieTitle => 'Cập nhật phim';
+
+  @override
+  String get addMovieSuccess => 'Thêm phim thành công!';
+
+  @override
+  String get updateMovieSuccess => 'Cập nhật phim thành công!';
+
+  @override
+  String get selectPoster => 'Chọn poster';
+
+  @override
+  String get movieTitleLabel => 'Tên phim *';
+
+  @override
+  String get enterMovieTitle => 'Nhập tên phim';
+
+  @override
+  String get movieTitleRequired => 'Vui lòng nhập tên phim';
+
+  @override
+  String get genreLabel => 'Thể loại *';
+
+  @override
+  String get genrePlaceholder => 'Hành động, Hài hước, Kinh dị...';
+
+  @override
+  String get durationMinutesLabel => 'Thời lượng (phút) *';
+
+  @override
+  String get directorPlaceholder => 'Tên đạo diễn';
+
+  @override
+  String get castPlaceholder => 'Tên diễn viên...';
+
+  @override
+  String get languagePlaceholder => 'Tiếng Việt, Tiếng Anh...';
+
+  @override
+  String get ageLimitPlaceholder => '13, 16, 18...';
+
+  @override
+  String get releaseDateLabel => 'Ngày phát hành';
+
+  @override
+  String get screeningEndDate => 'Ngày kết thúc';
+
+  @override
+  String get selectDatePrompt => 'Chọn ngày';
+
+  @override
+  String get trailerUrl => 'Trailer URL';
+
+  @override
+  String get trailerUrlPlaceholder => 'https://youtube.com/...';
+
+  @override
+  String get movieDescriptionPlaceholder => 'Nội dung phim...';
+
+  @override
+  String get createMovieBtn => 'Tạo phim';
+
+  @override
+  String get searchMoviesPlaceholder => 'Tìm kiếm tên phim...';
+
+  @override
+  String get statusNowShowing => 'Đang chiếu';
+
+  @override
+  String get statusComingSoon => 'Sắp chiếu';
+
+  @override
+  String get statusStopped => 'Ngừng chiếu';
+
+  @override
+  String get roomTypeStandard => 'Tiêu chuẩn (Standard)';
+
+  @override
+  String get roomTypeVIP => 'Phòng VIP';
+
+  @override
+  String get roomTypeIMAX => 'Phòng IMAX';
+
+  @override
+  String get roomType4DX => 'Phòng 4DX';
+
+  @override
+  String get roomTypeCouple => 'Phòng Sweetbox';
+
+  @override
+  String get roomStatusActive => 'Đang hoạt động';
+
+  @override
+  String get roomStatusInactive => 'Tạm ngưng';
+
+  @override
+  String get roomStatusMaintenance => 'Bảo trì';
+
+  @override
+  String get viewSeatMap => 'Xem sơ đồ ghế';
+
+  @override
+  String get generateSeatsBtn => 'Tạo sơ đồ ghế tự động';
+
+  @override
+  String get generateSeatsSuccess => 'Tạo sơ đồ ghế thành công!';
+
+  @override
+  String get generateSeatsConfirm =>
+      'Hành động này sẽ tạo ma trận ghế tự động cho phòng chiếu. Tiếp tục?';
+
+  @override
+  String get seatLayoutTitle => 'Sơ đồ phòng chiếu';
+
+  @override
+  String get seatMatrixRows => 'Số hàng ghế';
+
+  @override
+  String get seatMatrixCols => 'Số cột ghế';
+
+  @override
+  String get cinemaStatusActive => 'Đang hoạt động';
+
+  @override
+  String get cinemaStatusInactive => 'Tạm dừng';
+
+  @override
+  String get cinemaStatusMaintenance => 'Bảo trì';
+
+  @override
+  String get format4DX => '4DX';
+
+  @override
+  String get filterByDatePrompt => 'Lọc theo ngày';
+
+  @override
+  String millionShort(String amount) {
+    return '$amount Tr';
+  }
+
+  @override
+  String thousandShort(String amount) {
+    return '$amount N';
+  }
+
+  @override
+  String rankBadge(int rank) {
+    return '#$rank';
+  }
+
+  @override
+  String get topPerformingMovies => 'Top phim doanh thu cao';
+
+  @override
+  String get chartRevenueUnit => 'Đơn vị: VNĐ';
+
+  @override
+  String get noDataInPeriod => 'Không có dữ liệu trong khoảng thời gian này';
+
+  @override
+  String get adminSettings => 'Cài đặt hệ thống';
+
+  @override
+  String get adminProfile => 'Hồ sơ quản trị viên';
+
+  @override
+  String get themeModeSetting => 'Giao diện';
+
+  @override
+  String get themeModeDark => 'Giao diện tối';
+
+  @override
+  String get themeModeLight => 'Giao diện sáng';
+
+  @override
+  String get themeModeSystem => 'Theo hệ thống';
+
+  @override
+  String get systemInfo => 'Thông tin hệ thống';
+
+  @override
+  String get clearCache => 'Xóa bộ nhớ đệm';
+
+  @override
+  String get clearCacheSuccess => 'Đã xóa bộ nhớ đệm thành công';
+
+  @override
+  String get soundAndHaptic => 'Âm thanh & Rung khi quét';
+
+  @override
+  String get soundAndHapticDesc =>
+      'Phát âm báo và rung khi quét mã QR thành công hoặc thất bại';
+
+  @override
+  String get weekdayMon => 'Th 2';
+
+  @override
+  String get weekdayTue => 'Th 3';
+
+  @override
+  String get weekdayWed => 'Th 4';
+
+  @override
+  String get weekdayThu => 'Th 5';
+
+  @override
+  String get weekdayFri => 'Th 6';
+
+  @override
+  String get weekdaySat => 'Th 7';
+
+  @override
+  String get weekdaySun => 'CN';
+
+  @override
+  String get cameraInitializing => 'Đang khởi động máy ảnh...';
+
+  @override
+  String get cameraPermissionDenied =>
+      'Không có quyền truy cập máy ảnh. Vui lòng cấp quyền trong cài đặt thiết bị.';
+
+  @override
+  String get cameraError => 'Không thể khởi động máy ảnh';
+
+  @override
+  String get cameraErrorHint =>
+      'Vui lòng kiểm tra quyền truy cập hoặc sử dụng tính năng nhập mã thủ công bên dưới.';
+
+  @override
+  String get staffProfile => 'Hồ sơ nhân viên';
+
+  @override
+  String get posTabTickets => 'Vé & Bắp nước';
+
+  @override
+  String get posTabConcessions => 'Bắp nước nhanh';
+
+  @override
+  String get checkinResultTitle => 'Kết quả soát vé';
+
+  @override
+  String get cashReceived => 'Tiền khách đưa';
+
+  @override
+  String get cashChange => 'Tiền thối lại';
+
+  @override
+  String get exactAmount => 'Đủ tiền';
+
+  @override
+  String get printTicketReceipt => 'In vé & Hóa đơn';
+
+  @override
+  String get posOrderSuccess => 'Tạo đơn hàng thành công!';
+
+  @override
+  String posOrderSuccessPrompt(String code) {
+    return 'Mã đơn: $code';
+  }
+
+  @override
+  String get staffBadge => 'NHÂN VIÊN';
+
+  @override
+  String get seatNumber => 'Số ghế';
+
+  @override
+  String get customer => 'Khách hàng';
+
+  @override
+  String get ticketNumber => 'Mã vé';
+
+  @override
+  String get tomorrow => 'Ngày mai';
+
+  @override
+  String get cashPaymentDesc => 'Thanh toán tiền mặt trực tiếp tại quầy';
+
+  @override
+  String get momoPaymentDesc => 'Quét mã MoMo QR tại quầy';
+
+  @override
+  String get vnpayPaymentDesc => 'Thẻ ATM / VNPAY-QR';
+
+  @override
+  String get enterCashReceivedHint => 'Nhập số tiền khách đưa';
+
+  @override
+  String get insufficientCashReceived =>
+      'Số tiền khách đưa không đủ thanh toán';
+
+  @override
+  String get scanSoundTitle => 'Âm báo khi quét mã';
+
+  @override
+  String get scanHapticTitle => 'Rung khi quét mã';
+
+  @override
+  String get seatUnit => 'ghế';
+
+  @override
+  String availableCountLabel(int count) {
+    return 'Trống: $count';
+  }
+
+  @override
+  String bookedCountLabel(int count) {
+    return 'Đã đặt: $count';
+  }
+
+  @override
+  String totalCountLabel(int count) {
+    return 'Tổng: $count';
+  }
+
+  @override
+  String get counterRevenueSubtitle => 'Doanh thu quầy';
+
+  @override
+  String get upcomingShowtimesSubtitle => 'Đang mở bán';
+
+  @override
+  String get averageSubtitle => 'Trung bình';
+
+  @override
+  String get defaultRoom => 'Phòng';
+
+  @override
+  String get format2DSubtitle => '2D Phụ đề';
+
+  @override
+  String get format2DDubbed => '2D Lồng tiếng';
+
+  @override
+  String get format3DDubbed => '3D Lồng tiếng';
+
+  @override
+  String get movieExhuma => 'Exhuma: Quật mộ trùng ma';
+
+  @override
+  String get adminBadge => 'QUẢN TRỊ VIÊN';
+
+  @override
+  String get userIdLabel => 'Mã tài khoản';
+
+  @override
+  String get roleLabel => 'Vai trò';
+
+  @override
+  String get emailPlaceholder => 'nhanvien@cineplex.vn';
+
+  @override
+  String get phonePlaceholder => '09xxxxxxxx';
+
+  @override
+  String get passwordPlaceholder => 'Nhập mật khẩu';
+
+  @override
+  String get confirmPasswordPlaceholder => 'Nhập lại mật khẩu';
+
+  @override
+  String get percentDiscountBadge => 'GIẢM %';
+
+  @override
+  String get fixedDiscountBadge => 'GIẢM TIỀN';
+
+  @override
+  String get discountTypePercentage => 'Giảm theo phần trăm (%)';
+
+  @override
+  String get discountTypeFixed => 'Giảm số tiền cố định (VNĐ)';
+
+  @override
+  String get noPromotionsSubtitle =>
+      'Chưa có mã khuyến mãi nào được tạo. Nhấn nút bên dưới để tạo mã mới.';
+
+  @override
+  String get pricePlaceholder => 'Ví dụ: 65.000';
+
+  @override
+  String get stockPlaceholder => 'Ví dụ: 100';
+
+  @override
+  String get movieManagement => 'Quản lý phim';
+
+  @override
+  String get togglePasswordVisibility => 'Hiện/ẩn mật khẩu';
+
+  @override
+  String get unitVnd => 'VNĐ';
+
+  @override
+  String get unitPercent => '%';
+
+  @override
+  String get screenLabel => 'MÀN HÌNH';
+
+  @override
+  String shortMonthFormat(int month) {
+    return 'T$month';
+  }
+
+  @override
+  String get startTime => 'Thời gian bắt đầu';
+
+  @override
+  String get statusInactive => 'Ngưng hoạt động';
 }

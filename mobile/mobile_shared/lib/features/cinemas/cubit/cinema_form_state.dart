@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:mobile_shared/mobile_shared.dart';
 
 abstract class CinemaFormState extends Equatable {
   const CinemaFormState();

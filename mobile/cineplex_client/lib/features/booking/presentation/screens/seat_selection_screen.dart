@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 import 'package:cineplex_client/features/booking/presentation/bloc/seat_booking_bloc.dart';
 import 'package:cineplex_client/features/booking/presentation/widgets/seat_layout_widget.dart';
-import 'package:cineplex_client/features/booking/presentation/widgets/seat_legend.dart';
 import 'package:cineplex_client/features/booking/presentation/widgets/booking_timer_widget.dart';
 
 class SeatSelectionScreen extends StatefulWidget {
@@ -25,15 +25,16 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final colors = CineplexColors.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.selectSeats),
+        title: Text(l10n.seatSelection),
       ),
       body: BlocConsumer<SeatBookingBloc, SeatBookingState>(
         listener: (context, state) {
           if (state is SeatsHeld) {
-            Navigator.pushNamed(context, '/concession', arguments: state.bookingId);
+            context.push('/concessions/${state.bookingId}');
           } else if (state is SeatBookingError) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
           }
@@ -43,24 +44,45 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
             return const Center(child: AppLoading());
           }
 
+          if (state is SeatBookingError) {
+            return AppErrorView(
+              message: state.message,
+              onRetry: () => context.read<SeatBookingBloc>().add(LoadSeatMap(widget.showtimeId)),
+            );
+          }
+
           if (state is SeatMapLoaded) {
+            final totalPrice = state.selectedSeatIds.length * state.pricePerSeat;
             return Column(
               children: [
                 if (state.secondsRemaining != null)
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.only(top: 8.0, bottom: 4.0),
                     child: BookingTimerWidget(secondsRemaining: state.secondsRemaining!),
                   ),
                 
                 // Screen curved indicator
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 32.0),
-                  child: CustomPaint(
-                    size: const Size(double.infinity, 30),
-                    painter: ScreenPainter(),
+                  padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 32.0),
+                  child: Column(
+                    children: [
+                      CustomPaint(
+                        size: const Size(double.infinity, 24),
+                        painter: ScreenPainter(color: colors.primary),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        l10n.seatLayoutTitle,
+                        style: TextStyle(
+                          fontSize: 11,
+                          letterSpacing: 2,
+                          fontWeight: FontWeight.w600,
+                          color: colors.textSecondary.withValues(alpha: 0.7),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                Text(l10n.seatInfo, style: const TextStyle(color: Colors.grey)),
                 
                 Expanded(
                   child: SeatLayoutWidget(
@@ -79,40 +101,55 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
                 ),
                 
                 Container(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
+                    color: colors.surface,
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: 0.08),
                         blurRadius: 10,
-                        offset: const Offset(0, -5),
+                        offset: const Offset(0, -4),
                       ),
                     ],
+                    border: Border(
+                      top: BorderSide(color: colors.textSecondary.withValues(alpha: 0.1)),
+                    ),
                   ),
                   child: SafeArea(
+                    top: false,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const SeatLegend(),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 12),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(l10n.totalPrice('${state.selectedSeatIds.length * state.pricePerSeat} \u20ab'), 
-                                  style: const TextStyle(
-                                    fontSize: 20,
+                                Text(
+                                  l10n.totalAmount,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: colors.textSecondary,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  FormatUtils.formatCurrency(totalPrice),
+                                  style: TextStyle(
+                                    fontSize: 18,
                                     fontWeight: FontWeight.bold,
-                                    color: AppColors.primary,
+                                    color: colors.primary,
                                   ),
                                 ),
                               ],
                             ),
                             AppButton(
                               text: l10n.continueBtn,
+                              width: 150,
                               onPressed: state.selectedSeatIds.isEmpty
                                   ? null
                                   : () => context.read<SeatBookingBloc>().add(HoldSelectedSeats()),
@@ -135,10 +172,13 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
 }
 
 class ScreenPainter extends CustomPainter {
+  final Color color;
+  const ScreenPainter({required this.color});
+
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = AppColors.primary
+      ..color = color
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3.0;
 
@@ -149,10 +189,10 @@ class ScreenPainter extends CustomPainter {
     canvas.drawPath(path, paint);
     
     final glowPaint = Paint()
-      ..color = AppColors.primary.withOpacity(0.3)
+      ..color = color.withValues(alpha: 0.3)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 10.0
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5.0);
+      ..strokeWidth = 8.0
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4.0);
       
     canvas.drawPath(path, glowPaint);
   }
@@ -160,3 +200,4 @@ class ScreenPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
+

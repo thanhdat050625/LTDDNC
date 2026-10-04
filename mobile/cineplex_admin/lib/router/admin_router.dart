@@ -6,6 +6,8 @@ import 'package:mobile_shared/mobile_shared.dart';
 import '../features/auth/presentation/screens/admin_login_screen.dart';
 import '../features/users/presentation/screens/user_management_screen.dart';
 import '../features/statistics/presentation/screens/statistics_screen.dart';
+import '../features/profile/presentation/screens/admin_profile_screen.dart';
+import '../features/settings/presentation/screens/admin_settings_screen.dart';
 import '../features/dashboard/presentation/widgets/admin_drawer.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -43,6 +45,14 @@ GoRouter createAdminRouter(AuthBloc authBloc) {
         redirect: (_, __) => '/statistics',
       ),
       GoRoute(
+        path: '/profile',
+        builder: (context, state) => const AdminProfileScreen(drawer: AdminDrawer()),
+      ),
+      GoRoute(
+        path: '/settings',
+        builder: (context, state) => const AdminSettingsScreen(drawer: AdminDrawer()),
+      ),
+      GoRoute(
         path: '/users',
         builder: (context, state) => const UserManagementScreen(drawer: AdminDrawer()),
       ),
@@ -67,6 +77,10 @@ GoRouter createAdminRouter(AuthBloc authBloc) {
           ),
           child: const MovieFormScreen(),
         ),
+      ),
+      GoRoute(
+        path: '/movies/:id',
+        redirect: (context, state) => '/movies/${state.pathParameters['id']}/edit',
       ),
       GoRoute(
         path: '/movies/:id/edit',

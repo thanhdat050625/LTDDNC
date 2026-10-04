@@ -17,6 +17,15 @@ class PromotionListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).extension<CineplexColors>()!;
+    final l10n = AppLocalizations.of(context)!;
+
+    final isPercentage = promotion.discountType == 'PERCENTAGE';
+    final discountBadgeColor = isPercentage ? const Color(0xFF6366F1) : const Color(0xFF10B981);
+    final discountBadgeText = isPercentage ? l10n.percentDiscountBadge : l10n.fixedDiscountBadge;
+    final discountIcon = isPercentage ? LucideIcons.percent : LucideIcons.banknote;
+    final discountFormatted = isPercentage
+        ? '-${promotion.discountValue}%'
+        : '-${FormatUtils.formatCurrency(promotion.discountValue.toDouble())}';
 
     return AppCard(
       margin: EdgeInsets.zero,
@@ -37,13 +46,17 @@ class PromotionListItem extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: (promotion.isActive ? theme.success : theme.error).withValues(alpha: 0.1),
+                  color: (promotion.isActive ? theme.success : theme.error).withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(4),
+                  border: Border.all(
+                    color: (promotion.isActive ? theme.success : theme.error).withValues(alpha: 0.3),
+                    width: 0.8,
+                  ),
                 ),
                 child: Text(
-                  promotion.isActive ? 'ACTIVE' : 'INACTIVE',
+                  promotion.isActive ? l10n.statusActive : l10n.statusInactive,
                   style: TextStyle(
                     color: promotion.isActive ? theme.success : theme.error,
                     fontSize: 10,
@@ -56,36 +69,63 @@ class PromotionListItem extends StatelessWidget {
           SizedBox(height: theme.spacingSm),
           Row(
             children: [
-              Icon(LucideIcons.tag, size: 14, color: theme.textSecondary),
-              SizedBox(width: 4),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: discountBadgeColor.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(
+                    color: discountBadgeColor.withValues(alpha: 0.4),
+                    width: 0.8,
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(discountIcon, size: 10, color: discountBadgeColor),
+                    const SizedBox(width: 4),
+                    Text(
+                      discountBadgeText,
+                      style: TextStyle(
+                        color: discountBadgeColor,
+                        fontSize: 9,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  promotion.discountType == 'PERCENTAGE' 
-                    ? '${promotion.discountValue}%' 
-                    : FormatUtils.formatCurrency(promotion.discountValue.toDouble()),
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: theme.accent, fontWeight: FontWeight.bold),
+                  discountFormatted,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: discountBadgeColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 6),
           Row(
             children: [
               Icon(LucideIcons.calendar, size: 14, color: theme.textSecondary),
-              SizedBox(width: 4),
+              const SizedBox(width: 4),
               Text(
                 '${FormatUtils.formatDate(promotion.startDate)} - ${FormatUtils.formatDate(promotion.endDate)}',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(color: theme.textSecondary),
               ),
             ],
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Row(
             children: [
               Icon(LucideIcons.users, size: 14, color: theme.textSecondary),
-              SizedBox(width: 4),
+              const SizedBox(width: 4),
               Text(
                 '${promotion.usedCount} / ${promotion.maxUsage == null ? '∞' : promotion.maxUsage}',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(color: theme.textSecondary),
@@ -97,17 +137,19 @@ class PromotionListItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               IconButton(
-                icon: Icon(LucideIcons.edit3, size: 20, color: theme.accent),
+                icon: Icon(LucideIcons.edit3, size: 18, color: theme.accent),
                 onPressed: onEdit,
-                constraints: const BoxConstraints(),
-                padding: EdgeInsets.all(4),
+                tooltip: l10n.editPromotion,
+                constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                padding: const EdgeInsets.all(8),
               ),
-              SizedBox(width: theme.spacingSm),
+              const SizedBox(width: 4),
               IconButton(
-                icon: Icon(LucideIcons.trash2, size: 20, color: theme.error),
+                icon: Icon(LucideIcons.trash2, size: 18, color: theme.error),
                 onPressed: onDelete,
-                constraints: const BoxConstraints(),
-                padding: EdgeInsets.all(4),
+                tooltip: l10n.delete,
+                constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                padding: const EdgeInsets.all(8),
               ),
             ],
           ),

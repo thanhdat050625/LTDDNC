@@ -18,10 +18,28 @@ class TicketDetailScreen extends StatelessWidget {
     }
   }
 
+  String _localizeStatus(String status, AppLocalizations l10n) {
+    switch (status.toUpperCase()) {
+      case 'PAID':
+        return l10n.bookingStatusPaid;
+      case 'PENDING':
+        return l10n.bookingStatusPending;
+      case 'CANCELLED':
+      case 'CANCELED':
+        return l10n.bookingStatusCancelled;
+      case 'EXPIRED':
+        return l10n.bookingStatusExpired;
+      case 'CONFIRMED':
+        return l10n.bookingStatusConfirmed;
+      default:
+        return status;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final colorScheme = Theme.of(context).colorScheme;
+    final colors = CineplexColors.of(context);
     final locale = Localizations.localeOf(context).languageCode;
 
     final qrTickets = booking.tickets.where((t) => t.qrCode.isNotEmpty).toList();
@@ -29,6 +47,7 @@ class TicketDetailScreen extends StatelessWidget {
         .map((t) => t.seatLabel ?? t.seatId)
         .where((s) => s.isNotEmpty)
         .join(', ');
+    final isPaid = booking.status.toUpperCase() == 'PAID';
 
     return AppScaffold(
       title: l10n.ticketDetail,
@@ -41,9 +60,9 @@ class TicketDetailScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: colorScheme.surfaceContainer,
+                color: colors.card,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.5)),
+                border: Border.all(color: colors.cardBorder),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,8 +75,12 @@ class TicketDetailScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              booking.movieTitle ?? 'Cineplex Movie',
-                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              booking.movieTitle ?? l10n.defaultMovieTitle,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: colors.textPrimary,
+                              ),
                             ),
                             const SizedBox(height: 6),
                             Row(
@@ -65,22 +88,22 @@ class TicketDetailScreen extends StatelessWidget {
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                   decoration: BoxDecoration(
-                                    color: colorScheme.primaryContainer,
+                                    color: colors.primary.withValues(alpha: 0.12),
                                     borderRadius: BorderRadius.circular(6),
                                   ),
                                   child: Text(
-                                    booking.format ?? '2D',
+                                    booking.format ?? l10n.ticketFormat2D,
                                     style: TextStyle(
                                       fontSize: 11,
                                       fontWeight: FontWeight.bold,
-                                      color: colorScheme.onPrimaryContainer,
+                                      color: colors.primary,
                                     ),
                                   ),
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  '${booking.cinemaName ?? 'Cineplex'} - ${booking.roomName ?? l10n.screeningRoom}',
-                                  style: TextStyle(fontSize: 13, color: colorScheme.onSurfaceVariant),
+                                  '${booking.cinemaName ?? l10n.appName} - ${booking.roomName ?? l10n.screeningRoom}',
+                                  style: TextStyle(fontSize: 13, color: colors.textSecondary),
                                 ),
                               ],
                             ),
@@ -92,11 +115,11 @@ class TicketDetailScreen extends StatelessWidget {
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      Icon(Icons.access_time, size: 16, color: colorScheme.primary),
+                      Icon(Icons.access_time, size: 16, color: colors.primary),
                       const SizedBox(width: 6),
                       Text(
                         _formatDateTime(booking.startTime, locale),
-                        style: TextStyle(fontSize: 13, color: colorScheme.onSurfaceVariant),
+                        style: TextStyle(fontSize: 13, color: colors.textSecondary),
                       ),
                     ],
                   ),
@@ -108,7 +131,7 @@ class TicketDetailScreen extends StatelessWidget {
             // QR Codes Section (Real QR using qr_flutter)
             Text(
               l10n.qrCode,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: colorScheme.primary),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: colors.primary),
             ),
             const SizedBox(height: 10),
 
@@ -119,9 +142,9 @@ class TicketDetailScreen extends StatelessWidget {
                   margin: const EdgeInsets.only(bottom: 16),
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainerLow,
+                    color: colors.card,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.5)),
+                    border: Border.all(color: colors.cardBorder),
                   ),
                   child: Column(
                     children: [
@@ -130,14 +153,18 @@ class TicketDetailScreen extends StatelessWidget {
                         children: [
                           Text(
                             '${l10n.seatStandard}: ${ticket.seatLabel ?? ticket.seatId}',
-                            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: colors.textPrimary,
+                            ),
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
                               color: isCheckedIn
-                                  ? colorScheme.secondaryContainer
-                                  : colorScheme.primaryContainer,
+                                  ? colors.success.withValues(alpha: 0.12)
+                                  : colors.primary.withValues(alpha: 0.12),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
@@ -145,9 +172,7 @@ class TicketDetailScreen extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
-                                color: isCheckedIn
-                                    ? colorScheme.onSecondaryContainer
-                                    : colorScheme.onPrimaryContainer,
+                                color: isCheckedIn ? colors.success : colors.primary,
                               ),
                             ),
                           ),
@@ -161,7 +186,7 @@ class TicketDetailScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.08),
+                              color: Colors.black.withValues(alpha: 0.08),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
                             ),
@@ -180,7 +205,7 @@ class TicketDetailScreen extends StatelessWidget {
                         style: TextStyle(
                           fontFamily: 'monospace',
                           fontSize: 12,
-                          color: colorScheme.onSurfaceVariant,
+                          color: colors.textSecondary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -192,14 +217,15 @@ class TicketDetailScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: colorScheme.surfaceContainerLow,
+                  color: colors.card,
                   borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: colors.cardBorder),
                 ),
                 child: Center(
                   child: Text(
                     l10n.qrCodeAvailableAfterPayment,
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: colorScheme.onSurfaceVariant),
+                    style: TextStyle(color: colors.textSecondary),
                   ),
                 ),
               ),
@@ -210,49 +236,49 @@ class TicketDetailScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: colorScheme.surfaceContainerLow,
+                color: colors.card,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.5)),
+                border: Border.all(color: colors.cardBorder),
               ),
               child: Column(
                 children: [
                   _buildDetailRow(
                     label: l10n.orderCode,
                     value: booking.bookingCode,
-                    colorScheme: colorScheme,
+                    colors: colors,
                   ),
                   if (seatsString.isNotEmpty) ...[
-                    const Divider(height: 16),
+                    Divider(height: 16, color: colors.divider),
                     _buildDetailRow(
                       label: l10n.seatInfo,
                       value: seatsString,
-                      colorScheme: colorScheme,
+                      colors: colors,
                     ),
                   ],
                   if (booking.concessions.isNotEmpty) ...[
-                    const Divider(height: 16),
+                    Divider(height: 16, color: colors.divider),
                     _buildDetailRow(
                       label: l10n.concessions,
                       value: booking.concessions
-                          .map((c) => '${c['quantity'] ?? 1}x ${c['concession']?['name'] ?? 'Combo'}')
+                          .map((c) => '${c['quantity'] ?? 1}x ${c['concession']?['name'] ?? l10n.concessionCombo}')
                           .join(', '),
-                      colorScheme: colorScheme,
+                      colors: colors,
                     ),
                   ],
-                  const Divider(height: 16),
+                  Divider(height: 16, color: colors.divider),
                   _buildDetailRow(
                     label: l10n.orderStatus,
-                    value: booking.status,
-                    colorScheme: colorScheme,
-                    valueColor: booking.status == 'PAID' ? colorScheme.primary : colorScheme.error,
+                    value: _localizeStatus(booking.status, l10n),
+                    colors: colors,
+                    valueColor: isPaid ? colors.success : colors.error,
                   ),
-                  const Divider(height: 16),
+                  Divider(height: 16, color: colors.divider),
                   _buildDetailRow(
                     label: l10n.totalAmount,
                     value: FormatUtils.formatCurrency(booking.totalAmount.toInt()),
-                    colorScheme: colorScheme,
+                    colors: colors,
                     isBold: true,
-                    valueColor: colorScheme.primary,
+                    valueColor: colors.primary,
                   ),
                 ],
               ),
@@ -266,7 +292,7 @@ class TicketDetailScreen extends StatelessWidget {
   Widget _buildDetailRow({
     required String label,
     required String value,
-    required ColorScheme colorScheme,
+    required CineplexColors colors,
     bool isBold = false,
     Color? valueColor,
   }) {
@@ -275,14 +301,14 @@ class TicketDetailScreen extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(fontSize: 13, color: colorScheme.onSurfaceVariant),
+          style: TextStyle(fontSize: 13, color: colors.textSecondary),
         ),
         Text(
           value,
           style: TextStyle(
             fontSize: isBold ? 15 : 13,
             fontWeight: isBold ? FontWeight.bold : FontWeight.w500,
-            color: valueColor ?? colorScheme.onSurface,
+            color: valueColor ?? colors.textPrimary,
           ),
         ),
       ],

@@ -214,7 +214,7 @@ class _TicketSaleScreenView extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Text(
                         l10n.durationMinutes(movie.durationMinutes),
                         style: TextStyle(color: theme.textSecondary, fontSize: 12),
@@ -257,7 +257,7 @@ class _TicketSaleScreenView extends StatelessWidget {
       onRefresh: () => context.read<TicketSaleCubit>().loadInitialData(),
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.fromLTRB(12, 8, 12, 100),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: grouped.entries.map((entry) {
@@ -305,7 +305,7 @@ class _TicketSaleScreenView extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             Text(
               '${st.room?.roomType ?? "Standard"} • ${st.format.replaceAll("FORMAT_", "")}',
               style: TextStyle(

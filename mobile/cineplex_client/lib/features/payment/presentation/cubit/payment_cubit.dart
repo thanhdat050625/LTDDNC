@@ -79,9 +79,9 @@ class PaymentCubit extends Cubit<PaymentState> {
       if (status.status == 'SUCCESS' || status.status == 'PAID') {
         emit(PaymentSuccess(status));
       } else if (status.status == 'FAILED') {
-        emit(const PaymentFailed('Payment failed'));
+        emit(const PaymentFailed('Thanh toán thất bại'));
       } else {
-        emit(PaymentFailed('Payment status: ${status.status}'));
+        emit(PaymentFailed('Trạng thái thanh toán: ${status.status}'));
       }
     } catch (e) {
       emit(PaymentFailed(e.toString()));

@@ -23,14 +23,37 @@ class BookingManagementRepository {
     return response.statusCode == 200 || response.statusCode == 201;
   }
 
-  Future<BookingModel> createStaffBooking(int showtimeId, List<int> seatIds, {int? customerId}) async {
+  Future<BookingModel> createStaffBooking(
+    int showtimeId,
+    List<int> seatIds, {
+    int? customerId,
+    List<Map<String, dynamic>>? concessions,
+    int? pointsToUse,
+    String source = 'OFFLINE',
+  }) async {
     final response = await _dioClient.post('/bookings/staff', data: {
       'showtimeId': showtimeId,
       'seatIds': seatIds,
+      'source': source,
       if (customerId != null) 'customerId': customerId,
+      if (concessions != null && concessions.isNotEmpty) 'concessions': concessions,
+      if (pointsToUse != null && pointsToUse > 0) 'pointsToUse': pointsToUse,
     });
     final payload = (response.data is Map && response.data.containsKey('data')) ? response.data['data'] : response.data;
     return BookingModel.fromJson(payload as Map<String, dynamic>);
+  }
+
+  Future<dynamic> checkoutPayment({
+    required int bookingId,
+    required String method,
+  }) async {
+    final response = await _dioClient.post('/payments/checkout', data: {
+      'bookingId': bookingId,
+      'method': method,
+    });
+    return (response.data is Map && response.data.containsKey('data'))
+        ? response.data['data']
+        : response.data;
   }
 
   Future<void> confirmBooking(int bookingId, String paymentMethod) async {

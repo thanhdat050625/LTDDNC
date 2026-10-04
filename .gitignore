@@ -34,3 +34,5 @@ coverage/
 *.keystore
 key.properties
 
+# Agents Teamwork
+.agents/teamwork

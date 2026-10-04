@@ -16,7 +16,7 @@ class BookingTimerWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: isWarning ? AppColors.primary.withOpacity(0.2) : Colors.grey.withOpacity(0.2),
+        color: isWarning ? AppColors.primary.withValues(alpha: 0.2) : Colors.grey.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isWarning ? AppColors.primary : Colors.transparent,

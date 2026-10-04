@@ -27,4 +27,13 @@ class StorageService {
   Future<void> clearAll() async {
     await _storage.deleteAll();
   }
+
+  Future<void> saveThemeMode(String mode) async {
+    await _storage.write(key: 'theme_mode', value: mode);
+  }
+
+  Future<String?> getThemeMode() async {
+    return await _storage.read(key: 'theme_mode');
+  }
 }
+

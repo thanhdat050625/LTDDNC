@@ -272,7 +272,7 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
                   AppTextField(
                     controller: _priceCtrl,
                     label: '${l10n.priceLabel} *',
-                    hintText: '65000',
+                    hintText: l10n.pricePlaceholder,
                     keyboardType: TextInputType.number,
                     validator: (val) {
                       if (val == null || val.trim().isEmpty)
@@ -288,7 +288,7 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
                   AppTextField(
                     controller: _stockCtrl,
                     label: '${l10n.stockQuantity} *',
-                    hintText: '100',
+                    hintText: l10n.stockPlaceholder,
                     keyboardType: TextInputType.number,
                     validator: (val) {
                       if (val == null || val.trim().isEmpty)
