@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -25,6 +26,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late final TextEditingController _emailController;
 
   File? _avatarFile;
+  Uint8List? _avatarBytes;
   String? _currentAvatarUrl;
   String? _selectedGender;
   DateTime? _selectedDate;
@@ -81,8 +83,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         MaterialPageRoute(builder: (_) => const CameraCaptureScreen()),
       );
       if (imagePath != null && mounted) {
+        final file = File(imagePath);
+        final bytes = await file.readAsBytes();
         setState(() {
-          _avatarFile = File(imagePath);
+          _avatarFile = file;
+          _avatarBytes = bytes;
         });
       }
     } catch (_) {
@@ -99,8 +104,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       final picker = ImagePicker();
       final picked = await picker.pickImage(source: ImageSource.gallery);
       if (picked != null && mounted) {
+        final bytes = await picked.readAsBytes();
         setState(() {
           _avatarFile = File(picked.path);
+          _avatarBytes = bytes;
         });
       }
     } catch (_) {
@@ -263,30 +270,41 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         border: Border.all(color: colors.primary, width: 2),
                       ),
                       child: ClipOval(
-                        child: _avatarFile != null
-                            ? Image.file(
-                                _avatarFile!,
+                        child: _avatarBytes != null
+                            ? Image.memory(
+                                _avatarBytes!,
+                                key: ValueKey(_avatarBytes.hashCode),
                                 width: 100,
                                 height: 100,
                                 fit: BoxFit.cover,
+                                gaplessPlayback: true,
                                 errorBuilder: (_, __, ___) => _buildAvatarFallback(colors),
                               )
-                            : (_currentAvatarUrl != null && _currentAvatarUrl!.isNotEmpty
-                                ? CachedNetworkImage(
-                                    imageUrl: _currentAvatarUrl!,
+                            : (_avatarFile != null
+                                ? Image.file(
+                                    _avatarFile!,
                                     width: 100,
                                     height: 100,
                                     fit: BoxFit.cover,
-                                    placeholder: (_, __) => const Center(
-                                      child: SizedBox(
-                                        width: 24,
-                                        height: 24,
-                                        child: CircularProgressIndicator(strokeWidth: 2),
-                                      ),
-                                    ),
-                                    errorWidget: (_, __, ___) => _buildAvatarFallback(colors),
+                                    gaplessPlayback: true,
+                                    errorBuilder: (_, __, ___) => _buildAvatarFallback(colors),
                                   )
-                                : _buildAvatarFallback(colors)),
+                                : (_currentAvatarUrl != null && _currentAvatarUrl!.isNotEmpty
+                                    ? CachedNetworkImage(
+                                        imageUrl: _currentAvatarUrl!,
+                                        width: 100,
+                                        height: 100,
+                                        fit: BoxFit.cover,
+                                        placeholder: (_, __) => const Center(
+                                          child: SizedBox(
+                                            width: 24,
+                                            height: 24,
+                                            child: CircularProgressIndicator(strokeWidth: 2),
+                                          ),
+                                        ),
+                                        errorWidget: (_, __, ___) => _buildAvatarFallback(colors),
+                                      )
+                                    : _buildAvatarFallback(colors))),
                       ),
                     ),
                     Positioned(
