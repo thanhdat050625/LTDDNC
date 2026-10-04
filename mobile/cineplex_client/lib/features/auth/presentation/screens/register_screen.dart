@@ -11,7 +11,6 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final PageController _pageCtrl = PageController();
   int _currentStep = 0;
   String _email = '';
   String _otp = '';
@@ -20,14 +19,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void _nextStep() {
     if (_currentStep < 2) {
-      _pageCtrl.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
       setState(() => _currentStep++);
     }
   }
 
   void _prevStep() {
     if (_currentStep > 0) {
-      _pageCtrl.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
       setState(() => _currentStep--);
     } else {
       Navigator.pop(context);
