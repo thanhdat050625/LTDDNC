@@ -74,7 +74,7 @@ class _MovieListScreenContentState extends State<_MovieListScreenContent> {
           final isLoading = state is MovieListLoading;
           final isError = state is MovieListError;
           final hasMore = (state is MovieListLoaded) && state.hasMore;
-          final bottomPadding = 100 + MediaQuery.of(context).padding.bottom;
+          final bottomPadding = MediaQuery.of(context).padding.bottom + 16;
 
           return Column(
             children: [

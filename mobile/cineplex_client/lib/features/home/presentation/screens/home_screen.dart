@@ -86,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       NowShowingSection(movies: data.nowShowing),
                       const SizedBox(height: 24),
                       ComingSoonSection(movies: data.comingSoon),
-                      SizedBox(height: 100 + MediaQuery.of(context).padding.bottom),
+                      SizedBox(height: MediaQuery.of(context).padding.bottom + 16),
                     ],
                   ),
                 ),

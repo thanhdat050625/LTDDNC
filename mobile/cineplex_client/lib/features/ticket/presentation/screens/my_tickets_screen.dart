@@ -77,7 +77,7 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> with SingleTickerProv
   }
 
   Widget _buildList(List bookings, AppLocalizations l10n, CineplexColors colors) {
-    final bottomPadding = 100 + MediaQuery.of(context).padding.bottom;
+    final bottomPadding = MediaQuery.of(context).padding.bottom + 16;
 
     if (bookings.isEmpty) {
       return Center(

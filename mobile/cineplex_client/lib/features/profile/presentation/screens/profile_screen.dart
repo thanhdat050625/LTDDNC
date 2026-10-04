@@ -162,7 +162,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     16,
                     16,
                     16,
-                    100 + MediaQuery.of(context).padding.bottom,
+                    MediaQuery.of(context).padding.bottom + 16,
                   ),
                   children: [
                     // Header Avatar & Name (Avatar qua trái, thông tin qua phải)
