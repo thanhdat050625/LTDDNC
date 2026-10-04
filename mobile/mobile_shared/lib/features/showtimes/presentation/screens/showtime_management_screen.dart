@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mobile_shared/mobile_shared.dart';
+import '../widgets/date_carousel.dart';
 
 class ShowtimeManagementScreen extends StatefulWidget {
   final Widget? drawer;
@@ -14,7 +14,6 @@ class ShowtimeManagementScreen extends StatefulWidget {
 }
 
 class _ShowtimeManagementScreenState extends State<ShowtimeManagementScreen> {
-
   @override
   void initState() {
     super.initState();
@@ -28,7 +27,7 @@ class _ShowtimeManagementScreenState extends State<ShowtimeManagementScreen> {
     }
   }
 
-  Future<void> _selectDate(BuildContext context, DateTime? currentDate) async {
+  Future<void> _selectCustomDate(BuildContext context, DateTime? currentDate) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: currentDate ?? DateTime.now(),
@@ -42,10 +41,11 @@ class _ShowtimeManagementScreenState extends State<ShowtimeManagementScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context).extension<CineplexColors>()!;
+    final theme = CineplexColors.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return AppScaffold(
-      title: AppLocalizations.of(context)!.manageShowtimes,
+      title: l10n.manageShowtimes,
       drawer: widget.drawer,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -56,57 +56,46 @@ class _ShowtimeManagementScreenState extends State<ShowtimeManagementScreen> {
       ),
       body: Column(
         children: [
-          // Filter Bar
-          Container(
-            padding: const EdgeInsets.fromLTRB(12, 8, 12, 6),
-            color: theme.surface,
-            child: BlocBuilder<ShowtimeManagementCubit, ShowtimeManagementState>(
-              builder: (context, state) {
-                DateTime? selectedDate;
-                if (state is ShowtimeManagementLoaded) {
-                  selectedDate = state.selectedDate;
-                }
-                
-                return Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => _selectDate(context, selectedDate),
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: theme.spacingMd, vertical: 12),
-                          decoration: BoxDecoration(
-                            color: theme.background,
-                            borderRadius: BorderRadius.circular(theme.radiusMd),
-                            border: Border.all(color: theme.textSecondary.withValues(alpha: 0.2)),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(LucideIcons.calendar, size: 20, color: theme.textSecondary),
-                              SizedBox(width: theme.spacingMd),
-                              Text(
-                                selectedDate != null ? DateFormat('dd/MM/yyyy').format(selectedDate) : 'Lọc theo ngày',
-                                style: TextStyle(color: selectedDate != null ? theme.textPrimary : theme.textSecondary),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+          // Horizontal Date Carousel & Calendar Picker
+          BlocBuilder<ShowtimeManagementCubit, ShowtimeManagementState>(
+            builder: (context, state) {
+              DateTime? selectedDate;
+              if (state is ShowtimeManagementLoaded) {
+                selectedDate = state.selectedDate;
+              }
+
+              return Row(
+                children: [
+                  Expanded(
+                    child: DateCarousel(
+                      selectedDate: selectedDate,
+                      onDateSelected: (date) {
+                        context.read<ShowtimeManagementCubit>().filterByDate(date);
+                      },
                     ),
-                    if (selectedDate != null) ...[
-                      SizedBox(width: theme.spacingSm),
-                      IconButton(
-                        icon: Icon(LucideIcons.x, color: theme.error),
-                        onPressed: () {
-                          context.read<ShowtimeManagementCubit>().filterByDate(null);
-                        },
+                  ),
+                  Container(
+                    height: 74,
+                    color: theme.surface,
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.only(right: 12),
+                    child: IconButton(
+                      icon: Icon(
+                        LucideIcons.calendar,
+                        size: 20,
+                        color: selectedDate != null ? theme.accent : theme.textSecondary,
                       ),
-                    ]
-                  ],
-                );
-              },
-            ),
+                      tooltip: l10n.filterByDatePrompt,
+                      constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                      onPressed: () => _selectCustomDate(context, selectedDate),
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
-          
+          Divider(color: theme.borderSubtle, height: 1),
+
           // Showtime List
           Expanded(
             child: RefreshIndicator(
@@ -114,42 +103,46 @@ class _ShowtimeManagementScreenState extends State<ShowtimeManagementScreen> {
               child: BlocBuilder<ShowtimeManagementCubit, ShowtimeManagementState>(
                 builder: (context, state) {
                   if (state is ShowtimeManagementLoading) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const Center(child: AppLoading());
                   } else if (state is ShowtimeManagementError) {
-                    return ListView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      children: [
-                        SizedBox(height: MediaQuery.of(context).size.height * 0.25),
-                        Center(
-                          child: Text(
-                            state.message,
-                            style: TextStyle(color: theme.error),
-                          ),
+                    return Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: AppErrorView(
+                          message: state.message,
+                          onRetry: () => context.read<ShowtimeManagementCubit>().loadShowtimes(),
                         ),
-                      ],
+                      ),
                     );
                   } else if (state is ShowtimeManagementLoaded) {
                     final showtimes = state.showtimes;
                     if (showtimes.isEmpty) {
-                      return ListView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        children: [
-                          SizedBox(height: MediaQuery.of(context).size.height * 0.25),
-                          Center(child: Text(AppLocalizations.of(context)!.noShowtimesFound)),
-                        ],
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: AppEmptyView(
+                            icon: LucideIcons.calendarX,
+                            title: l10n.noShowtimesFound,
+                            message: l10n.noResultsFound,
+                            actionLabel: l10n.addShowtime,
+                            onAction: () => _reloadAfterPush(context.push('/showtimes/new')),
+                          ),
+                        ),
                       );
                     }
                     return ListView.separated(
                       physics: const AlwaysScrollableScrollPhysics(),
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       itemCount: showtimes.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 6),
+                      separatorBuilder: (_, __) => const SizedBox(height: 8),
                       itemBuilder: (context, index) {
                         final st = showtimes[index];
                         return ShowtimeListItem(
                           showtime: st,
                           onTap: () {
-                            // View details
+                            _reloadAfterPush(
+                              context.push('/showtimes/${st.id}/edit', extra: st),
+                            );
                           },
                           onEdit: () {
                             _reloadAfterPush(
@@ -157,25 +150,27 @@ class _ShowtimeManagementScreenState extends State<ShowtimeManagementScreen> {
                             );
                           },
                           onDelete: () {
-                            // Handle delete logic via Cubit
                             showDialog(
                               context: context,
                               builder: (dCtx) => AlertDialog(
-                                title: Text(AppLocalizations.of(context)!.confirmDelete),
-                                content: Text(AppLocalizations.of(context)!.confirmDeleteShowtimeDesc),
+                                backgroundColor: theme.surface,
+                                title: Text(l10n.confirmDelete),
+                                content: Text(l10n.confirmDeleteShowtimeDesc),
                                 actions: [
                                   TextButton(
                                     onPressed: () => Navigator.pop(dCtx),
-                                    child: Text(AppLocalizations.of(context)!.cancel),
+                                    child: Text(l10n.cancel, style: TextStyle(color: theme.textSecondary)),
                                   ),
-                                  TextButton(
+                                  ElevatedButton(
                                     onPressed: () {
                                       Navigator.pop(dCtx);
-                                      // Use ShowtimeFormCubit from another BlocProvider or add delete to ManagementCubit.
-                                      // Let's add delete to ManagementCubit for list items.
                                       context.read<ShowtimeManagementCubit>().deleteShowtime(st.id);
                                     },
-                                    child: Text(AppLocalizations.of(context)!.delete, style: TextStyle(color: theme.error)),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: theme.error,
+                                      foregroundColor: Colors.white,
+                                    ),
+                                    child: Text(l10n.delete),
                                   ),
                                 ],
                               ),

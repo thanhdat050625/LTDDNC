@@ -64,4 +64,20 @@ class CinemaManagementRepository {
   Future<void> deleteRoom(int roomId) async {
     await _dioClient.delete('/cinemas/rooms/$roomId');
   }
+
+  Future<List<SeatModel>> getRoomSeats(int roomId) async {
+    final response = await _dioClient.get('/cinemas/rooms/$roomId/seats');
+    final data = response.data;
+    List<dynamic> items = [];
+    if (data is Map && data.containsKey('data')) {
+      items = data['data'] is List ? data['data'] : [];
+    } else if (data is List) {
+      items = data;
+    }
+    return items.map((e) => SeatModel.fromJson(e as Map<String, dynamic>)).toList();
+  }
+
+  Future<void> generateRoomSeats(int roomId) async {
+    await _dioClient.post('/cinemas/rooms/$roomId/generate-seats', data: {});
+  }
 }

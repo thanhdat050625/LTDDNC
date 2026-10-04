@@ -81,7 +81,7 @@ class UserDetailBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context).extension<CineplexColors>()!;
+    final theme = CineplexColors.of(context);
     final l10n = AppLocalizations.of(context)!;
 
     final isBlocked = user.isBlocked;
@@ -136,19 +136,23 @@ class UserDetailBottomSheet extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                l10n.accountDetailsTitle,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: theme.textPrimary,
+              Expanded(
+                child: Text(
+                  l10n.accountDetailsTitle,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: theme.textPrimary,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               IconButton(
                 onPressed: () => Navigator.of(context).pop(),
                 icon: Icon(LucideIcons.x, color: theme.textSecondary, size: 20),
-                constraints: const BoxConstraints(),
-                padding: EdgeInsets.zero,
+                tooltip: l10n.close,
+                constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                padding: const EdgeInsets.all(8),
               ),
             ],
           ),
@@ -191,6 +195,8 @@ class UserDetailBottomSheet extends StatelessWidget {
                     children: [
                       Text(
                         name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -200,13 +206,17 @@ class UserDetailBottomSheet extends StatelessWidget {
                       const SizedBox(height: 1),
                       Text(
                         user.email,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontSize: 12,
                           color: theme.textSecondary,
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Row(
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 4,
                         children: [
                           // Role Badge
                           Container(
@@ -231,7 +241,6 @@ class UserDetailBottomSheet extends StatelessWidget {
                               ],
                             ),
                           ),
-                          const SizedBox(width: 6),
                           // Status Badge
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -275,7 +284,7 @@ class UserDetailBottomSheet extends StatelessWidget {
                 _buildInfoRow(
                   theme,
                   icon: LucideIcons.hash,
-                  label: 'ID',
+                  label: l10n.userIdLabel,
                   value: '#${user.id}',
                 ),
                 _buildDivider(theme),
@@ -363,20 +372,27 @@ class UserDetailBottomSheet extends StatelessWidget {
         children: [
           Icon(icon, size: 14, color: theme.textSecondary),
           const SizedBox(width: 8),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              color: theme.textSecondary,
+          Expanded(
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                color: theme.textSecondary,
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
-          const Spacer(),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: valueColor ?? theme.textPrimary,
+          const SizedBox(width: 8),
+          Flexible(
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: valueColor ?? theme.textPrimary,
+              ),
+              textAlign: TextAlign.end,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],

@@ -14,10 +14,34 @@ class DateSelector extends StatelessWidget {
     required this.onDateSelected,
   });
 
+  String _getWeekdayName(DateTime date, AppLocalizations l10n) {
+    switch (date.weekday) {
+      case DateTime.monday:
+        return l10n.weekdayMon;
+      case DateTime.tuesday:
+        return l10n.weekdayTue;
+      case DateTime.wednesday:
+        return l10n.weekdayWed;
+      case DateTime.thursday:
+        return l10n.weekdayThu;
+      case DateTime.friday:
+        return l10n.weekdayFri;
+      case DateTime.saturday:
+        return l10n.weekdaySat;
+      case DateTime.sunday:
+        return l10n.weekdaySun;
+      default:
+        return '';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = CineplexColors.of(context);
+
     return SizedBox(
-      height: 70,
+      height: 72,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: dates.length,
@@ -25,28 +49,42 @@ class DateSelector extends StatelessWidget {
         itemBuilder: (context, index) {
           final date = dates[index];
           final isSelected = _isSameDay(date, selectedDate);
+          final weekday = _getWeekdayName(date, l10n);
 
           return GestureDetector(
             onTap: () => onDateSelected(date),
-            child: Container(
-              margin: const EdgeInsets.only(right: 12),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              margin: const EdgeInsets.only(right: 10),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: isSelected ? AppColors.primary : Theme.of(context).cardColor,
+                color: isSelected ? colors.primary : colors.surface,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: isSelected ? AppColors.primary : Colors.grey.withOpacity(0.2),
+                  color: isSelected
+                      ? colors.primary
+                      : colors.textSecondary.withValues(alpha: 0.2),
+                  width: 1.5,
                 ),
+                boxShadow: isSelected
+                    ? [
+                        BoxShadow(
+                          color: colors.primary.withValues(alpha: 0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ]
+                    : null,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    DateFormat('MMM').format(date).toUpperCase(),
+                    weekday,
                     style: TextStyle(
                       fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: isSelected ? Colors.white : Colors.grey,
+                      fontWeight: FontWeight.w600,
+                      color: isSelected ? Colors.white : colors.textSecondary,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -55,7 +93,7 @@ class DateSelector extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: isSelected ? Colors.white : Theme.of(context).textTheme.bodyLarge?.color,
+                      color: isSelected ? Colors.white : colors.textPrimary,
                     ),
                   ),
                 ],
@@ -71,3 +109,4 @@ class DateSelector extends StatelessWidget {
     return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 }
+

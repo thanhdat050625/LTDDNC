@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:go_router/go_router.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 
 class MovieCarousel extends StatefulWidget {
@@ -41,6 +42,7 @@ class _MovieCarouselState extends State<MovieCarousel> {
   @override
   Widget build(BuildContext context) {
     if (widget.movies.isEmpty) return const SizedBox.shrink();
+    final colors = CineplexColors.of(context);
     
     return Column(
       children: [
@@ -68,47 +70,69 @@ class _MovieCarouselState extends State<MovieCarousel> {
                     ),
                   );
                 },
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 5))
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        AppCachedImage(imageUrl: movie.posterUrl ?? '', fit: BoxFit.cover),
-                        Container(
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [Colors.transparent, Colors.black87],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
+                child: GestureDetector(
+                  onTap: () => context.push('/movies/${movie.id}'),
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.3),
+                          blurRadius: 10,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          AppCachedImage(imageUrl: movie.posterUrl ?? '', fit: BoxFit.cover),
+                          Container(
+                            decoration: const BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [Colors.transparent, Colors.black87],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
                             ),
                           ),
-                        ),
-                        Positioned(
-                          bottom: 16,
-                          left: 16,
-                          right: 16,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(movie.title, style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold), maxLines: 2, overflow: TextOverflow.ellipsis),
-                              const SizedBox(height: 8),
-                              ElevatedButton(
-                                onPressed: () {},
-                                style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white),
-                                child: Text(AppLocalizations.of(context)!.bookNow),
-                              )
-                            ],
+                          Positioned(
+                            bottom: 16,
+                            left: 16,
+                            right: 16,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  movie.title,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 8),
+                                ElevatedButton(
+                                  onPressed: () => context.push('/movies/${movie.id}'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: colors.primary,
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  child: Text(AppLocalizations.of(context)!.bookNow),
+                                ),
+                              ],
+                            ),
                           ),
-                        )
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -125,7 +149,7 @@ class _MovieCarouselState extends State<MovieCarousel> {
               width: _currentPage == index ? 24 : 8,
               height: 8,
               decoration: BoxDecoration(
-                color: _currentPage == index ? AppColors.primary : Colors.grey,
+                color: _currentPage == index ? colors.primary : colors.surfaceVariant,
                 borderRadius: BorderRadius.circular(4),
               ),
             );

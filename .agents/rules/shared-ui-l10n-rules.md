@@ -36,3 +36,20 @@ Toàn bộ text hiển thị cho người dùng (user-facing text) MUST được
 - **MUST** chỉ bổ sung text mới vào duy nhất file `mobile/mobile_shared/lib/l10n/app_vi.arb` bằng Tiếng Việt khi cần text mới, sau đó chạy `flutter gen-l10n` trong `mobile_shared`.
 - **MUST NOT** tạo thêm file ngôn ngữ khác (như `app_en.arb`), không hỗ trợ đa ngôn ngữ hay tính năng chuyển đổi ngôn ngữ.
 - **Khi code review / PR review**: Agent MUST kiểm tra và phát hiện các hardcoded user-facing strings hoặc việc thêm file đa ngôn ngữ không cần thiết. Nếu phát hiện hardcoded user-facing text, Agent MUST coi đó là lỗi cần fix.
+## 3. ARB FILE STRUCTURE & KEY NAMING CONVENTIONS (`app_vi.arb`)
+
+Để đảm bảo file `app_vi.arb` luôn chuẩn hóa, dễ bảo trì cho cả Lập trình viên và AI Agent:
+
+- **MUST NOT** thêm các key giả / comment giả / delimiter giả như `"@_MODULE_NAME": {}` hoặc `// --- MODULE ---` vào `app_vi.arb`.
+  - *Lý do*: File ARB là file JSON phẳng cho `flutter gen-l10n`. Key giả gây cảnh báo orphan metadata khi gen code, làm bẩn interface `AppLocalizations`, không hỗ trợ code folding thực tế trên IDE (folding JSON dựa trên block `{...}` nhiều dòng, không áp dụng cho object rỗng), và gây nhiễu context phân tích của Agent.
+- **MUST** đặt prefix theo module cho các localization key thuộc tính năng cụ thể:
+  - Cú pháp camelCase: `<module><ActionOrElement>`, ví dụ:
+    - Module Auth: `authLogin`, `authRegister`, `authForgotPassword`, `authOtpTitle`...
+    - Module Phim: `movieDetail`, `movieShowtimes`, `movieCast`, `movieTitleLabel`...
+    - Module Vé & Soát vé: `ticketCode`, `ticketSeat`, `ticketStatus`, `checkinSuccessBanner`...
+    - Module Bán hàng / Quầy: `posOrderSuccess`, `counterRevenueSubtitle`, `concessionCombo`...
+    - Module Quản trị (Admin): `adminRevenue`, `adminUserRole`, `adminSettings`...
+  - *Lợi ích*: Giúp lập trình viên tận dụng IDE autocomplete (`l10n.auth...`, `l10n.movie...`) và giúp Agent tìm kiếm context chính xác qua tiền tố.
+- **MUST** gom nhóm tự nhiên (natural grouping): Các key cùng module MUST được sắp xếp nằm liền kề nhau trong `app_vi.arb`.
+- **Shared UI text**: Các text hành động/trạng thái dùng chung toàn hệ thống (như `cancel`, `save`, `retry`, `delete`, `noData`, `copy`, `close`, `back`, `confirm`...) giữ nguyên dạng dùng chung ngắn gọn, không bắt buộc gắn prefix module để tránh tạo duplicate keys dư thừa.
+- **Khi code review / PR review**: Agent MUST đánh dấu lỗi nếu phát hiện key ngăn cách giả dạng `"@_...": {}` hoặc khai báo key mới phá vỡ cấu trúc gom nhóm / đặt tên chuẩn.

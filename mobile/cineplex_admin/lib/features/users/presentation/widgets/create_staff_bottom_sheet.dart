@@ -31,6 +31,8 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
   bool _isLoading = false;
   String? _errorMessage;
 
@@ -76,7 +78,7 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context).extension<CineplexColors>()!;
+    final theme = CineplexColors.of(context);
     final l10n = AppLocalizations.of(context)!;
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
@@ -154,8 +156,9 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: Icon(LucideIcons.x, color: theme.textSecondary, size: 20),
-                    constraints: const BoxConstraints(),
-                    padding: EdgeInsets.zero,
+                    tooltip: l10n.close,
+                    constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                    padding: const EdgeInsets.all(8),
                   ),
                 ],
               ),
@@ -207,7 +210,7 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
               AppTextField(
                 controller: _emailController,
                 label: l10n.emailLabel,
-                hint: 'staff@cineplex.vn',
+                hint: l10n.emailPlaceholder,
                 prefixIcon: LucideIcons.mail,
                 keyboardType: TextInputType.emailAddress,
                 validator: (val) {
@@ -227,7 +230,7 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
               AppTextField(
                 controller: _phoneController,
                 label: l10n.phoneLabel,
-                hint: '0901234567',
+                hint: l10n.phonePlaceholder,
                 prefixIcon: LucideIcons.phone,
                 keyboardType: TextInputType.phone,
               ),
@@ -237,9 +240,19 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
               AppTextField(
                 controller: _passwordController,
                 label: l10n.passwordLabel,
-                hint: '••••••••',
+                hint: l10n.passwordPlaceholder,
                 prefixIcon: LucideIcons.lock,
-                obscureText: true,
+                obscureText: _obscurePassword,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                    color: theme.textSecondary,
+                    size: 20,
+                  ),
+                  tooltip: l10n.togglePasswordVisibility,
+                  constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                  onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                ),
                 validator: (val) {
                   if (val == null || val.isEmpty) return l10n.fieldRequired;
                   if (val.length < 6) return l10n.passwordMinLength;
@@ -252,9 +265,19 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
               AppTextField(
                 controller: _confirmPasswordController,
                 label: l10n.confirmPasswordLabel,
-                hint: '••••••••',
+                hint: l10n.confirmPasswordPlaceholder,
                 prefixIcon: LucideIcons.lockKeyhole,
-                obscureText: true,
+                obscureText: _obscureConfirmPassword,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscureConfirmPassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                    color: theme.textSecondary,
+                    size: 20,
+                  ),
+                  tooltip: l10n.togglePasswordVisibility,
+                  constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                  onPressed: () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
+                ),
                 validator: (val) {
                   if (val == null || val.isEmpty) return l10n.fieldRequired;
                   if (val != _passwordController.text) {

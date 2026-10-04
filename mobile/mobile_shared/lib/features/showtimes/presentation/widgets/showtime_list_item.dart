@@ -17,30 +17,93 @@ class ShowtimeListItem extends StatelessWidget {
     required this.onDelete,
   });
 
+  String _getFormatLabel(String format, AppLocalizations l10n) {
+    final f = format.toUpperCase();
+    if (f.contains('3D')) return l10n.format3D;
+    if (f.contains('IMAX')) return l10n.formatIMAX;
+    if (f.contains('4DX')) return l10n.format4DX;
+    return l10n.format2D;
+  }
+
+  Color _getFormatColor(String format, CineplexColors theme) {
+    final f = format.toUpperCase();
+    if (f.contains('3D')) return const Color(0xFF8B5CF6);
+    if (f.contains('IMAX')) return const Color(0xFFF59E0B);
+    if (f.contains('4DX')) return const Color(0xFF10B981);
+    return theme.info;
+  }
+
+  Color _getStatusColor(String status, CineplexColors theme) {
+    switch (status.toUpperCase()) {
+      case 'SCHEDULED':
+        return theme.info;
+      case 'BOOKING':
+        return theme.success;
+      case 'FULL':
+        return theme.warning;
+      case 'CANCELLED':
+        return theme.error;
+      case 'COMPLETED':
+        return theme.textSecondary;
+      default:
+        return theme.textSecondary;
+    }
+  }
+
+  String _getStatusText(String status, AppLocalizations l10n) {
+    switch (status.toUpperCase()) {
+      case 'SCHEDULED':
+        return l10n.statusScheduled;
+      case 'BOOKING':
+        return l10n.statusBooking;
+      case 'FULL':
+        return l10n.statusFull;
+      case 'CANCELLED':
+        return l10n.statusCancelled;
+      case 'COMPLETED':
+        return l10n.statusCompleted;
+      default:
+        return status;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context).extension<CineplexColors>()!;
+    final theme = CineplexColors.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final statusColor = _getStatusColor(showtime.status, theme);
+    final formatColor = _getFormatColor(showtime.format, theme);
 
-    return GestureDetector(
+    return InkWell(
       onTap: onTap,
+      borderRadius: BorderRadius.circular(theme.radiusMd),
       child: AppCard(
         margin: EdgeInsets.zero,
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Movie Poster
-            if (showtime.movie?.posterUrl != null)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(theme.radiusSm),
-                child: AppCachedImage(
-                  imageUrl: showtime.movie!.posterUrl!,
-                  width: 52,
-                  height: 70,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            const SizedBox(width: 10),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(theme.radiusSm),
+              child: (showtime.movie?.posterUrl != null && showtime.movie!.posterUrl!.isNotEmpty)
+                  ? AppCachedImage(
+                      imageUrl: showtime.movie!.posterUrl!,
+                      width: 54,
+                      height: 76,
+                      fit: BoxFit.cover,
+                    )
+                  : Container(
+                      width: 54,
+                      height: 76,
+                      decoration: BoxDecoration(
+                        color: theme.surfaceVariant,
+                        borderRadius: BorderRadius.circular(theme.radiusSm),
+                      ),
+                      child: Icon(Icons.movie_outlined, size: 24, color: theme.textSecondary),
+                    ),
+            ),
+            const SizedBox(width: 12),
             
             // Info
             Expanded(
@@ -48,82 +111,102 @@ class ShowtimeListItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    showtime.movie?.title ?? AppLocalizations.of(context)!.unknownMovie,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: theme.textPrimary,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    showtime.movie?.title ?? l10n.unknownMovie,
+                    style: TextStyle(
+                      color: theme.textPrimary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(LucideIcons.calendar, size: 14, color: theme.textSecondary),
-                      SizedBox(width: 4),
+                      Icon(LucideIcons.calendar, size: 13, color: theme.textSecondary),
+                      const SizedBox(width: 4),
                       Text(
-                        DateFormat('dd/MM/yyyy HH:mm').format(showtime.publicStartTime),
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(color: theme.textSecondary),
+                        DateFormat('dd/MM/yyyy • HH:mm').format(showtime.publicStartTime),
+                        style: TextStyle(color: theme.textSecondary, fontSize: 12),
                       ),
                     ],
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(LucideIcons.monitorPlay, size: 14, color: theme.textSecondary),
-                      SizedBox(width: 4),
-                      Text(
-                        showtime.room?.name ?? AppLocalizations.of(context)!.emptyRoom,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(color: theme.textSecondary),
+                      Icon(LucideIcons.monitorPlay, size: 13, color: theme.textSecondary),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          showtime.room?.name ?? l10n.emptyRoom,
+                          style: TextStyle(color: theme.textSecondary, fontSize: 12),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                      SizedBox(width: 12),
+                      const SizedBox(width: 8),
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: theme.primary.withValues(alpha: 0.1),
+                          color: formatColor.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(4),
+                          border: Border.all(
+                            color: formatColor.withValues(alpha: 0.3),
+                            width: 0.8,
+                          ),
                         ),
                         child: Text(
-                          showtime.format,
-                          style: TextStyle(color: theme.primary, fontSize: 10, fontWeight: FontWeight.bold),
+                          _getFormatLabel(showtime.format, l10n),
+                          style: TextStyle(
+                            color: formatColor,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 6),
                   
                   // Status & Actions
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          color: _getStatusColor(showtime.status, theme).withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(4),
+                          color: statusColor.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: statusColor.withValues(alpha: 0.3),
+                            width: 0.8,
+                          ),
                         ),
                         child: Text(
-                          _getStatusText(showtime.status, context),
+                          _getStatusText(showtime.status, l10n),
                           style: TextStyle(
-                            color: _getStatusColor(showtime.status, theme),
-                            fontSize: 10,
+                            color: statusColor,
+                            fontSize: 10.5,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                       Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            icon: Icon(LucideIcons.edit3, size: 20, color: theme.accent),
+                            icon: Icon(LucideIcons.edit3, size: 18, color: theme.accent),
                             onPressed: onEdit,
-                            constraints: const BoxConstraints(),
-                            padding: EdgeInsets.all(4),
+                            tooltip: l10n.editShowtime,
+                            constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                            padding: const EdgeInsets.all(8),
                           ),
                           IconButton(
-                            icon: Icon(LucideIcons.trash2, size: 20, color: theme.error),
+                            icon: Icon(LucideIcons.trash2, size: 18, color: theme.error),
                             onPressed: onDelete,
-                            constraints: const BoxConstraints(),
-                            padding: EdgeInsets.all(4),
+                            tooltip: l10n.delete,
+                            constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                            padding: const EdgeInsets.all(8),
                           ),
                         ],
                       ),
@@ -136,27 +219,5 @@ class ShowtimeListItem extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Color _getStatusColor(String status, CineplexColors theme) {
-    switch (status) {
-      case 'SCHEDULED': return theme.info;
-      case 'BOOKING': return theme.success;
-      case 'FULL': return theme.warning;
-      case 'CANCELLED': return theme.error;
-      case 'COMPLETED': return theme.textSecondary;
-      default: return theme.textSecondary;
-    }
-  }
-
-  String _getStatusText(String status, BuildContext context) {
-    switch (status) {
-      case 'SCHEDULED': return AppLocalizations.of(context)!.statusScheduled;
-      case 'BOOKING': return AppLocalizations.of(context)!.statusBooking;
-      case 'FULL': return AppLocalizations.of(context)!.statusFull;
-      case 'CANCELLED': return AppLocalizations.of(context)!.statusCancelled;
-      case 'COMPLETED': return AppLocalizations.of(context)!.statusCompleted;
-      default: return status;
-    }
   }
 }

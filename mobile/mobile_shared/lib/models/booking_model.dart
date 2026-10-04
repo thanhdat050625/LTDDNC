@@ -77,6 +77,7 @@ class ConcessionItemDto {
   ConcessionItemDto({required this.concessionId, required this.quantity});
 
   Map<String, dynamic> toJson() => {
+    'productId': concessionId,
     'concessionId': concessionId,
     'quantity': quantity,
   };

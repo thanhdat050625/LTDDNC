@@ -58,7 +58,10 @@ class _AppState extends State<App> {
   late final HomeCubit _homeCubit;
   late final NotificationCubit _notificationCubit;
   late final ProfileCubit _profileCubit;
+  late final ThemeCubit _themeCubit;
+  late final SocketService _socketService;
   late final GoRouter _router;
+  late final AppBackHandler _backHandler;
 
   @override
   void initState() {
@@ -67,15 +70,27 @@ class _AppState extends State<App> {
     _homeCubit = HomeCubit(widget.homeRepo)..load();
     _notificationCubit = NotificationCubit(widget.notificationRepo);
     _profileCubit = ProfileCubit(widget.profileRepo);
+    _themeCubit = ThemeCubit(widget.storageService);
+    _socketService = SocketService(baseUrl: AppConstants.baseUrl);
     _router = createRouter(_authBloc);
+    _backHandler = AppBackHandler(
+      router: _router,
+      rootNavKey: rootNavigatorKey,
+      shellNavKey: shellNavigatorKey,
+      defaultRootPath: '/home',
+      exitOnPaths: {'/home'},
+    )..init();
   }
 
   @override
   void dispose() {
+    _backHandler.dispose();
     _authBloc.close();
     _homeCubit.close();
     _notificationCubit.close();
     _profileCubit.close();
+    _themeCubit.close();
+    _socketService.dispose();
     super.dispose();
   }
 
@@ -95,6 +110,7 @@ class _AppState extends State<App> {
         RepositoryProvider.value(value: widget.ticketRepo),
         RepositoryProvider.value(value: widget.notificationRepo),
         RepositoryProvider.value(value: widget.profileRepo),
+        RepositoryProvider.value(value: _socketService),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -102,17 +118,22 @@ class _AppState extends State<App> {
           BlocProvider.value(value: _homeCubit),
           BlocProvider.value(value: _notificationCubit),
           BlocProvider.value(value: _profileCubit),
+          BlocProvider.value(value: _themeCubit),
         ],
-        child: MaterialApp.router(
-          title: 'Cineplex',
-          routerConfig: _router,
-          theme: AppTheme.lightTheme,
-          darkTheme: AppTheme.darkTheme,
-          themeMode: ThemeMode.dark,
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: const [Locale('vi')],
-          locale: const Locale('vi'),
-          debugShowCheckedModeBanner: false,
+        child: BlocBuilder<ThemeCubit, ThemeMode>(
+          builder: (context, themeMode) {
+            return MaterialApp.router(
+              title: 'Cineplex',
+              routerConfig: _router,
+              theme: AppTheme.lightTheme,
+              darkTheme: AppTheme.darkTheme,
+              themeMode: themeMode,
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: const [Locale('vi')],
+              locale: const Locale('vi'),
+              debugShowCheckedModeBanner: false,
+            );
+          },
         ),
       ),
     );

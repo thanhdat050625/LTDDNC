@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 import 'package:cineplex_client/features/movie/presentation/widgets/movie_card.dart';
 
@@ -10,6 +11,7 @@ class ComingSoonSection extends StatelessWidget {
   Widget build(BuildContext context) {
     if (movies.isEmpty) return const SizedBox.shrink();
     final l10n = AppLocalizations.of(context)!;
+    final colors = CineplexColors.of(context);
     
     return Column(
       children: [
@@ -18,10 +20,23 @@ class ComingSoonSection extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(l10n.comingSoon, style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+              Expanded(
+                child: Text(
+                  l10n.comingSoon,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: colors.textPrimary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
               TextButton(
-                onPressed: () {},
-                child: Text(l10n.seeAll, style: const TextStyle(color: AppColors.secondary)),
+                onPressed: () => context.push('/movies'),
+                child: Text(
+                  l10n.seeAll,
+                  style: TextStyle(color: colors.primary, fontWeight: FontWeight.w600),
+                ),
               )
             ],
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 
 class ScanResultOverlay extends StatelessWidget {
   final bool isSuccess;
@@ -16,19 +17,23 @@ class ScanResultOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color bgColor;
-    IconData icon;
+    final colors = CineplexColors.of(context);
+    final Color bgColor;
+    final IconData icon;
 
     if (isSuccess) {
-      bgColor = Colors.green.shade700;
-      icon = Icons.check_circle;
+      bgColor = colors.success;
+      icon = Icons.check_circle_rounded;
     } else if (isWarning) {
-      bgColor = Colors.amber.shade800;
+      bgColor = colors.warning;
       icon = Icons.warning_amber_rounded;
     } else {
-      bgColor = Colors.red.shade700;
-      icon = Icons.cancel;
+      bgColor = colors.error;
+      icon = Icons.cancel_rounded;
     }
+
+    final Color textColor = isWarning ? const Color(0xFF111827) : Colors.white;
+    final Color iconColor = isWarning ? const Color(0xFF111827) : Colors.white;
 
     return Material(
       elevation: 8,
@@ -38,13 +43,13 @@ class ScanResultOverlay extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
           children: [
-            Icon(icon, color: Colors.white, size: 28),
+            Icon(icon, color: iconColor, size: 28),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
                 message,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: textColor,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                   height: 1.3,
@@ -54,7 +59,7 @@ class ScanResultOverlay extends StatelessWidget {
             if (onDismiss != null) ...[
               const SizedBox(width: 8),
               IconButton(
-                icon: const Icon(Icons.close, color: Colors.white, size: 20),
+                icon: Icon(Icons.close, color: iconColor, size: 20),
                 onPressed: onDismiss,
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),

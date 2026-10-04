@@ -2101,13 +2101,13 @@ abstract class AppLocalizations {
   /// No description provided for @startDate.
   ///
   /// In vi, this message translates to:
-  /// **'Từ ngày'**
+  /// **'Ngày bắt đầu'**
   String get startDate;
 
   /// No description provided for @endDate.
   ///
   /// In vi, this message translates to:
-  /// **'Đến ngày'**
+  /// **'Ngày kết thúc'**
   String get endDate;
 
   /// No description provided for @manageConcessions.
@@ -2548,11 +2548,1427 @@ abstract class AppLocalizations {
   /// **'Chọn khoảng ngày'**
   String get selectDateRange;
 
+  /// No description provided for @dateFrom.
+  ///
+  /// In vi, this message translates to:
+  /// **'Từ ngày'**
+  String get dateFrom;
+
+  /// No description provided for @dateTo.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đến ngày'**
+  String get dateTo;
+
   /// No description provided for @totalRevenueLabel.
   ///
   /// In vi, this message translates to:
   /// **'Tổng doanh thu kỳ này'**
   String get totalRevenueLabel;
+
+  /// No description provided for @genreAll.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tất cả'**
+  String get genreAll;
+
+  /// No description provided for @genreAction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hành động'**
+  String get genreAction;
+
+  /// No description provided for @genreComedy.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hài hước'**
+  String get genreComedy;
+
+  /// No description provided for @genreDrama.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chính kịch'**
+  String get genreDrama;
+
+  /// No description provided for @genreHorror.
+  ///
+  /// In vi, this message translates to:
+  /// **'Kinh dị'**
+  String get genreHorror;
+
+  /// No description provided for @genreSciFi.
+  ///
+  /// In vi, this message translates to:
+  /// **'Khoa học viễn tưởng'**
+  String get genreSciFi;
+
+  /// No description provided for @genreRomance.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lãng mạn'**
+  String get genreRomance;
+
+  /// No description provided for @genreAnimation.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hoạt hình'**
+  String get genreAnimation;
+
+  /// No description provided for @genreAdventure.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phiêu lưu'**
+  String get genreAdventure;
+
+  /// No description provided for @genreThriller.
+  ///
+  /// In vi, this message translates to:
+  /// **'Giật gân'**
+  String get genreThriller;
+
+  /// No description provided for @genreFantasy.
+  ///
+  /// In vi, this message translates to:
+  /// **'Giả tưởng'**
+  String get genreFantasy;
+
+  /// No description provided for @genreDocumentary.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tài liệu'**
+  String get genreDocumentary;
+
+  /// No description provided for @bookingStatusPending.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chờ thanh toán'**
+  String get bookingStatusPending;
+
+  /// No description provided for @bookingStatusPaid.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã thanh toán'**
+  String get bookingStatusPaid;
+
+  /// No description provided for @bookingStatusCancelled.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã hủy'**
+  String get bookingStatusCancelled;
+
+  /// No description provided for @bookingStatusExpired.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hết hạn'**
+  String get bookingStatusExpired;
+
+  /// No description provided for @bookingStatusConfirmed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã xác nhận'**
+  String get bookingStatusConfirmed;
+
+  /// No description provided for @paymentStatusPending.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang xử lý'**
+  String get paymentStatusPending;
+
+  /// No description provided for @paymentStatusSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thành công'**
+  String get paymentStatusSuccess;
+
+  /// No description provided for @paymentStatusFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thất bại'**
+  String get paymentStatusFailed;
+
+  /// No description provided for @paymentStatusCancelled.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã hủy'**
+  String get paymentStatusCancelled;
+
+  /// No description provided for @paymentResult.
+  ///
+  /// In vi, this message translates to:
+  /// **'Kết quả thanh toán'**
+  String get paymentResult;
+
+  /// No description provided for @paymentSuccessful.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thanh toán thành công!'**
+  String get paymentSuccessful;
+
+  /// No description provided for @viewTickets.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem vé của tôi'**
+  String get viewTickets;
+
+  /// No description provided for @bookingCodeWithParam.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mã đặt vé: {code}'**
+  String bookingCodeWithParam(String code);
+
+  /// No description provided for @simulateSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mô phỏng thanh toán thành công'**
+  String get simulateSuccess;
+
+  /// No description provided for @webviewPlaceholder.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cổng thanh toán trực tuyến'**
+  String get webviewPlaceholder;
+
+  /// No description provided for @specialDiscount.
+  ///
+  /// In vi, this message translates to:
+  /// **'Khuyến mãi đặc biệt'**
+  String get specialDiscount;
+
+  /// No description provided for @unknownCinema.
+  ///
+  /// In vi, this message translates to:
+  /// **'Rạp không xác định'**
+  String get unknownCinema;
+
+  /// No description provided for @defaultMovieTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phim Cineplex'**
+  String get defaultMovieTitle;
+
+  /// No description provided for @concessionCombo.
+  ///
+  /// In vi, this message translates to:
+  /// **'Combo bắp nước'**
+  String get concessionCombo;
+
+  /// No description provided for @paymentMethodMomo.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ví MoMo'**
+  String get paymentMethodMomo;
+
+  /// No description provided for @paymentMethodVnpay.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cổng VNPAY'**
+  String get paymentMethodVnpay;
+
+  /// No description provided for @paymentMethodZaloPay.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ví ZaloPay'**
+  String get paymentMethodZaloPay;
+
+  /// No description provided for @paymentMethodCard.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thẻ ATM / Thẻ quốc tế'**
+  String get paymentMethodCard;
+
+  /// No description provided for @paymentMethodCash.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tiền mặt tại quầy'**
+  String get paymentMethodCash;
+
+  /// No description provided for @epassTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vé điện tử (E-Pass)'**
+  String get epassTitle;
+
+  /// No description provided for @epassInstruction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vui lòng xuất trình mã QR này tại cửa kiểm soát để vào rạp'**
+  String get epassInstruction;
+
+  /// No description provided for @ticketFormat2D.
+  ///
+  /// In vi, this message translates to:
+  /// **'2D'**
+  String get ticketFormat2D;
+
+  /// No description provided for @ticketFormat3D.
+  ///
+  /// In vi, this message translates to:
+  /// **'3D'**
+  String get ticketFormat3D;
+
+  /// No description provided for @ticketFormatIMAX.
+  ///
+  /// In vi, this message translates to:
+  /// **'IMAX'**
+  String get ticketFormatIMAX;
+
+  /// No description provided for @checkinStatusValid.
+  ///
+  /// In vi, this message translates to:
+  /// **'HỢP LỆ'**
+  String get checkinStatusValid;
+
+  /// No description provided for @checkinStatusAlreadyUsed.
+  ///
+  /// In vi, this message translates to:
+  /// **'ĐÃ SOÁT TRƯỚC ĐÓ'**
+  String get checkinStatusAlreadyUsed;
+
+  /// No description provided for @checkinStatusInvalid.
+  ///
+  /// In vi, this message translates to:
+  /// **'KHÔNG HỢP LỆ'**
+  String get checkinStatusInvalid;
+
+  /// No description provided for @checkinSuccessBanner.
+  ///
+  /// In vi, this message translates to:
+  /// **'Soát vé thành công - Mời khách vào rạp'**
+  String get checkinSuccessBanner;
+
+  /// No description provided for @checkinWarningBanner.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cảnh báo: Vé đã được sử dụng trước đó!'**
+  String get checkinWarningBanner;
+
+  /// No description provided for @checkinErrorBanner.
+  ///
+  /// In vi, this message translates to:
+  /// **'Từ chối: Vé không hợp lệ hoặc đã bị hủy!'**
+  String get checkinErrorBanner;
+
+  /// No description provided for @checkinTimeLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thời gian soát vé'**
+  String get checkinTimeLabel;
+
+  /// No description provided for @checkinStaffLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhân viên soát vé'**
+  String get checkinStaffLabel;
+
+  /// No description provided for @customerNameLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tên khách hàng'**
+  String get customerNameLabel;
+
+  /// No description provided for @ticketCodeLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mã vé'**
+  String get ticketCodeLabel;
+
+  /// No description provided for @flashToggle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bật/Tắt đèn Flash'**
+  String get flashToggle;
+
+  /// No description provided for @switchCamera.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đổi camera'**
+  String get switchCamera;
+
+  /// No description provided for @scannerPrompt.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hướng camera về phía mã QR trên vé của khách'**
+  String get scannerPrompt;
+
+  /// No description provided for @scanNextTicket.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quét vé tiếp theo'**
+  String get scanNextTicket;
+
+  /// No description provided for @manualCodeHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhập mã vé (VD: TKT-12345)'**
+  String get manualCodeHint;
+
+  /// No description provided for @verifySuccessPrompt.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vé {code} đã được xác nhận thành công!'**
+  String verifySuccessPrompt(String code);
+
+  /// No description provided for @shiftDashboard.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bảng điều khiển ca trực'**
+  String get shiftDashboard;
+
+  /// No description provided for @shiftInfo.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thông tin ca trực'**
+  String get shiftInfo;
+
+  /// No description provided for @currentShift.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ca trực hiện tại'**
+  String get currentShift;
+
+  /// No description provided for @assignedCinema.
+  ///
+  /// In vi, this message translates to:
+  /// **'Rạp làm việc'**
+  String get assignedCinema;
+
+  /// No description provided for @staffName.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhân viên trực'**
+  String get staffName;
+
+  /// No description provided for @ticketsScannedToday.
+  ///
+  /// In vi, this message translates to:
+  /// **'Số vé đã soát hôm nay'**
+  String get ticketsScannedToday;
+
+  /// No description provided for @counterRevenueToday.
+  ///
+  /// In vi, this message translates to:
+  /// **'Doanh thu tại quầy'**
+  String get counterRevenueToday;
+
+  /// No description provided for @upcomingShowtimesCount.
+  ///
+  /// In vi, this message translates to:
+  /// **'Suất chiếu sắp tới'**
+  String get upcomingShowtimesCount;
+
+  /// No description provided for @quickActions.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thao tác nhanh'**
+  String get quickActions;
+
+  /// No description provided for @actionScanTicket.
+  ///
+  /// In vi, this message translates to:
+  /// **'Soát vé vào rạp'**
+  String get actionScanTicket;
+
+  /// No description provided for @actionCounterSale.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bán vé tại quầy'**
+  String get actionCounterSale;
+
+  /// No description provided for @actionFastPOS.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bán bắp nước nhanh'**
+  String get actionFastPOS;
+
+  /// No description provided for @actionRoomStatus.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tình trạng phòng chiếu'**
+  String get actionRoomStatus;
+
+  /// No description provided for @endShift.
+  ///
+  /// In vi, this message translates to:
+  /// **'Kết thúc ca trực'**
+  String get endShift;
+
+  /// No description provided for @shiftSummary.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tổng kết ca trực'**
+  String get shiftSummary;
+
+  /// No description provided for @fastPosTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bán bắp nước nhanh'**
+  String get fastPosTitle;
+
+  /// No description provided for @posCategoryAll.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tất cả'**
+  String get posCategoryAll;
+
+  /// No description provided for @posCategoryPopcorn.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bắp rang bơ'**
+  String get posCategoryPopcorn;
+
+  /// No description provided for @posCategoryDrink.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nước giải khát'**
+  String get posCategoryDrink;
+
+  /// No description provided for @posCategoryCombo.
+  ///
+  /// In vi, this message translates to:
+  /// **'Combo bắp nước'**
+  String get posCategoryCombo;
+
+  /// No description provided for @posCategorySnack.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đồ ăn nhẹ'**
+  String get posCategorySnack;
+
+  /// No description provided for @quickOrder.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đơn hàng nhanh'**
+  String get quickOrder;
+
+  /// No description provided for @cartItemsCount.
+  ///
+  /// In vi, this message translates to:
+  /// **'{count} món'**
+  String cartItemsCount(int count);
+
+  /// No description provided for @clearCart.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xóa giỏ hàng'**
+  String get clearCart;
+
+  /// No description provided for @confirmOrder.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xác nhận đơn hàng'**
+  String get confirmOrder;
+
+  /// No description provided for @customerPhoneLookup.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tra cứu SĐT khách hàng'**
+  String get customerPhoneLookup;
+
+  /// No description provided for @searchCustomerHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhập số điện thoại khách hàng...'**
+  String get searchCustomerHint;
+
+  /// No description provided for @customerPointsDisplay.
+  ///
+  /// In vi, this message translates to:
+  /// **'Điểm tích lũy: {points}'**
+  String customerPointsDisplay(int points);
+
+  /// No description provided for @customerNameDisplay.
+  ///
+  /// In vi, this message translates to:
+  /// **'Khách hàng: {name}'**
+  String customerNameDisplay(String name);
+
+  /// No description provided for @payWithCash.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thanh toán tiền mặt'**
+  String get payWithCash;
+
+  /// No description provided for @printReceipt.
+  ///
+  /// In vi, this message translates to:
+  /// **'In hóa đơn / Vé'**
+  String get printReceipt;
+
+  /// No description provided for @defaultPopcorn.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bắp rang bơ lớn'**
+  String get defaultPopcorn;
+
+  /// No description provided for @defaultDrink.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nước ngọt lớn'**
+  String get defaultDrink;
+
+  /// No description provided for @defaultCombo.
+  ///
+  /// In vi, this message translates to:
+  /// **'Combo 1 bắp 2 nước'**
+  String get defaultCombo;
+
+  /// No description provided for @occupancyPercent.
+  ///
+  /// In vi, this message translates to:
+  /// **'{percent}% lấp đầy'**
+  String occupancyPercent(int percent);
+
+  /// No description provided for @roomStatusScreening.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang chiếu'**
+  String get roomStatusScreening;
+
+  /// No description provided for @roomStatusPreparing.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chuẩn bị chiếu'**
+  String get roomStatusPreparing;
+
+  /// No description provided for @roomStatusCleaning.
+  ///
+  /// In vi, this message translates to:
+  /// **'Dọn dẹp'**
+  String get roomStatusCleaning;
+
+  /// No description provided for @roomStatusReady.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sẵn sàng'**
+  String get roomStatusReady;
+
+  /// No description provided for @roomStatusEnded.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã kết thúc'**
+  String get roomStatusEnded;
+
+  /// No description provided for @showtimesAndOccupancy.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lịch chiếu & Tình trạng phòng'**
+  String get showtimesAndOccupancy;
+
+  /// No description provided for @viewRoomLayout.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem sơ đồ phòng'**
+  String get viewRoomLayout;
+
+  /// No description provided for @totalSeatsInRoom.
+  ///
+  /// In vi, this message translates to:
+  /// **'{total} ghế'**
+  String totalSeatsInRoom(int total);
+
+  /// No description provided for @bookedSeatsCount.
+  ///
+  /// In vi, this message translates to:
+  /// **'{booked}/{total} ghế đã đặt'**
+  String bookedSeatsCount(int booked, int total);
+
+  /// No description provided for @addMovieTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thêm phim mới'**
+  String get addMovieTitle;
+
+  /// No description provided for @editMovieTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cập nhật phim'**
+  String get editMovieTitle;
+
+  /// No description provided for @addMovieSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thêm phim thành công!'**
+  String get addMovieSuccess;
+
+  /// No description provided for @updateMovieSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cập nhật phim thành công!'**
+  String get updateMovieSuccess;
+
+  /// No description provided for @selectPoster.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn poster'**
+  String get selectPoster;
+
+  /// No description provided for @movieTitleLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tên phim *'**
+  String get movieTitleLabel;
+
+  /// No description provided for @enterMovieTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhập tên phim'**
+  String get enterMovieTitle;
+
+  /// No description provided for @movieTitleRequired.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vui lòng nhập tên phim'**
+  String get movieTitleRequired;
+
+  /// No description provided for @genreLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thể loại *'**
+  String get genreLabel;
+
+  /// No description provided for @genrePlaceholder.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hành động, Hài hước, Kinh dị...'**
+  String get genrePlaceholder;
+
+  /// No description provided for @durationMinutesLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thời lượng (phút) *'**
+  String get durationMinutesLabel;
+
+  /// No description provided for @directorPlaceholder.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tên đạo diễn'**
+  String get directorPlaceholder;
+
+  /// No description provided for @castPlaceholder.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tên diễn viên...'**
+  String get castPlaceholder;
+
+  /// No description provided for @languagePlaceholder.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tiếng Việt, Tiếng Anh...'**
+  String get languagePlaceholder;
+
+  /// No description provided for @ageLimitPlaceholder.
+  ///
+  /// In vi, this message translates to:
+  /// **'13, 16, 18...'**
+  String get ageLimitPlaceholder;
+
+  /// No description provided for @releaseDateLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ngày phát hành'**
+  String get releaseDateLabel;
+
+  /// No description provided for @screeningEndDate.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ngày kết thúc'**
+  String get screeningEndDate;
+
+  /// No description provided for @selectDatePrompt.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn ngày'**
+  String get selectDatePrompt;
+
+  /// No description provided for @trailerUrl.
+  ///
+  /// In vi, this message translates to:
+  /// **'Trailer URL'**
+  String get trailerUrl;
+
+  /// No description provided for @trailerUrlPlaceholder.
+  ///
+  /// In vi, this message translates to:
+  /// **'https://youtube.com/...'**
+  String get trailerUrlPlaceholder;
+
+  /// No description provided for @movieDescriptionPlaceholder.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nội dung phim...'**
+  String get movieDescriptionPlaceholder;
+
+  /// No description provided for @createMovieBtn.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tạo phim'**
+  String get createMovieBtn;
+
+  /// No description provided for @searchMoviesPlaceholder.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tìm kiếm tên phim...'**
+  String get searchMoviesPlaceholder;
+
+  /// No description provided for @statusNowShowing.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang chiếu'**
+  String get statusNowShowing;
+
+  /// No description provided for @statusComingSoon.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sắp chiếu'**
+  String get statusComingSoon;
+
+  /// No description provided for @statusStopped.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ngừng chiếu'**
+  String get statusStopped;
+
+  /// No description provided for @roomTypeStandard.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tiêu chuẩn (Standard)'**
+  String get roomTypeStandard;
+
+  /// No description provided for @roomTypeVIP.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phòng VIP'**
+  String get roomTypeVIP;
+
+  /// No description provided for @roomTypeIMAX.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phòng IMAX'**
+  String get roomTypeIMAX;
+
+  /// No description provided for @roomType4DX.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phòng 4DX'**
+  String get roomType4DX;
+
+  /// No description provided for @roomTypeCouple.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phòng Sweetbox'**
+  String get roomTypeCouple;
+
+  /// No description provided for @roomStatusActive.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang hoạt động'**
+  String get roomStatusActive;
+
+  /// No description provided for @roomStatusInactive.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tạm ngưng'**
+  String get roomStatusInactive;
+
+  /// No description provided for @roomStatusMaintenance.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bảo trì'**
+  String get roomStatusMaintenance;
+
+  /// No description provided for @viewSeatMap.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem sơ đồ ghế'**
+  String get viewSeatMap;
+
+  /// No description provided for @generateSeatsBtn.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tạo sơ đồ ghế tự động'**
+  String get generateSeatsBtn;
+
+  /// No description provided for @generateSeatsSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tạo sơ đồ ghế thành công!'**
+  String get generateSeatsSuccess;
+
+  /// No description provided for @generateSeatsConfirm.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hành động này sẽ tạo ma trận ghế tự động cho phòng chiếu. Tiếp tục?'**
+  String get generateSeatsConfirm;
+
+  /// No description provided for @seatLayoutTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sơ đồ phòng chiếu'**
+  String get seatLayoutTitle;
+
+  /// No description provided for @seatMatrixRows.
+  ///
+  /// In vi, this message translates to:
+  /// **'Số hàng ghế'**
+  String get seatMatrixRows;
+
+  /// No description provided for @seatMatrixCols.
+  ///
+  /// In vi, this message translates to:
+  /// **'Số cột ghế'**
+  String get seatMatrixCols;
+
+  /// No description provided for @cinemaStatusActive.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang hoạt động'**
+  String get cinemaStatusActive;
+
+  /// No description provided for @cinemaStatusInactive.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tạm dừng'**
+  String get cinemaStatusInactive;
+
+  /// No description provided for @cinemaStatusMaintenance.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bảo trì'**
+  String get cinemaStatusMaintenance;
+
+  /// No description provided for @format4DX.
+  ///
+  /// In vi, this message translates to:
+  /// **'4DX'**
+  String get format4DX;
+
+  /// No description provided for @filterByDatePrompt.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lọc theo ngày'**
+  String get filterByDatePrompt;
+
+  /// No description provided for @millionShort.
+  ///
+  /// In vi, this message translates to:
+  /// **'{amount} Tr'**
+  String millionShort(String amount);
+
+  /// No description provided for @thousandShort.
+  ///
+  /// In vi, this message translates to:
+  /// **'{amount} N'**
+  String thousandShort(String amount);
+
+  /// No description provided for @rankBadge.
+  ///
+  /// In vi, this message translates to:
+  /// **'#{rank}'**
+  String rankBadge(int rank);
+
+  /// No description provided for @topPerformingMovies.
+  ///
+  /// In vi, this message translates to:
+  /// **'Top phim doanh thu cao'**
+  String get topPerformingMovies;
+
+  /// No description provided for @chartRevenueUnit.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đơn vị: VNĐ'**
+  String get chartRevenueUnit;
+
+  /// No description provided for @noDataInPeriod.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không có dữ liệu trong khoảng thời gian này'**
+  String get noDataInPeriod;
+
+  /// No description provided for @adminSettings.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cài đặt hệ thống'**
+  String get adminSettings;
+
+  /// No description provided for @adminProfile.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hồ sơ quản trị viên'**
+  String get adminProfile;
+
+  /// No description provided for @themeModeSetting.
+  ///
+  /// In vi, this message translates to:
+  /// **'Giao diện'**
+  String get themeModeSetting;
+
+  /// No description provided for @themeModeDark.
+  ///
+  /// In vi, this message translates to:
+  /// **'Giao diện tối'**
+  String get themeModeDark;
+
+  /// No description provided for @themeModeLight.
+  ///
+  /// In vi, this message translates to:
+  /// **'Giao diện sáng'**
+  String get themeModeLight;
+
+  /// No description provided for @themeModeSystem.
+  ///
+  /// In vi, this message translates to:
+  /// **'Theo hệ thống'**
+  String get themeModeSystem;
+
+  /// No description provided for @systemInfo.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thông tin hệ thống'**
+  String get systemInfo;
+
+  /// No description provided for @clearCache.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xóa bộ nhớ đệm'**
+  String get clearCache;
+
+  /// No description provided for @clearCacheSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã xóa bộ nhớ đệm thành công'**
+  String get clearCacheSuccess;
+
+  /// No description provided for @soundAndHaptic.
+  ///
+  /// In vi, this message translates to:
+  /// **'Âm thanh & Rung khi quét'**
+  String get soundAndHaptic;
+
+  /// No description provided for @soundAndHapticDesc.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phát âm báo và rung khi quét mã QR thành công hoặc thất bại'**
+  String get soundAndHapticDesc;
+
+  /// No description provided for @weekdayMon.
+  ///
+  /// In vi, this message translates to:
+  /// **'Th 2'**
+  String get weekdayMon;
+
+  /// No description provided for @weekdayTue.
+  ///
+  /// In vi, this message translates to:
+  /// **'Th 3'**
+  String get weekdayTue;
+
+  /// No description provided for @weekdayWed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Th 4'**
+  String get weekdayWed;
+
+  /// No description provided for @weekdayThu.
+  ///
+  /// In vi, this message translates to:
+  /// **'Th 5'**
+  String get weekdayThu;
+
+  /// No description provided for @weekdayFri.
+  ///
+  /// In vi, this message translates to:
+  /// **'Th 6'**
+  String get weekdayFri;
+
+  /// No description provided for @weekdaySat.
+  ///
+  /// In vi, this message translates to:
+  /// **'Th 7'**
+  String get weekdaySat;
+
+  /// No description provided for @weekdaySun.
+  ///
+  /// In vi, this message translates to:
+  /// **'CN'**
+  String get weekdaySun;
+
+  /// No description provided for @cameraInitializing.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang khởi động máy ảnh...'**
+  String get cameraInitializing;
+
+  /// No description provided for @cameraPermissionDenied.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không có quyền truy cập máy ảnh. Vui lòng cấp quyền trong cài đặt thiết bị.'**
+  String get cameraPermissionDenied;
+
+  /// No description provided for @cameraError.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể khởi động máy ảnh'**
+  String get cameraError;
+
+  /// No description provided for @cameraErrorHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vui lòng kiểm tra quyền truy cập hoặc sử dụng tính năng nhập mã thủ công bên dưới.'**
+  String get cameraErrorHint;
+
+  /// No description provided for @staffProfile.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hồ sơ nhân viên'**
+  String get staffProfile;
+
+  /// No description provided for @posTabTickets.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vé & Bắp nước'**
+  String get posTabTickets;
+
+  /// No description provided for @posTabConcessions.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bắp nước nhanh'**
+  String get posTabConcessions;
+
+  /// No description provided for @checkinResultTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Kết quả soát vé'**
+  String get checkinResultTitle;
+
+  /// No description provided for @cashReceived.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tiền khách đưa'**
+  String get cashReceived;
+
+  /// No description provided for @cashChange.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tiền thối lại'**
+  String get cashChange;
+
+  /// No description provided for @exactAmount.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đủ tiền'**
+  String get exactAmount;
+
+  /// No description provided for @printTicketReceipt.
+  ///
+  /// In vi, this message translates to:
+  /// **'In vé & Hóa đơn'**
+  String get printTicketReceipt;
+
+  /// No description provided for @posOrderSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tạo đơn hàng thành công!'**
+  String get posOrderSuccess;
+
+  /// No description provided for @posOrderSuccessPrompt.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mã đơn: {code}'**
+  String posOrderSuccessPrompt(String code);
+
+  /// No description provided for @staffBadge.
+  ///
+  /// In vi, this message translates to:
+  /// **'NHÂN VIÊN'**
+  String get staffBadge;
+
+  /// No description provided for @seatNumber.
+  ///
+  /// In vi, this message translates to:
+  /// **'Số ghế'**
+  String get seatNumber;
+
+  /// No description provided for @customer.
+  ///
+  /// In vi, this message translates to:
+  /// **'Khách hàng'**
+  String get customer;
+
+  /// No description provided for @ticketNumber.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mã vé'**
+  String get ticketNumber;
+
+  /// No description provided for @tomorrow.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ngày mai'**
+  String get tomorrow;
+
+  /// No description provided for @cashPaymentDesc.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thanh toán tiền mặt trực tiếp tại quầy'**
+  String get cashPaymentDesc;
+
+  /// No description provided for @momoPaymentDesc.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quét mã MoMo QR tại quầy'**
+  String get momoPaymentDesc;
+
+  /// No description provided for @vnpayPaymentDesc.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thẻ ATM / VNPAY-QR'**
+  String get vnpayPaymentDesc;
+
+  /// No description provided for @enterCashReceivedHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhập số tiền khách đưa'**
+  String get enterCashReceivedHint;
+
+  /// No description provided for @insufficientCashReceived.
+  ///
+  /// In vi, this message translates to:
+  /// **'Số tiền khách đưa không đủ thanh toán'**
+  String get insufficientCashReceived;
+
+  /// No description provided for @scanSoundTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Âm báo khi quét mã'**
+  String get scanSoundTitle;
+
+  /// No description provided for @scanHapticTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Rung khi quét mã'**
+  String get scanHapticTitle;
+
+  /// No description provided for @seatUnit.
+  ///
+  /// In vi, this message translates to:
+  /// **'ghế'**
+  String get seatUnit;
+
+  /// No description provided for @availableCountLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Trống: {count}'**
+  String availableCountLabel(int count);
+
+  /// No description provided for @bookedCountLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã đặt: {count}'**
+  String bookedCountLabel(int count);
+
+  /// No description provided for @totalCountLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tổng: {count}'**
+  String totalCountLabel(int count);
+
+  /// No description provided for @counterRevenueSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Doanh thu quầy'**
+  String get counterRevenueSubtitle;
+
+  /// No description provided for @upcomingShowtimesSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang mở bán'**
+  String get upcomingShowtimesSubtitle;
+
+  /// No description provided for @averageSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Trung bình'**
+  String get averageSubtitle;
+
+  /// No description provided for @defaultRoom.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phòng'**
+  String get defaultRoom;
+
+  /// No description provided for @format2DSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'2D Phụ đề'**
+  String get format2DSubtitle;
+
+  /// No description provided for @format2DDubbed.
+  ///
+  /// In vi, this message translates to:
+  /// **'2D Lồng tiếng'**
+  String get format2DDubbed;
+
+  /// No description provided for @format3DDubbed.
+  ///
+  /// In vi, this message translates to:
+  /// **'3D Lồng tiếng'**
+  String get format3DDubbed;
+
+  /// No description provided for @movieExhuma.
+  ///
+  /// In vi, this message translates to:
+  /// **'Exhuma: Quật mộ trùng ma'**
+  String get movieExhuma;
+
+  /// No description provided for @adminBadge.
+  ///
+  /// In vi, this message translates to:
+  /// **'QUẢN TRỊ VIÊN'**
+  String get adminBadge;
+
+  /// No description provided for @userIdLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mã tài khoản'**
+  String get userIdLabel;
+
+  /// No description provided for @roleLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vai trò'**
+  String get roleLabel;
+
+  /// No description provided for @emailPlaceholder.
+  ///
+  /// In vi, this message translates to:
+  /// **'nhanvien@cineplex.vn'**
+  String get emailPlaceholder;
+
+  /// No description provided for @phonePlaceholder.
+  ///
+  /// In vi, this message translates to:
+  /// **'09xxxxxxxx'**
+  String get phonePlaceholder;
+
+  /// No description provided for @passwordPlaceholder.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhập mật khẩu'**
+  String get passwordPlaceholder;
+
+  /// No description provided for @confirmPasswordPlaceholder.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhập lại mật khẩu'**
+  String get confirmPasswordPlaceholder;
+
+  /// No description provided for @percentDiscountBadge.
+  ///
+  /// In vi, this message translates to:
+  /// **'GIẢM %'**
+  String get percentDiscountBadge;
+
+  /// No description provided for @fixedDiscountBadge.
+  ///
+  /// In vi, this message translates to:
+  /// **'GIẢM TIỀN'**
+  String get fixedDiscountBadge;
+
+  /// No description provided for @discountTypePercentage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Giảm theo phần trăm (%)'**
+  String get discountTypePercentage;
+
+  /// No description provided for @discountTypeFixed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Giảm số tiền cố định (VNĐ)'**
+  String get discountTypeFixed;
+
+  /// No description provided for @noPromotionsSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có mã khuyến mãi nào được tạo. Nhấn nút bên dưới để tạo mã mới.'**
+  String get noPromotionsSubtitle;
+
+  /// No description provided for @pricePlaceholder.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ví dụ: 65.000'**
+  String get pricePlaceholder;
+
+  /// No description provided for @stockPlaceholder.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ví dụ: 100'**
+  String get stockPlaceholder;
+
+  /// No description provided for @movieManagement.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quản lý phim'**
+  String get movieManagement;
+
+  /// No description provided for @togglePasswordVisibility.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hiện/ẩn mật khẩu'**
+  String get togglePasswordVisibility;
+
+  /// No description provided for @unitVnd.
+  ///
+  /// In vi, this message translates to:
+  /// **'VNĐ'**
+  String get unitVnd;
+
+  /// No description provided for @unitPercent.
+  ///
+  /// In vi, this message translates to:
+  /// **'%'**
+  String get unitPercent;
+
+  /// No description provided for @screenLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'MÀN HÌNH'**
+  String get screenLabel;
+
+  /// No description provided for @shortMonthFormat.
+  ///
+  /// In vi, this message translates to:
+  /// **'T{month}'**
+  String shortMonthFormat(int month);
+
+  /// No description provided for @startTime.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thời gian bắt đầu'**
+  String get startTime;
+
+  /// No description provided for @statusInactive.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ngưng hoạt động'**
+  String get statusInactive;
+
+  /// No description provided for @exitAppTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thoát ứng dụng'**
+  String get exitAppTitle;
+
+  /// No description provided for @exitAppMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn có chắc chắn muốn thoát ứng dụng không?'**
+  String get exitAppMessage;
+
+  /// No description provided for @exitAppConfirm.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thoát'**
+  String get exitAppConfirm;
 
   /// No description provided for @cameraPermissionRequired.
   ///
@@ -2607,12 +4023,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Nhập nội dung tóm tắt phim...'**
   String get enterMovieDescription;
-
-  /// No description provided for @screeningEndDate.
-  ///
-  /// In vi, this message translates to:
-  /// **'Ngày kết thúc'**
-  String get screeningEndDate;
 
   /// No description provided for @status.
   ///

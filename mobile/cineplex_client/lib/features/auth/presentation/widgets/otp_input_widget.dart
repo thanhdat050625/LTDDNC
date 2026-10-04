@@ -45,6 +45,8 @@ class _OtpInputWidgetState extends State<OtpInputWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = CineplexColors.of(context);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: List.generate(widget.length, (index) {
@@ -60,17 +62,26 @@ class _OtpInputWidgetState extends State<OtpInputWidget> {
               LengthLimitingTextInputFormatter(1),
               FilteringTextInputFormatter.digitsOnly,
             ],
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: colors.textPrimary,
+            ),
             decoration: InputDecoration(
               filled: true,
-              fillColor: AppColors.darkSurface,
+              fillColor: colors.surfaceVariant,
+              contentPadding: EdgeInsets.zero,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide.none,
+                borderSide: BorderSide(color: colors.borderSubtle),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: colors.borderSubtle),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(color: AppColors.primary),
+                borderSide: BorderSide(color: colors.primary, width: 2),
               ),
             ),
             onChanged: (val) => _onChanged(val, index),

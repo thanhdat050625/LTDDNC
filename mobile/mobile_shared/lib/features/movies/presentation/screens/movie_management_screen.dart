@@ -40,11 +40,11 @@ class _MovieManagementScreenState extends State<MovieManagementScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context).extension<CineplexColors>()!;
+    final theme = CineplexColors.of(context);
     final l10n = AppLocalizations.of(context)!;
 
     return AppScaffold(
-      title: l10n.manageMovies,
+      title: l10n.movieManagement,
       drawer: widget.drawer,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -59,35 +59,16 @@ class _MovieManagementScreenState extends State<MovieManagementScreen> {
           Container(
             padding: const EdgeInsets.fromLTRB(12, 8, 12, 6),
             color: theme.surface,
-            child: Row(
-              children: [
-                Expanded(
-                  child: AppTextField(
-                    controller: _searchController,
-                    hintText: '${l10n.searchMovies}...',
-                    prefixIcon: LucideIcons.search,
-                    onChanged: (val) {
-                      if (_debounce?.isActive ?? false) _debounce!.cancel();
-                      _debounce = Timer(const Duration(milliseconds: 500), () {
-                        context.read<MovieManagementCubit>().searchMovies(val);
-                      });
-                    },
-                  ),
-                ),
-                SizedBox(width: theme.spacingMd),
-                Container(
-                  decoration: BoxDecoration(
-                    color: theme.background,
-                    borderRadius: BorderRadius.circular(theme.radiusMd),
-                  ),
-                  child: IconButton(
-                    icon: Icon(LucideIcons.filter, color: theme.textPrimary),
-                    onPressed: () {
-                      // Show filter bottom sheet
-                    },
-                  ),
-                ),
-              ],
+            child: AppTextField(
+              controller: _searchController,
+              hintText: l10n.searchMoviesPlaceholder,
+              prefixIcon: LucideIcons.search,
+              onChanged: (val) {
+                if (_debounce?.isActive ?? false) _debounce!.cancel();
+                _debounce = Timer(const Duration(milliseconds: 400), () {
+                  context.read<MovieManagementCubit>().searchMovies(val);
+                });
+              },
             ),
           ),
           
@@ -102,37 +83,43 @@ class _MovieManagementScreenState extends State<MovieManagementScreen> {
                   }
                   
                   if (state is MovieManagementError) {
-                    return ListView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      children: [
-                        SizedBox(height: MediaQuery.of(context).size.height * 0.25),
-                        Center(child: Text(state.message, style: TextStyle(color: theme.error))),
-                      ],
+                    return Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: AppErrorView(
+                          message: state.message,
+                          onRetry: () => context.read<MovieManagementCubit>().loadMovies(),
+                        ),
+                      ),
                     );
                   }
 
                   if (state is MovieManagementLoaded) {
                     final movies = state.movies;
                     if (movies.isEmpty) {
-                      return ListView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        children: [
-                          SizedBox(height: MediaQuery.of(context).size.height * 0.25),
-                          Center(child: Text(AppLocalizations.of(context)!.noData)),
-                        ],
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: AppEmptyView(
+                            icon: LucideIcons.film,
+                            title: l10n.noData,
+                            message: l10n.searchMoviesPlaceholder,
+                            actionLabel: l10n.addMovieTitle,
+                            onAction: () => _reloadAfterPush(context.push('/movies/new')),
+                          ),
+                        ),
                       );
                     }
                     return ListView.separated(
                       physics: const AlwaysScrollableScrollPhysics(),
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       itemCount: movies.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 6),
+                      separatorBuilder: (_, __) => const SizedBox(height: 8),
                       itemBuilder: (context, index) {
                         final movie = movies[index];
                         return MovieListItem(
                           movie: movie,
                           onTap: () {
-                            // Navigate to detail
                             _reloadAfterPush(
                               context.push('/movies/${movie.id}', extra: movie),
                             );

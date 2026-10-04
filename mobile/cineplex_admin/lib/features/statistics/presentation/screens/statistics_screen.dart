@@ -24,6 +24,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final colors = CineplexColors.of(context);
     final colorScheme = Theme.of(context).colorScheme;
 
     return AppScaffold(
@@ -63,36 +64,32 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     childAspectRatio: 1.9,
                     children: [
                       _buildKpiCard(
+                        context,
                         title: l10n.totalRevenue,
                         value: FormatUtils.formatCurrency(summary.revenue.toInt()),
                         icon: Icons.monetization_on_outlined,
-                        containerColor: colorScheme.primaryContainer,
-                        iconColor: Colors.white,
-                        textColor: Colors.white,
+                        accentColor: colors.accent,
                       ),
                       _buildKpiCard(
+                        context,
                         title: l10n.ticketsSold,
                         value: summary.tickets.toString(),
                         icon: Icons.confirmation_number_outlined,
-                        containerColor: colorScheme.secondaryContainer,
-                        iconColor: Colors.white,
-                        textColor: Colors.white,
+                        accentColor: colors.primary,
                       ),
                       _buildKpiCard(
+                        context,
                         title: l10n.totalCinemas,
                         value: summary.cinemas.toString(),
                         icon: Icons.business_outlined,
-                        containerColor: colorScheme.tertiaryContainer,
-                        iconColor: Colors.white,
-                        textColor: Colors.white,
+                        accentColor: colors.secondary,
                       ),
                       _buildKpiCard(
+                        context,
                         title: l10n.activeMovies,
                         value: summary.activeMovies.toString(),
                         icon: Icons.movie_outlined,
-                        containerColor: colorScheme.surfaceContainerHighest,
-                        iconColor: colorScheme.onSurfaceVariant,
-                        textColor: colorScheme.onSurface,
+                        accentColor: colors.success,
                       ),
                     ],
                   ),
@@ -130,19 +127,27 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     );
   }
 
-  Widget _buildKpiCard({
+  Widget _buildKpiCard(
+    BuildContext context, {
     required String title,
     required String value,
     required IconData icon,
-    required Color containerColor,
-    required Color iconColor,
-    required Color textColor,
+    required Color accentColor,
   }) {
+    final colors = CineplexColors.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
-        color: containerColor,
+        color: colors.card,
         borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: colors.cardBorder),
+        boxShadow: [
+          BoxShadow(
+            color: colors.shadowColor.withValues(alpha: 0.04),
+            blurRadius: 4,
+            offset: const Offset(0, 1),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -150,8 +155,15 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         children: [
           Row(
             children: [
-              Icon(icon, color: iconColor, size: 16),
-              const SizedBox(width: 5),
+              Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Icon(icon, color: accentColor, size: 15),
+              ),
+              const SizedBox(width: 6),
               Expanded(
                 child: Text(
                   title,
@@ -160,13 +172,13 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
-                    color: textColor.withValues(alpha: 0.9),
+                    color: colors.textSecondary,
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 3),
+          const SizedBox(height: 4),
           Text(
             value,
             maxLines: 1,
@@ -174,7 +186,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
-              color: textColor,
+              color: colors.textPrimary,
+              letterSpacing: -0.2,
             ),
           ),
         ],
@@ -477,7 +490,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               duration: const Duration(milliseconds: 200),
               child: SizedBox(
                 height: 135,
-                child: _buildBarChart(state.revenuePeriods, colorScheme, state.filterType),
+                child: _buildBarChart(state.revenuePeriods, colorScheme, state.filterType, l10n),
               ),
             ),
           ],
@@ -522,6 +535,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     List<RevenuePeriodModel> periods,
     ColorScheme colorScheme,
     String filterType,
+    AppLocalizations l10n,
   ) {
     final maxRevenue = periods.fold<num>(0, (prev, p) => p.revenue > prev ? p.revenue : prev);
     final safeMax = maxRevenue > 0 ? maxRevenue : 1;
@@ -542,7 +556,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           String label;
           if (filterType == 'year') {
             final m = int.tryParse(p.period.split('-').last) ?? 1;
-            label = 'T$m';
+            label = l10n.shortMonthFormat(m);
           } else if (filterType == 'month') {
             label = p.period.split('-').last;
           } else {
@@ -621,12 +635,20 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     AppLocalizations l10n,
     ColorScheme colorScheme,
   ) {
+    final colors = CineplexColors.of(context);
     return Container(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerLow,
+        color: colors.card,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+        border: Border.all(color: colors.cardBorder),
+        boxShadow: [
+          BoxShadow(
+            color: colors.shadowColor.withValues(alpha: 0.04),
+            blurRadius: 4,
+            offset: const Offset(0, 1),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -634,10 +656,18 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                l10n.moviePerformance,
-                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              Expanded(
+                child: Text(
+                  l10n.moviePerformance,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: colors.textPrimary,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
+              const SizedBox(width: 8),
               TextButton.icon(
                 style: TextButton.styleFrom(
                   visualDensity: VisualDensity.compact,
@@ -646,10 +676,10 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 onPressed: () {
                   setState(() => _sortByOccupancy = !_sortByOccupancy);
                 },
-                icon: const Icon(Icons.sort, size: 14),
+                icon: Icon(Icons.sort, size: 14, color: colors.primary),
                 label: Text(
                   _sortByOccupancy ? l10n.occupancyRate : l10n.revenueCol,
-                  style: const TextStyle(fontSize: 11),
+                  style: TextStyle(fontSize: 11, color: colors.primary),
                 ),
               ),
             ],
@@ -662,22 +692,66 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               child: Center(
                 child: Text(
                   l10n.noData,
-                  style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12),
+                  style: TextStyle(color: colors.textSecondary, fontSize: 12),
                 ),
               ),
             ),
           ] else ...[
             ...movies.map((m) {
+              final index = movies.indexOf(m);
+              final isTop1 = index == 0;
+              final isTop2 = index == 1;
+              final isTop3 = index == 2;
+              final rankBadgeColor = isTop1
+                  ? const Color(0xFFF59E0B)
+                  : (isTop2 ? const Color(0xFF94A3B8) : (isTop3 ? const Color(0xFFD97706) : colors.surfaceVariant));
+              final rankTextColor = (isTop1 || isTop2 || isTop3) ? const Color(0xFF111827) : colors.textSecondary;
+
+              final isDark = Theme.of(context).brightness == Brightness.dark;
+              final occupancyColor = m.occupancyRate >= 70
+                  ? colors.success
+                  : (m.occupancyRate >= 40 ? colors.accent : colors.secondary);
+              final occupancyTextColor = isDark
+                  ? (m.occupancyRate < 40 ? const Color(0xFF93C5FD) : occupancyColor)
+                  : (m.occupancyRate >= 70
+                      ? const Color(0xFF14532D)
+                      : (m.occupancyRate >= 40 ? const Color(0xFF7C2D12) : const Color(0xFF1E3A8A)));
+              final occupancyBgColor = isDark
+                  ? occupancyColor.withValues(alpha: 0.18)
+                  : occupancyColor.withValues(alpha: 0.12);
+              final occupancyBorderColor = isDark
+                  ? occupancyColor.withValues(alpha: 0.3)
+                  : occupancyTextColor.withValues(alpha: 0.25);
+
               return Container(
                 margin: const EdgeInsets.only(bottom: 6),
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                 decoration: BoxDecoration(
-                  color: colorScheme.surface,
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.4)),
+                  border: Border.all(color: colors.cardBorder),
                 ),
                 child: Row(
                   children: [
+                    // Rank Badge
+                    Container(
+                      width: 22,
+                      height: 22,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: rankBadgeColor,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(
+                        '${index + 1}',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: rankTextColor,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(6),
                       child: (m.poster != null && m.poster!.trim().isNotEmpty)
@@ -692,13 +766,13 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                               width: 36,
                               height: 48,
                               decoration: BoxDecoration(
-                                color: colorScheme.surfaceContainerHighest,
+                                color: colors.surfaceVariant,
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Icon(
                                 Icons.movie_outlined,
                                 size: 20,
-                                color: colorScheme.onSurfaceVariant,
+                                color: colors.textSecondary,
                               ),
                             ),
                     ),
@@ -711,32 +785,44 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                             m.title,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: colors.textPrimary,
+                            ),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             '${FormatUtils.formatCurrency(m.revenue.toInt())} • ${m.ticketsSold} ${l10n.ticketsSoldCol}',
-                            style: TextStyle(fontSize: 11, color: colorScheme.onSurfaceVariant),
+                            style: TextStyle(fontSize: 11, color: colors.textSecondary),
+                          ),
+                          const SizedBox(height: 6),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(2),
+                            child: LinearProgressIndicator(
+                              value: (m.occupancyRate / 100).clamp(0.0, 1.0),
+                              minHeight: 4,
+                              backgroundColor: colors.surfaceVariant,
+                              valueColor: AlwaysStoppedAnimation<Color>(occupancyColor),
+                            ),
                           ),
                         ],
                       ),
                     ),
+                    const SizedBox(width: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
                       decoration: BoxDecoration(
-                        color: m.occupancyRate >= 50
-                            ? colorScheme.primaryContainer
-                            : colorScheme.surfaceContainerHighest,
+                        color: occupancyBgColor,
                         borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: occupancyBorderColor, width: 0.5),
                       ),
                       child: Text(
                         '${m.occupancyRate}%',
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
-                          color: m.occupancyRate >= 50
-                              ? colorScheme.onPrimaryContainer
-                              : colorScheme.onSurfaceVariant,
+                          color: occupancyTextColor,
                         ),
                       ),
                     ),

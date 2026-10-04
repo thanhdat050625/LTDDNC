@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:mobile_shared/mobile_shared.dart';
+
 import '../../data/repositories/staff_repository.dart';
 
 abstract class StaffState extends Equatable {
@@ -10,6 +11,7 @@ abstract class StaffState extends Equatable {
 }
 
 class StaffInitial extends StaffState {}
+
 class StaffScanning extends StaffState {}
 
 class StaffCheckinSuccess extends StaffState {
@@ -48,7 +50,7 @@ class StaffCubit extends Cubit<StaffState> {
       emit(StaffCheckinSuccess(ticket));
     } catch (e) {
       if (e is ServerException) {
-        final isWarning = e.code == 'BOOKING_CODE_SCANNED';
+        final isWarning = e.code == 'BOOKING_CODE_SCANNED' || e.code == 'TICKET_ALREADY_CHECKED_IN';
         emit(StaffCheckinError(e.message, code: e.code, isWarning: isWarning));
       } else {
         emit(StaffCheckinError(e.toString()));

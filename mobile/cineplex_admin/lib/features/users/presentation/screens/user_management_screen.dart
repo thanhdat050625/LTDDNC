@@ -120,7 +120,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context).extension<CineplexColors>()!;
+    final theme = CineplexColors.of(context);
 
     return AppScaffold(
       title: l10n.userManagement,
@@ -130,73 +130,92 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
           // Top Bar: Search Bar & Add Staff Button
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _searchController,
-                    style: TextStyle(color: theme.textPrimary, fontSize: 14),
-                    decoration: InputDecoration(
-                      hintText: l10n.searchUser,
-                      hintStyle: TextStyle(color: theme.textSecondary.withValues(alpha: 0.7), fontSize: 13),
-                      isDense: true,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
-                      prefixIcon: Icon(LucideIcons.search, size: 18, color: theme.textSecondary),
-                      suffixIcon: _searchController.text.isNotEmpty
-                          ? IconButton(
-                              icon: Icon(LucideIcons.x, size: 16, color: theme.textSecondary),
-                              onPressed: () {
-                                _searchController.clear();
-                                setState(() {});
-                                context.read<UserManagementCubit>().searchUsers('');
-                              },
-                            )
-                          : null,
-                      filled: true,
-                      fillColor: theme.surface,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          color: theme.textSecondary.withValues(alpha: 0.15),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final isNarrow = constraints.maxWidth < 360;
+                return Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _searchController,
+                        style: TextStyle(color: theme.textPrimary, fontSize: 14),
+                        decoration: InputDecoration(
+                          hintText: l10n.searchUser,
+                          hintStyle: TextStyle(color: theme.textSecondary.withValues(alpha: 0.7), fontSize: 13),
+                          isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+                          prefixIcon: Icon(LucideIcons.search, size: 18, color: theme.textSecondary),
+                          suffixIcon: _searchController.text.isNotEmpty
+                              ? IconButton(
+                                  icon: Icon(LucideIcons.x, size: 16, color: theme.textSecondary),
+                                  onPressed: () {
+                                    _searchController.clear();
+                                    setState(() {});
+                                    context.read<UserManagementCubit>().searchUsers('');
+                                  },
+                                )
+                              : null,
+                          filled: true,
+                          fillColor: theme.surface,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: theme.textSecondary.withValues(alpha: 0.15),
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: theme.textSecondary.withValues(alpha: 0.15),
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: theme.primary,
+                              width: 1.5,
+                            ),
+                          ),
                         ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          color: theme.textSecondary.withValues(alpha: 0.15),
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          color: theme.primary,
-                          width: 1.5,
-                        ),
+                        onChanged: (val) {
+                          setState(() {});
+                          _onSearchChanged(val);
+                        },
                       ),
                     ),
-                    onChanged: (val) {
-                      setState(() {});
-                      _onSearchChanged(val);
-                    },
-                  ),
-                ),
-                const SizedBox(width: 10),
-                // Add Staff Button
-                ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.primary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                  onPressed: () => _openAddStaffModal(context, l10n, theme),
-                  icon: const Icon(LucideIcons.userPlus, size: 16),
-                  label: Text(
-                    l10n.addStaff,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                  ),
-                ),
-              ],
+                    const SizedBox(width: 10),
+                    // Add Staff Button (Responsive: icon-only on < 360px, full button otherwise)
+                    if (isNarrow)
+                      IconButton(
+                        style: IconButton.styleFrom(
+                          backgroundColor: theme.primary,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          minimumSize: const Size(44, 44),
+                        ),
+                        onPressed: () => _openAddStaffModal(context, l10n, theme),
+                        icon: const Icon(LucideIcons.userPlus, size: 18),
+                        tooltip: l10n.addStaff,
+                      )
+                    else
+                      ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: theme.primary,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          minimumSize: const Size(44, 44),
+                        ),
+                        onPressed: () => _openAddStaffModal(context, l10n, theme),
+                        icon: const Icon(LucideIcons.userPlus, size: 16),
+                        label: Text(
+                          l10n.addStaff,
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                        ),
+                      ),
+                  ],
+                );
+              },
             ),
           ),
 
@@ -383,31 +402,37 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
     return Expanded(
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 13, color: iconColor),
-              const SizedBox(width: 4),
-              Text(
-                value,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: theme.textPrimary,
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, size: 13, color: iconColor),
+                const SizedBox(width: 4),
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: theme.textPrimary,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           const SizedBox(height: 2),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 10,
-              color: theme.textSecondary,
-              fontWeight: FontWeight.w500,
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 10,
+                color: theme.textSecondary,
+                fontWeight: FontWeight.w500,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
@@ -487,12 +512,15 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
             borderRadius: BorderRadius.circular(8),
           ),
           alignment: Alignment.center,
-          child: Text(
-            count != null ? '$title ($count)' : title,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-              color: isSelected ? Colors.white : theme.textSecondary,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              count != null ? '$title ($count)' : title,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                color: isSelected ? Colors.white : theme.textSecondary,
+              ),
             ),
           ),
         ),
@@ -507,31 +535,34 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
     CineplexColors theme,
     AppLocalizations l10n,
   ) {
-    return Row(
-      children: [
-        _buildChip(
-          label: l10n.statusAll,
-          isSelected: state.selectedStatus == null,
-          onTap: () => context.read<UserManagementCubit>().setStatusFilter(null),
-          theme: theme,
-        ),
-        const SizedBox(width: 8),
-        _buildChip(
-          label: l10n.statusActive,
-          isSelected: state.selectedStatus == 'ACTIVE',
-          onTap: () => context.read<UserManagementCubit>().setStatusFilter('ACTIVE'),
-          theme: theme,
-          activeColor: theme.success,
-        ),
-        const SizedBox(width: 8),
-        _buildChip(
-          label: l10n.statusBlocked,
-          isSelected: state.selectedStatus == 'BLOCKED',
-          onTap: () => context.read<UserManagementCubit>().setStatusFilter('BLOCKED'),
-          theme: theme,
-          activeColor: theme.error,
-        ),
-      ],
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          _buildChip(
+            label: l10n.statusAll,
+            isSelected: state.selectedStatus == null,
+            onTap: () => context.read<UserManagementCubit>().setStatusFilter(null),
+            theme: theme,
+          ),
+          const SizedBox(width: 8),
+          _buildChip(
+            label: l10n.statusActive,
+            isSelected: state.selectedStatus == 'ACTIVE',
+            onTap: () => context.read<UserManagementCubit>().setStatusFilter('ACTIVE'),
+            theme: theme,
+            activeColor: theme.success,
+          ),
+          const SizedBox(width: 8),
+          _buildChip(
+            label: l10n.statusBlocked,
+            isSelected: state.selectedStatus == 'BLOCKED',
+            onTap: () => context.read<UserManagementCubit>().setStatusFilter('BLOCKED'),
+            theme: theme,
+            activeColor: theme.error,
+          ),
+        ],
+      ),
     );
   }
 
@@ -547,6 +578,8 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
       onTap: onTap,
       borderRadius: BorderRadius.circular(20),
       child: Container(
+        constraints: const BoxConstraints(minHeight: 36),
+        alignment: Alignment.center,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           color: isSelected ? chipColor.withValues(alpha: 0.15) : theme.surface,

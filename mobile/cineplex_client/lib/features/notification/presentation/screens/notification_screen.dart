@@ -5,7 +5,7 @@ import '../cubit/notification_cubit.dart';
 import '../widgets/notification_item.dart';
 
 class NotificationScreen extends StatefulWidget {
-  const NotificationScreen({Key? key}) : super(key: key);
+  const NotificationScreen({super.key});
 
   @override
   State<NotificationScreen> createState() => _NotificationScreenState();
@@ -21,12 +21,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final colors = CineplexColors.of(context);
+    final bottomPadding = 100 + MediaQuery.of(context).padding.bottom;
+
     return AppScaffold(
       title: l10n.notifications,
       bottomSafeArea: false,
       actions: [
         IconButton(
-          icon: const Icon(Icons.done_all),
+          icon: Icon(Icons.done_all, color: colors.primary),
           onPressed: () => context.read<NotificationCubit>().markAllRead(),
         )
       ],
@@ -34,19 +37,31 @@ class _NotificationScreenState extends State<NotificationScreen> {
         builder: (context, state) {
           if (state is NotificationLoading) return const AppLoading();
           if (state is NotificationLoaded) {
-            if (state.notifications.isEmpty) return Center(child: Text(l10n.noNotifications));
+            if (state.notifications.isEmpty) {
+              return AppEmptyView(
+                icon: Icons.notifications_none_outlined,
+                title: l10n.noNotifications,
+              );
+            }
             return RefreshIndicator(
               onRefresh: () => context.read<NotificationCubit>().loadNotifications(),
-              child: ListView.builder(
-                padding: EdgeInsets.fromLTRB(0, 0, 0, MediaQuery.of(context).padding.bottom + 16),
+              color: colors.primary,
+              child: ListView.separated(
+                padding: EdgeInsets.fromLTRB(0, 0, 0, bottomPadding),
                 itemCount: state.notifications.length,
+                separatorBuilder: (_, __) => Divider(height: 1, color: colors.divider),
                 itemBuilder: (context, index) {
                   return NotificationItem(notification: state.notifications[index]);
                 },
               ),
             );
           }
-          if (state is NotificationError) return Center(child: Text(state.message));
+          if (state is NotificationError) {
+            return AppErrorView(
+              message: state.message,
+              onRetry: () => context.read<NotificationCubit>().loadNotifications(),
+            );
+          }
           return const SizedBox.shrink();
         },
       ),

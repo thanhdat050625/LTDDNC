@@ -33,23 +33,24 @@ class MovieInfoSection extends StatelessWidget {
   }
 
   Widget _buildRow(BuildContext context, IconData icon, String label, String value) {
+    final colors = CineplexColors.of(context);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 20, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
+        Icon(icon, size: 20, color: colors.textSecondary),
         const SizedBox(width: 12),
         SizedBox(
           width: 90, 
           child: Text(
             label, 
-            style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5))
+            style: TextStyle(color: colors.textSecondary),
           ),
         ),
         Expanded(
           child: Text(
             value, 
-            style: TextStyle(fontWeight: FontWeight.w500, color: Theme.of(context).colorScheme.onSurface)
-          )
+            style: TextStyle(fontWeight: FontWeight.w500, color: colors.textPrimary),
+          ),
         ),
       ],
     );

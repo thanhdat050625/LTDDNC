@@ -27,7 +27,7 @@ class ConcessionListItem extends StatelessWidget {
       stockColor = theme.error;
       stockText = l10n.outOfStock;
     } else if (concession.stockQuantity <= 5) {
-      stockColor = Colors.orange;
+      stockColor = theme.warning;
       stockText = l10n.lowStockCount(concession.stockQuantity);
     }
 
@@ -156,9 +156,8 @@ class ConcessionListItem extends StatelessWidget {
                     ),
                     onPressed: onEdit,
                     tooltip: l10n.editProduct,
-                    constraints: const BoxConstraints(),
-                    padding: const EdgeInsets.all(6),
-                    visualDensity: VisualDensity.compact,
+                    constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                    padding: const EdgeInsets.all(8),
                   ),
                   const SizedBox(height: 2),
                   IconButton(
@@ -169,9 +168,8 @@ class ConcessionListItem extends StatelessWidget {
                     ),
                     onPressed: onDelete,
                     tooltip: l10n.delete,
-                    constraints: const BoxConstraints(),
-                    padding: const EdgeInsets.all(6),
-                    visualDensity: VisualDensity.compact,
+                    constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                    padding: const EdgeInsets.all(8),
                   ),
                 ],
               ),

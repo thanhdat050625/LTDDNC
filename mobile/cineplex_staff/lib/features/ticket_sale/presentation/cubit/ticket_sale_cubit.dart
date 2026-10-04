@@ -110,7 +110,6 @@ class TicketSaleCubit extends Cubit<TicketSaleState> {
   }
 
   List<ShowtimeModel> _parseShowtimes(Map<String, dynamic> data) {
-    final now = DateTime.now();
     final List<ShowtimeModel> allShowtimes = [];
     
     // The backend returns a map keyed by YYYY-MM-DD

@@ -19,7 +19,7 @@ class AppCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<CineplexColors>()!;
+    final colors = CineplexColors.of(context);
     
     return Container(
       margin: margin ?? EdgeInsets.zero,

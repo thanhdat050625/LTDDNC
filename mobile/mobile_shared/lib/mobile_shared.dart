@@ -20,15 +20,18 @@ export 'theme/app_colors.dart';
 export 'theme/cineplex_colors.dart';
 export 'theme/app_theme.dart';
 export 'theme/app_text_styles.dart';
+export 'theme/theme_cubit.dart';
 
 // Utils
 export 'utils/format_utils.dart';
 export 'utils/validators.dart';
+
 export 'package:image_picker/image_picker.dart';
 
 // Widgets
 export 'widgets/app_loading.dart';
 export 'widgets/app_error_view.dart';
+export 'widgets/app_empty_view.dart';
 export 'widgets/app_scaffold.dart';
 export 'widgets/app_button.dart';
 export 'widgets/app_text_field.dart';
@@ -36,6 +39,9 @@ export 'widgets/app_card.dart';
 export 'widgets/app_cached_image.dart';
 export 'widgets/shimmer_skeleton.dart';
 export 'widgets/staggered_list.dart';
+export 'widgets/seat_widget.dart';
+export 'widgets/app_exit_dialog.dart';
+export 'navigation/app_back_handler.dart';
 
 // Models
 export 'models/user_model.dart';
@@ -118,3 +124,6 @@ export 'features/concessions/cubit/concession_form_state.dart';
 export 'features/concessions/presentation/widgets/concession_list_item.dart';
 export 'features/concessions/presentation/screens/concession_management_screen.dart';
 export 'features/concessions/presentation/screens/concession_form_screen.dart';
+
+// Settings
+export 'features/settings/presentation/screens/app_settings_screen.dart';
