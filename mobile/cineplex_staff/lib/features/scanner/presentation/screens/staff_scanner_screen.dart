@@ -36,11 +36,28 @@ class _StaffScannerScreenState extends State<StaffScannerScreen>
       vsync: this,
       duration: const Duration(milliseconds: 2200),
     )..repeat(reverse: true);
+    _scannerController.addListener(_onScannerStateChanged);
+  }
+
+  void _onScannerStateChanged() {
+    final state = _scannerController.value;
+    debugPrint(
+      '[QR_SCAN] State changed -> '
+      'isInitialized: ${state.isInitialized}, '
+      'isRunning: ${state.isRunning}, '
+      'isStarting: ${state.isStarting}, '
+      'cameraDirection: ${state.cameraDirection}, '
+      'torchState: ${state.torchState}, '
+      'size: ${state.size}, '
+      'error: ${state.error?.errorCode.name} (${state.error?.errorDetails?.message ?? "no message"})',
+    );
   }
 
   @override
   void dispose() {
     _laserController.dispose();
+    debugPrint('[QR_SCAN] StaffScannerScreen: dispose');
+    _scannerController.removeListener(_onScannerStateChanged);
     _scannerController.dispose();
     _manualCodeController.dispose();
     super.dispose();

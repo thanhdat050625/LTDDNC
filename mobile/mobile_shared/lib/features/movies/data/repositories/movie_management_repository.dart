@@ -64,4 +64,10 @@ class MovieManagementRepository {
     final payload = (response.data is Map && response.data.containsKey('data')) ? response.data['data'] : response.data;
     return MovieModel.fromJson(payload as Map<String, dynamic>);
   }
+
+  Future<MovieModel> getMovieDetail(int id) async {
+    final response = await _dioClient.get('/movies/get-movie/$id');
+    final payload = (response.data is Map && response.data.containsKey('data')) ? response.data['data'] : response.data;
+    return MovieModel.fromJson(payload as Map<String, dynamic>);
+  }
 }

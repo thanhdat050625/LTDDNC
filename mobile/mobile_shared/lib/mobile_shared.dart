@@ -74,6 +74,7 @@ export 'features/movies/cubit/movie_management_state.dart';
 export 'features/movies/cubit/movie_form_cubit.dart';
 export 'features/movies/presentation/screens/movie_management_screen.dart';
 export 'features/movies/presentation/screens/movie_form_screen.dart';
+export 'features/movies/presentation/screens/movie_management_detail_screen.dart';
 
 // Showtimes
 export 'features/showtimes/data/repositories/showtime_management_repository.dart';

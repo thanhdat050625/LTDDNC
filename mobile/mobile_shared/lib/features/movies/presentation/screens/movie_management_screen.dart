@@ -121,7 +121,7 @@ class _MovieManagementScreenState extends State<MovieManagementScreen> {
                           movie: movie,
                           onTap: () {
                             _reloadAfterPush(
-                              context.push('/movies/${movie.id}/edit', extra: movie),
+                              context.push('/movies/${movie.id}', extra: movie),
                             );
                           },
                           onEdit: () {
