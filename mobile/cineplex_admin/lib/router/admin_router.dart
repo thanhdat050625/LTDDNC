@@ -10,11 +10,15 @@ import '../features/profile/presentation/screens/admin_profile_screen.dart';
 import '../features/settings/presentation/screens/admin_settings_screen.dart';
 import '../features/dashboard/presentation/widgets/admin_drawer.dart';
 
-final _rootNavigatorKey = GlobalKey<NavigatorState>();
+final adminRootNavigatorKey = GlobalKey<NavigatorState>();
 
-GoRouter createAdminRouter(AuthBloc authBloc) {
+GoRouter createAdminRouter(
+  AuthBloc authBloc, {
+  GlobalKey<NavigatorState>? rootNavKey,
+}) {
+  final rootKey = rootNavKey ?? adminRootNavigatorKey;
   return GoRouter(
-    navigatorKey: _rootNavigatorKey,
+    navigatorKey: rootKey,
     initialLocation: '/statistics',
     refreshListenable: _AdminAuthRefreshNotifier(authBloc),
     redirect: (context, state) {

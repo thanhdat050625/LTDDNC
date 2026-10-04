@@ -61,6 +61,7 @@ class _AppState extends State<App> {
   late final ThemeCubit _themeCubit;
   late final SocketService _socketService;
   late final GoRouter _router;
+  late final AppBackHandler _backHandler;
 
   @override
   void initState() {
@@ -72,10 +73,18 @@ class _AppState extends State<App> {
     _themeCubit = ThemeCubit(widget.storageService);
     _socketService = SocketService(baseUrl: AppConstants.baseUrl);
     _router = createRouter(_authBloc);
+    _backHandler = AppBackHandler(
+      router: _router,
+      rootNavKey: rootNavigatorKey,
+      shellNavKey: shellNavigatorKey,
+      defaultRootPath: '/home',
+      exitOnPaths: {'/home'},
+    )..init();
   }
 
   @override
   void dispose() {
+    _backHandler.dispose();
     _authBloc.close();
     _homeCubit.close();
     _notificationCubit.close();

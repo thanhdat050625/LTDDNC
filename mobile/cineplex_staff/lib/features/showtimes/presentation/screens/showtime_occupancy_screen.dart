@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 
+import 'package:cineplex_staff/features/home/presentation/widgets/staff_drawer.dart';
+
 class ShowtimeOccupancyScreen extends StatefulWidget {
   const ShowtimeOccupancyScreen({super.key});
 
   @override
-  State<ShowtimeOccupancyScreen> createState() => _ShowtimeOccupancyScreenState();
+  State<ShowtimeOccupancyScreen> createState() =>
+      _ShowtimeOccupancyScreenState();
 }
 
 class _ShowtimeOccupancyScreenState extends State<ShowtimeOccupancyScreen> {
@@ -17,16 +20,11 @@ class _ShowtimeOccupancyScreenState extends State<ShowtimeOccupancyScreen> {
     final l10n = AppLocalizations.of(context)!;
     final theme = CineplexColors.of(context);
 
-    final dates = [
-      l10n.today,
-      l10n.tomorrow,
-      '05/10',
-      '06/10',
-      '07/10',
-    ];
+    final dates = [l10n.today, l10n.tomorrow, '05/10', '06/10', '07/10'];
 
     return AppScaffold(
       title: l10n.showtimesAndOccupancy,
+      drawer: const StaffDrawer(),
       body: Column(
         children: [
           // Horizontal Date Picker
@@ -47,19 +45,25 @@ class _ShowtimeOccupancyScreenState extends State<ShowtimeOccupancyScreen> {
                       label: Text(dates[index]),
                       selected: isSelected,
                       onSelected: (selected) {
-                        if (selected) setState(() => _selectedDateIndex = index);
+                        if (selected) {
+                          setState(() => _selectedDateIndex = index);
+                        }
                       },
                       selectedColor: theme.primary,
                       backgroundColor: theme.surface,
                       labelStyle: TextStyle(
                         fontSize: 12,
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                        fontWeight: isSelected
+                            ? FontWeight.bold
+                            : FontWeight.w500,
                         color: isSelected ? Colors.white : theme.textSecondary,
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                         side: BorderSide(
-                          color: isSelected ? theme.primary : theme.borderSubtle,
+                          color: isSelected
+                              ? theme.primary
+                              : theme.borderSubtle,
                         ),
                       ),
                     ),
@@ -72,7 +76,7 @@ class _ShowtimeOccupancyScreenState extends State<ShowtimeOccupancyScreen> {
           // Room Timeline Cards
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
               children: [
                 _buildRoomCard(
                   context: context,
@@ -294,13 +298,25 @@ class _ShowtimeOccupancyScreenState extends State<ShowtimeOccupancyScreen> {
               ),
               const SizedBox(width: 6),
               OutlinedButton.icon(
-                onPressed: () => _showQuickSeatMap(context, roomName, movie, capacity, booked),
+                onPressed: () => _showQuickSeatMap(
+                  context,
+                  roomName,
+                  movie,
+                  capacity,
+                  booked,
+                ),
                 icon: const Icon(LucideIcons.layoutGrid, size: 14),
-                label: Text(l10n.viewSeatMap, style: const TextStyle(fontSize: 11)),
+                label: Text(
+                  l10n.viewSeatMap,
+                  style: const TextStyle(fontSize: 11),
+                ),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: theme.primary,
                   side: BorderSide(color: theme.primary.withValues(alpha: 0.5)),
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 6,
+                  ),
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   shape: RoundedRectangleBorder(
@@ -416,9 +432,7 @@ class _QuickSeatMapModal extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 4),
             decoration: BoxDecoration(
-              border: Border(
-                top: BorderSide(color: theme.primary, width: 3),
-              ),
+              border: Border(top: BorderSide(color: theme.primary, width: 3)),
             ),
             child: Text(
               l10n.screen,
@@ -468,7 +482,9 @@ class _QuickSeatMapModal extends StatelessWidget {
                             return Container(
                               width: 24,
                               height: 24,
-                              margin: const EdgeInsets.symmetric(horizontal: 2.5),
+                              margin: const EdgeInsets.symmetric(
+                                horizontal: 2.5,
+                              ),
                               decoration: BoxDecoration(
                                 color: seatColor,
                                 borderRadius: BorderRadius.circular(5),
@@ -479,7 +495,9 @@ class _QuickSeatMapModal extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 9,
                                     fontWeight: FontWeight.bold,
-                                    color: isBooked ? theme.seatBookedText : theme.seatText,
+                                    color: isBooked
+                                        ? theme.seatBookedText
+                                        : theme.seatText,
                                   ),
                                 ),
                               ),
@@ -564,10 +582,7 @@ class _QuickSeatMapModal extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 4),
-        Text(
-          label,
-          style: TextStyle(fontSize: 11, color: theme.textSecondary),
-        ),
+        Text(label, style: TextStyle(fontSize: 11, color: theme.textSecondary)),
       ],
     );
   }

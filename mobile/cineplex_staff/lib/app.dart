@@ -29,6 +29,7 @@ class _CineplexStaffAppState extends State<CineplexStaffApp> {
   late final StaffCubit _staffCubit;
   late final ThemeCubit _themeCubit;
   late final GoRouter _router;
+  late final AppBackHandler _backHandler;
 
   @override
   void initState() {
@@ -37,10 +38,18 @@ class _CineplexStaffAppState extends State<CineplexStaffApp> {
     _staffCubit = StaffCubit(widget.staffRepo);
     _themeCubit = ThemeCubit(widget.storageService);
     _router = createStaffRouter(_authBloc);
+    _backHandler = AppBackHandler(
+      router: _router,
+      rootNavKey: staffRootNavigatorKey,
+      shellNavKey: staffShellNavigatorKey,
+      defaultRootPath: '/dashboard',
+      exitOnPaths: {'/dashboard', '/login'},
+    )..init();
   }
 
   @override
   void dispose() {
+    _backHandler.dispose();
     _authBloc.close();
     _staffCubit.close();
     _themeCubit.close();

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_shared/mobile_shared.dart';
+
 import '../cubit/profile_cubit.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -18,7 +19,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     context.read<ProfileCubit>().loadProfile();
   }
 
-  void _showLoyaltyPolicyDialog(BuildContext context, Map<String, dynamic> loyalty, AppLocalizations l10n) {
+  void _showLoyaltyPolicyDialog(
+    BuildContext context,
+    Map<String, dynamic> loyalty,
+    AppLocalizations l10n,
+  ) {
     final colorScheme = Theme.of(context).colorScheme;
 
     showDialog(
@@ -29,9 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             const Icon(Icons.stars_rounded, color: Color(0xFFFFB800)),
             const SizedBox(width: 8),
-            Expanded(
-              child: Text(l10n.loyaltyPolicyTitle),
-            ),
+            Expanded(child: Text(l10n.loyaltyPolicyTitle)),
           ],
         ),
         content: Column(
@@ -67,17 +70,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildPolicyItem({required IconData icon, required Color color, required String text}) {
+  Widget _buildPolicyItem({
+    required IconData icon,
+    required Color color,
+    required String text,
+  }) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Icon(icon, size: 20, color: color),
         const SizedBox(width: 8),
         Expanded(
-          child: Text(
-            text,
-            style: const TextStyle(fontSize: 13, height: 1.4),
-          ),
+          child: Text(text, style: const TextStyle(fontSize: 13, height: 1.4)),
         ),
       ],
     );
@@ -133,7 +137,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             if (state is ProfileLoading) return const AppLoading();
             if (state is ProfileLoaded) {
               final loyalty = state.loyaltyInfo;
-              final role = (user!['role'] ?? 'CUSTOMER').toString().toUpperCase();
+              final role = (user!['role'] ?? 'CUSTOMER')
+                  .toString()
+                  .toUpperCase();
               final isStaffOrAdmin = role == 'STAFF' || role == 'ADMIN';
 
               final fullName = user['fullName'] ?? user['name'] ?? '';
@@ -142,270 +148,319 @@ class _ProfileScreenState extends State<ProfileScreen> {
               final gender = user['gender'] == 'MALE'
                   ? l10n.male
                   : (user['gender'] == 'FEMALE' ? l10n.female : '');
-              final dob = user['dateOfBirth'] != null ? user['dateOfBirth'].toString().split('T').first : '';
-              final points = loyalty['loyaltyPoints'] ?? user['loyaltyPoints'] ?? 0;
+              final dob = user['dateOfBirth'] != null
+                  ? user['dateOfBirth'].toString().split('T').first
+                  : '';
+              final points =
+                  loyalty['loyaltyPoints'] ?? user['loyaltyPoints'] ?? 0;
 
               return RefreshIndicator(
                 onRefresh: () => context.read<ProfileCubit>().loadProfile(),
                 child: ListView(
                   physics: const AlwaysScrollableScrollPhysics(),
-                  padding: EdgeInsets.fromLTRB(16, 16, 16, 100 + MediaQuery.of(context).padding.bottom),
-                  children: [
-                  // Header Avatar & Name (Avatar qua trái, thông tin qua phải)
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 36,
-                        backgroundColor: colorScheme.primaryContainer,
-                        backgroundImage: (user['avatar'] != null && user['avatar'].toString().isNotEmpty)
-                            ? NetworkImage(user['avatar'].toString())
-                            : null,
-                        child: (user['avatar'] != null && user['avatar'].toString().isNotEmpty)
-                            ? null
-                            : Text(
-                                fullName.isNotEmpty ? fullName[0].toUpperCase() : 'U',
-                                style: TextStyle(
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.bold,
-                                  color: colorScheme.onPrimaryContainer,
-                                ),
-                              ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              fullName,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              email,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontSize: 13, color: colorScheme.onSurfaceVariant),
-                            ),
-                            const SizedBox(height: 8),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                              decoration: BoxDecoration(
-                                color: isStaffOrAdmin ? colorScheme.errorContainer : colorScheme.secondaryContainer,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                role == 'STAFF'
-                                    ? l10n.staffRole
-                                    : (role == 'ADMIN' ? l10n.adminRole : l10n.customerRole),
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                  color: isStaffOrAdmin ? colorScheme.onErrorContainer : colorScheme.onSecondaryContainer,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                  padding: EdgeInsets.fromLTRB(
+                    16,
+                    16,
+                    16,
+                    100 + MediaQuery.of(context).padding.bottom,
                   ),
-                  const SizedBox(height: 20),
-
-                  // Loyalty Card
-                  InkWell(
-                    onTap: () => _showLoyaltyPolicyDialog(context, loyalty, l10n),
-                    borderRadius: BorderRadius.circular(16),
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            colorScheme.primaryContainer,
-                            colorScheme.surfaceContainerHighest,
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
+                  children: [
+                    // Header Avatar & Name (Avatar qua trái, thông tin qua phải)
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 36,
+                          backgroundColor: colorScheme.primaryContainer,
+                          backgroundImage:
+                              (user['avatar'] != null &&
+                                  user['avatar'].toString().isNotEmpty)
+                              ? NetworkImage(user['avatar'].toString())
+                              : null,
+                          child:
+                              (user['avatar'] != null &&
+                                  user['avatar'].toString().isNotEmpty)
+                              ? null
+                              : Text(
+                                  fullName.isNotEmpty
+                                      ? fullName[0].toUpperCase()
+                                      : 'U',
+                                  style: TextStyle(
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.bold,
+                                    color: colorScheme.onPrimaryContainer,
+                                  ),
+                                ),
                         ),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
-                                children: [
-                                  const Icon(Icons.stars_rounded, size: 20, color: Color(0xFFFFB800)),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    l10n.loyaltyInfo,
-                                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant),
-                                  ),
-                                ],
+                              Text(
+                                fullName,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                email,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
                               ),
                               const SizedBox(height: 8),
-                              Text(
-                                '$points ${l10n.pointsSuffix}',
-                                style: TextStyle(
-                                  fontSize: 26,
-                                  fontWeight: FontWeight.bold,
-                                  color: colorScheme.onSurface,
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 3,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isStaffOrAdmin
+                                      ? colorScheme.errorContainer
+                                      : colorScheme.secondaryContainer,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  role == 'STAFF'
+                                      ? l10n.staffRole
+                                      : (role == 'ADMIN'
+                                            ? l10n.adminRole
+                                            : l10n.customerRole),
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: isStaffOrAdmin
+                                        ? colorScheme.onErrorContainer
+                                        : colorScheme.onSecondaryContainer,
+                                  ),
                                 ),
                               ),
                             ],
                           ),
-                          Row(
-                            children: [
-                              Text(
-                                l10n.info,
-                                style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant, fontWeight: FontWeight.w500),
-                              ),
-                              Icon(Icons.chevron_right, size: 18, color: colorScheme.onSurfaceVariant),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Loyalty Card
+                    InkWell(
+                      onTap: () =>
+                          _showLoyaltyPolicyDialog(context, loyalty, l10n),
+                      borderRadius: BorderRadius.circular(16),
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              colorScheme.primaryContainer,
+                              colorScheme.surfaceContainerHighest,
                             ],
-                          )
-                        ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: colorScheme.outlineVariant.withValues(
+                              alpha: 0.5,
+                            ),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.stars_rounded,
+                                      size: 20,
+                                      color: Color(0xFFFFB800),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      l10n.loyaltyInfo,
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                        color: colorScheme.onSurfaceVariant,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  '$points ${l10n.pointsSuffix}',
+                                  style: TextStyle(
+                                    fontSize: 26,
+                                    fontWeight: FontWeight.bold,
+                                    color: colorScheme.onSurface,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  l10n.info,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: colorScheme.onSurfaceVariant,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.chevron_right,
+                                  size: 18,
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
-                  // Personal Info Details
-                  if (phone.isNotEmpty || gender.isNotEmpty || dob.isNotEmpty)
+                    // Personal Info Details
+                    if (phone.isNotEmpty || gender.isNotEmpty || dob.isNotEmpty)
+                      Card(
+                        elevation: 0,
+                        color: colorScheme.surfaceContainerLow,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          side: BorderSide(
+                            color: colorScheme.outlineVariant.withValues(
+                              alpha: 0.4,
+                            ),
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            if (phone.isNotEmpty)
+                              ListTile(
+                                leading: const Icon(Icons.phone_outlined),
+                                title: Text(l10n.phone),
+                                trailing: Text(
+                                  phone,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            if (gender.isNotEmpty)
+                              ListTile(
+                                leading: const Icon(Icons.person_outline),
+                                title: Text(l10n.gender),
+                                trailing: Text(
+                                  gender,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            if (dob.isNotEmpty)
+                              ListTile(
+                                leading: const Icon(
+                                  Icons.calendar_today_outlined,
+                                ),
+                                title: Text(l10n.dateOfBirth),
+                                trailing: Text(
+                                  dob,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+
+                    const SizedBox(height: 16),
+
+                    // System Settings Card
                     Card(
                       elevation: 0,
                       color: colorScheme.surfaceContainerLow,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
-                        side: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.4)),
-                      ),
-                      child: Column(
-                        children: [
-                          if (phone.isNotEmpty)
-                            ListTile(
-                              leading: const Icon(Icons.phone_outlined),
-                              title: Text(l10n.phone),
-                              trailing: Text(phone, style: const TextStyle(fontWeight: FontWeight.w500)),
-                            ),
-                          if (gender.isNotEmpty)
-                            ListTile(
-                              leading: const Icon(Icons.person_outline),
-                              title: Text(l10n.gender),
-                              trailing: Text(gender, style: const TextStyle(fontWeight: FontWeight.w500)),
-                            ),
-                          if (dob.isNotEmpty)
-                            ListTile(
-                              leading: const Icon(Icons.calendar_today_outlined),
-                              title: Text(l10n.dateOfBirth),
-                              trailing: Text(dob, style: const TextStyle(fontWeight: FontWeight.w500)),
-                            ),
-                        ],
-                      ),
-                    ),
-
-                  const SizedBox(height: 16),
-
-                  // Theme Toggle Settings Card
-                  Card(
-                    elevation: 0,
-                    color: colorScheme.surfaceContainerLow,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      side: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.4)),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(Icons.palette_outlined, size: 20, color: colorScheme.primary),
-                              const SizedBox(width: 8),
-                              Text(
-                                l10n.themeModeSetting,
-                                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                              ),
-                            ],
+                        side: BorderSide(
+                          color: colorScheme.outlineVariant.withValues(
+                            alpha: 0.4,
                           ),
-                          const SizedBox(height: 12),
-                          BlocBuilder<ThemeCubit, ThemeMode>(
-                            builder: (context, currentMode) {
-                              return SizedBox(
-                                width: double.infinity,
-                                child: SegmentedButton<ThemeMode>(
-                                  segments: [
-                                    ButtonSegment<ThemeMode>(
-                                      value: ThemeMode.dark,
-                                      icon: const Icon(Icons.dark_mode_outlined, size: 16),
-                                      label: Text(l10n.themeModeDark, style: const TextStyle(fontSize: 12)),
-                                    ),
-                                    ButtonSegment<ThemeMode>(
-                                      value: ThemeMode.light,
-                                      icon: const Icon(Icons.light_mode_outlined, size: 16),
-                                      label: Text(l10n.themeModeLight, style: const TextStyle(fontSize: 12)),
-                                    ),
-                                    ButtonSegment<ThemeMode>(
-                                      value: ThemeMode.system,
-                                      icon: const Icon(Icons.phone_android_outlined, size: 16),
-                                      label: Text(l10n.themeModeSystem, style: const TextStyle(fontSize: 12)),
-                                    ),
-                                  ],
-                                  selected: {currentMode},
-                                  onSelectionChanged: (selected) {
-                                    if (selected.isNotEmpty) {
-                                      context.read<ThemeCubit>().setThemeMode(selected.first);
-                                    }
-                                  },
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // Logout Button
-                  ListTile(
-                    leading: Icon(Icons.logout, color: colorScheme.error),
-                    title: Text(l10n.logout, style: TextStyle(color: colorScheme.error, fontWeight: FontWeight.w600)),
-                    onTap: () => _showLogoutDialog(context, l10n),
-                  ),
-                ],
-              ),
-            );
-          }
-          if (state is ProfileError) {
-            return RefreshIndicator(
-              onRefresh: () => context.read<ProfileCubit>().loadProfile(),
-              child: ListView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                children: [
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.3),
-                  Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(state.message, textAlign: TextAlign.center),
-                        const SizedBox(height: 12),
-                        ElevatedButton(
-                          onPressed: () => context.read<ProfileCubit>().loadProfile(),
-                          child: Text(l10n.retry),
                         ),
-                      ],
+                      ),
+                      child: ListTile(
+                        leading: Icon(
+                          Icons.settings_outlined,
+                          color: colorScheme.primary,
+                        ),
+                        title: Text(
+                          l10n.adminSettings,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 15,
+                          ),
+                        ),
+                        trailing: Icon(
+                          Icons.chevron_right,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                        onTap: () => context.push('/settings'),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            );
-          }
+
+                    const SizedBox(height: 20),
+
+                    // Logout Button
+                    ListTile(
+                      leading: Icon(Icons.logout, color: colorScheme.error),
+                      title: Text(
+                        l10n.logout,
+                        style: TextStyle(
+                          color: colorScheme.error,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      onTap: () => _showLogoutDialog(context, l10n),
+                    ),
+                  ],
+                ),
+              );
+            }
+            if (state is ProfileError) {
+              return RefreshIndicator(
+                onRefresh: () => context.read<ProfileCubit>().loadProfile(),
+                child: ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  children: [
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.3),
+                    Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(state.message, textAlign: TextAlign.center),
+                          const SizedBox(height: 12),
+                          ElevatedButton(
+                            onPressed: () =>
+                                context.read<ProfileCubit>().loadProfile(),
+                            child: Text(l10n.retry),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
             return const SizedBox.shrink();
           }(),
         );

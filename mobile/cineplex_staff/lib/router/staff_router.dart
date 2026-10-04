@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +8,7 @@ import 'package:mobile_shared/mobile_shared.dart';
 import '../core/widgets/staff_shell_scaffold.dart';
 import '../features/auth/presentation/screens/staff_login_screen.dart';
 import '../features/dashboard/presentation/screens/staff_dashboard_screen.dart';
+import '../features/home/presentation/widgets/staff_drawer.dart';
 import '../features/profile/presentation/screens/staff_profile_screen.dart';
 import '../features/scanner/presentation/screens/staff_scanner_screen.dart';
 import '../features/showtimes/presentation/screens/showtime_occupancy_screen.dart';
@@ -16,12 +18,18 @@ import '../features/ticket_sale/presentation/screens/checkout_screen.dart';
 import '../features/ticket_sale/presentation/screens/seat_selection_screen.dart';
 import '../features/ticket_sale/presentation/screens/ticket_sale_screen.dart';
 
-final _rootNavigatorKey = GlobalKey<NavigatorState>();
-final _shellNavigatorKey = GlobalKey<NavigatorState>();
+final staffRootNavigatorKey = GlobalKey<NavigatorState>();
+final staffShellNavigatorKey = GlobalKey<NavigatorState>();
 
-GoRouter createStaffRouter(AuthBloc authBloc) {
+GoRouter createStaffRouter(
+  AuthBloc authBloc, {
+  GlobalKey<NavigatorState>? rootNavKey,
+  GlobalKey<NavigatorState>? shellNavKey,
+}) {
+  final rootKey = rootNavKey ?? staffRootNavigatorKey;
+  final shellKey = shellNavKey ?? staffShellNavigatorKey;
   return GoRouter(
-    navigatorKey: _rootNavigatorKey,
+    navigatorKey: rootKey,
     initialLocation: '/dashboard',
     refreshListenable: _StaffAuthRefreshNotifier(authBloc),
     redirect: (context, state) {
@@ -54,7 +62,7 @@ GoRouter createStaffRouter(AuthBloc authBloc) {
 
       // 5 Core Staff Destinations hosted in ShellRoute
       ShellRoute(
-        navigatorKey: _shellNavigatorKey,
+        navigatorKey: shellKey,
         builder: (context, state, child) => StaffShellScaffold(child: child),
         routes: [
           GoRoute(
@@ -117,7 +125,7 @@ GoRouter createStaffRouter(AuthBloc authBloc) {
           create: (context) => MovieManagementCubit(
             MovieManagementRepository(context.read<DioClient>()),
           ),
-          child: const MovieManagementScreen(),
+          child: const MovieManagementScreen(drawer: StaffDrawer()),
         ),
       ),
       GoRoute(
@@ -147,7 +155,7 @@ GoRouter createStaffRouter(AuthBloc authBloc) {
           create: (context) => ShowtimeManagementCubit(
             ShowtimeManagementRepository(context.read<DioClient>()),
           ),
-          child: const ShowtimeManagementScreen(),
+          child: const ShowtimeManagementScreen(drawer: StaffDrawer()),
         ),
       ),
       GoRoute(
@@ -181,7 +189,7 @@ GoRouter createStaffRouter(AuthBloc authBloc) {
           create: (context) => CinemaManagementCubit(
             CinemaManagementRepository(context.read<DioClient>()),
           ),
-          child: const CinemaManagementScreen(),
+          child: const CinemaManagementScreen(drawer: StaffDrawer()),
         ),
       ),
       GoRoute(
@@ -249,7 +257,7 @@ GoRouter createStaffRouter(AuthBloc authBloc) {
             create: (context) => PromotionManagementCubit(
               PromotionManagementRepository(context.read<DioClient>()),
             ),
-            child: const PromotionManagementScreen(),
+            child: const PromotionManagementScreen(drawer: StaffDrawer()),
           );
         },
       ),
@@ -283,7 +291,7 @@ GoRouter createStaffRouter(AuthBloc authBloc) {
             create: (context) => ConcessionManagementCubit(
               ConcessionManagementRepository(context.read<DioClient>()),
             ),
-            child: const ConcessionManagementScreen(),
+            child: const ConcessionManagementScreen(drawer: StaffDrawer()),
           );
         },
       ),
@@ -309,6 +317,13 @@ GoRouter createStaffRouter(AuthBloc authBloc) {
             child: ConcessionFormScreen(concession: concession),
           );
         },
+      ),
+      GoRoute(
+        path: '/settings',
+        builder: (context, state) => const AppSettingsScreen(
+          drawer: StaffDrawer(),
+          appName: 'Cineplex Staff',
+        ),
       ),
     ],
   );

@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 
+import 'package:cineplex_staff/features/home/presentation/widgets/staff_drawer.dart';
+
 class StaffProfileScreen extends StatefulWidget {
   const StaffProfileScreen({super.key});
 
@@ -21,14 +23,17 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
     final authState = context.watch<AuthBloc>().state;
     final user = authState is AuthAuthenticated ? authState.user : null;
 
-    final staffName = user?.fullName.isNotEmpty == true ? user!.fullName : l10n.staffRole;
+    final staffName = user?.fullName.isNotEmpty == true
+        ? user!.fullName
+        : l10n.staffRole;
     final staffEmail = user?.email ?? 'staff@cineplex.vn';
     const cinemaName = 'Cineplex Flagship';
 
     return AppScaffold(
       title: l10n.staffProfile,
+      drawer: const StaffDrawer(),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
         child: Column(
           children: [
             // User Header Card
@@ -81,7 +86,10 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
                             ),
                             const SizedBox(width: 8),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
                                 color: theme.primary.withValues(alpha: 0.12),
                                 borderRadius: BorderRadius.circular(6),
@@ -110,7 +118,11 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
                         const SizedBox(height: 4),
                         Row(
                           children: [
-                            Icon(LucideIcons.mapPin, size: 12, color: theme.textSecondary),
+                            Icon(
+                              LucideIcons.mapPin,
+                              size: 12,
+                              color: theme.textSecondary,
+                            ),
                             const SizedBox(width: 4),
                             Expanded(
                               child: Text(
@@ -146,7 +158,11 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.palette_outlined, color: theme.primary, size: 20),
+                      Icon(
+                        Icons.palette_outlined,
+                        color: theme.primary,
+                        size: 20,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         l10n.themeModeSetting,
@@ -167,24 +183,44 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
                           segments: [
                             ButtonSegment<ThemeMode>(
                               value: ThemeMode.dark,
-                              icon: const Icon(Icons.dark_mode_outlined, size: 16),
-                              label: Text(l10n.themeModeDark, style: const TextStyle(fontSize: 12)),
+                              icon: const Icon(
+                                Icons.dark_mode_outlined,
+                                size: 16,
+                              ),
+                              label: Text(
+                                l10n.themeModeDark,
+                                style: const TextStyle(fontSize: 12),
+                              ),
                             ),
                             ButtonSegment<ThemeMode>(
                               value: ThemeMode.light,
-                              icon: const Icon(Icons.light_mode_outlined, size: 16),
-                              label: Text(l10n.themeModeLight, style: const TextStyle(fontSize: 12)),
+                              icon: const Icon(
+                                Icons.light_mode_outlined,
+                                size: 16,
+                              ),
+                              label: Text(
+                                l10n.themeModeLight,
+                                style: const TextStyle(fontSize: 12),
+                              ),
                             ),
                             ButtonSegment<ThemeMode>(
                               value: ThemeMode.system,
-                              icon: const Icon(Icons.phone_android_outlined, size: 16),
-                              label: Text(l10n.themeModeSystem, style: const TextStyle(fontSize: 12)),
+                              icon: const Icon(
+                                Icons.phone_android_outlined,
+                                size: 16,
+                              ),
+                              label: Text(
+                                l10n.themeModeSystem,
+                                style: const TextStyle(fontSize: 12),
+                              ),
                             ),
                           ],
                           selected: {currentMode},
                           onSelectionChanged: (selected) {
                             if (selected.isNotEmpty) {
-                              context.read<ThemeCubit>().setThemeMode(selected.first);
+                              context.read<ThemeCubit>().setThemeMode(
+                                selected.first,
+                              );
                             }
                           },
                         ),
@@ -210,7 +246,11 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
                   children: [
                     Row(
                       children: [
-                        Icon(LucideIcons.scanLine, color: theme.primary, size: 20),
+                        Icon(
+                          LucideIcons.scanLine,
+                          color: theme.primary,
+                          size: 20,
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
@@ -283,7 +323,10 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
               ),
               style: OutlinedButton.styleFrom(
                 side: BorderSide(color: theme.error.withValues(alpha: 0.6)),
-                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 14,
+                  horizontal: 24,
+                ),
                 minimumSize: const Size(double.infinity, 48),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -295,10 +338,7 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
             // App Version
             Text(
               'Cineplex Staff v1.0.0',
-              style: TextStyle(
-                fontSize: 12,
-                color: theme.textSecondary,
-              ),
+              style: TextStyle(fontSize: 12, color: theme.textSecondary),
             ),
           ],
         ),
@@ -306,14 +346,21 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
     );
   }
 
-  void _confirmLogout(BuildContext context, AppLocalizations l10n, CineplexColors theme) {
+  void _confirmLogout(
+    BuildContext context,
+    AppLocalizations l10n,
+    CineplexColors theme,
+  ) {
     showDialog(
       context: context,
       builder: (dialogCtx) => AlertDialog(
         backgroundColor: theme.surface,
         title: Text(
           l10n.endShift,
-          style: TextStyle(color: theme.textPrimary, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: theme.textPrimary,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         content: Text(
           l10n.logoutConfirm,
@@ -322,7 +369,10 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogCtx),
-            child: Text(l10n.cancel, style: TextStyle(color: theme.textSecondary)),
+            child: Text(
+              l10n.cancel,
+              style: TextStyle(color: theme.textSecondary),
+            ),
           ),
           ElevatedButton(
             onPressed: () {

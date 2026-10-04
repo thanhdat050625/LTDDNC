@@ -25,6 +25,7 @@ export 'theme/theme_cubit.dart';
 // Utils
 export 'utils/format_utils.dart';
 export 'utils/validators.dart';
+
 export 'package:image_picker/image_picker.dart';
 
 // Widgets
@@ -39,7 +40,8 @@ export 'widgets/app_cached_image.dart';
 export 'widgets/shimmer_skeleton.dart';
 export 'widgets/staggered_list.dart';
 export 'widgets/seat_widget.dart';
-
+export 'widgets/app_exit_dialog.dart';
+export 'navigation/app_back_handler.dart';
 
 // Models
 export 'models/user_model.dart';
@@ -121,3 +123,6 @@ export 'features/concessions/cubit/concession_form_state.dart';
 export 'features/concessions/presentation/widgets/concession_list_item.dart';
 export 'features/concessions/presentation/screens/concession_management_screen.dart';
 export 'features/concessions/presentation/screens/concession_form_screen.dart';
+
+// Settings
+export 'features/settings/presentation/screens/app_settings_screen.dart';

@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 
+import 'package:cineplex_staff/features/home/presentation/widgets/staff_drawer.dart';
+
 class StaffDashboardScreen extends StatelessWidget {
   const StaffDashboardScreen({super.key});
 
@@ -14,11 +16,14 @@ class StaffDashboardScreen extends StatelessWidget {
     final authState = context.watch<AuthBloc>().state;
     final staffUser = authState is AuthAuthenticated ? authState.user : null;
 
-    final staffName = staffUser?.fullName.isNotEmpty == true ? staffUser!.fullName : l10n.staffRole;
+    final staffName = staffUser?.fullName.isNotEmpty == true
+        ? staffUser!.fullName
+        : l10n.staffRole;
     const cinemaName = 'Cineplex Flagship';
 
     return AppScaffold(
       title: l10n.staffDashboard,
+      drawer: const StaffDrawer(),
       actions: [
         IconButton(
           icon: const Icon(LucideIcons.user),
@@ -27,7 +32,7 @@ class StaffDashboardScreen extends StatelessWidget {
         ),
       ],
       body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -152,7 +157,10 @@ class StaffDashboardScreen extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: theme.primary.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(6),
@@ -171,7 +179,11 @@ class StaffDashboardScreen extends StatelessWidget {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    Icon(LucideIcons.mapPin, size: 13, color: theme.textSecondary),
+                    Icon(
+                      LucideIcons.mapPin,
+                      size: 13,
+                      color: theme.textSecondary,
+                    ),
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
@@ -220,7 +232,11 @@ class StaffDashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildKpiGrid(BuildContext context, CineplexColors theme, AppLocalizations l10n) {
+  Widget _buildKpiGrid(
+    BuildContext context,
+    CineplexColors theme,
+    AppLocalizations l10n,
+  ) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final cardWidth = (constraints.maxWidth - 12) / 2;
@@ -312,10 +328,7 @@ class StaffDashboardScreen extends StatelessWidget {
               Flexible(
                 child: Text(
                   subtitle,
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: theme.textSecondary,
-                  ),
+                  style: TextStyle(fontSize: 11, color: theme.textSecondary),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -336,10 +349,7 @@ class StaffDashboardScreen extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             title,
-            style: TextStyle(
-              fontSize: 11,
-              color: theme.textSecondary,
-            ),
+            style: TextStyle(fontSize: 11, color: theme.textSecondary),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -348,7 +358,11 @@ class StaffDashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildQuickActions(BuildContext context, CineplexColors theme, AppLocalizations l10n) {
+  Widget _buildQuickActions(
+    BuildContext context,
+    CineplexColors theme,
+    AppLocalizations l10n,
+  ) {
     final actions = [
       {
         'title': l10n.actionScanTicket,
@@ -386,7 +400,10 @@ class StaffDashboardScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               onTap: a['onTap'] as VoidCallback,
               child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 6,
+                ),
                 decoration: BoxDecoration(
                   color: theme.surface,
                   borderRadius: BorderRadius.circular(12),
@@ -400,7 +417,11 @@ class StaffDashboardScreen extends StatelessWidget {
                         color: color.withValues(alpha: 0.12),
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(a['icon'] as IconData, size: 20, color: color),
+                      child: Icon(
+                        a['icon'] as IconData,
+                        size: 20,
+                        color: color,
+                      ),
                     ),
                     const SizedBox(height: 6),
                     Text(
@@ -424,7 +445,11 @@ class StaffDashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLiveRoomList(BuildContext context, CineplexColors theme, AppLocalizations l10n) {
+  Widget _buildLiveRoomList(
+    BuildContext context,
+    CineplexColors theme,
+    AppLocalizations l10n,
+  ) {
     final sampleRooms = [
       {
         'name': '${l10n.roomPrefix('01')} (IMAX)',
@@ -487,7 +512,10 @@ class StaffDashboardScreen extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
                       color: statusColor.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(8),
@@ -521,10 +549,7 @@ class StaffDashboardScreen extends StatelessWidget {
                   const SizedBox(width: 8),
                   Text(
                     room['time'] as String,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: theme.textSecondary,
-                    ),
+                    style: TextStyle(fontSize: 12, color: theme.textSecondary),
                   ),
                 ],
               ),
@@ -539,7 +564,9 @@ class StaffDashboardScreen extends StatelessWidget {
                         minHeight: 6,
                         backgroundColor: theme.borderSubtle,
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          percent > 90 ? theme.error : (percent > 70 ? theme.warning : theme.success),
+                          percent > 90
+                              ? theme.error
+                              : (percent > 70 ? theme.warning : theme.success),
                         ),
                       ),
                     ),

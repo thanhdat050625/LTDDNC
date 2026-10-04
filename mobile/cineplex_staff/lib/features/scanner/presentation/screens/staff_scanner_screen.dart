@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:mobile_shared/mobile_shared.dart';
+import 'package:cineplex_staff/features/home/presentation/widgets/staff_drawer.dart';
 
 import '../cubit/staff_cubit.dart';
 import '../widgets/scan_result_sheet.dart';
@@ -79,7 +80,11 @@ class _StaffScannerScreenState extends State<StaffScannerScreen>
     }
   }
 
-  void _showResultModal(StaffState state, BuildContext context, AppLocalizations l10n) {
+  void _showResultModal(
+    StaffState state,
+    BuildContext context,
+    AppLocalizations l10n,
+  ) {
     if (state is StaffCheckinSuccess) {
       HapticFeedback.lightImpact();
       final ticket = state.ticket;
@@ -118,7 +123,9 @@ class _StaffScannerScreenState extends State<StaffScannerScreen>
         isScrollControlled: true,
         backgroundColor: Colors.transparent,
         builder: (bottomSheetCtx) => ScanResultSheet(
-          status: state.isWarning ? ScanStatusType.alreadyUsed : ScanStatusType.invalid,
+          status: state.isWarning
+              ? ScanStatusType.alreadyUsed
+              : ScanStatusType.invalid,
           message: state.message,
           checkinTime: DateTime.now(),
           onScanNext: () {
@@ -148,6 +155,7 @@ class _StaffScannerScreenState extends State<StaffScannerScreen>
       },
       child: AppScaffold(
         title: l10n.scanTicket,
+        drawer: const StaffDrawer(),
         actions: [
           IconButton(
             icon: const Icon(LucideIcons.monitorSmartphone),
@@ -162,10 +170,10 @@ class _StaffScannerScreenState extends State<StaffScannerScreen>
                       await context.push('/pos');
                       if (!mounted) return;
                       await _scannerController.start();
-                    } on MobileScannerException {
-                      // Handled by controller
                     } finally {
-                      if (mounted) setState(() => _isNavigatingToTicketSale = false);
+                      if (mounted) {
+                        setState(() => _isNavigatingToTicketSale = false);
+                      }
                     }
                   },
           ),
@@ -188,11 +196,16 @@ class _StaffScannerScreenState extends State<StaffScannerScreen>
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                CircularProgressIndicator(color: colorScheme.primary),
+                                CircularProgressIndicator(
+                                  color: colorScheme.primary,
+                                ),
                                 const SizedBox(height: 16),
                                 Text(
                                   l10n.cameraInitializing,
-                                  style: TextStyle(fontSize: 13, color: colors.textSecondary),
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: colors.textSecondary,
+                                  ),
                                 ),
                               ],
                             ),
@@ -200,10 +213,13 @@ class _StaffScannerScreenState extends State<StaffScannerScreen>
                         },
                         errorBuilder: (context, error) {
                           final isPermission =
-                              error.errorCode == MobileScannerErrorCode.permissionDenied;
+                              error.errorCode ==
+                              MobileScannerErrorCode.permissionDenied;
                           return Center(
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24.0,
+                              ),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -230,14 +246,19 @@ class _StaffScannerScreenState extends State<StaffScannerScreen>
                                   Text(
                                     l10n.cameraErrorHint,
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(fontSize: 12, color: colors.textSecondary),
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: colors.textSecondary,
+                                    ),
                                   ),
                                   const SizedBox(height: 16),
                                   AppButton(
                                     text: l10n.retry,
                                     width: null,
                                     isLoading: _isRetryingCamera,
-                                    onPressed: _isRetryingCamera ? null : _retryScanner,
+                                    onPressed: _isRetryingCamera
+                                        ? null
+                                        : _retryScanner,
                                   ),
                                 ],
                               ),
@@ -282,14 +303,19 @@ class _StaffScannerScreenState extends State<StaffScannerScreen>
                                         decoration: BoxDecoration(
                                           gradient: LinearGradient(
                                             colors: [
-                                              colorScheme.primary.withValues(alpha: 0.1),
+                                              colorScheme.primary.withValues(
+                                                alpha: 0.1,
+                                              ),
                                               colorScheme.primary,
-                                              colorScheme.primary.withValues(alpha: 0.1),
+                                              colorScheme.primary.withValues(
+                                                alpha: 0.1,
+                                              ),
                                             ],
                                           ),
                                           boxShadow: [
                                             BoxShadow(
-                                              color: colorScheme.primary.withValues(alpha: 0.6),
+                                              color: colorScheme.primary
+                                                  .withValues(alpha: 0.6),
                                               blurRadius: 6,
                                               spreadRadius: 1,
                                             ),
@@ -318,7 +344,9 @@ class _StaffScannerScreenState extends State<StaffScannerScreen>
                             return Row(
                               children: [
                                 _ScannerGlassButton(
-                                  icon: _isTorchOn ? Icons.flash_on : Icons.flash_off,
+                                  icon: _isTorchOn
+                                      ? Icons.flash_on
+                                      : Icons.flash_off,
                                   isActive: _isTorchOn,
                                   activeColor: colors.warning,
                                   onTap: () async {
@@ -330,7 +358,8 @@ class _StaffScannerScreenState extends State<StaffScannerScreen>
                                 _ScannerGlassButton(
                                   icon: Icons.flip_camera_ios_outlined,
                                   isActive: false,
-                                  onTap: () => _scannerController.switchCamera(),
+                                  onTap: () =>
+                                      _scannerController.switchCamera(),
                                 ),
                               ],
                             );
@@ -343,7 +372,7 @@ class _StaffScannerScreenState extends State<StaffScannerScreen>
 
                 // Manual Input Section at Bottom
                 Container(
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 80),
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
                   decoration: BoxDecoration(
                     color: colorScheme.surface,
                     border: Border(top: BorderSide(color: colors.borderSubtle)),
@@ -385,7 +414,9 @@ class _StaffScannerScreenState extends State<StaffScannerScreen>
                                 ),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(color: colors.borderSubtle),
+                                  borderSide: BorderSide(
+                                    color: colors.borderSubtle,
+                                  ),
                                 ),
                                 prefixIcon: Icon(
                                   Icons.keyboard_outlined,
@@ -505,7 +536,9 @@ class _ScannerGlassButton extends StatelessWidget {
               : colorScheme.surface.withValues(alpha: 0.8),
           shape: BoxShape.circle,
           border: Border.all(
-            color: isActive ? highlight : colorScheme.outlineVariant.withValues(alpha: 0.3),
+            color: isActive
+                ? highlight
+                : colorScheme.outlineVariant.withValues(alpha: 0.3),
             width: 1.5,
           ),
           boxShadow: [

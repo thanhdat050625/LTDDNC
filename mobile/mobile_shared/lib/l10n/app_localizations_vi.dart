@@ -2038,4 +2038,13 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get statusInactive => 'Ngưng hoạt động';
+
+  @override
+  String get exitAppTitle => 'Thoát ứng dụng';
+
+  @override
+  String get exitAppMessage => 'Bạn có chắc chắn muốn thoát ứng dụng không?';
+
+  @override
+  String get exitAppConfirm => 'Thoát';
 }

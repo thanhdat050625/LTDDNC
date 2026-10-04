@@ -32,18 +32,25 @@ import 'package:cineplex_client/features/payment/presentation/cubit/payment_cubi
 import 'package:cineplex_client/features/payment/data/repositories/payment_repository.dart';
 import 'package:cineplex_client/core/router/main_shell.dart';
 
-final _rootNavigatorKey = GlobalKey<NavigatorState>();
-final _shellNavigatorKey = GlobalKey<NavigatorState>();
+final rootNavigatorKey = GlobalKey<NavigatorState>();
+final shellNavigatorKey = GlobalKey<NavigatorState>();
 
-GoRouter createRouter(AuthBloc authBloc) {
+GoRouter createRouter(
+  AuthBloc authBloc, {
+  GlobalKey<NavigatorState>? rootNavKey,
+  GlobalKey<NavigatorState>? shellNavKey,
+}) {
+  final rootKey = rootNavKey ?? rootNavigatorKey;
+  final shellKey = shellNavKey ?? shellNavigatorKey;
   return GoRouter(
-    navigatorKey: _rootNavigatorKey,
+    navigatorKey: rootKey,
     initialLocation: '/home',
     refreshListenable: _AuthRefreshNotifier(authBloc),
     redirect: (context, state) {
       final authState = authBloc.state;
       final isAuth = authState is AuthAuthenticated;
-      final isOnAuth = state.matchedLocation == '/login' ||
+      final isOnAuth =
+          state.matchedLocation == '/login' ||
           state.matchedLocation == '/register' ||
           state.matchedLocation == '/forgot-password';
 
@@ -56,8 +63,11 @@ GoRouter createRouter(AuthBloc authBloc) {
         '/notifications',
         '/profile',
         '/edit-profile',
+        '/settings',
       ];
-      final isProtected = protectedPrefixes.any((p) => state.matchedLocation.startsWith(p));
+      final isProtected = protectedPrefixes.any(
+        (p) => state.matchedLocation.startsWith(p),
+      );
 
       if (!isAuth && isProtected) return '/login';
       if (isAuth && isOnAuth) return '/home';
@@ -68,11 +78,14 @@ GoRouter createRouter(AuthBloc authBloc) {
       // Auth routes (no shell)
       GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
       GoRoute(path: '/register', builder: (_, __) => const RegisterScreen()),
-      GoRoute(path: '/forgot-password', builder: (_, __) => const ForgotPasswordScreen()),
+      GoRoute(
+        path: '/forgot-password',
+        builder: (_, __) => const ForgotPasswordScreen(),
+      ),
 
       // Main shell with bottom navigation
       ShellRoute(
-        navigatorKey: _shellNavigatorKey,
+        navigatorKey: shellKey,
         builder: (_, __, child) => MainShell(child: child),
         routes: [
           GoRoute(path: '/home', builder: (_, __) => const HomeScreen()),
@@ -84,7 +97,10 @@ GoRouter createRouter(AuthBloc authBloc) {
               child: const MyTicketsScreen(),
             ),
           ),
-          GoRoute(path: '/notifications', builder: (_, __) => const NotificationScreen()),
+          GoRoute(
+            path: '/notifications',
+            builder: (_, __) => const NotificationScreen(),
+          ),
           GoRoute(path: '/profile', builder: (_, __) => const ProfileScreen()),
         ],
       ),
@@ -100,7 +116,8 @@ GoRouter createRouter(AuthBloc authBloc) {
       GoRoute(
         path: '/showtimes/:movieId',
         builder: (_, state) => BlocProvider(
-          create: (context) => ShowtimeCubit(context.read<ShowtimeRepository>()),
+          create: (context) =>
+              ShowtimeCubit(context.read<ShowtimeRepository>()),
           child: ShowtimeSelectionScreen(
             movieId: int.parse(state.pathParameters['movieId']!),
           ),
@@ -124,9 +141,9 @@ GoRouter createRouter(AuthBloc authBloc) {
         builder: (context, state) {
           final bookingId = int.parse(state.pathParameters['bookingId']!);
           return BlocProvider(
-            create: (ctx) => ConcessionCubit(
-              ctx.read<ConcessionRepository>(),
-            )..loadConcessions(),
+            create: (ctx) =>
+                ConcessionCubit(ctx.read<ConcessionRepository>())
+                  ..loadConcessions(),
             child: ConcessionScreen(bookingId: bookingId),
           );
         },
@@ -136,9 +153,9 @@ GoRouter createRouter(AuthBloc authBloc) {
         builder: (context, state) {
           final bookingId = state.pathParameters['bookingId']!;
           return BlocProvider(
-            create: (ctx) => PaymentCubit(
-              ctx.read<PaymentRepository>(),
-            )..prepareCheckout(bookingId),
+            create: (ctx) =>
+                PaymentCubit(ctx.read<PaymentRepository>())
+                  ..prepareCheckout(bookingId),
             child: CheckoutScreen(bookingId: bookingId),
           );
         },
@@ -155,9 +172,9 @@ GoRouter createRouter(AuthBloc authBloc) {
         builder: (context, state) {
           final bookingId = state.pathParameters['bookingId']!;
           return BlocProvider(
-            create: (ctx) => PaymentCubit(
-              ctx.read<PaymentRepository>(),
-            )..checkStatus(bookingId),
+            create: (ctx) =>
+                PaymentCubit(ctx.read<PaymentRepository>())
+                  ..checkStatus(bookingId),
             child: PaymentResultScreen(bookingId: bookingId),
           );
         },
@@ -174,6 +191,10 @@ GoRouter createRouter(AuthBloc authBloc) {
         builder: (_, state) => EditProfileScreen(
           initialUser: state.extra as Map<String, dynamic>?,
         ),
+      ),
+      GoRoute(
+        path: '/settings',
+        builder: (_, __) => const AppSettingsScreen(appName: 'Cineplex Client'),
       ),
     ],
   );

@@ -34,6 +34,7 @@ class _CineplexAdminAppState extends State<CineplexAdminApp> {
   late final UserManagementCubit _userManagementCubit;
   late final ThemeCubit _themeCubit;
   late final GoRouter _router;
+  late final AppBackHandler _backHandler;
 
   @override
   void initState() {
@@ -43,10 +44,17 @@ class _CineplexAdminAppState extends State<CineplexAdminApp> {
     _userManagementCubit = UserManagementCubit(widget.userManagementRepo);
     _themeCubit = ThemeCubit(widget.storageService);
     _router = createAdminRouter(_authBloc);
+    _backHandler = AppBackHandler(
+      router: _router,
+      rootNavKey: adminRootNavigatorKey,
+      defaultRootPath: '/statistics',
+      exitOnPaths: {'/statistics', '/login'},
+    )..init();
   }
 
   @override
   void dispose() {
+    _backHandler.dispose();
     _authBloc.close();
     _statisticsCubit.close();
     _userManagementCubit.close();

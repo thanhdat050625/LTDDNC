@@ -3,12 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mobile_shared/mobile_shared.dart';
+import 'package:cineplex_staff/features/home/presentation/widgets/staff_drawer.dart';
+
 import '../cubit/ticket_sale_cubit.dart';
 import '../cubit/ticket_sale_state.dart';
 
 class TicketSaleScreen extends StatelessWidget {
   final Widget? drawer;
-  const TicketSaleScreen({super.key, this.drawer});
+  const TicketSaleScreen({super.key, this.drawer = const StaffDrawer()});
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +30,7 @@ class TicketSaleScreen extends StatelessWidget {
 
 class _TicketSaleScreenView extends StatelessWidget {
   final Widget? drawer;
-  const _TicketSaleScreenView({this.drawer});
+  const _TicketSaleScreenView({this.drawer = const StaffDrawer()});
 
   @override
   Widget build(BuildContext context) {
@@ -46,14 +48,16 @@ class _TicketSaleScreenView extends StatelessWidget {
 
           if (state is TicketSaleError) {
             return RefreshIndicator(
-              onRefresh: () => context.read<TicketSaleCubit>().loadInitialData(),
+              onRefresh: () =>
+                  context.read<TicketSaleCubit>().loadInitialData(),
               child: ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 children: [
                   SizedBox(height: MediaQuery.of(context).size.height * 0.25),
                   AppErrorView(
                     message: state.message,
-                    onRetry: () => context.read<TicketSaleCubit>().loadInitialData(),
+                    onRetry: () =>
+                        context.read<TicketSaleCubit>().loadInitialData(),
                   ),
                 ],
               ),
@@ -63,7 +67,8 @@ class _TicketSaleScreenView extends StatelessWidget {
           if (state is TicketSaleLoaded) {
             if (state.cinemas.isEmpty) {
               return RefreshIndicator(
-                onRefresh: () => context.read<TicketSaleCubit>().loadInitialData(),
+                onRefresh: () =>
+                    context.read<TicketSaleCubit>().loadInitialData(),
                 child: ListView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   children: [
@@ -89,14 +94,26 @@ class _TicketSaleScreenView extends StatelessWidget {
                     child: Container(
                       decoration: BoxDecoration(
                         color: theme.surface,
-                        border: Border(bottom: BorderSide(color: theme.textSecondary.withValues(alpha: 0.1))),
+                        border: Border(
+                          bottom: BorderSide(
+                            color: theme.textSecondary.withValues(alpha: 0.1),
+                          ),
+                        ),
                       ),
                       child: Column(
                         children: [
                           _buildCinemaSelector(context, theme, l10n, state),
-                          Divider(color: theme.textSecondary.withValues(alpha: 0.1), height: 1),
+                          Divider(
+                            color: theme.textSecondary.withValues(alpha: 0.1),
+                            height: 1,
+                          ),
                           Expanded(
-                            child: _buildMoviesList(context, theme, l10n, state),
+                            child: _buildMoviesList(
+                              context,
+                              theme,
+                              l10n,
+                              state,
+                            ),
                           ),
                         ],
                       ),
@@ -107,12 +124,21 @@ class _TicketSaleScreenView extends StatelessWidget {
                     flex: 65,
                     child: state.selectedMovieId == null
                         ? RefreshIndicator(
-                            onRefresh: () => context.read<TicketSaleCubit>().loadInitialData(),
+                            onRefresh: () => context
+                                .read<TicketSaleCubit>()
+                                .loadInitialData(),
                             child: ListView(
                               physics: const AlwaysScrollableScrollPhysics(),
                               children: [
                                 const SizedBox(height: 100),
-                                Center(child: Text(l10n.noData, style: TextStyle(color: theme.textSecondary))),
+                                Center(
+                                  child: Text(
+                                    l10n.noData,
+                                    style: TextStyle(
+                                      color: theme.textSecondary,
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
                           )
@@ -129,7 +155,12 @@ class _TicketSaleScreenView extends StatelessWidget {
     );
   }
 
-  Widget _buildCinemaSelector(BuildContext context, CineplexColors theme, AppLocalizations l10n, TicketSaleLoaded state) {
+  Widget _buildCinemaSelector(
+    BuildContext context,
+    CineplexColors theme,
+    AppLocalizations l10n,
+    TicketSaleLoaded state,
+  ) {
     return Padding(
       padding: EdgeInsets.all(theme.spacingMd),
       child: Container(
@@ -145,7 +176,10 @@ class _TicketSaleScreenView extends StatelessWidget {
             isExpanded: true,
             dropdownColor: theme.surface,
             icon: Icon(LucideIcons.chevronDown, color: theme.textPrimary),
-            style: TextStyle(color: theme.textPrimary, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: theme.textPrimary,
+              fontWeight: FontWeight.bold,
+            ),
             onChanged: (value) {
               if (value != null) {
                 context.read<TicketSaleCubit>().selectCinema(value);
@@ -160,7 +194,12 @@ class _TicketSaleScreenView extends StatelessWidget {
     );
   }
 
-  Widget _buildMoviesList(BuildContext context, CineplexColors theme, AppLocalizations l10n, TicketSaleLoaded state) {
+  Widget _buildMoviesList(
+    BuildContext context,
+    CineplexColors theme,
+    AppLocalizations l10n,
+    TicketSaleLoaded state,
+  ) {
     if (state.moviesForCinema.isEmpty) {
       return Center(
         child: Text(l10n.noData, style: TextStyle(color: theme.textSecondary)),
@@ -172,13 +211,15 @@ class _TicketSaleScreenView extends StatelessWidget {
       itemBuilder: (context, index) {
         final movie = state.moviesForCinema[index];
         final isSelected = movie.id == state.selectedMovieId;
-        
+
         return InkWell(
           onTap: () => context.read<TicketSaleCubit>().selectMovie(movie.id),
           child: Container(
             padding: EdgeInsets.all(theme.spacingMd),
             decoration: BoxDecoration(
-              color: isSelected ? theme.primary.withValues(alpha: 0.1) : Colors.transparent,
+              color: isSelected
+                  ? theme.primary.withValues(alpha: 0.1)
+                  : Colors.transparent,
               border: Border(
                 left: BorderSide(
                   color: isSelected ? theme.primary : Colors.transparent,
@@ -197,8 +238,15 @@ class _TicketSaleScreenView extends StatelessWidget {
                   ),
                   clipBehavior: Clip.hardEdge,
                   child: movie.posterUrl != null && movie.posterUrl!.isNotEmpty
-                      ? AppCachedImage(imageUrl: movie.posterUrl!, fit: BoxFit.cover)
-                      : Icon(LucideIcons.film, color: theme.textSecondary, size: 20),
+                      ? AppCachedImage(
+                          imageUrl: movie.posterUrl!,
+                          fit: BoxFit.cover,
+                        )
+                      : Icon(
+                          LucideIcons.film,
+                          color: theme.textSecondary,
+                          size: 20,
+                        ),
                 ),
                 SizedBox(width: theme.spacingSm),
                 Expanded(
@@ -209,7 +257,9 @@ class _TicketSaleScreenView extends StatelessWidget {
                         movie.title,
                         style: TextStyle(
                           color: theme.textPrimary,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.normal,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -217,7 +267,10 @@ class _TicketSaleScreenView extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         l10n.durationMinutes(movie.durationMinutes),
-                        style: TextStyle(color: theme.textSecondary, fontSize: 12),
+                        style: TextStyle(
+                          color: theme.textSecondary,
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ),
@@ -230,8 +283,15 @@ class _TicketSaleScreenView extends StatelessWidget {
     );
   }
 
-  Widget _buildShowtimes(BuildContext context, CineplexColors theme, AppLocalizations l10n, TicketSaleLoaded state) {
-    final movieShowtimes = state.cinemaShowtimes.where((st) => st.movie?.id == state.selectedMovieId).toList();
+  Widget _buildShowtimes(
+    BuildContext context,
+    CineplexColors theme,
+    AppLocalizations l10n,
+    TicketSaleLoaded state,
+  ) {
+    final movieShowtimes = state.cinemaShowtimes
+        .where((st) => st.movie?.id == state.selectedMovieId)
+        .toList();
     if (movieShowtimes.isEmpty) {
       return RefreshIndicator(
         onRefresh: () => context.read<TicketSaleCubit>().loadInitialData(),
@@ -239,7 +299,12 @@ class _TicketSaleScreenView extends StatelessWidget {
           physics: const AlwaysScrollableScrollPhysics(),
           children: [
             const SizedBox(height: 100),
-            Center(child: Text(l10n.noData, style: TextStyle(color: theme.textSecondary))),
+            Center(
+              child: Text(
+                l10n.noData,
+                style: TextStyle(color: theme.textSecondary),
+              ),
+            ),
           ],
         ),
       );
@@ -257,7 +322,7 @@ class _TicketSaleScreenView extends StatelessWidget {
       onRefresh: () => context.read<TicketSaleCubit>().loadInitialData(),
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.fromLTRB(12, 8, 12, 100),
+        padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: grouped.entries.map((entry) {
@@ -269,13 +334,18 @@ class _TicketSaleScreenView extends StatelessWidget {
               children: [
                 Text(
                   dateStr,
-                  style: AppTextStyles.title.copyWith(color: theme.textPrimary, fontSize: 14),
+                  style: AppTextStyles.title.copyWith(
+                    color: theme.textPrimary,
+                    fontSize: 14,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
-                  children: list.map((st) => _buildShowtimeCard(context, theme, st)).toList(),
+                  children: list
+                      .map((st) => _buildShowtimeCard(context, theme, st))
+                      .toList(),
                 ),
                 const SizedBox(height: 12),
               ],
@@ -286,11 +356,18 @@ class _TicketSaleScreenView extends StatelessWidget {
     );
   }
 
-  Widget _buildShowtimeCard(BuildContext context, CineplexColors theme, ShowtimeModel st) {
+  Widget _buildShowtimeCard(
+    BuildContext context,
+    CineplexColors theme,
+    ShowtimeModel st,
+  ) {
     return GestureDetector(
       onTap: () {
         context.read<TicketSaleCubit>().selectShowtime(st);
-        context.push('/ticket-sale/seat-selection', extra: context.read<TicketSaleCubit>());
+        context.push(
+          '/ticket-sale/seat-selection',
+          extra: context.read<TicketSaleCubit>(),
+        );
       },
       child: AppCard(
         margin: EdgeInsets.zero,

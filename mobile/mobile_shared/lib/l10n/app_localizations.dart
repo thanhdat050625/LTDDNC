@@ -3951,6 +3951,24 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Ngưng hoạt động'**
   String get statusInactive;
+
+  /// No description provided for @exitAppTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thoát ứng dụng'**
+  String get exitAppTitle;
+
+  /// No description provided for @exitAppMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn có chắc chắn muốn thoát ứng dụng không?'**
+  String get exitAppMessage;
+
+  /// No description provided for @exitAppConfirm.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thoát'**
+  String get exitAppConfirm;
 }
 
 class _AppLocalizationsDelegate

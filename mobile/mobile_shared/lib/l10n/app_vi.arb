@@ -954,5 +954,8 @@
     }
   },
   "startTime": "Thời gian bắt đầu",
-  "statusInactive": "Ngưng hoạt động"
+  "statusInactive": "Ngưng hoạt động",
+  "exitAppTitle": "Thoát ứng dụng",
+  "exitAppMessage": "Bạn có chắc chắn muốn thoát ứng dụng không?",
+  "exitAppConfirm": "Thoát"
 }
