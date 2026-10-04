@@ -47,47 +47,64 @@ class _OtpInputWidgetState extends State<OtpInputWidget> {
   Widget build(BuildContext context) {
     final colors = CineplexColors.of(context);
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: List.generate(widget.length, (index) {
-        return SizedBox(
-          width: 45,
-          height: 55,
-          child: TextField(
-            controller: _controllers[index],
-            focusNode: _focusNodes[index],
-            keyboardType: TextInputType.number,
-            textAlign: TextAlign.center,
-            inputFormatters: [
-              LengthLimitingTextInputFormatter(1),
-              FilteringTextInputFormatter.digitsOnly,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final availableWidth = constraints.maxWidth;
+        final double gap = availableWidth < 280 ? 6.0 : (availableWidth < 340 ? 8.0 : 10.0);
+        final totalGaps = (widget.length - 1) * gap;
+        final boxWidth = ((availableWidth - totalGaps) / widget.length).clamp(32.0, 46.0);
+        final boxHeight = (boxWidth * 1.18).clamp(46.0, 54.0);
+
+        final borderColor = colors.isDark
+            ? Colors.white.withValues(alpha: 0.16)
+            : colors.border;
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            for (int i = 0; i < widget.length; i++) ...[
+              if (i > 0) SizedBox(width: gap),
+              SizedBox(
+                width: boxWidth,
+                height: boxHeight,
+                child: TextField(
+                  controller: _controllers[i],
+                  focusNode: _focusNodes[i],
+                  keyboardType: TextInputType.number,
+                  textAlign: TextAlign.center,
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(1),
+                    FilteringTextInputFormatter.digitsOnly,
+                  ],
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: colors.textPrimary,
+                  ),
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: colors.surfaceVariant,
+                    contentPadding: EdgeInsets.zero,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: borderColor, width: 1.2),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: borderColor, width: 1.2),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: colors.primary, width: 2),
+                    ),
+                  ),
+                  onChanged: (val) => _onChanged(val, i),
+                ),
+              ),
             ],
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: colors.textPrimary,
-            ),
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: colors.surfaceVariant,
-              contentPadding: EdgeInsets.zero,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: colors.borderSubtle),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: colors.borderSubtle),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: colors.primary, width: 2),
-              ),
-            ),
-            onChanged: (val) => _onChanged(val, index),
-          ),
+          ],
         );
-      }),
+      },
     );
   }
 }
