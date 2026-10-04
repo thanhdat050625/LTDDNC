@@ -70,7 +70,10 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
           return SafeArea(
             child: Center(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 16,
+                ),
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 420),
                   child: Form(
@@ -81,44 +84,29 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                       children: [
                         // Cinema Brand Header
                         Center(
-                          child: Container(
+                          child: Image.asset(
+                            'assets/images/app_icon.png',
                             width: 68,
                             height: 68,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [colors.primary, colors.accent],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: colors.primary.withValues(alpha: 0.35),
-                                  blurRadius: 16,
-                                  offset: const Offset(0, 6),
-                                ),
-                              ],
-                            ),
-                            child: const Icon(
-                              Icons.admin_panel_settings_rounded,
-                              color: Colors.white,
-                              size: 38,
-                            ),
                           ),
                         ),
                         const SizedBox(height: 16),
-                        Text(
-                          l10n.adminPortal,
-                          textAlign: TextAlign.center,
-                          style: theme.textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: colors.textPrimary,
-                            letterSpacing: 1.1,
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            l10n.adminLoginTitle,
+                            textAlign: TextAlign.center,
+                            maxLines: 1,
+                            style: theme.textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: colors.textPrimary,
+                              letterSpacing: 1.1,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          l10n.adminDashboard,
+                          l10n.adminLoginSubtitle,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: colors.textSecondary,
@@ -136,7 +124,9 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                             border: Border.all(color: colors.cardBorder),
                             boxShadow: [
                               BoxShadow(
-                                color: colors.shadowColor.withValues(alpha: 0.04),
+                                color: colors.shadowColor.withValues(
+                                  alpha: 0.04,
+                                ),
                                 blurRadius: 10,
                                 offset: const Offset(0, 4),
                               ),
@@ -186,7 +176,8 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                                     child: Checkbox(
                                       value: _rememberMe,
                                       activeColor: colors.primary,
-                                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                      materialTapTargetSize:
+                                          MaterialTapTargetSize.shrinkWrap,
                                       onChanged: (val) {
                                         setState(() {
                                           _rememberMe = val ?? false;

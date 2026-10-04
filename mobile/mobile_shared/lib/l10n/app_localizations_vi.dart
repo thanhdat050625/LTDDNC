@@ -512,7 +512,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get about => 'Về chúng tôi';
 
   @override
-  String get staffDashboard => 'Bảng điều khiển nhân viên';
+  String get staffDashboard => 'Tổng quan';
 
   @override
   String get qrScanner => 'Quét mã QR';
@@ -834,6 +834,18 @@ class AppLocalizationsVi extends AppLocalizations {
   String get scanTicketSubtitle => 'Soát vé vào phòng chiếu';
 
   @override
+  String get staffLoginTitle => 'Quản Lý Rạp';
+
+  @override
+  String get staffLoginSubtitle => 'Nhân Viên';
+
+  @override
+  String get adminLoginTitle => 'Quản Trị Hệ Thống';
+
+  @override
+  String get adminLoginSubtitle => 'Admin';
+
+  @override
   String get userManagementSubtitle => 'Danh sách & Quản lý tài khoản';
 
   @override
@@ -841,12 +853,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get accessDenied => 'Truy cập bị từ chối. Không đủ quyền hạn.';
-
-  @override
-  String get adminDashboard => 'Bảng điều khiển Quản trị';
-
-  @override
-  String get adminPortal => 'Cổng Quản trị Hệ thống';
 
   @override
   String get counterSaleDesc => 'Bán vé & Thanh toán';

@@ -39,18 +39,21 @@ void main() {
 
     await tester.pump();
 
-    final l10n = AppLocalizations.of(tester.element(find.byType(StaffScannerScreen)))!;
+    final l10n = AppLocalizations.of(
+      tester.element(find.byType(StaffScannerScreen)),
+    )!;
 
     // Verify AppBar
     expect(find.text(l10n.scanTicket), findsOneWidget);
 
-    // Verify manual input label
-    expect(find.text(l10n.manualTicketInput), findsOneWidget);
+    // Verify manual input label above is removed
+    expect(find.text(l10n.manualTicketInput), findsNothing);
 
     // Verify verify ticket button
     expect(find.text(l10n.verifyTicket), findsOneWidget);
 
-    // Verify text field
+    // Verify text field with hint
     expect(find.byType(TextField), findsOneWidget);
+    expect(find.text(l10n.manualCodeHint), findsOneWidget);
   });
 }

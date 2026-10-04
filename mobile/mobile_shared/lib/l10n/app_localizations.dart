@@ -1069,7 +1069,7 @@ abstract class AppLocalizations {
   /// No description provided for @staffDashboard.
   ///
   /// In vi, this message translates to:
-  /// **'Bảng điều khiển nhân viên'**
+  /// **'Tổng quan'**
   String get staffDashboard;
 
   /// No description provided for @qrScanner.
@@ -1660,6 +1660,30 @@ abstract class AppLocalizations {
   /// **'Soát vé vào phòng chiếu'**
   String get scanTicketSubtitle;
 
+  /// No description provided for @staffLoginTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quản Lý Rạp'**
+  String get staffLoginTitle;
+
+  /// No description provided for @staffLoginSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhân Viên'**
+  String get staffLoginSubtitle;
+
+  /// No description provided for @adminLoginTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quản Trị Hệ Thống'**
+  String get adminLoginTitle;
+
+  /// No description provided for @adminLoginSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Admin'**
+  String get adminLoginSubtitle;
+
   /// No description provided for @userManagementSubtitle.
   ///
   /// In vi, this message translates to:
@@ -1677,18 +1701,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Truy cập bị từ chối. Không đủ quyền hạn.'**
   String get accessDenied;
-
-  /// No description provided for @adminDashboard.
-  ///
-  /// In vi, this message translates to:
-  /// **'Bảng điều khiển Quản trị'**
-  String get adminDashboard;
-
-  /// No description provided for @adminPortal.
-  ///
-  /// In vi, this message translates to:
-  /// **'Cổng Quản trị Hệ thống'**
-  String get adminPortal;
 
   /// No description provided for @counterSaleDesc.
   ///
