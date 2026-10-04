@@ -3628,6 +3628,36 @@ abstract class AppLocalizations {
   /// **'Vui lòng kiểm tra quyền truy cập hoặc sử dụng tính năng nhập mã thủ công bên dưới.'**
   String get cameraErrorHint;
 
+  /// No description provided for @cameraRetake.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chụp lại'**
+  String get cameraRetake;
+
+  /// No description provided for @cameraUsePhoto.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sử dụng ảnh'**
+  String get cameraUsePhoto;
+
+  /// No description provided for @cameraCapture.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chụp ảnh'**
+  String get cameraCapture;
+
+  /// No description provided for @cameraNoCameras.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không tìm thấy máy ảnh trên thiết bị'**
+  String get cameraNoCameras;
+
+  /// No description provided for @cameraCircleHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Căn chỉnh khuôn mặt vào giữa khung tròn'**
+  String get cameraCircleHint;
+
   /// No description provided for @staffProfile.
   ///
   /// In vi, this message translates to:

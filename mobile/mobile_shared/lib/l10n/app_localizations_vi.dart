@@ -1866,6 +1866,21 @@ class AppLocalizationsVi extends AppLocalizations {
       'Vui lòng kiểm tra quyền truy cập hoặc sử dụng tính năng nhập mã thủ công bên dưới.';
 
   @override
+  String get cameraRetake => 'Chụp lại';
+
+  @override
+  String get cameraUsePhoto => 'Sử dụng ảnh';
+
+  @override
+  String get cameraCapture => 'Chụp ảnh';
+
+  @override
+  String get cameraNoCameras => 'Không tìm thấy máy ảnh trên thiết bị';
+
+  @override
+  String get cameraCircleHint => 'Căn chỉnh khuôn mặt vào giữa khung tròn';
+
+  @override
   String get staffProfile => 'Hồ sơ nhân viên';
 
   @override

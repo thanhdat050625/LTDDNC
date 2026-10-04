@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 import '../cubit/profile_cubit.dart';
+import 'camera_capture_screen.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final Map<String, dynamic>? initialUser;
@@ -72,13 +74,41 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     super.dispose();
   }
 
-  Future<void> _pickImage(ImageSource source) async {
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(source: source, imageQuality: 80, maxWidth: 1024);
-    if (picked != null) {
-      setState(() {
-        _avatarFile = File(picked.path);
-      });
+  Future<void> _pickImageFromCamera() async {
+    try {
+      final imagePath = await Navigator.push<String>(
+        context,
+        MaterialPageRoute(builder: (_) => const CameraCaptureScreen()),
+      );
+      if (imagePath != null && mounted) {
+        setState(() {
+          _avatarFile = File(imagePath);
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.cameraError)),
+        );
+      }
+    }
+  }
+
+  Future<void> _pickImageFromGallery() async {
+    try {
+      final picker = ImagePicker();
+      final picked = await picker.pickImage(source: ImageSource.gallery);
+      if (picked != null && mounted) {
+        setState(() {
+          _avatarFile = File(picked.path);
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.error)),
+        );
+      }
     }
   }
 
@@ -107,7 +137,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 title: Text(l10n.takePhoto),
                 onTap: () {
                   Navigator.pop(ctx);
-                  _pickImage(ImageSource.camera);
+                  _pickImageFromCamera();
                 },
               ),
               ListTile(
@@ -115,7 +145,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 title: Text(l10n.chooseFromGallery),
                 onTap: () {
                   Navigator.pop(ctx);
-                  _pickImage(ImageSource.gallery);
+                  _pickImageFromGallery();
                 },
               ),
             ],
@@ -192,10 +222,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
+  Widget _buildAvatarFallback(CineplexColors colors) {
+    return Center(
+      child: Text(
+        _nameController.text.isNotEmpty ? _nameController.text[0].toUpperCase() : 'U',
+        style: TextStyle(
+          fontSize: 36,
+          fontWeight: FontWeight.bold,
+          color: colors.textPrimary,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
+    final colors = CineplexColors.of(context);
 
     return AppScaffold(
       title: l10n.editProfile,
@@ -210,24 +254,40 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               Center(
                 child: Stack(
                   children: [
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundColor: colorScheme.primaryContainer,
-                      backgroundImage: _avatarFile != null
-                          ? FileImage(_avatarFile!)
-                          : (_currentAvatarUrl != null && _currentAvatarUrl!.isNotEmpty
-                              ? NetworkImage(_currentAvatarUrl!) as ImageProvider
-                              : null),
-                      child: (_avatarFile == null && (_currentAvatarUrl == null || _currentAvatarUrl!.isEmpty))
-                          ? Text(
-                              _nameController.text.isNotEmpty ? _nameController.text[0].toUpperCase() : 'U',
-                              style: TextStyle(
-                                fontSize: 36,
-                                fontWeight: FontWeight.bold,
-                                color: colorScheme.onPrimaryContainer,
-                              ),
-                            )
-                          : null,
+                    Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: colors.surfaceVariant,
+                        border: Border.all(color: colors.primary, width: 2),
+                      ),
+                      child: ClipOval(
+                        child: _avatarFile != null
+                            ? Image.file(
+                                _avatarFile!,
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => _buildAvatarFallback(colors),
+                              )
+                            : (_currentAvatarUrl != null && _currentAvatarUrl!.isNotEmpty
+                                ? CachedNetworkImage(
+                                    imageUrl: _currentAvatarUrl!,
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.cover,
+                                    placeholder: (_, __) => const Center(
+                                      child: SizedBox(
+                                        width: 24,
+                                        height: 24,
+                                        child: CircularProgressIndicator(strokeWidth: 2),
+                                      ),
+                                    ),
+                                    errorWidget: (_, __, ___) => _buildAvatarFallback(colors),
+                                  )
+                                : _buildAvatarFallback(colors)),
+                      ),
                     ),
                     Positioned(
                       bottom: 0,
