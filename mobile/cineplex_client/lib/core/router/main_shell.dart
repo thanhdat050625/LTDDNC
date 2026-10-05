@@ -1,18 +1,55 @@
+import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import 'package:cineplex_client/features/notification/data/models/notification_model.dart';
 import 'package:cineplex_client/features/notification/presentation/cubit/notification_cubit.dart';
-
-import 'dart:ui';
+import 'package:cineplex_client/features/notification/presentation/widgets/in_app_notification_banner.dart';
+import 'package:cineplex_client/features/notification/presentation/widgets/notification_badge_icon.dart';
 
 /// Main shell with bottom navigation bar.
 /// Wraps the 5 main tabs: Home, Movies, Tickets, Notifications, Profile.
-class MainShell extends StatelessWidget {
+class MainShell extends StatefulWidget {
   final Widget child;
   const MainShell({super.key, required this.child});
+
+  @override
+  State<MainShell> createState() => _MainShellState();
+}
+
+class _MainShellState extends State<MainShell> {
+  StreamSubscription<NotificationModel>? _notifSub;
+
+  @override
+  void initState() {
+    super.initState();
+    final notifCubit = context.read<NotificationCubit>();
+    notifCubit.startPolling();
+
+    _notifSub = notifCubit.newNotificationStream.listen((notification) {
+      if (!mounted) return;
+      final currentIndex = _calculateIndex(context);
+      // Only show popup banner if user is NOT on the notifications screen
+      if (currentIndex != 3) {
+        InAppNotificationBanner.show(
+          context: context,
+          notification: notification,
+          onTap: () => context.go('/notifications'),
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _notifSub?.cancel();
+    InAppNotificationBanner.dismiss();
+    super.dispose();
+  }
 
   static int _calculateIndex(BuildContext context) {
     final location = GoRouterState.of(context).matchedLocation;
@@ -29,7 +66,7 @@ class MainShell extends StatelessWidget {
 
     return Scaffold(
       extendBody: true, // Cho phép nội dung lướt xuống dưới thanh điều hướng
-      body: child,
+      body: widget.child,
       bottomNavigationBar: _CustomGlassBottomBar(
         currentIndex: currentIndex,
         onTabSelected: (index) {
@@ -134,7 +171,7 @@ class _CustomGlassBottomBar extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   if (index == 3) 
-                                    _NotificationBadgeIcon(color: color, size: 22)
+                                    NotificationBadgeIcon(color: color, size: 22)
                                   else
                                     Icon(tabs[index]['icon'] as IconData, color: color, size: 22),
                                   const SizedBox(height: 3),
@@ -169,24 +206,3 @@ class _CustomGlassBottomBar extends StatelessWidget {
     );
   }
 }
-
-class _NotificationBadgeIcon extends StatelessWidget {
-  final Color color;
-  final double size;
-  const _NotificationBadgeIcon({required this.color, this.size = 22});
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<NotificationCubit, NotificationState>(
-      builder: (context, state) {
-        final count = state is NotificationLoaded ? state.unreadCount : 0;
-        return Badge(
-          isLabelVisible: count > 0,
-          label: Text('$count'),
-          child: Icon(LucideIcons.bell, color: color, size: size),
-        );
-      },
-    );
-  }
-}
-

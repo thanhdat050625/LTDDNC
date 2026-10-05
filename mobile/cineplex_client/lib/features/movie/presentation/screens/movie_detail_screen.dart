@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:cineplex_client/features/movie/presentation/widgets/movie_info_section.dart';
@@ -16,7 +15,8 @@ class MovieDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => MovieDetailCubit(context.read<MovieRepository>())..loadMovie(movieId),
+      create: (context) =>
+          MovieDetailCubit(context.read<MovieRepository>())..loadMovie(movieId),
       child: Builder(
         builder: (context) {
           final theme = Theme.of(context);
@@ -26,23 +26,28 @@ class MovieDetailScreen extends StatelessWidget {
             backgroundColor: theme.scaffoldBackgroundColor,
             body: BlocBuilder<MovieDetailCubit, MovieDetailState>(
               builder: (context, state) {
-                if (state is MovieDetailLoading || state is MovieDetailInitial) {
+                if (state is MovieDetailLoading ||
+                    state is MovieDetailInitial) {
                   return const Center(child: AppLoading());
                 }
                 if (state is MovieDetailError) {
                   return AppErrorView(
                     message: state.message,
-                    onRetry: () => context.read<MovieDetailCubit>().loadMovie(movieId),
+                    onRetry: () =>
+                        context.read<MovieDetailCubit>().loadMovie(movieId),
                   );
                 }
                 if (state is MovieDetailLoaded) {
                   final movie = state.movie;
                   final l10n = AppLocalizations.of(context)!;
-                  final releaseDate = movie.releaseDate != null ? DateFormat.yMMMd().format(movie.releaseDate!) : '';
+                  final releaseDate = movie.releaseDate != null
+                      ? DateFormat.yMMMd().format(movie.releaseDate!)
+                      : '';
                   return Stack(
                     children: [
                       RefreshIndicator(
-                        onRefresh: () => context.read<MovieDetailCubit>().loadMovie(movieId),
+                        onRefresh: () =>
+                            context.read<MovieDetailCubit>().loadMovie(movieId),
                         color: colors.primary,
                         child: CustomScrollView(
                           physics: const AlwaysScrollableScrollPhysics(),
@@ -51,21 +56,27 @@ class MovieDetailScreen extends StatelessWidget {
                               expandedHeight: 400,
                               pinned: true,
                               backgroundColor: theme.scaffoldBackgroundColor,
-                              iconTheme: IconThemeData(color: colors.textPrimary),
+                              iconTheme: IconThemeData(
+                                color: colors.textPrimary,
+                              ),
                               flexibleSpace: FlexibleSpaceBar(
                                 background: Stack(
                                   fit: StackFit.expand,
                                   children: [
                                     Hero(
                                       tag: 'poster_${movie.id}',
-                                      child: AppCachedImage(imageUrl: movie.posterUrl ?? '', fit: BoxFit.cover),
+                                      child: AppCachedImage(
+                                        imageUrl: movie.posterUrl ?? '',
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
                                     Container(
                                       decoration: BoxDecoration(
                                         gradient: LinearGradient(
                                           colors: [
                                             Colors.transparent,
-                                            theme.scaffoldBackgroundColor.withValues(alpha: 0.6),
+                                            theme.scaffoldBackgroundColor
+                                                .withValues(alpha: 0.6),
                                             theme.scaffoldBackgroundColor,
                                           ],
                                           stops: const [0.4, 0.8, 1.0],
@@ -74,18 +85,28 @@ class MovieDetailScreen extends StatelessWidget {
                                         ),
                                       ),
                                     ),
-                                    if (movie.trailerUrl != null && movie.trailerUrl!.isNotEmpty)
+                                    if (movie.trailerUrl != null &&
+                                        movie.trailerUrl!.isNotEmpty)
                                       Center(
                                         child: IconButton(
-                                          icon: Icon(LucideIcons.playCircle, size: 64, color: colors.primary),
-                                          onPressed: () async {
-                                            final uri = Uri.parse(movie.trailerUrl!);
-                                            if (await canLaunchUrl(uri)) {
-                                              await launchUrl(uri);
-                                            }
+                                          icon: Icon(
+                                            LucideIcons.playCircle,
+                                            size: 64,
+                                            color: colors.primary,
+                                          ),
+                                          onPressed: () {
+                                            TrailerPlayerScreen.open(
+                                              context,
+                                              trailerUrl: movie.trailerUrl!,
+                                              title: movie.title,
+                                              genre: movie.genre,
+                                              durationMinutes:
+                                                  movie.durationMinutes,
+                                              description: movie.description,
+                                            );
                                           },
                                         ),
-                                      )
+                                      ),
                                   ],
                                 ),
                               ),
@@ -98,25 +119,36 @@ class MovieDetailScreen extends StatelessWidget {
                                   children: [
                                     Text(
                                       movie.title,
-                                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: colors.textPrimary,
-                                      ),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color: colors.textPrimary,
+                                          ),
                                     ),
                                     const SizedBox(height: 16),
                                     Wrap(
                                       spacing: 8,
                                       runSpacing: 8,
                                       children: [
-                                        if (movie.genre.isNotEmpty) _buildChip(movie.genre, colors),
+                                        if (movie.genre.isNotEmpty)
+                                          _buildChip(movie.genre, colors),
                                         _buildChip(
-                                          l10n.durationMinutes(movie.durationMinutes),
+                                          l10n.durationMinutes(
+                                            movie.durationMinutes,
+                                          ),
                                           colors,
                                           icon: LucideIcons.clock,
                                         ),
-                                        if (movie.ageLimit != null)
-                                          _buildChip('${movie.ageLimit}+', colors, color: colors.primary),
-                                        if (movie.language != null) _buildChip(movie.language!, colors),
+                                        if (movie.ageLimit != null && movie.ageLimit! > 0)
+                                          _buildChip(
+                                            '${movie.ageLimit}+',
+                                            colors,
+                                            color: colors.primary,
+                                          ),
+                                        if (movie.language != null)
+                                          _buildChip(movie.language!, colors),
                                       ],
                                     ),
                                     const SizedBox(height: 24),
@@ -129,21 +161,27 @@ class MovieDetailScreen extends StatelessWidget {
                                     const SizedBox(height: 24),
                                     Text(
                                       l10n.description,
-                                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: colors.textPrimary,
-                                      ),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleLarge
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color: colors.textPrimary,
+                                          ),
                                     ),
                                     const SizedBox(height: 8),
                                     Text(
                                       movie.description ?? '',
-                                      style: TextStyle(color: colors.textSecondary, height: 1.5),
+                                      style: TextStyle(
+                                        color: colors.textSecondary,
+                                        height: 1.5,
+                                      ),
                                     ),
                                     const SizedBox(height: 100),
                                   ],
                                 ),
                               ),
-                            )
+                            ),
                           ],
                         ),
                       ),
@@ -155,7 +193,9 @@ class MovieDetailScreen extends StatelessWidget {
                           padding: const EdgeInsets.all(24),
                           decoration: BoxDecoration(
                             color: colors.card,
-                            border: Border(top: BorderSide(color: colors.borderSubtle)),
+                            border: Border(
+                              top: BorderSide(color: colors.borderSubtle),
+                            ),
                             boxShadow: [
                               BoxShadow(
                                 color: colors.shadowColor,
@@ -187,7 +227,12 @@ class MovieDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildChip(String label, CineplexColors colors, {IconData? icon, Color? color}) {
+  Widget _buildChip(
+    String label,
+    CineplexColors colors, {
+    IconData? icon,
+    Color? color,
+  }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(

@@ -13,7 +13,7 @@ class NotificationItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = CineplexColors.of(context);
 
-    return Container(
+    return Material(
       color: notification.isRead ? Colors.transparent : colors.primary.withValues(alpha: 0.08),
       child: ListTile(
         leading: Container(

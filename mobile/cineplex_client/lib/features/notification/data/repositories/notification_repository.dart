@@ -20,8 +20,11 @@ class NotificationRepository {
     final raw = response.data;
     if (raw is Map<String, dynamic>) {
       final payload = raw['data'] ?? raw;
-      if (payload is Map<String, dynamic>) return (payload['unreadCount'] as int?) ?? 0;
-      if (payload is int) return payload;
+      if (payload is Map<String, dynamic>) {
+        final count = payload['count'] ?? payload['unreadCount'];
+        if (count is num) return count.toInt();
+      }
+      if (payload is num) return payload.toInt();
     } else if (raw is int) {
       return raw;
     }
