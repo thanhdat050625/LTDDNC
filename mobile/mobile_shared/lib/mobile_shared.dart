@@ -41,6 +41,7 @@ export 'widgets/shimmer_skeleton.dart';
 export 'widgets/staggered_list.dart';
 export 'widgets/seat_widget.dart';
 export 'widgets/app_exit_dialog.dart';
+export 'widgets/app_drawer.dart';
 export 'navigation/app_back_handler.dart';
 
 // Models
@@ -87,6 +88,7 @@ export 'features/showtimes/cubit/showtime_form_state.dart';
 export 'features/showtimes/presentation/screens/showtime_management_screen.dart';
 export 'features/showtimes/presentation/widgets/showtime_list_item.dart';
 export 'features/showtimes/presentation/screens/showtime_form_screen.dart';
+export 'features/showtimes/presentation/screens/showtime_occupancy_screen.dart';
 
 // Cinemas
 export 'features/cinemas/data/repositories/cinema_management_repository.dart';
@@ -128,3 +130,11 @@ export 'features/concessions/presentation/screens/concession_form_screen.dart';
 
 // Settings
 export 'features/settings/presentation/screens/app_settings_screen.dart';
+
+// Tickets
+export 'features/tickets/presentation/cubit/ticket_management_cubit.dart';
+export 'features/tickets/presentation/cubit/ticket_management_state.dart';
+export 'features/tickets/presentation/screens/ticket_management_screen.dart';
+export 'features/tickets/presentation/widgets/booking_ticket_card.dart';
+export 'features/tickets/presentation/widgets/booking_detail_bottom_sheet.dart';
+export 'features/tickets/presentation/widgets/ticket_price_table.dart';

@@ -276,6 +276,21 @@ GoRouter createAdminRouter(
           );
         },
       ),
+      // Tickets Management
+      GoRoute(
+        path: '/ticket-management',
+        builder: (context, state) => BlocProvider(
+          create: (context) => TicketManagementCubit(
+            BookingManagementRepository(context.read<DioClient>()),
+          ),
+          child: const TicketManagementScreen(drawer: AdminDrawer()),
+        ),
+      ),
+      // Showtime Occupancy
+      GoRoute(
+        path: '/showtimes-occupancy',
+        builder: (context, state) => const ShowtimeOccupancyScreen(drawer: AdminDrawer()),
+      ),
     ],
   );
 }
