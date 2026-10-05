@@ -52,6 +52,15 @@ class _ShowtimeManagementScreenState extends State<ShowtimeManagementScreen> {
     return AppScaffold(
       title: l10n.manageShowtimes,
       drawer: widget.drawer,
+      actions: [
+        IconButton(
+          icon: const Icon(LucideIcons.sparkles),
+          tooltip: l10n.showtimeBulkCreate,
+          onPressed: () {
+            _reloadAfterPush(context.push('/showtimes/bulk'));
+          },
+        ),
+      ],
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _reloadAfterPush(context.push('/showtimes/new'));

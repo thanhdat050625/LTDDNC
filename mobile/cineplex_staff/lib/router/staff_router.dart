@@ -3,15 +3,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mobile_shared/mobile_shared.dart';
+import 'package:mobile_shared/mobile_shared.dart'
+    hide TicketManagementCubit, TicketManagementScreen;
 
 import '../core/widgets/staff_shell_scaffold.dart';
 import '../features/auth/presentation/screens/staff_login_screen.dart';
 import '../features/dashboard/presentation/screens/staff_dashboard_screen.dart';
-import '../features/home/presentation/widgets/staff_drawer.dart';
 import '../features/profile/presentation/screens/staff_profile_screen.dart';
 import '../features/scanner/presentation/screens/staff_scanner_screen.dart';
-import '../features/showtimes/presentation/screens/showtime_occupancy_screen.dart';
 import '../features/ticket_sale/data/models/checkout_args.dart';
 import '../features/ticket_sale/presentation/cubit/ticket_sale_cubit.dart';
 import '../features/ticket_sale/presentation/screens/checkout_screen.dart';
@@ -189,6 +188,17 @@ GoRouter createStaffRouter(
             CinemaManagementRepository(context.read<DioClient>()),
           ),
           child: const ShowtimeFormScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/showtimes/bulk',
+        builder: (context, state) => BlocProvider(
+          create: (context) => ShowtimeBulkCreateCubit(
+            ShowtimeManagementRepository(context.read<DioClient>()),
+            MovieManagementRepository(context.read<DioClient>()),
+            CinemaManagementRepository(context.read<DioClient>()),
+          ),
+          child: const ShowtimeBulkCreateScreen(),
         ),
       ),
       GoRoute(

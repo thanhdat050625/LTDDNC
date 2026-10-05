@@ -1006,6 +1006,80 @@ class AppLocalizationsVi extends AppLocalizations {
   String get createShowtimeBtn => 'Tạo suất chiếu';
 
   @override
+  String get showtimeBulkCreate => 'Tạo lịch tự động';
+
+  @override
+  String get showtimeBulkCreateTitle => 'Tạo Lịch Chiếu Hàng Loạt';
+
+  @override
+  String get showtimeBulkStartDate => 'Ngày bắt đầu';
+
+  @override
+  String get showtimeBulkEndDate => 'Ngày kết thúc';
+
+  @override
+  String get showtimeBulkSelectDate => 'Chọn ngày';
+
+  @override
+  String get showtimeBulkPrimaryRoom => 'Phòng ưu tiên (Tùy chọn)';
+
+  @override
+  String get showtimeBulkAutoAssignRoom => 'Tự động phân phòng';
+
+  @override
+  String get showtimeBulkPreShowMinutes => 'QC/Trailer (phút)';
+
+  @override
+  String get showtimeBulkPostBufferMinutes => 'Dọn rạp (phút)';
+
+  @override
+  String get showtimeBulkTimeSlots => 'Khung giờ chiếu';
+
+  @override
+  String get showtimeBulkAddTimeSlot => 'Thêm khung giờ';
+
+  @override
+  String get showtimeBulkSelectTime => 'Chọn giờ';
+
+  @override
+  String get showtimeBulkPreview => 'Xem trước';
+
+  @override
+  String showtimeBulkPreviewDesc(int days, int slots, int total) {
+    return '$days ngày × $slots khung giờ = $total suất dự kiến';
+  }
+
+  @override
+  String get showtimeBulkSubmitBtn => 'Tạo lịch hàng loạt';
+
+  @override
+  String get showtimeBulkSubmitting => 'Đang tạo lịch chiếu...';
+
+  @override
+  String showtimeBulkSuccessSummary(int count) {
+    return 'Tạo thành công $count suất chiếu';
+  }
+
+  @override
+  String showtimeBulkFailedSummary(int count) {
+    return 'Thất bại $count suất chiếu';
+  }
+
+  @override
+  String get showtimeBulkResultTitle => 'Kết quả tạo lịch tự động';
+
+  @override
+  String get showtimeBulkDateRangeError =>
+      'Ngày kết thúc phải sau hoặc bằng ngày bắt đầu';
+
+  @override
+  String get showtimeBulkTimeSlotsEmptyError =>
+      'Cần ít nhất một khung giờ chiếu';
+
+  @override
+  String get showtimeBulkDone => 'Hoàn tất';
+
+  @override
   String get manageCinemas => 'Quản lý Rạp';
 
   @override

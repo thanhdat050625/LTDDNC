@@ -1,5 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mobile_shared/mobile_shared.dart';
+import 'package:mobile_shared/mobile_shared.dart'
+    hide
+        TicketManagementState,
+        TicketManagementInitial,
+        TicketManagementLoading,
+        TicketManagementLoaded,
+        TicketManagementError;
 
 import 'ticket_management_state.dart';
 

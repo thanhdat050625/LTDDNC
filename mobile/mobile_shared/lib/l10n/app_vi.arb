@@ -474,6 +474,55 @@
   "statusLabel": "Trạng thái",
   "selectStartTimeReq": "Vui lòng chọn thời gian bắt đầu",
   "createShowtimeBtn": "Tạo suất chiếu",
+  "showtimeBulkCreate": "Tạo lịch tự động",
+  "showtimeBulkCreateTitle": "Tạo Lịch Chiếu Hàng Loạt",
+  "showtimeBulkStartDate": "Ngày bắt đầu",
+  "showtimeBulkEndDate": "Ngày kết thúc",
+  "showtimeBulkSelectDate": "Chọn ngày",
+  "showtimeBulkPrimaryRoom": "Phòng ưu tiên (Tùy chọn)",
+  "showtimeBulkAutoAssignRoom": "Tự động phân phòng",
+  "showtimeBulkPreShowMinutes": "QC/Trailer (phút)",
+  "showtimeBulkPostBufferMinutes": "Dọn rạp (phút)",
+  "showtimeBulkTimeSlots": "Khung giờ chiếu",
+  "showtimeBulkAddTimeSlot": "Thêm khung giờ",
+  "showtimeBulkSelectTime": "Chọn giờ",
+  "showtimeBulkPreview": "Xem trước",
+  "showtimeBulkPreviewDesc": "{days} ngày × {slots} khung giờ = {total} suất dự kiến",
+  "@showtimeBulkPreviewDesc": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "slots": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "showtimeBulkSubmitBtn": "Tạo lịch hàng loạt",
+  "showtimeBulkSubmitting": "Đang tạo lịch chiếu...",
+  "showtimeBulkSuccessSummary": "Tạo thành công {count} suất chiếu",
+  "@showtimeBulkSuccessSummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "showtimeBulkFailedSummary": "Thất bại {count} suất chiếu",
+  "@showtimeBulkFailedSummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "showtimeBulkResultTitle": "Kết quả tạo lịch tự động",
+  "showtimeBulkDateRangeError": "Ngày kết thúc phải sau hoặc bằng ngày bắt đầu",
+  "showtimeBulkTimeSlotsEmptyError": "Cần ít nhất một khung giờ chiếu",
+  "showtimeBulkDone": "Hoàn tất",
   "manageCinemas": "Quản lý Rạp",
   "addCinema": "Thêm Rạp",
   "editCinema": "Sửa Rạp",

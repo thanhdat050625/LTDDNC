@@ -126,6 +126,17 @@ GoRouter createAdminRouter(
         ),
       ),
       GoRoute(
+        path: '/showtimes/bulk',
+        builder: (context, state) => BlocProvider(
+          create: (context) => ShowtimeBulkCreateCubit(
+            ShowtimeManagementRepository(context.read<DioClient>()),
+            MovieManagementRepository(context.read<DioClient>()),
+            CinemaManagementRepository(context.read<DioClient>()),
+          ),
+          child: const ShowtimeBulkCreateScreen(),
+        ),
+      ),
+      GoRoute(
         path: '/showtimes/:id/edit',
         builder: (context, state) {
           final extra = state.extra as ShowtimeModel?;

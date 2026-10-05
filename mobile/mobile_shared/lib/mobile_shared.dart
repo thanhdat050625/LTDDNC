@@ -88,6 +88,9 @@ export 'features/showtimes/cubit/showtime_form_state.dart';
 export 'features/showtimes/presentation/screens/showtime_management_screen.dart';
 export 'features/showtimes/presentation/widgets/showtime_list_item.dart';
 export 'features/showtimes/presentation/screens/showtime_form_screen.dart';
+export 'features/showtimes/cubit/showtime_bulk_create_cubit.dart';
+export 'features/showtimes/cubit/showtime_bulk_create_state.dart';
+export 'features/showtimes/presentation/screens/showtime_bulk_create_screen.dart';
 export 'features/showtimes/presentation/screens/showtime_occupancy_screen.dart';
 
 // Cinemas

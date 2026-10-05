@@ -1984,6 +1984,138 @@ abstract class AppLocalizations {
   /// **'Tạo suất chiếu'**
   String get createShowtimeBtn;
 
+  /// No description provided for @showtimeBulkCreate.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tạo lịch tự động'**
+  String get showtimeBulkCreate;
+
+  /// No description provided for @showtimeBulkCreateTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tạo Lịch Chiếu Hàng Loạt'**
+  String get showtimeBulkCreateTitle;
+
+  /// No description provided for @showtimeBulkStartDate.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ngày bắt đầu'**
+  String get showtimeBulkStartDate;
+
+  /// No description provided for @showtimeBulkEndDate.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ngày kết thúc'**
+  String get showtimeBulkEndDate;
+
+  /// No description provided for @showtimeBulkSelectDate.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn ngày'**
+  String get showtimeBulkSelectDate;
+
+  /// No description provided for @showtimeBulkPrimaryRoom.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phòng ưu tiên (Tùy chọn)'**
+  String get showtimeBulkPrimaryRoom;
+
+  /// No description provided for @showtimeBulkAutoAssignRoom.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tự động phân phòng'**
+  String get showtimeBulkAutoAssignRoom;
+
+  /// No description provided for @showtimeBulkPreShowMinutes.
+  ///
+  /// In vi, this message translates to:
+  /// **'QC/Trailer (phút)'**
+  String get showtimeBulkPreShowMinutes;
+
+  /// No description provided for @showtimeBulkPostBufferMinutes.
+  ///
+  /// In vi, this message translates to:
+  /// **'Dọn rạp (phút)'**
+  String get showtimeBulkPostBufferMinutes;
+
+  /// No description provided for @showtimeBulkTimeSlots.
+  ///
+  /// In vi, this message translates to:
+  /// **'Khung giờ chiếu'**
+  String get showtimeBulkTimeSlots;
+
+  /// No description provided for @showtimeBulkAddTimeSlot.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thêm khung giờ'**
+  String get showtimeBulkAddTimeSlot;
+
+  /// No description provided for @showtimeBulkSelectTime.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn giờ'**
+  String get showtimeBulkSelectTime;
+
+  /// No description provided for @showtimeBulkPreview.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem trước'**
+  String get showtimeBulkPreview;
+
+  /// No description provided for @showtimeBulkPreviewDesc.
+  ///
+  /// In vi, this message translates to:
+  /// **'{days} ngày × {slots} khung giờ = {total} suất dự kiến'**
+  String showtimeBulkPreviewDesc(int days, int slots, int total);
+
+  /// No description provided for @showtimeBulkSubmitBtn.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tạo lịch hàng loạt'**
+  String get showtimeBulkSubmitBtn;
+
+  /// No description provided for @showtimeBulkSubmitting.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang tạo lịch chiếu...'**
+  String get showtimeBulkSubmitting;
+
+  /// No description provided for @showtimeBulkSuccessSummary.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tạo thành công {count} suất chiếu'**
+  String showtimeBulkSuccessSummary(int count);
+
+  /// No description provided for @showtimeBulkFailedSummary.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thất bại {count} suất chiếu'**
+  String showtimeBulkFailedSummary(int count);
+
+  /// No description provided for @showtimeBulkResultTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Kết quả tạo lịch tự động'**
+  String get showtimeBulkResultTitle;
+
+  /// No description provided for @showtimeBulkDateRangeError.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ngày kết thúc phải sau hoặc bằng ngày bắt đầu'**
+  String get showtimeBulkDateRangeError;
+
+  /// No description provided for @showtimeBulkTimeSlotsEmptyError.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cần ít nhất một khung giờ chiếu'**
+  String get showtimeBulkTimeSlotsEmptyError;
+
+  /// No description provided for @showtimeBulkDone.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hoàn tất'**
+  String get showtimeBulkDone;
+
   /// No description provided for @manageCinemas.
   ///
   /// In vi, this message translates to:
