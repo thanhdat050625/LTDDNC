@@ -6,15 +6,16 @@ class BookingManagementRepository {
   BookingManagementRepository(this._dioClient);
 
   Future<List<SeatModel>> getShowtimeSeats(int showtimeId) async {
-    final response = await _dioClient.get(
-      '/bookings/showtime/$showtimeId/seats',
-    );
+    final response = await _dioClient.get('/showtimes/$showtimeId');
     final raw = response.data;
     final data = (raw is Map && raw.containsKey('data')) ? raw['data'] : raw;
-    if (data is List) {
-      return data
-          .map((e) => SeatModel.fromJson(e as Map<String, dynamic>))
-          .toList();
+    if (data is Map<String, dynamic>) {
+      final seats = data['seats'];
+      if (seats is List) {
+        return seats
+            .map((e) => SeatModel.fromJson(e as Map<String, dynamic>))
+            .toList();
+      }
     }
     return [];
   }
