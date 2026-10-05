@@ -6,6 +6,7 @@ import 'package:cineplex_client/features/home/presentation/cubit/home_cubit.dart
 import 'package:cineplex_client/features/home/presentation/widgets/movie_carousel.dart';
 import 'package:cineplex_client/features/home/presentation/widgets/now_showing_section.dart';
 import 'package:cineplex_client/features/home/presentation/widgets/coming_soon_section.dart';
+import 'package:cineplex_client/features/notification/presentation/widgets/notification_badge_icon.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -74,7 +75,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               ],
                             ),
                             IconButton(
-                              icon: Icon(Icons.notifications_none_outlined, color: colors.iconPrimary),
+                              icon: NotificationBadgeIcon(
+                                color: colors.iconPrimary,
+                                size: 24,
+                                icon: Icons.notifications_none_outlined,
+                              ),
                               onPressed: () => context.push('/notifications'),
                             ),
                           ],

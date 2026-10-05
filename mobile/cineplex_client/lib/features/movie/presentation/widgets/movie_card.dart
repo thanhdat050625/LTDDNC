@@ -80,7 +80,7 @@ class MovieCard extends StatelessWidget {
                 style: TextStyle(color: colors.textSecondary, fontSize: 12),
               ),
               const Spacer(),
-              if (movie.ageLimit != null)
+              if (movie.ageLimit != null && movie.ageLimit! > 0)
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                   decoration: BoxDecoration(

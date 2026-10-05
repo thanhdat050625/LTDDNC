@@ -203,6 +203,6 @@ export class NotificationService {
       where: { userId, isRead: false },
     });
 
-    return new ApiResponse(true, 'Lấy số lượng chưa đọc thành công', { count });
+    return new ApiResponse(true, 'Lấy số lượng chưa đọc thành công', { count, unreadCount: count });
   }
 }

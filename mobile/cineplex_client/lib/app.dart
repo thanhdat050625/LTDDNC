@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_shared/mobile_shared.dart';
@@ -62,6 +63,7 @@ class _AppState extends State<App> {
   late final SocketService _socketService;
   late final GoRouter _router;
   late final AppBackHandler _backHandler;
+  late final StreamSubscription<AuthState> _authSub;
 
   @override
   void initState() {
@@ -80,10 +82,17 @@ class _AppState extends State<App> {
       defaultRootPath: '/home',
       exitOnPaths: {'/home'},
     )..init();
+
+    _authSub = _authBloc.stream.listen((state) {
+      if (state is AuthAuthenticated) {
+        _notificationCubit.loadNotifications();
+      }
+    });
   }
 
   @override
   void dispose() {
+    _authSub.cancel();
     _backHandler.dispose();
     _authBloc.close();
     _homeCubit.close();
