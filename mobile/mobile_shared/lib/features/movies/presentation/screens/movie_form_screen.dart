@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -40,14 +41,16 @@ class _MovieFormScreenState extends State<MovieFormScreen> {
     final m = widget.movie;
     _titleCtrl = TextEditingController(text: m?.title ?? '');
     _genreCtrl = TextEditingController(text: m?.genre ?? '');
-    _durationCtrl = TextEditingController(text: m != null ? m.durationMinutes.toString() : '');
+    _durationCtrl = TextEditingController(
+      text: m != null ? m.durationMinutes.toString() : '',
+    );
     _directorCtrl = TextEditingController(text: m?.director ?? '');
     _castCtrl = TextEditingController(text: m?.cast ?? '');
     _trailerCtrl = TextEditingController(text: m?.trailerUrl ?? '');
     _descCtrl = TextEditingController(text: m?.description ?? '');
     _langCtrl = TextEditingController(text: m?.language ?? '');
     _ageLimitCtrl = TextEditingController(text: m?.ageLimit?.toString() ?? '');
-    
+
     _releaseDate = m?.releaseDate;
     _screeningEndDate = m?.screeningEndDate;
     if (m != null) _status = m.status;
@@ -77,8 +80,8 @@ class _MovieFormScreenState extends State<MovieFormScreen> {
   }
 
   Future<void> _selectDate(BuildContext context, bool isReleaseDate) async {
-    final initialDate = isReleaseDate 
-        ? (_releaseDate ?? DateTime.now()) 
+    final initialDate = isReleaseDate
+        ? (_releaseDate ?? DateTime.now())
         : (_screeningEndDate ?? DateTime.now().add(const Duration(days: 30)));
     final picked = await showDatePicker(
       context: context,
@@ -99,10 +102,12 @@ class _MovieFormScreenState extends State<MovieFormScreen> {
 
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
-    
+
     final data = {
+      'name': _titleCtrl.text.trim(),
       'title': _titleCtrl.text.trim(),
       'genre': _genreCtrl.text.trim(),
+      'duration': int.tryParse(_durationCtrl.text) ?? 0,
       'durationMinutes': int.tryParse(_durationCtrl.text) ?? 0,
       'director': _directorCtrl.text.trim(),
       'cast': _castCtrl.text.trim(),
@@ -112,7 +117,8 @@ class _MovieFormScreenState extends State<MovieFormScreen> {
       'trailerUrl': _trailerCtrl.text.trim(),
       'description': _descCtrl.text.trim(),
       if (_releaseDate != null) 'releaseDate': _releaseDate!.toIso8601String(),
-      if (_screeningEndDate != null) 'screeningEndDate': _screeningEndDate!.toIso8601String(),
+      if (_screeningEndDate != null)
+        'screeningEndDate': _screeningEndDate!.toIso8601String(),
     };
 
     final isEdit = widget.movie != null || widget.movieId != null;
@@ -139,14 +145,19 @@ class _MovieFormScreenState extends State<MovieFormScreen> {
           if (state is MovieFormSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(isEdit ? l10n.updateMovieSuccess : l10n.addMovieSuccess),
+                content: Text(
+                  isEdit ? l10n.updateMovieSuccess : l10n.addMovieSuccess,
+                ),
                 backgroundColor: theme.success,
               ),
             );
             context.pop();
           } else if (state is MovieFormError) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message), backgroundColor: theme.error),
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: theme.error,
+              ),
             );
           }
         },
@@ -182,24 +193,38 @@ class _MovieFormScreenState extends State<MovieFormScreen> {
                         child: _posterFile != null
                             ? ClipRRect(
                                 borderRadius: BorderRadius.circular(12),
-                                child: Image.file(_posterFile!, fit: BoxFit.cover),
+                                child: Image.file(
+                                  _posterFile!,
+                                  fit: BoxFit.cover,
+                                ),
                               )
-                            : (widget.movie?.posterUrl != null && widget.movie!.posterUrl!.isNotEmpty)
-                                ? ClipRRect(
-                                    borderRadius: BorderRadius.circular(12),
-                                    child: AppCachedImage(imageUrl: widget.movie!.posterUrl!, fit: BoxFit.cover),
-                                  )
-                                : Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(LucideIcons.imagePlus, size: 36, color: theme.accent),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        l10n.selectPoster,
-                                        style: TextStyle(color: theme.textSecondary, fontSize: 12),
-                                      ),
-                                    ],
+                            : (widget.movie?.posterUrl != null &&
+                                  widget.movie!.posterUrl!.isNotEmpty)
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: AppCachedImage(
+                                  imageUrl: widget.movie!.posterUrl!,
+                                  fit: BoxFit.cover,
+                                ),
+                              )
+                            : Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    LucideIcons.imagePlus,
+                                    size: 36,
+                                    color: theme.accent,
                                   ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    l10n.selectPoster,
+                                    style: TextStyle(
+                                      color: theme.textSecondary,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
                       ),
                     ),
                   ),
@@ -215,7 +240,9 @@ class _MovieFormScreenState extends State<MovieFormScreen> {
                           controller: _titleCtrl,
                           label: l10n.movieTitleLabel,
                           hintText: l10n.enterMovieTitle,
-                          validator: (val) => val == null || val.trim().isEmpty ? l10n.movieTitleRequired : null,
+                          validator: (val) => val == null || val.trim().isEmpty
+                              ? l10n.movieTitleRequired
+                              : null,
                         ),
                         const SizedBox(height: 12),
                         Row(
@@ -225,7 +252,10 @@ class _MovieFormScreenState extends State<MovieFormScreen> {
                                 controller: _genreCtrl,
                                 label: l10n.genreLabel,
                                 hintText: l10n.genrePlaceholder,
-                                validator: (val) => val == null || val.trim().isEmpty ? l10n.fillRequiredFields : null,
+                                validator: (val) =>
+                                    val == null || val.trim().isEmpty
+                                    ? l10n.fillRequiredFields
+                                    : null,
                               ),
                             ),
                             const SizedBox(width: 10),
@@ -235,7 +265,10 @@ class _MovieFormScreenState extends State<MovieFormScreen> {
                                 label: l10n.durationMinutesLabel,
                                 hintText: '120',
                                 keyboardType: TextInputType.number,
-                                validator: (val) => val == null || val.trim().isEmpty ? l10n.fillRequiredFields : null,
+                                validator: (val) =>
+                                    val == null || val.trim().isEmpty
+                                    ? l10n.fillRequiredFields
+                                    : null,
                               ),
                             ),
                           ],
@@ -298,17 +331,28 @@ class _MovieFormScreenState extends State<MovieFormScreen> {
                           children: [
                             Expanded(
                               child: InkWell(
-                                onTap: isLoading ? null : () => _selectDate(context, true),
+                                onTap: isLoading
+                                    ? null
+                                    : () => _selectDate(context, true),
                                 child: InputDecorator(
                                   decoration: InputDecoration(
                                     labelText: l10n.releaseDateLabel,
-                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 10,
+                                    ),
                                   ),
                                   child: Text(
-                                    _releaseDate != null ? '${_releaseDate!.day}/${_releaseDate!.month}/${_releaseDate!.year}' : l10n.selectDatePrompt,
+                                    _releaseDate != null
+                                        ? '${_releaseDate!.day}/${_releaseDate!.month}/${_releaseDate!.year}'
+                                        : l10n.selectDatePrompt,
                                     style: TextStyle(
-                                      color: _releaseDate != null ? theme.textPrimary : theme.textSecondary,
+                                      color: _releaseDate != null
+                                          ? theme.textPrimary
+                                          : theme.textSecondary,
                                       fontSize: 13,
                                     ),
                                   ),
@@ -318,17 +362,28 @@ class _MovieFormScreenState extends State<MovieFormScreen> {
                             const SizedBox(width: 10),
                             Expanded(
                               child: InkWell(
-                                onTap: isLoading ? null : () => _selectDate(context, false),
+                                onTap: isLoading
+                                    ? null
+                                    : () => _selectDate(context, false),
                                 child: InputDecorator(
                                   decoration: InputDecoration(
                                     labelText: l10n.screeningEndDate,
-                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 10,
+                                    ),
                                   ),
                                   child: Text(
-                                    _screeningEndDate != null ? '${_screeningEndDate!.day}/${_screeningEndDate!.month}/${_screeningEndDate!.year}' : l10n.selectDatePrompt,
+                                    _screeningEndDate != null
+                                        ? '${_screeningEndDate!.day}/${_screeningEndDate!.month}/${_screeningEndDate!.year}'
+                                        : l10n.selectDatePrompt,
                                     style: TextStyle(
-                                      color: _screeningEndDate != null ? theme.textPrimary : theme.textSecondary,
+                                      color: _screeningEndDate != null
+                                          ? theme.textPrimary
+                                          : theme.textSecondary,
                                       fontSize: 13,
                                     ),
                                   ),
@@ -342,17 +397,34 @@ class _MovieFormScreenState extends State<MovieFormScreen> {
                           initialValue: _status,
                           decoration: InputDecoration(
                             labelText: l10n.statusLabel,
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 10,
+                            ),
                           ),
                           items: [
-                            DropdownMenuItem(value: 'NOW_SHOWING', child: Text(l10n.statusNowShowing)),
-                            DropdownMenuItem(value: 'COMING_SOON', child: Text(l10n.statusComingSoon)),
-                            DropdownMenuItem(value: 'STOPPED', child: Text(l10n.statusStopped)),
+                            DropdownMenuItem(
+                              value: 'NOW_SHOWING',
+                              child: Text(l10n.statusNowShowing),
+                            ),
+                            DropdownMenuItem(
+                              value: 'COMING_SOON',
+                              child: Text(l10n.statusComingSoon),
+                            ),
+                            DropdownMenuItem(
+                              value: 'STOPPED',
+                              child: Text(l10n.statusStopped),
+                            ),
                           ],
-                          onChanged: isLoading ? null : (val) {
-                            if (val != null) setState(() => _status = val);
-                          },
+                          onChanged: isLoading
+                              ? null
+                              : (val) {
+                                  if (val != null)
+                                    setState(() => _status = val);
+                                },
                         ),
                       ],
                     ),

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { CreateMovieRequestDto, UpdateMovieRequestDto } from './dto/movie.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Movie } from './entities/movie.entity';
@@ -19,20 +19,25 @@ export class MovieService {
     request: CreateMovieRequestDto,
     poster?: Express.Multer.File,
   ) {
+    const title = (request.title || request.name || '').trim();
+    if (!title) {
+      throw new BadRequestException('Tên phim không được để trống');
+    }
+
     const posterUrl = await this.resolvePosterUrl(request, poster);
 
     const newMovie = this.movieRepository.create({
-      title: request.name,
+      title,
       description: request.description,
-      status: request.status as EMovieStatus,
+      status: (request.status as EMovieStatus) || EMovieStatus.COMING_SOON,
       posterUrl,
       trailerUrl: request.trailerUrl,
-      durationMinutes: request.duration,
+      durationMinutes: request.durationMinutes ?? request.duration ?? 0,
       releaseDate: request.releaseDate,
-      screeningEndDate: request.screeningEndDate ?? null,
+      screeningEndDate: request.screeningEndDate,
       genre: request.genre,
       director: request.director,
-      cast: request.actors ? request.actors.join(', ') : '',
+      cast: request.cast ?? (request.actors ? request.actors.join(', ') : ''),
       language: request.language,
       ageLimit: request.ageLimit,
     });
@@ -54,17 +59,17 @@ export class MovieService {
     const posterUrl = await this.resolvePosterUrl(request, poster, movie.posterUrl);
 
     const updatedMovie = Object.assign(movie, {
-      title: request.name ?? movie.title,
+      title: request.title ?? request.name ?? movie.title,
       description: request.description ?? movie.description,
       status: request.status ? (request.status as EMovieStatus) : movie.status,
       posterUrl,
       trailerUrl: request.trailerUrl ?? movie.trailerUrl,
-      durationMinutes: request.duration ?? movie.durationMinutes,
+      durationMinutes: request.durationMinutes ?? request.duration ?? movie.durationMinutes,
       releaseDate: request.releaseDate ?? movie.releaseDate,
       screeningEndDate: request.screeningEndDate !== undefined ? request.screeningEndDate : movie.screeningEndDate,
       genre: request.genre ?? movie.genre,
       director: request.director ?? movie.director,
-      cast: request.actors ? request.actors.join(', ') : movie.cast,
+      cast: request.cast ?? (request.actors ? request.actors.join(', ') : movie.cast),
       language: request.language ?? movie.language,
       ageLimit: request.ageLimit ?? movie.ageLimit,
     });

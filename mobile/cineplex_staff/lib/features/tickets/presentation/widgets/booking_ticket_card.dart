@@ -18,10 +18,11 @@ class BookingTicketCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
 
+    final bStatus = booking.status.toUpperCase();
     final isPaid =
-        booking.status.toUpperCase() == 'CONFIRMED' ||
-        booking.status.toUpperCase() == 'PAID';
-    final isPending = booking.status.toUpperCase() == 'PENDING';
+        bStatus == 'CONFIRMED' || bStatus == 'PAID' || bStatus == 'SUCCESS';
+    final isPending =
+        bStatus == 'PENDING' || bStatus == 'WAITING' || bStatus == 'PROCESSING';
 
     final statusBg = isPaid
         ? colors.success.withValues(alpha: 0.15)

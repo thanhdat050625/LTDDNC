@@ -162,16 +162,8 @@ class StaffDrawer extends StatelessWidget {
                   ),
                   _buildDrawerItem(
                     context,
-                    icon: LucideIcons.film,
-                    title: l10n.showtimesAndOccupancy,
-                    route: '/showtimes-occupancy',
-                    theme: theme,
-                  ),
-                  Divider(color: theme.borderSubtle, height: 1),
-                  _buildDrawerItem(
-                    context,
                     icon: LucideIcons.ticket,
-                    title: l10n.manageTickets,
+                    title: l10n.ticketManagement,
                     route: '/ticket-management',
                     theme: theme,
                   ),
@@ -184,6 +176,13 @@ class StaffDrawer extends StatelessWidget {
                   ),
                   _buildDrawerItem(
                     context,
+                    icon: LucideIcons.calendarDays,
+                    title: l10n.manageShowtimes,
+                    route: '/showtimes',
+                    theme: theme,
+                  ),
+                  _buildDrawerItem(
+                    context,
                     icon: LucideIcons.mapPin,
                     title: l10n.manageCinemas,
                     route: '/cinemas',
@@ -191,9 +190,9 @@ class StaffDrawer extends StatelessWidget {
                   ),
                   _buildDrawerItem(
                     context,
-                    icon: LucideIcons.calendarDays,
-                    title: l10n.manageShowtimes,
-                    route: '/showtimes',
+                    icon: LucideIcons.film,
+                    title: l10n.showtimesAndOccupancy,
+                    route: '/showtimes-occupancy',
                     theme: theme,
                   ),
                   _buildDrawerItem(

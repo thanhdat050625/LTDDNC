@@ -445,7 +445,7 @@ export class BookingService {
         'tickets',
         'tickets.seat',
         'bookingConcessions',
-        'bookingConcessions.concessionProduct',
+        'bookingConcessions.product',
         'payment',
       ],
       order: { createdAt: 'DESC' },

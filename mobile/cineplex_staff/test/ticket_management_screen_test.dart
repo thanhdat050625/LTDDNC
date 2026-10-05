@@ -88,6 +88,15 @@ void main() {
       customerName: 'Trần Thị B',
       tickets: [],
     ),
+    const BookingDetailModel(
+      id: '103',
+      bookingCode: 'BK-2026-003',
+      totalAmount: 65000,
+      status: 'EXPIRED',
+      movieTitle: 'Godzilla x Kong',
+      cinemaName: 'Cineplex Thủ Đức',
+      tickets: [],
+    ),
   ];
 
   final testPrices = [
@@ -133,6 +142,13 @@ void main() {
   testWidgets(
     'TicketManagementScreen renders tabs, bookings, and bottom sheet detail',
     (tester) async {
+      tester.view.physicalSize = const Size(800, 1200);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
       await tester.pumpWidget(buildTestWidget());
       await tester.pumpAndSettle();
 
@@ -148,9 +164,10 @@ void main() {
       expect(find.text(l10n.ticketPriceConfig), findsOneWidget);
 
       // Verify Bookings list
-      expect(find.byType(BookingTicketCard), findsNWidgets(2));
+      expect(find.byType(BookingTicketCard), findsNWidgets(3));
       expect(find.text('BK-2026-001'), findsOneWidget);
       expect(find.text('BK-2026-002'), findsOneWidget);
+      expect(find.text('BK-2026-003'), findsOneWidget);
       expect(find.text('Mai'), findsOneWidget);
 
       // Tap on first booking card to open bottom sheet
@@ -167,6 +184,60 @@ void main() {
       // Close bottom sheet
       await tester.tap(find.byIcon(LucideIcons.x).first);
       await tester.pumpAndSettle();
+    },
+  );
+
+  testWidgets(
+    'TicketManagementScreen filter by cancelled correctly includes expired bookings',
+    (tester) async {
+      tester.view.physicalSize = const Size(800, 1200);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      await tester.pumpWidget(buildTestWidget());
+      await tester.pumpAndSettle();
+
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(TicketManagementScreen)),
+      )!;
+
+      // Initially all 3 bookings visible
+      expect(find.byType(BookingTicketCard), findsNWidgets(3));
+
+      // Tap on "Đã hủy" filter chip
+      await tester.tap(
+        find.widgetWithText(ChoiceChip, l10n.ticketStatusCancelled),
+      );
+      await tester.pumpAndSettle();
+
+      // Only the expired/cancelled booking should remain visible
+      expect(find.byType(BookingTicketCard), findsOneWidget);
+      expect(find.text('BK-2026-003'), findsOneWidget);
+      expect(find.text('BK-2026-001'), findsNothing);
+      expect(find.text('BK-2026-002'), findsNothing);
+
+      // Tap on "Đã xác nhận" filter chip
+      await tester.tap(
+        find.widgetWithText(ChoiceChip, l10n.ticketStatusConfirmed),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(BookingTicketCard), findsOneWidget);
+      expect(find.text('BK-2026-001'), findsOneWidget);
+      expect(find.text('BK-2026-003'), findsNothing);
+
+      // Tap on "Chờ thanh toán" filter chip
+      await tester.tap(
+        find.widgetWithText(ChoiceChip, l10n.ticketStatusPending),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(BookingTicketCard), findsOneWidget);
+      expect(find.text('BK-2026-002'), findsOneWidget);
+      expect(find.text('BK-2026-001'), findsNothing);
     },
   );
 

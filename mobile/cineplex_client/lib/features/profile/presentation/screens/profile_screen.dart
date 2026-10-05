@@ -415,7 +415,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     const SizedBox(height: 16),
 
-                    // System Settings Card
+                    // Account Security & Settings Card
                     Card(
                       elevation: 0,
                       color: colorScheme.surfaceContainerLow,
@@ -427,23 +427,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ),
                       ),
-                      child: ListTile(
-                        leading: Icon(
-                          Icons.settings_outlined,
-                          color: colorScheme.primary,
-                        ),
-                        title: Text(
-                          l10n.adminSettings,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 15,
+                      child: Column(
+                        children: [
+                          ListTile(
+                            leading: Icon(
+                              Icons.lock_outline,
+                              color: colorScheme.primary,
+                            ),
+                            title: Text(
+                              l10n.changePassword,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15,
+                              ),
+                            ),
+                            trailing: Icon(
+                              Icons.chevron_right,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                            onTap: () => context.push('/change-password'),
                           ),
-                        ),
-                        trailing: Icon(
-                          Icons.chevron_right,
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                        onTap: () => context.push('/settings'),
+                          Divider(
+                            height: 1,
+                            indent: 56,
+                            endIndent: 16,
+                            color: colorScheme.outlineVariant.withValues(alpha: 0.3),
+                          ),
+                          ListTile(
+                            leading: Icon(
+                              Icons.settings_outlined,
+                              color: colorScheme.primary,
+                            ),
+                            title: Text(
+                              l10n.adminSettings,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15,
+                              ),
+                            ),
+                            trailing: Icon(
+                              Icons.chevron_right,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                            onTap: () => context.push('/settings'),
+                          ),
+                        ],
                       ),
                     ),
 
