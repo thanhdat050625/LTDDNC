@@ -1,17 +1,8 @@
-import 'package:cineplex_staff/features/tickets/presentation/cubit/ticket_management_cubit.dart';
-import 'package:cineplex_staff/features/tickets/presentation/screens/ticket_management_screen.dart';
-import 'package:cineplex_staff/features/tickets/presentation/widgets/booking_ticket_card.dart';
-import 'package:cineplex_staff/features/tickets/presentation/widgets/ticket_price_table.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:mobile_shared/mobile_shared.dart'
-    hide
-        TicketManagementCubit,
-        TicketManagementScreen,
-        BookingTicketCard,
-        TicketPriceTable;
+import 'package:mobile_shared/mobile_shared.dart';
 
 class _MockBookingManagementRepository implements BookingManagementRepository {
   final List<BookingDetailModel> mockBookings;

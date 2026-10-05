@@ -3,8 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mobile_shared/mobile_shared.dart'
-    hide TicketManagementCubit, TicketManagementScreen;
+import 'package:mobile_shared/mobile_shared.dart';
 
 import '../core/widgets/staff_shell_scaffold.dart';
 import '../features/auth/presentation/screens/staff_login_screen.dart';
@@ -16,8 +15,6 @@ import '../features/ticket_sale/presentation/cubit/ticket_sale_cubit.dart';
 import '../features/ticket_sale/presentation/screens/checkout_screen.dart';
 import '../features/ticket_sale/presentation/screens/seat_selection_screen.dart';
 import '../features/ticket_sale/presentation/screens/ticket_sale_screen.dart';
-import '../features/tickets/presentation/cubit/ticket_management_cubit.dart';
-import '../features/tickets/presentation/screens/ticket_management_screen.dart';
 
 final staffRootNavigatorKey = GlobalKey<NavigatorState>();
 final staffShellNavigatorKey = GlobalKey<NavigatorState>();
