@@ -32,6 +32,7 @@ class TicketSaleCubit extends Cubit<TicketSaleState> {
           selectedCinemaId: firstCinema.id,
           cinemaShowtimes: showtimes,
           moviesForCinema: movies,
+          selectedMovieId: movies.isNotEmpty ? movies.first.id : null,
         ),
       );
     } catch (e) {
@@ -54,7 +55,7 @@ class TicketSaleCubit extends Cubit<TicketSaleState> {
             selectedCinemaId: cinemaId,
             cinemaShowtimes: showtimes,
             moviesForCinema: movies,
-            selectedMovieId: null, // Reset movie selection
+            selectedMovieId: movies.isNotEmpty ? movies.first.id : null,
           ),
         );
       } catch (e) {
