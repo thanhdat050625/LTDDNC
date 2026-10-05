@@ -196,6 +196,42 @@ abstract class AppLocalizations {
   /// **'Mật khẩu mới'**
   String get newPassword;
 
+  /// No description provided for @changePasswordSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đổi mật khẩu thành công'**
+  String get changePasswordSuccess;
+
+  /// No description provided for @changePasswordDescription.
+  ///
+  /// In vi, this message translates to:
+  /// **'Để bảo mật tài khoản, vui lòng nhập mật khẩu cũ và đặt mật khẩu mới có ít nhất 6 ký tự.'**
+  String get changePasswordDescription;
+
+  /// No description provided for @oldPasswordRequired.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vui lòng nhập mật khẩu cũ'**
+  String get oldPasswordRequired;
+
+  /// No description provided for @newPasswordRequired.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vui lòng nhập mật khẩu mới'**
+  String get newPasswordRequired;
+
+  /// No description provided for @confirmPasswordRequired.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vui lòng xác nhận mật khẩu mới'**
+  String get confirmPasswordRequired;
+
+  /// No description provided for @newPasswordSameAsOld.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mật khẩu mới phải khác mật khẩu cũ'**
+  String get newPasswordSameAsOld;
+
   /// No description provided for @logout.
   ///
   /// In vi, this message translates to:
@@ -4125,6 +4161,42 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Không thể mở liên kết trailer'**
   String get cannotOpenTrailer;
+
+  /// No description provided for @replayTrailer.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem lại'**
+  String get replayTrailer;
+
+  /// No description provided for @seekBackward10s.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tua lại 10s'**
+  String get seekBackward10s;
+
+  /// No description provided for @seekForward10s.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tua tới 10s'**
+  String get seekForward10s;
+
+  /// No description provided for @playPauseTrailer.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phát / Dừng'**
+  String get playPauseTrailer;
+
+  /// No description provided for @fullscreen.
+  ///
+  /// In vi, this message translates to:
+  /// **'Toàn màn hình'**
+  String get fullscreen;
+
+  /// No description provided for @exitFullscreen.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thu nhỏ'**
+  String get exitFullscreen;
 
   /// No description provided for @manageTickets.
   ///

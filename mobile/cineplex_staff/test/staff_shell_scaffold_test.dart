@@ -123,19 +123,20 @@ void main() {
       expect(find.text('staff@cineplex.vn'), findsOneWidget);
       expect(find.text(l10n.staffBadge), findsOneWidget);
 
-      // Verify Main Staff Navigation Destinations
+      // Verify Top Navigation Destinations
       expect(find.text(l10n.staffDashboard), findsOneWidget);
       expect(find.text(l10n.scanTicket), findsOneWidget);
       expect(find.text(l10n.counterSale), findsOneWidget);
-      expect(find.text(l10n.showtimesAndOccupancy), findsOneWidget);
+      expect(find.text(l10n.ticketManagement), findsOneWidget);
 
-      // Verify Management Items (scroll ListView to ensure visibility)
-      await tester.drag(find.byType(ListView), const Offset(0, -200));
+      // Verify Remaining Management Items (scroll ListView to ensure visibility)
+      await tester.drag(find.byType(ListView), const Offset(0, -300));
       await tester.pumpAndSettle();
 
       expect(find.text(l10n.manageMovies), findsOneWidget);
-      expect(find.text(l10n.manageCinemas), findsOneWidget);
       expect(find.text(l10n.manageShowtimes), findsOneWidget);
+      expect(find.text(l10n.manageCinemas), findsOneWidget);
+      expect(find.text(l10n.showtimesAndOccupancy), findsOneWidget);
       expect(find.text(l10n.managePromotions), findsOneWidget);
       expect(find.text(l10n.manageConcessions), findsOneWidget);
       expect(find.text(l10n.adminSettings), findsOneWidget);

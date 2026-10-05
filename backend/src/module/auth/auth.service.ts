@@ -278,6 +278,22 @@ export class AuthService implements OnModuleInit {
   }
 
   async changePassword(userId: number, dto: ChangePasswordDto): Promise<ApiResponse<null>> {
+    if (!dto.oldPassword || !dto.oldPassword.trim()) {
+      throw new CustomException(HttpStatus.BAD_REQUEST, 'VALIDATION_FAILED', 'Vui lòng nhập mật khẩu cũ');
+    }
+
+    if (!dto.newPassword || !dto.newPassword.trim()) {
+      throw new CustomException(HttpStatus.BAD_REQUEST, 'VALIDATION_FAILED', 'Vui lòng nhập mật khẩu mới');
+    }
+
+    if (dto.newPassword.length < 6) {
+      throw new CustomException(HttpStatus.BAD_REQUEST, 'VALIDATION_FAILED', 'Mật khẩu mới phải có ít nhất 6 ký tự');
+    }
+
+    if (!dto.confirmPassword || !dto.confirmPassword.trim()) {
+      throw new CustomException(HttpStatus.BAD_REQUEST, 'VALIDATION_FAILED', 'Vui lòng xác nhận mật khẩu mới');
+    }
+
     if (dto.newPassword !== dto.confirmPassword) {
       throw new CustomException(HttpStatus.BAD_REQUEST, 'VALIDATION_FAILED', 'Mật khẩu xác nhận không khớp');
     }

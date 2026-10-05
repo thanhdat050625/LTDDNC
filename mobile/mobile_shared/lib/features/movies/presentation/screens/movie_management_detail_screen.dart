@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mobile_shared/mobile_shared.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class MovieManagementDetailScreen extends StatefulWidget {
   final int movieId;
@@ -18,10 +16,12 @@ class MovieManagementDetailScreen extends StatefulWidget {
   });
 
   @override
-  State<MovieManagementDetailScreen> createState() => _MovieManagementDetailScreenState();
+  State<MovieManagementDetailScreen> createState() =>
+      _MovieManagementDetailScreenState();
 }
 
-class _MovieManagementDetailScreenState extends State<MovieManagementDetailScreen> {
+class _MovieManagementDetailScreenState
+    extends State<MovieManagementDetailScreen> {
   late MovieModel? _movie;
   bool _isLoading = false;
   String? _errorMessage;
@@ -60,30 +60,21 @@ class _MovieManagementDetailScreenState extends State<MovieManagementDetailScree
     }
   }
 
-  Future<void> _openTrailer(String url) async {
-    final l10n = AppLocalizations.of(context)!;
-    try {
-      final uri = Uri.parse(url.trim());
-      final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
-      if (!launched && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.cannotOpenTrailer)),
-        );
-      }
-    } catch (_) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.cannotOpenTrailer)),
-        );
-      }
-    }
-  }
-
-  void _copyTrailer(String url) {
-    final l10n = AppLocalizations.of(context)!;
-    Clipboard.setData(ClipboardData(text: url.trim()));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.trailerCopied)),
+  void _openTrailerPlayer(
+    BuildContext context,
+    String url,
+    String title, {
+    String? genre,
+    int? durationMinutes,
+    String? description,
+  }) {
+    TrailerPlayerScreen.open(
+      context,
+      trailerUrl: url,
+      title: title,
+      genre: genre,
+      durationMinutes: durationMinutes,
+      description: description,
     );
   }
 
@@ -120,10 +111,7 @@ class _MovieManagementDetailScreenState extends State<MovieManagementDetailScree
     }
 
     if (_errorMessage != null && _movie == null) {
-      return AppErrorView(
-        message: _errorMessage!,
-        onRetry: _loadMovieDetail,
-      );
+      return AppErrorView(message: _errorMessage!, onRetry: _loadMovieDetail);
     }
 
     if (_movie == null) {
@@ -134,9 +122,14 @@ class _MovieManagementDetailScreenState extends State<MovieManagementDetailScree
 
     final movie = _movie!;
     final dateFormat = DateFormat('dd/MM/yyyy');
-    final releaseStr = movie.releaseDate != null ? dateFormat.format(movie.releaseDate!) : '---';
-    final endStr = movie.screeningEndDate != null ? dateFormat.format(movie.screeningEndDate!) : '---';
-    final hasTrailer = movie.trailerUrl != null && movie.trailerUrl!.trim().isNotEmpty;
+    final releaseStr = movie.releaseDate != null
+        ? dateFormat.format(movie.releaseDate!)
+        : '---';
+    final endStr = movie.screeningEndDate != null
+        ? dateFormat.format(movie.screeningEndDate!)
+        : '---';
+    final hasTrailer =
+        movie.trailerUrl != null && movie.trailerUrl!.trim().isNotEmpty;
 
     return RefreshIndicator(
       onRefresh: _loadMovieDetail,
@@ -146,7 +139,7 @@ class _MovieManagementDetailScreenState extends State<MovieManagementDetailScree
           theme.spacingMd,
           theme.spacingSm,
           theme.spacingMd,
-          theme.spacingLg + 40,
+          theme.spacingMd,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -155,29 +148,74 @@ class _MovieManagementDetailScreenState extends State<MovieManagementDetailScree
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Poster
-                Hero(
-                  tag: 'movie_poster_${movie.id}',
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(theme.radiusMd),
-                    child: Container(
-                      width: 110,
-                      height: 160,
-                      color: theme.surface,
-                      child: (movie.posterUrl != null && movie.posterUrl!.isNotEmpty)
-                          ? AppCachedImage(
-                              imageUrl: movie.posterUrl!,
-                              fit: BoxFit.cover,
-                            )
-                          : Center(
-                              child: Icon(
-                                LucideIcons.film,
-                                size: 40,
-                                color: theme.textSecondary,
+                // Poster & Trailer Action
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Hero(
+                      tag: 'movie_poster_${movie.id}',
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(theme.radiusMd),
+                        child: Container(
+                          width: 110,
+                          height: 160,
+                          color: theme.surface,
+                          child:
+                              (movie.posterUrl != null &&
+                                  movie.posterUrl!.isNotEmpty)
+                              ? AppCachedImage(
+                                  imageUrl: movie.posterUrl!,
+                                  fit: BoxFit.cover,
+                                )
+                              : Center(
+                                  child: Icon(
+                                    LucideIcons.film,
+                                    size: 40,
+                                    color: theme.textSecondary,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ),
+                    if (hasTrailer) ...[
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        width: 110,
+                        height: 34,
+                        child: ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: theme.primary,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                theme.radiusSm,
                               ),
                             ),
-                    ),
-                  ),
+                            elevation: 0,
+                          ),
+                          icon: const Icon(LucideIcons.play, size: 14),
+                          label: Text(
+                            l10n.watchTrailer,
+                            style: const TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          onPressed: () => _openTrailerPlayer(
+                            context,
+                            movie.trailerUrl!,
+                            movie.title,
+                            genre: movie.genre,
+                            durationMinutes: movie.durationMinutes,
+                            description: movie.description,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
                 SizedBox(width: theme.spacingMd),
 
@@ -209,13 +247,15 @@ class _MovieManagementDetailScreenState extends State<MovieManagementDetailScree
                           if (movie.durationMinutes > 0)
                             _buildInfoChip(
                               icon: LucideIcons.clock,
-                              label: l10n.durationMinutes(movie.durationMinutes),
+                              label: l10n.durationMinutes(
+                                movie.durationMinutes,
+                              ),
                               theme: theme,
                             ),
                           if (movie.ageLimit != null && movie.ageLimit! > 0)
                             _buildInfoChip(
                               icon: LucideIcons.shieldAlert,
-                              label: 'T${movie.ageLimit}',
+                              label: '${movie.ageLimit}+',
                               theme: theme,
                               color: theme.accent,
                             ),
@@ -225,7 +265,8 @@ class _MovieManagementDetailScreenState extends State<MovieManagementDetailScree
                               label: movie.genre,
                               theme: theme,
                             ),
-                          if (movie.language != null && movie.language!.isNotEmpty)
+                          if (movie.language != null &&
+                              movie.language!.isNotEmpty)
                             _buildInfoChip(
                               icon: LucideIcons.languages,
                               label: movie.language!,
@@ -261,7 +302,11 @@ class _MovieManagementDetailScreenState extends State<MovieManagementDetailScree
                     ],
                   ),
                   const Divider(height: 24),
-                  _buildDetailRow(l10n.director, movie.director ?? '---', theme),
+                  _buildDetailRow(
+                    l10n.director,
+                    movie.director ?? '---',
+                    theme,
+                  ),
                   const SizedBox(height: 10),
                   _buildDetailRow(l10n.cast, movie.cast ?? '---', theme),
                   const SizedBox(height: 10),
@@ -285,7 +330,11 @@ class _MovieManagementDetailScreenState extends State<MovieManagementDetailScree
                 children: [
                   Row(
                     children: [
-                      Icon(LucideIcons.fileText, size: 18, color: theme.primary),
+                      Icon(
+                        LucideIcons.fileText,
+                        size: 18,
+                        color: theme.primary,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         l10n.movieDescription,
@@ -299,7 +348,8 @@ class _MovieManagementDetailScreenState extends State<MovieManagementDetailScree
                   ),
                   const Divider(height: 24),
                   SelectableText(
-                    (movie.description != null && movie.description!.trim().isNotEmpty)
+                    (movie.description != null &&
+                            movie.description!.trim().isNotEmpty)
                         ? movie.description!
                         : '---',
                     style: TextStyle(
@@ -311,161 +361,17 @@ class _MovieManagementDetailScreenState extends State<MovieManagementDetailScree
                 ],
               ),
             ),
-            const SizedBox(height: 16),
-
-            // Trailer Card (Dedicated multiline view with direct open and copy actions)
-            AppCard(
-              padding: EdgeInsets.all(theme.spacingMd),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(LucideIcons.clapperboard, size: 18, color: theme.primary),
-                      const SizedBox(width: 8),
-                      Text(
-                        l10n.trailer,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: theme.textPrimary,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Divider(height: 24),
-                  if (hasTrailer) ...[
-                    // Primary Action: Xem trailer button
-                    SizedBox(
-                      width: double.infinity,
-                      height: 44,
-                      child: ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: theme.primary,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(theme.radiusMd),
-                          ),
-                        ),
-                        icon: const Icon(LucideIcons.play, size: 18),
-                        label: Text(
-                          l10n.watchTrailer,
-                          style: const TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                        onPressed: () => _openTrailer(movie.trailerUrl!),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Clean multiline URL display box (selectable, fully wrapped without ellipsis)
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: theme.background,
-                        borderRadius: BorderRadius.circular(theme.radiusSm),
-                        border: Border.all(
-                          color: theme.textSecondary.withValues(alpha: 0.15),
-                        ),
-                      ),
-                      child: SelectableText(
-                        movie.trailerUrl!,
-                        style: TextStyle(
-                          fontSize: 13,
-                          height: 1.4,
-                          color: theme.info,
-                          fontFamily: 'monospace',
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-
-                    // Quick Actions: Copy Link & Open in Browser
-                    Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: theme.textPrimary,
-                              side: BorderSide(
-                                color: theme.textSecondary.withValues(alpha: 0.3),
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(theme.radiusSm),
-                              ),
-                            ),
-                            icon: const Icon(LucideIcons.copy, size: 16),
-                            label: Text(l10n.copy),
-                            onPressed: () => _copyTrailer(movie.trailerUrl!),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: theme.textPrimary,
-                              side: BorderSide(
-                                color: theme.textSecondary.withValues(alpha: 0.3),
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(theme.radiusSm),
-                              ),
-                            ),
-                            icon: const Icon(LucideIcons.externalLink, size: 16),
-                            label: Text(l10n.openInBrowser),
-                            onPressed: () => _openTrailer(movie.trailerUrl!),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ] else ...[
-                    Row(
-                      children: [
-                        Icon(LucideIcons.videoOff, size: 20, color: theme.textSecondary),
-                        const SizedBox(width: 8),
-                        Text(
-                          l10n.noTrailer,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: theme.textSecondary,
-                            fontStyle: FontStyle.italic,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // Bottom Edit Button
-            SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: OutlinedButton.icon(
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: theme.primary,
-                  side: BorderSide(color: theme.primary, width: 1.5),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(theme.radiusMd),
-                  ),
-                ),
-                icon: const Icon(LucideIcons.pencil, size: 18),
-                label: Text(
-                  l10n.editMovie,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
-                onPressed: _navigateToEdit,
-              ),
-            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildStatusBadge(String status, CineplexColors theme, AppLocalizations l10n) {
+  Widget _buildStatusBadge(
+    String status,
+    CineplexColors theme,
+    AppLocalizations l10n,
+  ) {
     Color badgeColor;
     String badgeText;
 

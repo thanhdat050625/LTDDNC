@@ -38,14 +38,19 @@ class TicketManagementLoaded extends TicketManagementState {
       // Filter by status
       if (statusFilter != 'ALL') {
         final bStatus = b.status.toUpperCase();
-        if (statusFilter == 'CONFIRMED' &&
-            bStatus != 'CONFIRMED' &&
-            bStatus != 'PAID') {
-          return false;
-        } else if (statusFilter == 'PENDING' && bStatus != 'PENDING') {
-          return false;
-        } else if (statusFilter == 'CANCELLED' && bStatus != 'CANCELLED') {
-          return false;
+        final isPaid =
+            bStatus == 'CONFIRMED' || bStatus == 'PAID' || bStatus == 'SUCCESS';
+        final isPending =
+            bStatus == 'PENDING' ||
+            bStatus == 'WAITING' ||
+            bStatus == 'PROCESSING';
+
+        if (statusFilter == 'CONFIRMED') {
+          if (!isPaid) return false;
+        } else if (statusFilter == 'PENDING') {
+          if (!isPending) return false;
+        } else if (statusFilter == 'CANCELLED') {
+          if (isPaid || isPending) return false;
         }
       }
 

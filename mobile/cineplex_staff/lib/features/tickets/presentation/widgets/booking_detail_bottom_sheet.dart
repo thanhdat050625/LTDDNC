@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 
@@ -23,9 +22,11 @@ class BookingDetailBottomSheet extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
 
+    final bStatus = booking.status.toUpperCase();
     final isPaid =
-        booking.status.toUpperCase() == 'CONFIRMED' ||
-        booking.status.toUpperCase() == 'PAID';
+        bStatus == 'CONFIRMED' || bStatus == 'PAID' || bStatus == 'SUCCESS';
+    final isPending =
+        bStatus == 'PENDING' || bStatus == 'WAITING' || bStatus == 'PROCESSING';
 
     return Container(
       constraints: BoxConstraints(
@@ -358,6 +359,7 @@ class BookingDetailBottomSheet extends StatelessWidget {
                     const SizedBox(height: 8),
                     ...booking.concessions.map((c) {
                       final name =
+                          c['product']?['name'] ??
                           c['concessionProduct']?['name'] ??
                           c['name'] ??
                           'Combo';
@@ -428,10 +430,14 @@ class BookingDetailBottomSheet extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          '${booking.paymentMethod} • ${isPaid ? l10n.ticketStatusConfirmed : l10n.ticketStatusPending}',
+                          '${booking.paymentMethod} • ${isPaid ? l10n.ticketStatusConfirmed : (isPending ? l10n.ticketStatusPending : l10n.ticketStatusCancelled)}',
                           style: TextStyle(
                             fontSize: 12.5,
-                            color: isPaid ? colors.success : colors.warning,
+                            color: isPaid
+                                ? colors.success
+                                : (isPending
+                                      ? colors.warning
+                                      : colors.textMuted),
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -443,20 +449,7 @@ class BookingDetailBottomSheet extends StatelessWidget {
             ),
           ),
 
-          // Bottom Action: Soát vé QR button
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 10, 20, 14),
-              child: AppButton(
-                text: l10n.ticketOpenScanner,
-                icon: LucideIcons.scanLine,
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  context.push('/scanner');
-                },
-              ),
-            ),
-          ),
+          const SafeArea(top: false, child: SizedBox(height: 12)),
         ],
       ),
     );

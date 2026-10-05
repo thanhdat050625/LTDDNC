@@ -10,97 +10,110 @@ import { Type } from 'class-transformer';
 
 export class CreateMovieRequestDto {
   @IsString()
-  @IsNotEmpty()
-  name: string;
+  @IsOptional()
+  name?: string;
 
   @IsString()
   @IsOptional()
-  description: string;
+  title?: string;
 
   @IsString()
   @IsOptional()
-  status: string;
+  description?: string;
 
   @IsString()
   @IsOptional()
-  format: string;
+  status?: string;
 
   @IsString()
   @IsOptional()
-  imageUrl: string;
+  format?: string;
 
   @IsString()
   @IsOptional()
-  trailerUrl: string;
+  imageUrl?: string;
+
+  @IsString()
+  @IsOptional()
+  trailerUrl?: string;
 
   @Type(() => Number)
   @IsNumber()
   @IsOptional()
-  duration: number;
+  duration?: number;
 
   @Type(() => Number)
   @IsNumber()
   @IsOptional()
-  rating: number;
+  durationMinutes?: number;
 
   @Type(() => Number)
   @IsNumber()
   @IsOptional()
-  price: number;
+  rating?: number;
+
+  @Type(() => Number)
+  @IsNumber()
+  @IsOptional()
+  price?: number;
 
   @Type(() => Date)
   @IsDate()
   @IsOptional()
-  releaseDate: Date;
+  releaseDate?: Date;
 
   @Type(() => Date)
   @IsDate()
   @IsOptional()
-  endDate: Date;
+  endDate?: Date;
 
   @Type(() => Date)
   @IsDate()
   @IsOptional()
-  screeningEndDate: Date;
+  screeningEndDate?: Date;
 
   @IsString()
   @IsOptional()
-  genre: string;
+  genre?: string;
 
   @IsString()
   @IsOptional()
-  director: string;
+  director?: string;
 
   @IsArray()
   @IsOptional()
-  actors: string[];
+  actors?: string[];
 
   @IsString()
   @IsOptional()
-  producer: string;
+  cast?: string;
 
   @IsString()
   @IsOptional()
-  studio: string;
+  producer?: string;
+
+  @IsString()
+  @IsOptional()
+  studio?: string;
 
   @Type(() => Number)
   @IsNumber()
   @IsOptional()
-  budget: number;
+  budget?: number;
 
   @IsString()
   @IsOptional()
-  language: string;
+  language?: string;
 
   @Type(() => Number)
   @IsNumber()
   @IsOptional()
-  ageLimit: number;
+  ageLimit?: number;
 
   @Type(() => Number)
   @IsNumber()
   @IsOptional()
-  revenue: number;
+  revenue?: number;
 }
 
 export class UpdateMovieRequestDto extends CreateMovieRequestDto {}

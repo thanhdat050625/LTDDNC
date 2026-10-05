@@ -61,6 +61,25 @@ class AppLocalizationsVi extends AppLocalizations {
   String get newPassword => 'Mật khẩu mới';
 
   @override
+  String get changePasswordSuccess => 'Đổi mật khẩu thành công';
+
+  @override
+  String get changePasswordDescription =>
+      'Để bảo mật tài khoản, vui lòng nhập mật khẩu cũ và đặt mật khẩu mới có ít nhất 6 ký tự.';
+
+  @override
+  String get oldPasswordRequired => 'Vui lòng nhập mật khẩu cũ';
+
+  @override
+  String get newPasswordRequired => 'Vui lòng nhập mật khẩu mới';
+
+  @override
+  String get confirmPasswordRequired => 'Vui lòng xác nhận mật khẩu mới';
+
+  @override
+  String get newPasswordSameAsOld => 'Mật khẩu mới phải khác mật khẩu cũ';
+
+  @override
   String get logout => 'Đăng xuất';
 
   @override
@@ -2127,6 +2146,24 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get cannotOpenTrailer => 'Không thể mở liên kết trailer';
+
+  @override
+  String get replayTrailer => 'Xem lại';
+
+  @override
+  String get seekBackward10s => 'Tua lại 10s';
+
+  @override
+  String get seekForward10s => 'Tua tới 10s';
+
+  @override
+  String get playPauseTrailer => 'Phát / Dừng';
+
+  @override
+  String get fullscreen => 'Toàn màn hình';
+
+  @override
+  String get exitFullscreen => 'Thu nhỏ';
 
   @override
   String get manageTickets => 'Quản lý vé';

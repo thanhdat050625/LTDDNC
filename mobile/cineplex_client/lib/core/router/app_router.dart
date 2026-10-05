@@ -22,6 +22,7 @@ import 'package:cineplex_client/features/ticket/data/repositories/ticket_reposit
 import 'package:cineplex_client/features/notification/presentation/screens/notification_screen.dart';
 import 'package:cineplex_client/features/profile/presentation/screens/profile_screen.dart';
 import 'package:cineplex_client/features/profile/presentation/screens/edit_profile_screen.dart';
+import 'package:cineplex_client/features/profile/presentation/screens/change_password_screen.dart';
 import 'package:cineplex_client/features/showtime/presentation/cubit/showtime_cubit.dart';
 import 'package:cineplex_client/features/showtime/data/repositories/showtime_repository.dart';
 import 'package:cineplex_client/features/booking/presentation/bloc/seat_booking_bloc.dart';
@@ -63,6 +64,7 @@ GoRouter createRouter(
         '/notifications',
         '/profile',
         '/edit-profile',
+        '/change-password',
         '/settings',
       ];
       final isProtected = protectedPrefixes.any(
@@ -191,6 +193,10 @@ GoRouter createRouter(
         builder: (_, state) => EditProfileScreen(
           initialUser: state.extra as Map<String, dynamic>?,
         ),
+      ),
+      GoRoute(
+        path: '/change-password',
+        builder: (_, __) => const ChangePasswordScreen(),
       ),
       GoRoute(
         path: '/settings',
