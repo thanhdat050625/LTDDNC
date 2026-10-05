@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mobile_shared/mobile_shared.dart';
+
 import '../widgets/date_carousel.dart';
 
 class ShowtimeManagementScreen extends StatefulWidget {
@@ -10,7 +11,8 @@ class ShowtimeManagementScreen extends StatefulWidget {
   const ShowtimeManagementScreen({super.key, this.drawer});
 
   @override
-  State<ShowtimeManagementScreen> createState() => _ShowtimeManagementScreenState();
+  State<ShowtimeManagementScreen> createState() =>
+      _ShowtimeManagementScreenState();
 }
 
 class _ShowtimeManagementScreenState extends State<ShowtimeManagementScreen> {
@@ -27,7 +29,10 @@ class _ShowtimeManagementScreenState extends State<ShowtimeManagementScreen> {
     }
   }
 
-  Future<void> _selectCustomDate(BuildContext context, DateTime? currentDate) async {
+  Future<void> _selectCustomDate(
+    BuildContext context,
+    DateTime? currentDate,
+  ) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: currentDate ?? DateTime.now(),
@@ -70,7 +75,9 @@ class _ShowtimeManagementScreenState extends State<ShowtimeManagementScreen> {
                     child: DateCarousel(
                       selectedDate: selectedDate,
                       onDateSelected: (date) {
-                        context.read<ShowtimeManagementCubit>().filterByDate(date);
+                        context.read<ShowtimeManagementCubit>().filterByDate(
+                          date,
+                        );
                       },
                     ),
                   ),
@@ -83,10 +90,15 @@ class _ShowtimeManagementScreenState extends State<ShowtimeManagementScreen> {
                       icon: Icon(
                         LucideIcons.calendar,
                         size: 20,
-                        color: selectedDate != null ? theme.accent : theme.textSecondary,
+                        color: selectedDate != null
+                            ? theme.accent
+                            : theme.textSecondary,
                       ),
                       tooltip: l10n.filterByDatePrompt,
-                      constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                      constraints: const BoxConstraints(
+                        minWidth: 44,
+                        minHeight: 44,
+                      ),
                       onPressed: () => _selectCustomDate(context, selectedDate),
                     ),
                   ),
@@ -99,90 +111,112 @@ class _ShowtimeManagementScreenState extends State<ShowtimeManagementScreen> {
           // Showtime List
           Expanded(
             child: RefreshIndicator(
-              onRefresh: () => context.read<ShowtimeManagementCubit>().loadShowtimes(),
-              child: BlocBuilder<ShowtimeManagementCubit, ShowtimeManagementState>(
-                builder: (context, state) {
-                  if (state is ShowtimeManagementLoading) {
-                    return const Center(child: AppLoading());
-                  } else if (state is ShowtimeManagementError) {
-                    return Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(24.0),
-                        child: AppErrorView(
-                          message: state.message,
-                          onRetry: () => context.read<ShowtimeManagementCubit>().loadShowtimes(),
-                        ),
-                      ),
-                    );
-                  } else if (state is ShowtimeManagementLoaded) {
-                    final showtimes = state.showtimes;
-                    if (showtimes.isEmpty) {
-                      return Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(24.0),
-                          child: AppEmptyView(
-                            icon: LucideIcons.calendarX,
-                            title: l10n.noShowtimesFound,
-                            message: l10n.noResultsFound,
-                            actionLabel: l10n.addShowtime,
-                            onAction: () => _reloadAfterPush(context.push('/showtimes/new')),
+              onRefresh: () =>
+                  context.read<ShowtimeManagementCubit>().loadShowtimes(),
+              child:
+                  BlocBuilder<ShowtimeManagementCubit, ShowtimeManagementState>(
+                    builder: (context, state) {
+                      if (state is ShowtimeManagementLoading) {
+                        return const Center(child: AppLoading());
+                      } else if (state is ShowtimeManagementError) {
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: AppErrorView(
+                              message: state.message,
+                              onRetry: () => context
+                                  .read<ShowtimeManagementCubit>()
+                                  .loadShowtimes(),
+                            ),
                           ),
-                        ),
-                      );
-                    }
-                    return ListView.separated(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      itemCount: showtimes.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 8),
-                      itemBuilder: (context, index) {
-                        final st = showtimes[index];
-                        return ShowtimeListItem(
-                          showtime: st,
-                          onTap: () {
-                            _reloadAfterPush(
-                              context.push('/showtimes/${st.id}/edit', extra: st),
-                            );
-                          },
-                          onEdit: () {
-                            _reloadAfterPush(
-                              context.push('/showtimes/${st.id}/edit', extra: st),
-                            );
-                          },
-                          onDelete: () {
-                            showDialog(
-                              context: context,
-                              builder: (dCtx) => AlertDialog(
-                                backgroundColor: theme.surface,
-                                title: Text(l10n.confirmDelete),
-                                content: Text(l10n.confirmDeleteShowtimeDesc),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(dCtx),
-                                    child: Text(l10n.cancel, style: TextStyle(color: theme.textSecondary)),
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.pop(dCtx);
-                                      context.read<ShowtimeManagementCubit>().deleteShowtime(st.id);
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: theme.error,
-                                      foregroundColor: Colors.white,
-                                    ),
-                                    child: Text(l10n.delete),
-                                  ),
-                                ],
+                        );
+                      } else if (state is ShowtimeManagementLoaded) {
+                        final showtimes = state.showtimes;
+                        if (showtimes.isEmpty) {
+                          return Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: AppEmptyView(
+                                icon: LucideIcons.calendarX,
+                                title: l10n.noShowtimesFound,
+                                message: l10n.noResultsFound,
+                                actionLabel: l10n.addShowtime,
+                                onAction: () => _reloadAfterPush(
+                                  context.push('/showtimes/new'),
+                                ),
                               ),
+                            ),
+                          );
+                        }
+                        return ListView.separated(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          padding: const EdgeInsets.fromLTRB(12, 8, 12, 88),
+                          itemCount: showtimes.length,
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(height: 8),
+                          itemBuilder: (context, index) {
+                            final st = showtimes[index];
+                            return ShowtimeListItem(
+                              showtime: st,
+                              onTap: () {
+                                _reloadAfterPush(
+                                  context.push(
+                                    '/showtimes/${st.id}/edit',
+                                    extra: st,
+                                  ),
+                                );
+                              },
+                              onEdit: () {
+                                _reloadAfterPush(
+                                  context.push(
+                                    '/showtimes/${st.id}/edit',
+                                    extra: st,
+                                  ),
+                                );
+                              },
+                              onDelete: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (dCtx) => AlertDialog(
+                                    backgroundColor: theme.surface,
+                                    title: Text(l10n.confirmDelete),
+                                    content: Text(
+                                      l10n.confirmDeleteShowtimeDesc,
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(dCtx),
+                                        child: Text(
+                                          l10n.cancel,
+                                          style: TextStyle(
+                                            color: theme.textSecondary,
+                                          ),
+                                        ),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.pop(dCtx);
+                                          context
+                                              .read<ShowtimeManagementCubit>()
+                                              .deleteShowtime(st.id);
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: theme.error,
+                                          foregroundColor: Colors.white,
+                                        ),
+                                        child: Text(l10n.delete),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
                             );
                           },
                         );
-                      },
-                    );
-                  }
-                  return const SizedBox.shrink();
-                },
-              ),
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
             ),
           ),
         ],

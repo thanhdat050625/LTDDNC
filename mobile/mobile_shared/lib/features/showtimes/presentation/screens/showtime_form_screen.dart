@@ -34,23 +34,32 @@ class _ShowtimeFormScreenState extends State<ShowtimeFormScreen> {
       _movieId = st.movieId;
       _roomId = st.roomId;
       _format = st.format;
-      _status = st.status;
+      _status = (st.status == 'BOOKING') ? 'ACTIVE' : st.status;
+      if (!const [
+        'SCHEDULED',
+        'ACTIVE',
+        'COMPLETED',
+        'CANCELLED',
+      ].contains(_status)) {
+        _status = 'SCHEDULED';
+      }
       _publicStartTime = st.publicStartTime;
-      _cinemaId = st.room?.cinemaId; 
+      _cinemaId = st.room?.cinemaId;
     }
-    context.read<ShowtimeFormCubit>().loadDependencies(initialCinemaId: _cinemaId);
+    context.read<ShowtimeFormCubit>().loadDependencies(
+      initialCinemaId: _cinemaId,
+    );
   }
 
   void _submit() {
     final l10n = AppLocalizations.of(context)!;
     if (_formKey.currentState!.validate()) {
       if (_movieId == null || _roomId == null || _publicStartTime == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.fillRequiredFields)),
-        );
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(l10n.fillRequiredFields)));
         return;
       }
-      
+
       final data = {
         'movieId': _movieId,
         'roomId': _roomId,
@@ -109,14 +118,19 @@ class _ShowtimeFormScreenState extends State<ShowtimeFormScreen> {
           if (state is ShowtimeFormSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(isEditMode ? l10n.updateSuccess : l10n.addSuccess),
+                content: Text(
+                  isEditMode ? l10n.updateSuccess : l10n.addSuccess,
+                ),
                 backgroundColor: theme.success,
               ),
             );
             context.pop();
           } else if (state is ShowtimeFormError) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message), backgroundColor: theme.error),
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: theme.error,
+              ),
             );
           }
         },
@@ -153,15 +167,32 @@ class _ShowtimeFormScreenState extends State<ShowtimeFormScreen> {
                           initialValue: _movieId,
                           decoration: InputDecoration(
                             labelText: l10n.movieLabel,
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(
+                                theme.radiusMd,
+                              ),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 12,
+                            ),
                           ),
-                          items: movies.map((m) => DropdownMenuItem(
-                            value: m.id,
-                            child: Text(m.title, overflow: TextOverflow.ellipsis),
-                          )).toList(),
-                          onChanged: isEditMode ? null : (val) => setState(() => _movieId = val),
-                          validator: (val) => val == null ? l10n.selectMovieReq : null,
+                          items: movies
+                              .map(
+                                (m) => DropdownMenuItem(
+                                  value: m.id,
+                                  child: Text(
+                                    m.title,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                          onChanged: isEditMode
+                              ? null
+                              : (val) => setState(() => _movieId = val),
+                          validator: (val) =>
+                              val == null ? l10n.selectMovieReq : null,
                         ),
                         const SizedBox(height: 14),
 
@@ -171,13 +202,27 @@ class _ShowtimeFormScreenState extends State<ShowtimeFormScreen> {
                           initialValue: _cinemaId,
                           decoration: InputDecoration(
                             labelText: l10n.cinemaLabel,
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(
+                                theme.radiusMd,
+                              ),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 12,
+                            ),
                           ),
-                          items: cinemas.map((c) => DropdownMenuItem(
-                            value: c.id,
-                            child: Text(c.name, overflow: TextOverflow.ellipsis),
-                          )).toList(),
+                          items: cinemas
+                              .map(
+                                (c) => DropdownMenuItem(
+                                  value: c.id,
+                                  child: Text(
+                                    c.name,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              )
+                              .toList(),
                           onChanged: isEditMode
                               ? null
                               : (val) {
@@ -186,10 +231,13 @@ class _ShowtimeFormScreenState extends State<ShowtimeFormScreen> {
                                     _roomId = null;
                                   });
                                   if (val != null) {
-                                    context.read<ShowtimeFormCubit>().selectCinema(val);
+                                    context
+                                        .read<ShowtimeFormCubit>()
+                                        .selectCinema(val);
                                   }
                                 },
-                          validator: (val) => val == null ? l10n.selectCinemaReq : null,
+                          validator: (val) =>
+                              val == null ? l10n.selectCinemaReq : null,
                         ),
                         const SizedBox(height: 14),
 
@@ -199,17 +247,32 @@ class _ShowtimeFormScreenState extends State<ShowtimeFormScreen> {
                           initialValue: _roomId,
                           decoration: InputDecoration(
                             labelText: l10n.roomLabel,
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(
+                                theme.radiusMd,
+                              ),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 12,
+                            ),
                           ),
-                          items: rooms.map((r) => DropdownMenuItem(
-                            value: r.id,
-                            child: Text('${r.name} (${r.roomType})', overflow: TextOverflow.ellipsis),
-                          )).toList(),
+                          items: rooms
+                              .map(
+                                (r) => DropdownMenuItem(
+                                  value: r.id,
+                                  child: Text(
+                                    '${r.name} (${r.roomType})',
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              )
+                              .toList(),
                           onChanged: isEditMode || _cinemaId == null
                               ? null
                               : (val) => setState(() => _roomId = val),
-                          validator: (val) => val == null ? l10n.selectRoomReq : null,
+                          validator: (val) =>
+                              val == null ? l10n.selectRoomReq : null,
                         ),
                         const SizedBox(height: 14),
 
@@ -220,16 +283,30 @@ class _ShowtimeFormScreenState extends State<ShowtimeFormScreen> {
                           child: InputDecorator(
                             decoration: InputDecoration(
                               labelText: l10n.startTime,
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                              suffixIcon: Icon(LucideIcons.calendar, color: theme.textSecondary, size: 20),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(
+                                  theme.radiusMd,
+                                ),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 12,
+                              ),
+                              suffixIcon: Icon(
+                                LucideIcons.calendar,
+                                color: theme.textSecondary,
+                                size: 20,
+                              ),
                             ),
                             child: Text(
                               _publicStartTime != null
-                                  ? DateFormat('dd/MM/yyyy • HH:mm').format(_publicStartTime!)
+                                  ? DateFormat('dd/MM/yyyy • HH:mm')
+                                        .format(_publicStartTime!)
                                   : l10n.selectStartTimeReq,
                               style: TextStyle(
-                                color: _publicStartTime != null ? theme.textPrimary : theme.textSecondary,
+                                color: _publicStartTime != null
+                                    ? theme.textPrimary
+                                    : theme.textSecondary,
                                 fontSize: 14,
                               ),
                             ),
@@ -243,13 +320,29 @@ class _ShowtimeFormScreenState extends State<ShowtimeFormScreen> {
                           initialValue: _format,
                           decoration: InputDecoration(
                             labelText: l10n.formatLabel,
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(
+                                theme.radiusMd,
+                              ),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 12,
+                            ),
                           ),
                           items: [
-                            DropdownMenuItem(value: 'FORMAT_2D', child: Text(l10n.format2D)),
-                            DropdownMenuItem(value: 'FORMAT_3D', child: Text(l10n.format3D)),
-                            DropdownMenuItem(value: 'IMAX', child: Text(l10n.formatIMAX)),
+                            DropdownMenuItem(
+                              value: 'FORMAT_2D',
+                              child: Text(l10n.format2D),
+                            ),
+                            DropdownMenuItem(
+                              value: 'FORMAT_3D',
+                              child: Text(l10n.format3D),
+                            ),
+                            DropdownMenuItem(
+                              value: 'IMAX',
+                              child: Text(l10n.formatIMAX),
+                            ),
                           ],
                           onChanged: (val) => setState(() => _format = val!),
                         ),
@@ -261,15 +354,33 @@ class _ShowtimeFormScreenState extends State<ShowtimeFormScreen> {
                           initialValue: _status,
                           decoration: InputDecoration(
                             labelText: l10n.statusLabel,
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(
+                                theme.radiusMd,
+                              ),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 12,
+                            ),
                           ),
                           items: [
-                            DropdownMenuItem(value: 'SCHEDULED', child: Text(l10n.statusScheduled)),
-                            DropdownMenuItem(value: 'BOOKING', child: Text(l10n.statusBooking)),
-                            DropdownMenuItem(value: 'FULL', child: Text(l10n.statusFull)),
-                            DropdownMenuItem(value: 'CANCELLED', child: Text(l10n.statusCancelled)),
-                            DropdownMenuItem(value: 'COMPLETED', child: Text(l10n.statusCompleted)),
+                            DropdownMenuItem(
+                              value: 'SCHEDULED',
+                              child: Text(l10n.statusScheduled),
+                            ),
+                            DropdownMenuItem(
+                              value: 'ACTIVE',
+                              child: Text(l10n.statusBooking),
+                            ),
+                            DropdownMenuItem(
+                              value: 'COMPLETED',
+                              child: Text(l10n.statusCompleted),
+                            ),
+                            DropdownMenuItem(
+                              value: 'CANCELLED',
+                              child: Text(l10n.statusCancelled),
+                            ),
                           ],
                           onChanged: (val) => setState(() => _status = val!),
                         ),
@@ -280,7 +391,9 @@ class _ShowtimeFormScreenState extends State<ShowtimeFormScreen> {
 
                   // Submit Button
                   AppButton(
-                    text: isEditMode ? l10n.saveChanges : l10n.createShowtimeBtn,
+                    text: isEditMode
+                        ? l10n.saveChanges
+                        : l10n.createShowtimeBtn,
                     onPressed: _submit,
                     isLoading: state is ShowtimeFormSubmitting,
                   ),

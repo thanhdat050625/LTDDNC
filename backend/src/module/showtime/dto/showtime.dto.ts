@@ -1,5 +1,5 @@
 import { IsNumber, IsNotEmpty, IsOptional, IsEnum, IsDateString, IsArray, IsString } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { EMovieFormat } from '../../movie/enums/movie.enum';
 import { EShowtimeStatus } from '../enums/EShowTimeStatus.enum';
 
@@ -32,6 +32,7 @@ export class CreateShowtimeDto {
   @IsNotEmpty()
   format: EMovieFormat;
 
+  @Transform(({ value }) => (value === 'BOOKING' ? EShowtimeStatus.ACTIVE : value))
   @IsEnum(EShowtimeStatus)
   @IsOptional()
   status?: EShowtimeStatus;
@@ -56,6 +57,7 @@ export class UpdateShowtimeDto {
   @IsOptional()
   format?: EMovieFormat;
 
+  @Transform(({ value }) => (value === 'BOOKING' ? EShowtimeStatus.ACTIVE : value))
   @IsEnum(EShowtimeStatus)
   @IsOptional()
   status?: EShowtimeStatus;
@@ -104,6 +106,7 @@ export class BulkCreateShowtimeDto {
   @IsNotEmpty()
   format: EMovieFormat;
 
+  @Transform(({ value }) => (value === 'BOOKING' ? EShowtimeStatus.ACTIVE : value))
   @IsEnum(EShowtimeStatus)
   @IsOptional()
   status?: EShowtimeStatus;

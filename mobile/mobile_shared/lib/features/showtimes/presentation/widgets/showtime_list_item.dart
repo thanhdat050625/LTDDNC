@@ -37,6 +37,7 @@ class ShowtimeListItem extends StatelessWidget {
     switch (status.toUpperCase()) {
       case 'SCHEDULED':
         return theme.info;
+      case 'ACTIVE':
       case 'BOOKING':
         return theme.success;
       case 'FULL':
@@ -54,6 +55,7 @@ class ShowtimeListItem extends StatelessWidget {
     switch (status.toUpperCase()) {
       case 'SCHEDULED':
         return l10n.statusScheduled;
+      case 'ACTIVE':
       case 'BOOKING':
         return l10n.statusBooking;
       case 'FULL':
@@ -86,7 +88,9 @@ class ShowtimeListItem extends StatelessWidget {
             // Movie Poster
             ClipRRect(
               borderRadius: BorderRadius.circular(theme.radiusSm),
-              child: (showtime.movie?.posterUrl != null && showtime.movie!.posterUrl!.isNotEmpty)
+              child:
+                  (showtime.movie?.posterUrl != null &&
+                      showtime.movie!.posterUrl!.isNotEmpty)
                   ? AppCachedImage(
                       imageUrl: showtime.movie!.posterUrl!,
                       width: 54,
@@ -100,11 +104,15 @@ class ShowtimeListItem extends StatelessWidget {
                         color: theme.surfaceVariant,
                         borderRadius: BorderRadius.circular(theme.radiusSm),
                       ),
-                      child: Icon(Icons.movie_outlined, size: 24, color: theme.textSecondary),
+                      child: Icon(
+                        Icons.movie_outlined,
+                        size: 24,
+                        color: theme.textSecondary,
+                      ),
                     ),
             ),
             const SizedBox(width: 12),
-            
+
             // Info
             Expanded(
               child: Column(
@@ -123,30 +131,48 @@ class ShowtimeListItem extends StatelessWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(LucideIcons.calendar, size: 13, color: theme.textSecondary),
+                      Icon(
+                        LucideIcons.calendar,
+                        size: 13,
+                        color: theme.textSecondary,
+                      ),
                       const SizedBox(width: 4),
                       Text(
-                        DateFormat('dd/MM/yyyy • HH:mm').format(showtime.publicStartTime),
-                        style: TextStyle(color: theme.textSecondary, fontSize: 12),
+                        DateFormat('dd/MM/yyyy • HH:mm')
+                            .format(showtime.publicStartTime),
+                        style: TextStyle(
+                          color: theme.textSecondary,
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(LucideIcons.monitorPlay, size: 13, color: theme.textSecondary),
+                      Icon(
+                        LucideIcons.monitorPlay,
+                        size: 13,
+                        color: theme.textSecondary,
+                      ),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
                           showtime.room?.name ?? l10n.emptyRoom,
-                          style: TextStyle(color: theme.textSecondary, fontSize: 12),
+                          style: TextStyle(
+                            color: theme.textSecondary,
+                            fontSize: 12,
+                          ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       const SizedBox(width: 8),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: formatColor.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(4),
@@ -167,13 +193,16 @@ class ShowtimeListItem extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 6),
-                  
+
                   // Status & Actions
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
                         decoration: BoxDecoration(
                           color: statusColor.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(6),
@@ -195,17 +224,31 @@ class ShowtimeListItem extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            icon: Icon(LucideIcons.edit3, size: 18, color: theme.accent),
+                            icon: Icon(
+                              LucideIcons.edit3,
+                              size: 18,
+                              color: theme.accent,
+                            ),
                             onPressed: onEdit,
                             tooltip: l10n.editShowtime,
-                            constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                            constraints: const BoxConstraints(
+                              minWidth: 44,
+                              minHeight: 44,
+                            ),
                             padding: const EdgeInsets.all(8),
                           ),
                           IconButton(
-                            icon: Icon(LucideIcons.trash2, size: 18, color: theme.error),
+                            icon: Icon(
+                              LucideIcons.trash2,
+                              size: 18,
+                              color: theme.error,
+                            ),
                             onPressed: onDelete,
                             tooltip: l10n.delete,
-                            constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                            constraints: const BoxConstraints(
+                              minWidth: 44,
+                              minHeight: 44,
+                            ),
                             padding: const EdgeInsets.all(8),
                           ),
                         ],
