@@ -1,9 +1,9 @@
 import {
-  Controller, Get, Post, Put, Body, Param, ParseIntPipe,
+  Controller, Get, Post, Put, Delete, Body, Param, ParseIntPipe,
   Query, UseGuards, HttpCode, HttpStatus, Request,
 } from '@nestjs/common';
 import { BookingService } from './booking.service';
-import { HoldSeatsDto, CreateBookingDto } from './dto/booking.dto';
+import { HoldSeatsDto, CreateBookingDto, ReleaseSeatsDto } from './dto/booking.dto';
 import { UpdateBookingConcessionsDto } from './dto/update-concessions.dto';
 import { JwtAuthGuard } from '../../core/security/jwt/jwt-auth.guard';
 import { RolesGuard } from '../../core/security/roles/roles.guard';
@@ -30,6 +30,13 @@ export class BookingController {
   @HttpCode(HttpStatus.OK)
   async holdSeats(@Request() req, @Body() dto: HoldSeatsDto) {
     return this.bookingService.holdSeats(req.user.id, dto);
+  }
+
+  @Post('release-seats')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async releaseSeats(@Request() req, @Body() dto: ReleaseSeatsDto) {
+    return this.bookingService.releaseSeats(req.user.id, dto);
   }
 
   @Post()

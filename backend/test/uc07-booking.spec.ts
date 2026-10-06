@@ -254,7 +254,7 @@ describe('UC07 - Đặt vé trực tuyến (Online Ticket Booking & Realtime Sea
      * Code hiện tại: Chỉ check showtime.status === 'COMPLETED' || showtime.status === 'CANCELLED',
      * KHÔNG so sánh publicStartTime với thời điểm hiện tại now.
      */
-    it.failing('[MISSING-FEATURE][BUG-14] UC07 - Pre.2 - Suất chiếu đã qua giờ bắt đầu chiếu (publicStartTime < now) nhưng status vẫn SCHEDULED -> từ chối đặt vé', async () => {
+    it('UC07 - Pre.2 - Suất chiếu đã qua giờ bắt đầu chiếu (publicStartTime < now) nhưng status vẫn SCHEDULED -> từ chối đặt vé', async () => {
       // Code cần sửa: Trong holdSeats và createBooking, kiểm tra if (new Date(showtime.publicStartTime) <= new Date()) throw CustomException.
       const pastShowtime = createMockShowtime({
         publicStartTime: new Date(Date.now() - 30 * 60 * 1000), // Chiếu từ 30 phút trước
@@ -485,7 +485,7 @@ describe('UC07 - Đặt vé trực tuyến (Online Ticket Booking & Realtime Sea
      * Đề xuất REST endpoint: POST /bookings/release-seats (body: { showtimeId: number, seatIds: number[] })
      * Code hiện tại: BookingController KHÔNG có route release-seats để Client gọi nhả ghế real-time.
      */
-    it.failing('[MISSING-FEATURE][BUG-13] UC07 - A3.1 - Khách hủy chọn ghế -> BookingController cung cấp endpoint POST /bookings/release-seats để nhả ghế tức thì', async () => {
+    it('[BUG-14] UC07 - A3.1 - Khách hủy chọn ghế -> BookingController cung cấp endpoint POST /bookings/release-seats để nhả ghế tức thì', async () => {
       // Kiểm tra đề xuất route handler trên BookingController
       const releaseSeatsHandler = (BookingController.prototype as any).releaseSeats;
       expect(releaseSeatsHandler).toBeDefined();
@@ -635,7 +635,7 @@ describe('UC07 - Đặt vé trực tuyến (Online Ticket Booking & Realtime Sea
      * Đặc tả UC07: Chỉ được phép chọn các ghế thuộc phòng chiếu của suất chiếu đã chọn.
      * Code hiện tại: holdSeats không truy vấn bảng seats để kiểm tra seat.roomId === showtime.roomId.
      */
-    it.failing('[MISSING-FEATURE] UC07 - E3.3 - Giữ ghế không thuộc phòng chiếu của suất đó -> từ chối với SEAT_ROOM_MISMATCH (400)', async () => {
+    it('UC07 - E3.3 - Giữ ghế không thuộc phòng chiếu của suất đó -> từ chối với SEAT_ROOM_MISMATCH (400)', async () => {
       // Code cần sửa: Trong holdSeats, query seatRepository và validate seat.roomId === showtime.roomId.
       const showtime = createMockShowtime({ id: 101, roomId: 1 });
       mockShowtimeRepo.findOne.mockResolvedValue(showtime);
@@ -658,7 +658,7 @@ describe('UC07 - Đặt vé trực tuyến (Online Ticket Booking & Realtime Sea
      * hệ thống chặn và yêu cầu Actor giảm số lượng".
      * Code hiện tại: Backend HoldSeatsDto và holdSeats hoàn toàn KHÔNG kiểm tra độ dài mảng seatIds <= 8!
      */
-    it.failing('[MISSING-FEATURE][BUG-14] UC07 - E6.1 - Chọn vượt quá 8 ghế tối đa của 1 đơn hàng -> Backend từ chối với lỗi MAX_SEATS_EXCEEDED (400)', async () => {
+    it('UC07 - E6.1 - Chọn vượt quá 8 ghế tối đa của 1 đơn hàng -> Backend từ chối với lỗi MAX_SEATS_EXCEEDED (400)', async () => {
       // Code cần sửa: Thêm validation @ArrayMaxSize(8) trong HoldSeatsDto và kiểm tra seatIds.length <= 8 trong BookingService.holdSeats.
       const dto = {
         showtimeId: 101,

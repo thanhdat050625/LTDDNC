@@ -4,7 +4,7 @@ import { Repository, In, DataSource } from 'typeorm';
 import { Booking } from './entities/booking.entity';
 import { BookingConcession } from './entities/booking-concession.entity';
 import { SeatHold } from './entities/seat-hold.entity';
-import { HoldSeatsDto, CreateBookingDto } from './dto/booking.dto';
+import { HoldSeatsDto, CreateBookingDto, ReleaseSeatsDto } from './dto/booking.dto';
 import { ApiResponse } from '../../core/dto/ApiResponse.dto';
 import { CustomException } from '../../core/exceptions/custom.exception';
 import { RedisService } from '../redis/redis.service';
@@ -20,7 +20,7 @@ import { SeatGateway } from './seat.gateway';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ENotificationType } from '../notification/enums/notification.enum';
 import { User } from '../users/entities/user.entity';
-import { BOOKING_ERROR_CODES } from './constants/booking.constant';
+import { BOOKING_ERROR_CODES, MAX_SEATS_PER_BOOKING } from './constants/booking.constant';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -59,6 +59,14 @@ export class BookingService {
   // ─── SEAT HOLD ────────────────────────────────────────────────────────
 
   async holdSeats(userId: number, dto: HoldSeatsDto): Promise<ApiResponse<any>> {
+    if (!dto.seatIds || dto.seatIds.length === 0 || dto.seatIds.length > MAX_SEATS_PER_BOOKING) {
+      throw new CustomException(
+        HttpStatus.BAD_REQUEST,
+        BOOKING_ERROR_CODES.MAX_SEATS_EXCEEDED,
+        `Chỉ được chọn tối đa ${MAX_SEATS_PER_BOOKING} ghế mỗi đơn`,
+      );
+    }
+
     // Kiểm tra showtime còn có thể đặt vé không
     const showtime = await this.showtimeRepository.findOne({ where: { id: dto.showtimeId } });
     if (!showtime) {
@@ -69,6 +77,25 @@ export class BookingService {
         HttpStatus.BAD_REQUEST,
         'SHOWTIME_NOT_BOOKABLE',
         'Suất chiếu này đã kết thúc hoặc bị huỷ, không thể đặt vé',
+      );
+    }
+    if (showtime.publicStartTime && new Date(showtime.publicStartTime) <= new Date()) {
+      throw new CustomException(
+        HttpStatus.BAD_REQUEST,
+        BOOKING_ERROR_CODES.SHOWTIME_EXPIRED,
+        'Suất chiếu đã bắt đầu hoặc quá hạn đặt vé',
+      );
+    }
+
+    // E3.3: Kiểm tra mọi seatId thuộc phòng của suất chiếu
+    const seats = await this.seatRepository.find({
+      where: { id: In(dto.seatIds) },
+    });
+    if (seats.length !== dto.seatIds.length || seats.some(s => s.roomId !== showtime.roomId)) {
+      throw new CustomException(
+        HttpStatus.BAD_REQUEST,
+        BOOKING_ERROR_CODES.SEAT_ROOM_MISMATCH,
+        'Một số ghế không thuộc phòng chiếu của suất chiếu này',
       );
     }
 
@@ -150,6 +177,14 @@ export class BookingService {
   // ─── CREATE BOOKING ───────────────────────────────────────────────────
 
   async createBooking(userId: number | null, dto: CreateBookingDto | any, staffId?: number): Promise<ApiResponse<Booking>> {
+    if (!dto.seatIds || dto.seatIds.length === 0 || dto.seatIds.length > MAX_SEATS_PER_BOOKING) {
+      throw new CustomException(
+        HttpStatus.BAD_REQUEST,
+        BOOKING_ERROR_CODES.MAX_SEATS_EXCEEDED,
+        `Chỉ được chọn tối đa ${MAX_SEATS_PER_BOOKING} ghế mỗi đơn`,
+      );
+    }
+
     const holderId = staffId || userId;
     // Verify tất cả ghế đang được hold bởi user này
     for (const seatId of dto.seatIds) {
@@ -163,13 +198,7 @@ export class BookingService {
       }
     }
 
-    // Lấy thông tin ghế
-    const seats = await this.seatRepository.find({
-      where: { id: In(dto.seatIds) },
-      relations: ['room'],
-    });
-
-    // Xác định dayType
+    // Xác định showtime
     const showtime = await this.showtimeRepository.findOne({ where: { id: dto.showtimeId } });
     if (!showtime) {
       throw new CustomException(HttpStatus.NOT_FOUND, 'SHOWTIME_NOT_FOUND', 'Không tìm thấy suất chiếu');
@@ -179,6 +208,27 @@ export class BookingService {
         HttpStatus.BAD_REQUEST,
         'SHOWTIME_NOT_BOOKABLE',
         'Suất chiếu này đã kết thúc hoặc bị huỷ, không thể đặt vé',
+      );
+    }
+    if (showtime.publicStartTime && new Date(showtime.publicStartTime) <= new Date()) {
+      throw new CustomException(
+        HttpStatus.BAD_REQUEST,
+        BOOKING_ERROR_CODES.SHOWTIME_EXPIRED,
+        'Suất chiếu đã bắt đầu hoặc quá hạn đặt vé',
+      );
+    }
+
+    // Lấy thông tin ghế
+    const seats = await this.seatRepository.find({
+      where: { id: In(dto.seatIds) },
+      relations: ['room'],
+    });
+
+    if (seats.filter(s => s.roomId === showtime.roomId).length !== dto.seatIds.length) {
+      throw new CustomException(
+        HttpStatus.BAD_REQUEST,
+        BOOKING_ERROR_CODES.SEAT_ROOM_MISMATCH,
+        'Một số ghế không thuộc phòng chiếu của suất chiếu này',
       );
     }
 
@@ -206,38 +256,23 @@ export class BookingService {
     }
 
     // Tính tổng tiền bắp nước
-    let concessionTotal = 0;
-    const concessionItems: { productId: number; quantity: number; unitPrice: number; subtotal: number }[] = [];
-
-    if (dto.concessions && dto.concessions.length > 0) {
-      for (const item of dto.concessions) {
-        const product = await this.concessionProductRepository.findOne({
-          where: { id: item.productId },
-        });
-        if (!product) {
-          throw new CustomException(HttpStatus.BAD_REQUEST, 'PRODUCT_NOT_FOUND', `Sản phẩm #${item.productId} không tồn tại`);
-        }
-        const subtotal = product.price * item.quantity;
-        concessionTotal += subtotal;
-        concessionItems.push({
-          productId: item.productId,
-          quantity: item.quantity,
-          unitPrice: product.price,
-          subtotal,
-        });
-      }
-    }
+    const validatedConcessionData = await this.buildConcessionItems(dto.concessions || []);
+    const concessionItems = [...validatedConcessionData.concessionItems];
+    let concessionTotal = validatedConcessionData.concessionTotal;
 
     // Tính discount nếu có promotion
-    const validatedConcessionData = await this.buildConcessionItems(dto.concessions);
-    concessionItems.length = 0;
-    concessionItems.push(...validatedConcessionData.concessionItems);
-    concessionTotal = validatedConcessionData.concessionTotal;
-
     let discountAmount = 0;
     let promotionId: number | undefined = undefined;
 
     if (dto.promotionCode) {
+      if (ticketTotal + concessionTotal <= 0) {
+        throw new CustomException(
+          HttpStatus.BAD_REQUEST,
+          'ORDER_TOTAL_ZERO',
+          'Tổng tiền đơn hàng bằng 0 không thể áp dụng voucher',
+        );
+      }
+
       const promotion = await this.promotionRepository.findOne({
         where: { code: dto.promotionCode },
         relations: ['movie'],
@@ -539,43 +574,20 @@ export class BookingService {
       throw new CustomException(HttpStatus.BAD_REQUEST, 'INVALID_STATUS', 'Chỉ có thể cập nhật đơn chờ thanh toán');
     }
 
+    if (booking.expiredAt && new Date(booking.expiredAt) < new Date()) {
+      throw new CustomException(HttpStatus.BAD_REQUEST, 'BOOKING_EXPIRED', 'Đơn đặt vé đã quá hạn giữ chỗ');
+    }
+
     const oldConcessionsTotal = booking.bookingConcessions.reduce((sum, bc) => sum + bc.subtotal, 0);
     const ticketTotal = booking.totalAmount + booking.discountAmount - oldConcessionsTotal;
 
-    let newConcessionTotal = 0;
-    const concessionItems: any[] = [];
-
-    if (dto.concessions && dto.concessions.length > 0) {
-      for (const item of dto.concessions) {
-        const product = await this.concessionProductRepository.findOne({
-          where: { id: item.productId },
-        });
-        if (!product) {
-          throw new CustomException(HttpStatus.BAD_REQUEST, 'PRODUCT_NOT_FOUND', `Sản phẩm #${item.productId} không tồn tại`);
-        }
-        const subtotal = product.price * item.quantity;
-        newConcessionTotal += subtotal;
-        concessionItems.push({
-          productId: item.productId,
-          quantity: item.quantity,
-          unitPrice: product.price,
-          subtotal,
-        });
-      }
-    }
-
-    const validatedConcessionData = await this.buildConcessionItems(dto.concessions);
-    concessionItems.length = 0;
-    concessionItems.push(...validatedConcessionData.concessionItems);
-    newConcessionTotal = validatedConcessionData.concessionTotal;
+    const validatedConcessionData = await this.buildConcessionItems(dto.concessions || []);
+    const concessionItems = [...validatedConcessionData.concessionItems];
+    let newConcessionTotal = validatedConcessionData.concessionTotal;
 
     let promotionDiscount = 0;
     if (booking.promotion) {
-      if (booking.promotion.discountType === EDiscountType.PERCENTAGE) {
-        promotionDiscount = Math.floor((ticketTotal + newConcessionTotal) * booking.promotion.discountValue / 100);
-      } else {
-        promotionDiscount = booking.promotion.discountValue;
-      }
+      promotionDiscount = calculateDiscount(booking.promotion, ticketTotal + newConcessionTotal);
     }
 
     let pointsUsed = booking.pointsUsed || 0;
@@ -716,13 +728,16 @@ export class BookingService {
       const productId = Number(item.productId);
       const quantity = Number(item.quantity);
 
-      if (!Number.isInteger(productId) || !Number.isInteger(quantity) || quantity <= 0) {
+      if (!Number.isInteger(productId) || !Number.isInteger(quantity) || quantity < 0) {
         throw new CustomException(
           HttpStatus.BAD_REQUEST,
           'INVALID_CONCESSION_QUANTITY',
           'So luong bap nuoc khong hop le',
         );
       }
+
+      // Bỏ qua item quantity = 0
+      if (quantity === 0) continue;
 
       quantityByProduct.set(productId, (quantityByProduct.get(productId) ?? 0) + quantity);
     }
@@ -762,6 +777,30 @@ export class BookingService {
     }
 
     return { concessionItems, concessionTotal };
+  }
+
+  // ─── RELEASE SEATS (UC07 A3.1) ─────────────────────────────────────────
+  async releaseSeats(userId: number, dto: ReleaseSeatsDto): Promise<ApiResponse<any>> {
+    const { showtimeId, seatIds } = dto;
+    const releasedSeatIds: number[] = [];
+
+    for (const seatId of seatIds) {
+      const holder = await this.redisService.getSeatHolder(showtimeId, seatId);
+      if (!holder || Number(holder) === Number(userId)) {
+        await this.redisService.releaseSeat(showtimeId, seatId);
+        await this.seatHoldRepository.update(
+          { showtimeId, seatId, status: ESeatHoldStatus.HOLDING },
+          { status: ESeatHoldStatus.RELEASED },
+        );
+        releasedSeatIds.push(seatId);
+      }
+    }
+
+    if (releasedSeatIds.length > 0) {
+      await this.broadcastSeatUpdate(showtimeId);
+    }
+
+    return new ApiResponse(true, 'Nhả ghế thành công', { releasedSeatIds });
   }
 
   private generateBookingCode(): string {
