@@ -14,6 +14,7 @@ import { TicketPrice } from '../ticket/entities/ticket-price.entity';
 import { ConcessionProduct } from '../concession/entities/concession-product.entity';
 import { Promotion } from '../promotion/entities/promotion.entity';
 import { EDiscountType } from '../promotion/enums/promotion.enum';
+import { validatePromotion, calculateDiscount } from '../promotion/promotion.service';
 import { Showtime } from '../showtime/entities/showtime.entity';
 import { SeatGateway } from './seat.gateway';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -239,27 +240,12 @@ export class BookingService {
     if (dto.promotionCode) {
       const promotion = await this.promotionRepository.findOne({
         where: { code: dto.promotionCode },
+        relations: ['movie'],
       });
 
-      if (promotion && promotion.isActive) {
-        const startDate = new Date(promotion.startDate);
-        const endDate = new Date(promotion.endDate);
-        const isValid = now >= startDate && now <= endDate;
-        const hasUsage = !promotion.maxUsage || promotion.usedCount < promotion.maxUsage;
-
-        if (isValid && hasUsage) {
-          promotionId = promotion.id;
-          if (promotion.discountType === EDiscountType.PERCENTAGE) {
-            discountAmount = Math.floor((ticketTotal + concessionTotal) * promotion.discountValue / 100);
-          } else {
-            discountAmount = promotion.discountValue;
-          }
-
-          // Cập nhật usedCount
-          promotion.usedCount += 1;
-          await this.promotionRepository.save(promotion);
-        }
-      }
+      const validatedPromo = validatePromotion(promotion, showtime.movieId);
+      promotionId = validatedPromo.id;
+      discountAmount = calculateDiscount(validatedPromo, ticketTotal + concessionTotal);
     }
 
     // ─── LOYALTY POINTS LOGIC ──────────────────────────────────────────────
@@ -393,9 +379,30 @@ export class BookingService {
         await queryRunner.manager.save(BookingConcession, bookingConcessions);
       }
 
+      // Tăng atomic usedCount nếu có promotion
+      if (promotionId) {
+        const updatePromoRes = await queryRunner.manager
+          .createQueryBuilder(Promotion, 'promotion')
+          .update()
+          .set({ usedCount: () => 'used_count + 1' })
+          .where('id = :id AND (max_usage IS NULL OR used_count < max_usage)', { id: promotionId })
+          .execute();
+
+        if (!updatePromoRes || updatePromoRes.affected === 0) {
+          throw new CustomException(
+            HttpStatus.BAD_REQUEST,
+            'PROMOTION_MAX_USAGE',
+            'Mã khuyến mãi đã hết lượt sử dụng',
+          );
+        }
+      }
+
       await queryRunner.commitTransaction();
     } catch (err) {
       await queryRunner.rollbackTransaction();
+      if (err instanceof CustomException) {
+        throw err;
+      }
       throw new CustomException(
         HttpStatus.INTERNAL_SERVER_ERROR,
         'BOOKING_CREATE_FAILED',
