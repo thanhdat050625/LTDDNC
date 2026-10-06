@@ -1107,6 +1107,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get address => 'Địa chỉ';
 
   @override
+  String get roomTotal => 'Tổng số phòng';
+
+  @override
   String get roomCount => 'Số phòng';
 
   @override

@@ -11,9 +11,17 @@ class RoomManagementInitial extends RoomManagementState {}
 class RoomManagementLoading extends RoomManagementState {}
 class RoomManagementLoaded extends RoomManagementState {
   final List<RoomModel> rooms;
-  const RoomManagementLoaded(this.rooms);
+  final List<RoomModel> allRooms;
+  final String? selectedStatus;
+
+  const RoomManagementLoaded({
+    required this.rooms,
+    this.allRooms = const [],
+    this.selectedStatus,
+  });
+
   @override
-  List<Object?> get props => [rooms];
+  List<Object?> get props => [rooms, allRooms, selectedStatus];
 }
 class RoomManagementError extends RoomManagementState {
   final String message;

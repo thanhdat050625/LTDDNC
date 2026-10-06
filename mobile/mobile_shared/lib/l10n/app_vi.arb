@@ -532,6 +532,7 @@
   "editCinema": "Sửa Rạp",
   "cinemaName": "Tên rạp",
   "address": "Địa chỉ",
+  "roomTotal": "Tổng số phòng",
   "roomCount": "Số phòng",
   "manageRooms": "Phòng chiếu",
   "addRoom": "Thêm phòng",

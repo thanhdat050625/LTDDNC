@@ -11,9 +11,17 @@ class CinemaManagementInitial extends CinemaManagementState {}
 class CinemaManagementLoading extends CinemaManagementState {}
 class CinemaManagementLoaded extends CinemaManagementState {
   final List<CinemaModel> cinemas;
-  const CinemaManagementLoaded(this.cinemas);
+  final List<CinemaModel> allCinemas;
+  final String? selectedStatus;
+
+  const CinemaManagementLoaded({
+    required this.cinemas,
+    this.allCinemas = const [],
+    this.selectedStatus,
+  });
+
   @override
-  List<Object?> get props => [cinemas];
+  List<Object?> get props => [cinemas, allCinemas, selectedStatus];
 }
 class CinemaManagementError extends CinemaManagementState {
   final String message;

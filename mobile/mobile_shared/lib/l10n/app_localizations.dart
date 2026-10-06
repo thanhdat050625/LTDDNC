@@ -2170,6 +2170,12 @@ abstract class AppLocalizations {
   /// **'Địa chỉ'**
   String get address;
 
+  /// No description provided for @roomTotal.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tổng số phòng'**
+  String get roomTotal;
+
   /// No description provided for @roomCount.
   ///
   /// In vi, this message translates to:
