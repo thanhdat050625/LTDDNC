@@ -3,6 +3,7 @@ export enum EPaymentStatus {
   PENDING_PAYMENT = 'PENDING_PAYMENT',
   SUCCESS = 'SUCCESS',
   FAILED = 'FAILED',
+  REFUND_PENDING = 'REFUND_PENDING',
 }
 
 export enum EPaymentMethod {

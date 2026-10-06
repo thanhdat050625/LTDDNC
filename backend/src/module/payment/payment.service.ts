@@ -9,6 +9,7 @@ import { SeatHold } from '../booking/entities/seat-hold.entity';
 import { BookingConcession } from '../booking/entities/booking-concession.entity';
 import { ConcessionProduct } from '../concession/entities/concession-product.entity';
 import { User } from '../users/entities/user.entity';
+import { Promotion } from '../promotion/entities/promotion.entity';
 
 import { CreatePaymentUrlDto } from './dto/create-payment-url.dto';
 import { ApiResponse } from '../../core/dto/ApiResponse.dto';
@@ -176,8 +177,12 @@ export class PaymentService {
       throw new CustomException(HttpStatus.BAD_REQUEST, 'BOOKING_EXPIRED', 'Đơn đặt vé đã hết hạn (quá 5 phút)');
     }
 
-    // Idempotency: nếu đã có payment URL đang chờ, trả về luôn
-    if (booking.payment?.payUrl && booking.payment.status === EPaymentStatus.PENDING_PAYMENT) {
+    // Idempotency: nếu đã có payment URL đang chờ và cùng phương thức thanh toán, trả về luôn
+    if (
+      booking.payment?.payUrl &&
+      booking.payment.status === EPaymentStatus.PENDING_PAYMENT &&
+      booking.payment.method === dto.method
+    ) {
       return new ApiResponse(true, 'Trả về link thanh toán đã tạo', {
         bookingId: booking.id,
         payUrl: booking.payment.payUrl,
@@ -229,7 +234,7 @@ export class PaymentService {
     try {
       let payment = booking.payment;
 
-      if (!payment) {
+      if (!payment || payment.status === EPaymentStatus.FAILED) {
         payment = queryRunner.manager.create(Payment, {
           bookingId: booking.id,
           method: dto.method,
@@ -279,6 +284,10 @@ export class PaymentService {
       throw new CustomException(HttpStatus.FORBIDDEN, 'FORBIDDEN', 'Bạn không có quyền xem đơn này');
     }
 
+    const now = new Date();
+    const isExpired = booking.status === EBookingStatus.EXPIRED || (booking.expiredAt ? booking.expiredAt < now : false);
+    const canRetry = booking.status === EBookingStatus.PENDING && !isExpired && booking.payment?.status === EPaymentStatus.FAILED;
+
     let statusForFrontend: 'PENDING' | 'PAID' | 'FAILED' | 'EXPIRED';
 
     switch (booking.status) {
@@ -301,6 +310,9 @@ export class PaymentService {
       transactionCode: booking.payment?.transactionCode,
       paymentDate: booking.payment?.paymentDate,
       source: booking.source,
+      canRetry: !!canRetry,
+      isExpired: !!isExpired,
+      expiredAt: booking.expiredAt,
     });
   }
 
@@ -314,6 +326,10 @@ export class PaymentService {
     if (!booking) {
       throw new CustomException(HttpStatus.NOT_FOUND, 'BOOKING_NOT_FOUND', 'Không tìm thấy đơn đặt vé');
     }
+
+    const now = new Date();
+    const isExpired = booking.status === EBookingStatus.EXPIRED || (booking.expiredAt ? booking.expiredAt < now : false);
+    const canRetry = booking.status === EBookingStatus.PENDING && !isExpired && booking.payment?.status === EPaymentStatus.FAILED;
 
     let statusForFrontend: 'PENDING' | 'PAID' | 'FAILED' | 'EXPIRED';
 
@@ -339,6 +355,9 @@ export class PaymentService {
       transactionCode: booking.payment?.transactionCode,
       paymentDate: booking.payment?.paymentDate,
       source: booking.source,
+      canRetry: !!canRetry,
+      isExpired: !!isExpired,
+      expiredAt: booking.expiredAt,
     });
   }
 
@@ -377,16 +396,42 @@ export class PaymentService {
       return;
     }
 
-    // 4. Nếu đã EXPIRED thì không cập nhật thành PAID
-    if (booking.status === EBookingStatus.EXPIRED) {
-      this.logger.warn(`MoMo IPN: booking ${orderId} is EXPIRED — cannot set PAID`);
+    // 4. Nếu đã EXPIRED hoặc CANCELLED
+    if (booking.status === EBookingStatus.EXPIRED || booking.status === EBookingStatus.CANCELLED) {
+      if (resultCode === 0) {
+        if (booking.payment) {
+          await this.paymentRepository.update(
+            { id: booking.payment.id },
+            {
+              status: EPaymentStatus.REFUND_PENDING,
+              transactionCode: String(transId),
+              amount: Number(amount),
+            },
+          );
+        } else {
+          const newPayment = this.paymentRepository.create({
+            bookingId: booking.id,
+            booking,
+            method: EPaymentMethod.MOMO,
+            amount: Number(amount),
+            status: EPaymentStatus.REFUND_PENDING,
+            transactionCode: String(transId),
+          });
+          await this.paymentRepository.save(newPayment);
+        }
+        this.logger.error(
+          `MoMo IPN: Late payment received for non-pending booking ${orderId}. Status=${booking.status}, amount=${amount}, transId=${transId}. Marked REFUND_PENDING for reconciliation.`,
+        );
+      } else {
+        this.logger.warn(`MoMo IPN: booking ${orderId} is ${booking.status} — cannot set PAID`);
+      }
       return;
     }
 
     if (resultCode === 0) {
       await this.confirmPaymentSuccess(booking, EPaymentMethod.MOMO, String(transId));
     } else {
-      await this.markPaymentFailed(booking);
+      await this.handlePaymentFailedOrCancelled(booking);
       this.logger.warn(`MoMo IPN: payment failed for ${orderId}, resultCode=${resultCode}`);
     }
   }
@@ -427,15 +472,39 @@ export class PaymentService {
       return { RspCode: '02', Message: 'Order already confirmed' };
     }
 
-    if (booking.status === EBookingStatus.EXPIRED) {
-      this.logger.warn(`VNPay IPN: booking ${orderId} is EXPIRED — cannot set PAID`);
+    if (booking.status === EBookingStatus.EXPIRED || booking.status === EBookingStatus.CANCELLED) {
+      if (responseCode === '00') {
+        if (booking.payment) {
+          await this.paymentRepository.update(
+            { id: booking.payment.id },
+            {
+              status: EPaymentStatus.REFUND_PENDING,
+              transactionCode: String(transId),
+              amount: booking.totalAmount,
+            },
+          );
+        } else {
+          const newPayment = this.paymentRepository.create({
+            bookingId: booking.id,
+            booking,
+            method: EPaymentMethod.VNPAY,
+            amount: booking.totalAmount,
+            status: EPaymentStatus.REFUND_PENDING,
+            transactionCode: String(transId),
+          });
+          await this.paymentRepository.save(newPayment);
+        }
+        this.logger.error(
+          `VNPay IPN: Late payment received for non-pending booking ${orderId}. Status=${booking.status}, amount=${booking.totalAmount}, transId=${transId}. Marked REFUND_PENDING for reconciliation.`,
+        );
+      }
       return { RspCode: '02', Message: 'Order expired' };
     }
 
     if (responseCode === '00') {
       await this.confirmPaymentSuccess(booking, EPaymentMethod.VNPAY, transId);
     } else {
-      await this.markPaymentFailed(booking);
+      await this.handlePaymentFailedOrCancelled(booking);
       this.logger.warn(`VNPay IPN: payment failed for ${orderId}, responseCode=${responseCode}`);
     }
 
@@ -681,31 +750,85 @@ export class PaymentService {
     this.logger.log(`Payment confirmed for booking ${booking.bookingCode}`);
   }
 
-  // ─── MARK FAILED ──────────────────────────────────────────────────────
-  private async markPaymentFailed(booking: Booking): Promise<void> {
-    await this.bookingRepository.update({ id: booking.id }, { status: EBookingStatus.CANCELLED });
-    if (booking.payment) {
-      await this.paymentRepository.update({ id: booking.payment.id }, { status: EPaymentStatus.FAILED });
-    }
+  // ─── CANCEL OR EXPIRE BOOKING (atomic release logic) ───────────────────
+  private async cancelOrExpireBooking(
+    booking: Booking,
+    targetStatus: EBookingStatus.CANCELLED | EBookingStatus.EXPIRED,
+  ): Promise<void> {
+    const updateRes = await this.bookingRepository.update(
+      { id: booking.id, status: EBookingStatus.PENDING },
+      { status: targetStatus },
+    );
 
-    // Hoàn điểm nếu booking có dùng điểm tích lũy
-    if (booking.pointsUsed > 0 && booking.userId) {
-      await this.userRepository.update(
-        { id: booking.userId },
-        { loyaltyPoints: () => `loyaltyPoints + ${booking.pointsUsed}` },
+    if (updateRes.affected === 1) {
+      if (booking.payment && booking.payment.status !== EPaymentStatus.SUCCESS) {
+        await this.paymentRepository.update({ id: booking.payment.id }, { status: EPaymentStatus.FAILED });
+      }
+
+      if (booking.promotionId) {
+        await this.dataSource
+          .createQueryBuilder()
+          .update(Promotion)
+          .set({ usedCount: () => 'GREATEST(used_count - 1, 0)' })
+          .where('id = :id', { id: booking.promotionId })
+          .execute();
+      }
+
+      if (booking.pointsUsed > 0 && booking.userId) {
+        await this.userRepository.update(
+          { id: booking.userId },
+          { loyaltyPoints: () => `loyaltyPoints + ${booking.pointsUsed}` },
+        );
+        this.logger.log(
+          `Loyalty refund: +${booking.pointsUsed} điểm cho userId=${booking.userId} (booking ${booking.bookingCode} ${targetStatus.toLowerCase()})`,
+        );
+      }
+
+      const seatHoldIds = (booking.seatHolds || [])
+        .filter(h => h.status !== ESeatHoldStatus.RELEASED)
+        .map(h => h.id);
+
+      if (seatHoldIds.length > 0) {
+        await this.seatHoldRepository.update(
+          { id: In(seatHoldIds) },
+          { status: ESeatHoldStatus.RELEASED },
+        );
+      }
+
+      await this.releaseBookingResources(booking);
+
+      this.eventEmitter.emit('notification.create', {
+        userId: booking.userId,
+        subject: targetStatus === EBookingStatus.EXPIRED ? 'Đơn hàng hết hạn' : 'Thanh toán thất bại',
+        content: `Đơn hàng ${booking.bookingCode} đã bị hủy.${booking.pointsUsed > 0 ? ` Điểm tích lũy đã được hoàn trả (${booking.pointsUsed.toLocaleString()} điểm).` : ''}`,
+        type: ENotificationType.PAYMENT_FAILED,
+        link: '/booking-history',
+      });
+    }
+  }
+
+  // ─── HANDLE PAYMENT FAILED OR CANCELLED ───────────────────────────────
+  // BUG-06: Nếu còn hạn giữ chỗ (expiredAt > now) thì chỉ đánh dấu Payment là FAILED,
+  // GIỮ Booking là PENDING để cho phép khách thử lại phương thức khác.
+  private async handlePaymentFailedOrCancelled(booking: Booking): Promise<void> {
+    const now = new Date();
+    const isStillValid = booking.expiredAt && new Date(booking.expiredAt) > now;
+
+    if (isStillValid && booking.status === EBookingStatus.PENDING) {
+      if (booking.payment) {
+        await this.paymentRepository.update({ id: booking.payment.id }, { status: EPaymentStatus.FAILED });
+      }
+      this.logger.log(
+        `Payment failed/cancelled for booking ${booking.bookingCode}, but hold is valid until ${booking.expiredAt}. Kept PENDING for retry.`,
       );
-      this.logger.log(`Loyalty refund: +${booking.pointsUsed} điểm cho userId=${booking.userId} (booking ${booking.bookingCode} failed)`);
+      return;
     }
 
-    await this.releaseBookingResources(booking);
+    await this.cancelOrExpireBooking(booking, EBookingStatus.CANCELLED);
+  }
 
-    this.eventEmitter.emit('notification.create', {
-      userId: booking.userId,
-      subject: 'Thanh toán thất bại',
-      content: `Đơn hàng ${booking.bookingCode} đã bị hủy do thanh toán thất bại. Vui lòng thử lại.${booking.pointsUsed > 0 ? ` Điểm tích lũy đã được hoàn trả (${booking.pointsUsed.toLocaleString()} điểm).` : ''}`,
-      type: ENotificationType.PAYMENT_FAILED,
-      link: '/booking-history',
-    });
+  private async markPaymentFailed(booking: Booking): Promise<void> {
+    await this.handlePaymentFailedOrCancelled(booking);
   }
 
   // ─── CRON: EXPIRE OVERDUE BOOKINGS ───────────────────────────────────
@@ -741,7 +864,7 @@ export class PaymentService {
           });
         }
 
-        const seatHoldIds = booking.seatHolds
+        const seatHoldIds = (booking.seatHolds || [])
           .filter(h => h.status !== ESeatHoldStatus.RELEASED)
           .map(h => h.id);
 
@@ -751,6 +874,15 @@ export class PaymentService {
             { id: In(seatHoldIds) },
             { status: ESeatHoldStatus.RELEASED },
           );
+        }
+
+        if (booking.promotionId) {
+          await queryRunner.manager
+            .createQueryBuilder()
+            .update(Promotion)
+            .set({ usedCount: () => 'GREATEST(used_count - 1, 0)' })
+            .where('id = :id', { id: booking.promotionId })
+            .execute();
         }
 
         await queryRunner.commitTransaction();

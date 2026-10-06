@@ -13,7 +13,12 @@
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest --config jest.config.json",
     "test:watch": "jest --config jest.config.json --watch",
-    "test:cov": "jest --config jest.config.json --coverage"
+    "test:cov": "jest --config jest.config.json --coverage",
+    "test:uc07": "jest --config jest.config.json test/uc07-booking.spec.ts",
+    "test:uc08": "jest --config jest.config.json test/uc08-concession.spec.ts",
+    "test:uc09": "jest --config jest.config.json test/uc09-promotion.spec.ts",
+    "test:uc10": "jest --config jest.config.json test/uc10-payment.spec.ts",
+    "test:e2e": "jest --config jest.config.json test/uc-e2e.spec.ts"
   },
   "repository": {
     "type": "git",

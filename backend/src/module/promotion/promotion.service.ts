@@ -5,8 +5,47 @@ import { Promotion } from './entities/promotion.entity';
 import { CreatePromotionDto, UpdatePromotionDto, CheckPromotionDto } from './dto/promotion.dto';
 import { ApiResponse } from '../../core/dto/ApiResponse.dto';
 import { CustomException } from '../../core/exceptions/custom.exception';
+import { EDiscountType } from './enums/promotion.enum';
 
 import { EventEmitter2 } from '@nestjs/event-emitter';
+
+export function validatePromotion(promotion: Promotion | null, movieId?: number): Promotion {
+  if (!promotion) {
+    throw new CustomException(HttpStatus.BAD_REQUEST, 'PROMOTION_NOT_FOUND', 'Mã khuyến mãi không tồn tại');
+  }
+
+  if (!promotion.isActive) {
+    throw new CustomException(HttpStatus.BAD_REQUEST, 'PROMOTION_INACTIVE', 'Mã khuyến mãi không còn hoạt động');
+  }
+
+  const now = new Date();
+  const startDate = new Date(promotion.startDate);
+  const endDate = new Date(promotion.endDate);
+
+  if (now < startDate || now > endDate) {
+    throw new CustomException(HttpStatus.BAD_REQUEST, 'PROMOTION_EXPIRED', 'Mã khuyến mãi đã hết hạn hoặc chưa bắt đầu');
+  }
+
+  if (promotion.maxUsage && promotion.usedCount >= promotion.maxUsage) {
+    throw new CustomException(HttpStatus.BAD_REQUEST, 'PROMOTION_MAX_USAGE', 'Mã khuyến mãi đã hết lượt sử dụng');
+  }
+
+  if (promotion.movieId && movieId && promotion.movieId !== movieId) {
+    throw new CustomException(HttpStatus.BAD_REQUEST, 'PROMOTION_MOVIE_MISMATCH', 'Mã khuyến mãi không áp dụng cho phim này');
+  }
+
+  return promotion;
+}
+
+export function calculateDiscount(promotion: Promotion, orderTotal: number): number {
+  let discount = 0;
+  if (promotion.discountType === EDiscountType.PERCENTAGE) {
+    discount = Math.floor((orderTotal * promotion.discountValue) / 100);
+  } else {
+    discount = promotion.discountValue;
+  }
+  return Math.max(0, discount);
+}
 
 @Injectable()
 export class PromotionService {
@@ -79,34 +118,27 @@ export class PromotionService {
     return new ApiResponse(true, 'Xóa khuyến mãi thành công');
   }
 
-  async checkPromotion(dto: CheckPromotionDto): Promise<ApiResponse<any>> {
+  async validatePromotion(code: string, movieId?: number): Promise<Promotion> {
     const promotion = await this.promotionRepository.findOne({
-      where: { code: dto.code },
+      where: { code },
       relations: ['movie'],
     });
+    return validatePromotion(promotion, movieId);
+  }
 
-    if (!promotion) {
-      throw new CustomException(HttpStatus.BAD_REQUEST, 'PROMOTION_NOT_FOUND', 'Mã khuyến mãi không tồn tại');
-    }
+  calculateDiscount(promotion: Promotion, orderTotal: number): number {
+    return calculateDiscount(promotion, orderTotal);
+  }
 
-    if (!promotion.isActive) {
-      throw new CustomException(HttpStatus.BAD_REQUEST, 'PROMOTION_INACTIVE', 'Mã khuyến mãi không còn hoạt động');
-    }
+  async checkPromotion(dto: CheckPromotionDto): Promise<ApiResponse<any>> {
+    const promotion = await this.validatePromotion(dto.code, dto.movieId);
 
-    const now = new Date();
-    const startDate = new Date(promotion.startDate);
-    const endDate = new Date(promotion.endDate);
+    let discountAmount: number | undefined;
+    let totalAfterDiscount: number | undefined;
 
-    if (now < startDate || now > endDate) {
-      throw new CustomException(HttpStatus.BAD_REQUEST, 'PROMOTION_EXPIRED', 'Mã khuyến mãi đã hết hạn hoặc chưa bắt đầu');
-    }
-
-    if (promotion.maxUsage && promotion.usedCount >= promotion.maxUsage) {
-      throw new CustomException(HttpStatus.BAD_REQUEST, 'PROMOTION_MAX_USAGE', 'Mã khuyến mãi đã hết lượt sử dụng');
-    }
-
-    if (promotion.movieId && dto.movieId && promotion.movieId !== dto.movieId) {
-      throw new CustomException(HttpStatus.BAD_REQUEST, 'PROMOTION_MOVIE_MISMATCH', 'Mã khuyến mãi không áp dụng cho phim này');
+    if (dto.orderTotal !== undefined && dto.orderTotal !== null) {
+      discountAmount = this.calculateDiscount(promotion, dto.orderTotal);
+      totalAfterDiscount = Math.max(0, dto.orderTotal - discountAmount);
     }
 
     return new ApiResponse(true, 'Mã khuyến mãi hợp lệ', {
@@ -115,6 +147,7 @@ export class PromotionService {
       discountType: promotion.discountType,
       discountValue: promotion.discountValue,
       description: promotion.description,
+      ...(discountAmount !== undefined ? { discountAmount, totalAfterDiscount } : {}),
     });
   }
 }

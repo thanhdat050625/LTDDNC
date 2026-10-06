@@ -93,4 +93,9 @@ export class CheckPromotionDto {
   @IsNumber()
   @IsOptional()
   movieId?: number;
+
+  @Type(() => Number)
+  @IsNumber()
+  @IsOptional()
+  orderTotal?: number;
 }
