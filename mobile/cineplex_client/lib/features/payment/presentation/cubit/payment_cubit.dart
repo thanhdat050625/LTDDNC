@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 import '../../data/models/payment_model.dart';
 import '../../data/repositories/payment_repository.dart';
 
@@ -15,9 +16,10 @@ class PaymentLoading extends PaymentState {}
 
 class CheckoutPrepared extends PaymentState {
   final CheckoutPrepareModel data;
-  const CheckoutPrepared(this.data);
+  final String? appliedPromoCode;
+  const CheckoutPrepared(this.data, {this.appliedPromoCode});
   @override
-  List<Object?> get props => [data];
+  List<Object?> get props => [data, appliedPromoCode];
 }
 
 class PaymentUrlReady extends PaymentState {
@@ -36,9 +38,10 @@ class PaymentSuccess extends PaymentState {
 
 class PaymentFailed extends PaymentState {
   final String message;
-  const PaymentFailed(this.message);
+  final PaymentStatusModel? status;
+  const PaymentFailed(this.message, {this.status});
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [message, status];
 }
 
 class PaymentPolling extends PaymentState {}
@@ -52,7 +55,7 @@ class PaymentCubit extends Cubit<PaymentState> {
     emit(PaymentLoading());
     try {
       final data = await repository.prepareCheckout(bookingId);
-      emit(CheckoutPrepared(data));
+      emit(CheckoutPrepared(data, appliedPromoCode: data.promotionCode));
     } catch (e) {
       emit(PaymentFailed(e.toString()));
     }
@@ -78,13 +81,82 @@ class PaymentCubit extends Cubit<PaymentState> {
       final status = await repository.getPaymentStatus(bookingId);
       if (status.status == 'SUCCESS' || status.status == 'PAID') {
         emit(PaymentSuccess(status));
-      } else if (status.status == 'FAILED') {
-        emit(const PaymentFailed('Thanh toán thất bại'));
+      } else if (status.status == 'FAILED' || status.isExpired) {
+        final msg = status.isExpired
+            ? 'Đơn đặt vé đã hết thời gian giữ chỗ'
+            : 'Thanh toán thất bại';
+        emit(PaymentFailed(msg, status: status));
       } else {
-        emit(PaymentFailed('Trạng thái thanh toán: ${status.status}'));
+        emit(PaymentFailed('Trạng thái thanh toán: ${status.status}', status: status));
       }
     } catch (e) {
       emit(PaymentFailed(e.toString()));
     }
+  }
+
+  Future<void> applyPromotion(String bookingId, String code) async {
+    if (state is CheckoutPrepared) {
+      final current = (state as CheckoutPrepared).data;
+      try {
+        final res = await repository.applyPromotion(bookingId, code);
+        final totalAmount = (res['totalAmount'] as num?) ?? current.totalAmount;
+        final discountAmount = (res['discountAmount'] as num?) ?? current.discountAmount;
+        final promoCode = (res['promotionCode'] as String?) ?? code;
+        final updated = current.copyWith(
+          totalAmount: totalAmount,
+          discountAmount: discountAmount,
+          promotionCode: promoCode,
+        );
+        emit(CheckoutPrepared(updated, appliedPromoCode: promoCode));
+      } catch (e) {
+        final errorMsg = _mapPromotionError(e);
+        emit(PaymentFailed(errorMsg));
+        emit(CheckoutPrepared(current));
+      }
+    }
+  }
+
+  Future<void> removePromotion(String bookingId) async {
+    if (state is CheckoutPrepared) {
+      final current = (state as CheckoutPrepared).data;
+      try {
+        final res = await repository.removePromotion(bookingId);
+        final totalAmount = (res['totalAmount'] as num?) ?? (current.totalAmount + current.discountAmount);
+        final updated = current.copyWith(
+          totalAmount: totalAmount,
+          discountAmount: 0,
+        );
+        emit(CheckoutPrepared(updated, appliedPromoCode: null));
+      } catch (e) {
+        emit(PaymentFailed(e.toString()));
+        emit(CheckoutPrepared(current));
+      }
+    }
+  }
+
+  String _mapPromotionError(Object e) {
+    if (e is ServerException) {
+      switch (e.code) {
+        case 'PROMOTION_NOT_FOUND':
+          return 'Mã khuyến mãi không tồn tại';
+        case 'PROMOTION_INACTIVE':
+          return 'Mã khuyến mãi đã ngưng hoạt động';
+        case 'PROMOTION_EXPIRED':
+          return 'Mã khuyến mãi đã hết hạn hoặc chưa bắt đầu';
+        case 'PROMOTION_MAX_USAGE':
+          return 'Mã khuyến mãi đã hết lượt sử dụng';
+        case 'PROMOTION_MOVIE_MISMATCH':
+          return 'Mã khuyến mãi không áp dụng cho phim này';
+        case 'ORDER_TOTAL_ZERO':
+          return 'Đơn hàng có tổng tiền bằng 0 không thể áp dụng mã';
+        case 'BOOKING_NOT_PENDING':
+          return 'Đơn hàng không ở trạng thái chờ thanh toán';
+        case 'BOOKING_EXPIRED':
+          return 'Đơn hàng đã hết hạn thanh toán';
+        default:
+          return e.message;
+      }
+    }
+    return e.toString();
   }
 }

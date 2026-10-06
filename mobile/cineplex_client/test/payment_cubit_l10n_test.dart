@@ -24,6 +24,12 @@ class FakePaymentRepository implements PaymentRepository {
 
   @override
   Future<dynamic> checkPromotion(String code, {String? movieId}) async => throw UnimplementedError();
+
+  @override
+  Future<Map<String, dynamic>> applyPromotion(String bookingId, String code) async => throw UnimplementedError();
+
+  @override
+  Future<Map<String, dynamic>> removePromotion(String bookingId) async => throw UnimplementedError();
 }
 
 void main() {

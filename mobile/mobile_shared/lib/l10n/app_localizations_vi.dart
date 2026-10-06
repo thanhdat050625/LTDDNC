@@ -416,6 +416,32 @@ class AppLocalizationsVi extends AppLocalizations {
   String get promotionInvalid => 'Mã khuyến mãi không hợp lệ';
 
   @override
+  String get promoNotFound => 'Mã khuyến mãi không tồn tại';
+
+  @override
+  String get promoInactive => 'Mã khuyến mãi đã ngưng hoạt động';
+
+  @override
+  String get promoExpired => 'Mã khuyến mãi đã hết hạn hoặc chưa bắt đầu';
+
+  @override
+  String get promoMaxUsage => 'Mã khuyến mãi đã hết lượt sử dụng';
+
+  @override
+  String get promoMovieMismatch => 'Mã khuyến mãi không áp dụng cho phim này';
+
+  @override
+  String get promoOrderTotalZero =>
+      'Đơn hàng có tổng tiền bằng 0 không thể áp dụng mã';
+
+  @override
+  String get promoBookingNotPending =>
+      'Đơn hàng không ở trạng thái chờ thanh toán';
+
+  @override
+  String get promoBookingExpired => 'Đơn hàng đã hết hạn thanh toán';
+
+  @override
   String get retryPayment => 'Đổi phương thức thanh toán';
 
   @override

@@ -874,6 +874,54 @@ abstract class AppLocalizations {
   /// **'Mã khuyến mãi không hợp lệ'**
   String get promotionInvalid;
 
+  /// No description provided for @promoNotFound.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mã khuyến mãi không tồn tại'**
+  String get promoNotFound;
+
+  /// No description provided for @promoInactive.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mã khuyến mãi đã ngưng hoạt động'**
+  String get promoInactive;
+
+  /// No description provided for @promoExpired.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mã khuyến mãi đã hết hạn hoặc chưa bắt đầu'**
+  String get promoExpired;
+
+  /// No description provided for @promoMaxUsage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mã khuyến mãi đã hết lượt sử dụng'**
+  String get promoMaxUsage;
+
+  /// No description provided for @promoMovieMismatch.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mã khuyến mãi không áp dụng cho phim này'**
+  String get promoMovieMismatch;
+
+  /// No description provided for @promoOrderTotalZero.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đơn hàng có tổng tiền bằng 0 không thể áp dụng mã'**
+  String get promoOrderTotalZero;
+
+  /// No description provided for @promoBookingNotPending.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đơn hàng không ở trạng thái chờ thanh toán'**
+  String get promoBookingNotPending;
+
+  /// No description provided for @promoBookingExpired.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đơn hàng đã hết hạn thanh toán'**
+  String get promoBookingExpired;
+
   /// No description provided for @retryPayment.
   ///
   /// In vi, this message translates to:
