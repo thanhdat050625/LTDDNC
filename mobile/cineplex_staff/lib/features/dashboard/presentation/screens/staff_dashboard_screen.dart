@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 
-import 'package:cineplex_staff/features/home/presentation/widgets/staff_drawer.dart';
-
 class StaffDashboardScreen extends StatefulWidget {
   const StaffDashboardScreen({super.key});
 

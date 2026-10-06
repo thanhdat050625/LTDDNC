@@ -4,16 +4,15 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 
-import '../cubit/ticket_management_cubit.dart';
-import '../cubit/ticket_management_state.dart';
-import '../widgets/booking_ticket_card.dart';
-import '../widgets/booking_detail_bottom_sheet.dart';
-import '../widgets/ticket_price_table.dart';
-
 class TicketManagementScreen extends StatefulWidget {
   final Widget? drawer;
+  final bool? showScannerAction;
 
-  const TicketManagementScreen({super.key, this.drawer});
+  const TicketManagementScreen({
+    super.key,
+    this.drawer,
+    this.showScannerAction,
+  });
 
   @override
   State<TicketManagementScreen> createState() => _TicketManagementScreenState();
@@ -43,16 +42,19 @@ class _TicketManagementScreenState extends State<TicketManagementScreen>
     final colors = Theme.of(context).extension<CineplexColors>()!;
     final colorScheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
+    final showScanner =
+        widget.showScannerAction ?? (widget.drawer is! AdminDrawer);
 
     return AppScaffold(
       title: l10n.manageTickets,
       drawer: widget.drawer,
       actions: [
-        IconButton(
-          icon: const Icon(LucideIcons.scanLine),
-          tooltip: l10n.ticketOpenScanner,
-          onPressed: () => context.push('/scanner'),
-        ),
+        if (showScanner)
+          IconButton(
+            icon: const Icon(LucideIcons.scanLine),
+            tooltip: l10n.ticketOpenScanner,
+            onPressed: () => context.push('/scanner'),
+          ),
       ],
       body: Column(
         children: [

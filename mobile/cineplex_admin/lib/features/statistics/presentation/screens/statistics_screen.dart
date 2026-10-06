@@ -13,8 +13,6 @@ class StatisticsScreen extends StatefulWidget {
 }
 
 class _StatisticsScreenState extends State<StatisticsScreen> {
-  bool _sortByOccupancy = false;
-
   @override
   void initState() {
     super.initState();
@@ -35,13 +33,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           if (state is StatisticsLoading) return const AppLoading();
           if (state is StatisticsLoaded) {
             final summary = state.summary;
-            final movies = List<MoviePerformanceModel>.from(state.movies);
-
-            if (_sortByOccupancy) {
-              movies.sort((a, b) => b.occupancyRate.compareTo(a.occupancyRate));
-            } else {
-              movies.sort((a, b) => b.revenue.compareTo(a.revenue));
-            }
+            final movies = List<MoviePerformanceModel>.from(state.movies)
+              ..sort((a, b) => b.revenue.compareTo(a.revenue));
 
             return RefreshIndicator(
               onRefresh: () => context.read<StatisticsCubit>().loadStats(
@@ -219,23 +212,13 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.revenueTrend,
-                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      '${l10n.totalRevenueLabel}: ${FormatUtils.formatCurrency(state.totalFilteredRevenue)}',
-                      style: TextStyle(
-                        fontSize: 11.5,
-                        fontWeight: FontWeight.w600,
-                        color: colorScheme.primary,
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  '${l10n.totalRevenueLabel}: ${FormatUtils.formatCurrency(state.totalFilteredRevenue)}',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: colorScheme.primary,
+                  ),
                 ),
               ),
               if (state.isUpdatingRevenue)
@@ -653,36 +636,13 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  l10n.moviePerformance,
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: colors.textPrimary,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              const SizedBox(width: 8),
-              TextButton.icon(
-                style: TextButton.styleFrom(
-                  visualDensity: VisualDensity.compact,
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                ),
-                onPressed: () {
-                  setState(() => _sortByOccupancy = !_sortByOccupancy);
-                },
-                icon: Icon(Icons.sort, size: 14, color: colors.primary),
-                label: Text(
-                  _sortByOccupancy ? l10n.occupancyRate : l10n.revenueCol,
-                  style: TextStyle(fontSize: 11, color: colors.primary),
-                ),
-              ),
-            ],
+          Text(
+            l10n.moviePerformance,
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color: colors.textPrimary,
+            ),
           ),
           const SizedBox(height: 6),
 
@@ -707,21 +667,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   : (isTop2 ? const Color(0xFF94A3B8) : (isTop3 ? const Color(0xFFD97706) : colors.surfaceVariant));
               final rankTextColor = (isTop1 || isTop2 || isTop3) ? const Color(0xFF111827) : colors.textSecondary;
 
-              final isDark = Theme.of(context).brightness == Brightness.dark;
               final occupancyColor = m.occupancyRate >= 70
                   ? colors.success
                   : (m.occupancyRate >= 40 ? colors.accent : colors.secondary);
-              final occupancyTextColor = isDark
-                  ? (m.occupancyRate < 40 ? const Color(0xFF93C5FD) : occupancyColor)
-                  : (m.occupancyRate >= 70
-                      ? const Color(0xFF14532D)
-                      : (m.occupancyRate >= 40 ? const Color(0xFF7C2D12) : const Color(0xFF1E3A8A)));
-              final occupancyBgColor = isDark
-                  ? occupancyColor.withValues(alpha: 0.18)
-                  : occupancyColor.withValues(alpha: 0.12);
-              final occupancyBorderColor = isDark
-                  ? occupancyColor.withValues(alpha: 0.3)
-                  : occupancyTextColor.withValues(alpha: 0.25);
 
               return Container(
                 margin: const EdgeInsets.only(bottom: 6),
@@ -807,23 +755,6 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                             ),
                           ),
                         ],
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: occupancyBgColor,
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: occupancyBorderColor, width: 0.5),
-                      ),
-                      child: Text(
-                        '${m.occupancyRate}%',
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                          color: occupancyTextColor,
-                        ),
                       ),
                     ),
                   ],

@@ -776,16 +776,10 @@ class AppLocalizationsVi extends AppLocalizations {
   String get userStatusUpdated => 'Cập nhật trạng thái người dùng thành công';
 
   @override
-  String get revenueTrend => 'Xu hướng doanh thu';
-
-  @override
-  String get moviePerformance => 'Hiệu suất phim';
+  String get moviePerformance => 'Top phim bán chạy';
 
   @override
   String get ticketsSoldCol => 'Vé bán';
-
-  @override
-  String get revenueCol => 'Doanh thu';
 
   @override
   String get allMonths => 'Tất cả các tháng';

@@ -329,10 +329,8 @@
   "confirmBlockUser": "Bạn có chắc chắn muốn khóa tài khoản này?",
   "confirmUnblockUser": "Bạn có chắc chắn muốn mở khóa tài khoản này?",
   "userStatusUpdated": "Cập nhật trạng thái người dùng thành công",
-  "revenueTrend": "Xu hướng doanh thu",
-  "moviePerformance": "Hiệu suất phim",
+  "moviePerformance": "Top phim bán chạy",
   "ticketsSoldCol": "Vé bán",
-  "revenueCol": "Doanh thu",
   "allMonths": "Tất cả các tháng",
   "monthFormat": "Tháng {month}",
   "@monthFormat": {

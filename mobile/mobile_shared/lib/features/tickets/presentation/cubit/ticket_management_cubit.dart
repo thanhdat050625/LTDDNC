@@ -1,8 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 
-import 'ticket_management_state.dart';
-
 class TicketManagementCubit extends Cubit<TicketManagementState> {
   final BookingManagementRepository _repository;
 

@@ -1570,16 +1570,10 @@ abstract class AppLocalizations {
   /// **'Cập nhật trạng thái người dùng thành công'**
   String get userStatusUpdated;
 
-  /// No description provided for @revenueTrend.
-  ///
-  /// In vi, this message translates to:
-  /// **'Xu hướng doanh thu'**
-  String get revenueTrend;
-
   /// No description provided for @moviePerformance.
   ///
   /// In vi, this message translates to:
-  /// **'Hiệu suất phim'**
+  /// **'Top phim bán chạy'**
   String get moviePerformance;
 
   /// No description provided for @ticketsSoldCol.
@@ -1587,12 +1581,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Vé bán'**
   String get ticketsSoldCol;
-
-  /// No description provided for @revenueCol.
-  ///
-  /// In vi, this message translates to:
-  /// **'Doanh thu'**
-  String get revenueCol;
 
   /// No description provided for @allMonths.
   ///

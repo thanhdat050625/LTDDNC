@@ -85,9 +85,14 @@ Widget buildStaffTestApp({
   );
 }
 
+Future<void> pumpApp(WidgetTester tester) async {
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 400));
+}
+
 void main() {
   group('Staff System Back Button Integration Tests', () {
-    testWidgets('Pressing back at /dashboard triggers exit confirmation dialog', (tester) async {
+    testWidgets('Pressing back at /scanner triggers exit confirmation dialog', (tester) async {
       bool exitTriggered = false;
       final authBloc = _StaffTestAuthBloc();
       final rootKey = GlobalKey<NavigatorState>();
@@ -98,38 +103,37 @@ void main() {
         router: router,
         rootNavKey: rootKey,
         shellNavKey: shellKey,
-        defaultRootPath: '/dashboard',
-        exitOnPaths: {'/dashboard', '/login'},
+        defaultRootPath: '/scanner',
+        exitOnPaths: {'/scanner', '/login'},
         onExitApp: () {
           exitTriggered = true;
         },
       )..init();
+      addTearDown(backHandler.dispose);
+      addTearDown(authBloc.close);
 
       await tester.pumpWidget(buildStaffTestApp(router: router, authBloc: authBloc));
-      await tester.pumpAndSettle();
+      await pumpApp(tester);
 
-      // Press back on Dashboard
+      // Press back on Scanner
       final handled = await tester.binding.handlePopRoute();
-      await tester.pumpAndSettle();
+      await pumpApp(tester);
       expect(handled, isTrue);
       expect(find.text('Thoát ứng dụng'), findsOneWidget);
       expect(find.text('Bạn có chắc chắn muốn thoát ứng dụng không?'), findsOneWidget);
 
       // Cancel
       await tester.tap(find.text('Hủy'));
-      await tester.pumpAndSettle();
+      await pumpApp(tester);
       expect(find.text('Thoát ứng dụng'), findsNothing);
       expect(exitTriggered, isFalse);
 
       // Confirm exit
       await tester.binding.handlePopRoute();
-      await tester.pumpAndSettle();
+      await pumpApp(tester);
       await tester.tap(find.text('Thoát'));
-      await tester.pumpAndSettle();
+      await pumpApp(tester);
       expect(exitTriggered, isTrue);
-
-      backHandler.dispose();
-      authBloc.close();
     });
 
     testWidgets('Pressing back at /login for unauthenticated staff shows exit dialog', (tester) async {
@@ -143,32 +147,31 @@ void main() {
         router: router,
         rootNavKey: rootKey,
         shellNavKey: shellKey,
-        defaultRootPath: '/dashboard',
-        exitOnPaths: {'/dashboard', '/login'},
+        defaultRootPath: '/scanner',
+        exitOnPaths: {'/scanner', '/login'},
         onExitApp: () {
           exitTriggered = true;
         },
       )..init();
+      addTearDown(backHandler.dispose);
+      addTearDown(authBloc.close);
 
       await tester.pumpWidget(buildStaffTestApp(router: router, authBloc: authBloc));
-      await tester.pumpAndSettle();
+      await pumpApp(tester);
       expect(router.routerDelegate.currentConfiguration.uri.path, '/login');
 
       // Press back on Login screen
       final handled = await tester.binding.handlePopRoute();
-      await tester.pumpAndSettle();
+      await pumpApp(tester);
       expect(handled, isTrue);
       expect(find.text('Thoát ứng dụng'), findsOneWidget);
 
       await tester.tap(find.text('Thoát'));
-      await tester.pumpAndSettle();
+      await pumpApp(tester);
       expect(exitTriggered, isTrue);
-
-      backHandler.dispose();
-      authBloc.close();
     });
 
-    testWidgets('Navigating from /dashboard to other destinations returns to /dashboard on back', (tester) async {
+    testWidgets('Navigating from /scanner to other destinations returns to /scanner on back', (tester) async {
       final authBloc = _StaffTestAuthBloc();
       final rootKey = GlobalKey<NavigatorState>();
       final shellKey = GlobalKey<NavigatorState>();
@@ -178,43 +181,42 @@ void main() {
         router: router,
         rootNavKey: rootKey,
         shellNavKey: shellKey,
-        defaultRootPath: '/dashboard',
-        exitOnPaths: {'/dashboard', '/login'},
+        defaultRootPath: '/scanner',
+        exitOnPaths: {'/scanner', '/login'},
       )..init();
+      addTearDown(backHandler.dispose);
+      addTearDown(authBloc.close);
 
       await tester.pumpWidget(buildStaffTestApp(router: router, authBloc: authBloc));
-      await tester.pumpAndSettle();
+      await pumpApp(tester);
 
       // Go to /showtimes-occupancy then /profile
       router.go('/showtimes-occupancy');
-      await tester.pumpAndSettle();
+      await pumpApp(tester);
       router.go('/profile');
-      await tester.pumpAndSettle();
+      await pumpApp(tester);
       expect(router.routerDelegate.currentConfiguration.uri.path, '/profile');
 
       // 1. Back: /profile -> /showtimes-occupancy
       var handled = await tester.binding.handlePopRoute();
-      await tester.pumpAndSettle();
+      await pumpApp(tester);
       expect(handled, isTrue);
       expect(router.routerDelegate.currentConfiguration.uri.path, '/showtimes-occupancy');
 
-      // 2. Back: /showtimes-occupancy -> /dashboard
+      // 2. Back: /showtimes-occupancy -> /scanner
       handled = await tester.binding.handlePopRoute();
-      await tester.pumpAndSettle();
+      await pumpApp(tester);
       expect(handled, isTrue);
-      expect(router.routerDelegate.currentConfiguration.uri.path, '/dashboard');
+      expect(router.routerDelegate.currentConfiguration.uri.path, '/scanner');
 
-      // 3. Back on /dashboard: shows exit dialog
+      // 3. Back on /scanner: shows exit dialog
       handled = await tester.binding.handlePopRoute();
-      await tester.pumpAndSettle();
+      await pumpApp(tester);
       expect(handled, isTrue);
       expect(find.text('Thoát ứng dụng'), findsOneWidget);
 
       await tester.tap(find.text('Hủy'));
-      await tester.pumpAndSettle();
-
-      backHandler.dispose();
-      authBloc.close();
+      await pumpApp(tester);
     });
 
     testWidgets('Open StaffDrawer is closed on back press without exiting', (tester) async {
@@ -227,29 +229,28 @@ void main() {
         router: router,
         rootNavKey: rootKey,
         shellNavKey: shellKey,
-        defaultRootPath: '/dashboard',
-        exitOnPaths: {'/dashboard', '/login'},
+        defaultRootPath: '/scanner',
+        exitOnPaths: {'/scanner', '/login'},
       )..init();
+      addTearDown(backHandler.dispose);
+      addTearDown(authBloc.close);
 
       await tester.pumpWidget(buildStaffTestApp(router: router, authBloc: authBloc));
-      await tester.pumpAndSettle();
+      await pumpApp(tester);
 
       // Open drawer from scaffold
       final scaffoldState = tester.state<ScaffoldState>(find.byType(Scaffold).first);
       scaffoldState.openDrawer();
-      await tester.pumpAndSettle();
+      await pumpApp(tester);
 
       // Press back: drawer closes
       final handled = await tester.binding.handlePopRoute();
-      await tester.pumpAndSettle();
+      await pumpApp(tester);
       expect(handled, isTrue);
       expect(find.text('Thoát ứng dụng'), findsNothing);
-
-      backHandler.dispose();
-      authBloc.close();
     });
 
-    testWidgets('After logout from /dashboard to /login, back button shows exit dialog immediately', (tester) async {
+    testWidgets('After logout from /scanner to /login, back button shows exit dialog immediately', (tester) async {
       final authBloc = _StaffTestAuthBloc();
       final rootKey = GlobalKey<NavigatorState>();
       final shellKey = GlobalKey<NavigatorState>();
@@ -259,27 +260,26 @@ void main() {
         router: router,
         rootNavKey: rootKey,
         shellNavKey: shellKey,
-        defaultRootPath: '/dashboard',
-        exitOnPaths: {'/dashboard', '/login'},
+        defaultRootPath: '/scanner',
+        exitOnPaths: {'/scanner', '/login'},
       )..init();
+      addTearDown(backHandler.dispose);
+      addTearDown(authBloc.close);
 
       await tester.pumpWidget(buildStaffTestApp(router: router, authBloc: authBloc));
-      await tester.pumpAndSettle();
-      expect(router.routerDelegate.currentConfiguration.uri.path, '/dashboard');
+      await pumpApp(tester);
+      expect(router.routerDelegate.currentConfiguration.uri.path, '/scanner');
 
       // Logout
       authBloc.emit(AuthUnauthenticated());
-      await tester.pumpAndSettle();
+      await pumpApp(tester);
       expect(router.routerDelegate.currentConfiguration.uri.path, '/login');
 
       // Press back on /login
       final handled = await tester.binding.handlePopRoute();
-      await tester.pumpAndSettle();
+      await pumpApp(tester);
       expect(handled, isTrue);
       expect(find.text('Thoát ứng dụng'), findsOneWidget);
-
-      backHandler.dispose();
-      authBloc.close();
     });
   });
 }
