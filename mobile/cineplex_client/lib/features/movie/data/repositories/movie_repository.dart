@@ -5,11 +5,13 @@ class MovieRepository {
   MovieRepository(this._dio);
 
   Future<({List<MovieModel> movies, int totalPages})> getAllMovies(
-      int page, int pageSize, {String? genre}) async {
+      int page, int pageSize, {String? genre, String? search, String? status}) async {
     final response = await _dio.get('/movies/get-all-movies', queryParameters: {
       'page': page,
       'pageSize': pageSize,
-      if (genre != null && genre != 'All') 'genres': genre,
+      if (genre != null && genre.isNotEmpty && genre != 'All' && genre != 'Tất cả') 'genres': genre,
+      if (search != null && search.trim().isNotEmpty) 'search': search.trim(),
+      if (status != null && status.isNotEmpty && status != 'ALL' && status != 'Tất cả') 'status': status,
     });
     
     final raw = response.data;

@@ -424,6 +424,54 @@ abstract class AppLocalizations {
   /// **'Không có phim nào'**
   String get noMovies;
 
+  /// No description provided for @movieSearchHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tìm kiếm phim...'**
+  String get movieSearchHint;
+
+  /// No description provided for @movieNowShowing.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang chiếu'**
+  String get movieNowShowing;
+
+  /// No description provided for @movieComingSoon.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sắp chiếu'**
+  String get movieComingSoon;
+
+  /// No description provided for @movieAll.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tất cả'**
+  String get movieAll;
+
+  /// No description provided for @movieNoResults.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không tìm thấy phim phù hợp'**
+  String get movieNoResults;
+
+  /// No description provided for @movieSearchError.
+  ///
+  /// In vi, this message translates to:
+  /// **'Có lỗi khi tải danh sách phim'**
+  String get movieSearchError;
+
+  /// No description provided for @movieFilterStatus.
+  ///
+  /// In vi, this message translates to:
+  /// **'Trạng thái'**
+  String get movieFilterStatus;
+
+  /// No description provided for @movieFilterGenre.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thể loại'**
+  String get movieFilterGenre;
+
   /// No description provided for @rating.
   ///
   /// In vi, this message translates to:
@@ -502,6 +550,12 @@ abstract class AppLocalizations {
   /// **'Chọn ghế'**
   String get seatSelection;
 
+  /// No description provided for @seatMapTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sơ đồ phòng chiếu'**
+  String get seatMapTitle;
+
   /// No description provided for @selectSeats.
   ///
   /// In vi, this message translates to:
@@ -514,11 +568,23 @@ abstract class AppLocalizations {
   /// **'Thường'**
   String get seatStandard;
 
+  /// No description provided for @seatNormal.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thường'**
+  String get seatNormal;
+
   /// No description provided for @seatVIP.
   ///
   /// In vi, this message translates to:
   /// **'VIP'**
   String get seatVIP;
+
+  /// No description provided for @seatVip.
+  ///
+  /// In vi, this message translates to:
+  /// **'VIP'**
+  String get seatVip;
 
   /// No description provided for @seatCouple.
   ///
@@ -549,6 +615,30 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Trống'**
   String get seatAvailable;
+
+  /// No description provided for @seatMaxSelection.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn chỉ có thể chọn tối đa 8 ghế.'**
+  String get seatMaxSelection;
+
+  /// No description provided for @seatLoadError.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể tải sơ đồ ghế'**
+  String get seatLoadError;
+
+  /// No description provided for @seatEmpty.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không tìm thấy sơ đồ ghế cho suất chiếu này.'**
+  String get seatEmpty;
+
+  /// No description provided for @seatReleaseError.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể nhả ghế, vui lòng thử lại'**
+  String get seatReleaseError;
 
   /// No description provided for @holdSeatExpired.
   ///

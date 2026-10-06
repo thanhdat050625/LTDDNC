@@ -82,7 +82,9 @@ export class MovieController {
     @Query('pageSize') pageSize: number = 10,
     @Query('sortBy') sortBy: string = 'id',
     @Query('genres') genres: string[] = [],
+    @Query('search') search?: string,
+    @Query('status') status?: string,
   ) {
-    return this.movieService.getAllMovies(page, pageSize, sortBy, genres);
+    return this.movieService.getAllMovies(page, pageSize, sortBy, genres, search, status);
   }
 }

@@ -178,6 +178,30 @@ class AppLocalizationsVi extends AppLocalizations {
   String get noMovies => 'Không có phim nào';
 
   @override
+  String get movieSearchHint => 'Tìm kiếm phim...';
+
+  @override
+  String get movieNowShowing => 'Đang chiếu';
+
+  @override
+  String get movieComingSoon => 'Sắp chiếu';
+
+  @override
+  String get movieAll => 'Tất cả';
+
+  @override
+  String get movieNoResults => 'Không tìm thấy phim phù hợp';
+
+  @override
+  String get movieSearchError => 'Có lỗi khi tải danh sách phim';
+
+  @override
+  String get movieFilterStatus => 'Trạng thái';
+
+  @override
+  String get movieFilterGenre => 'Thể loại';
+
+  @override
   String get rating => 'Đánh giá';
 
   @override
@@ -219,13 +243,22 @@ class AppLocalizationsVi extends AppLocalizations {
   String get seatSelection => 'Chọn ghế';
 
   @override
+  String get seatMapTitle => 'Sơ đồ phòng chiếu';
+
+  @override
   String get selectSeats => 'Vui lòng chọn ghế';
 
   @override
   String get seatStandard => 'Thường';
 
   @override
+  String get seatNormal => 'Thường';
+
+  @override
   String get seatVIP => 'VIP';
+
+  @override
+  String get seatVip => 'VIP';
 
   @override
   String get seatCouple => 'Ghế đôi';
@@ -241,6 +274,18 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get seatAvailable => 'Trống';
+
+  @override
+  String get seatMaxSelection => 'Bạn chỉ có thể chọn tối đa 8 ghế.';
+
+  @override
+  String get seatLoadError => 'Không thể tải sơ đồ ghế';
+
+  @override
+  String get seatEmpty => 'Không tìm thấy sơ đồ ghế cho suất chiếu này.';
+
+  @override
+  String get seatReleaseError => 'Không thể nhả ghế, vui lòng thử lại';
 
   @override
   String get holdSeatExpired => 'Hết thời gian giữ ghế';
