@@ -19,6 +19,7 @@ import { SeatGateway } from './seat.gateway';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ENotificationType } from '../notification/enums/notification.enum';
 import { User } from '../users/entities/user.entity';
+import { BOOKING_ERROR_CODES } from './constants/booking.constant';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -70,6 +71,24 @@ export class BookingService {
       );
     }
 
+    // BUG-01: Kiểm tra xem có ghế nào đã có SeatHold CONFIRMED (đơn đang chờ thanh toán hoặc đã bán)
+    for (const seatId of dto.seatIds) {
+      const confirmedHold = await this.seatHoldRepository.findOne({
+        where: {
+          showtimeId: dto.showtimeId,
+          seatId,
+          status: ESeatHoldStatus.CONFIRMED,
+        },
+      });
+      if (confirmedHold) {
+        throw new CustomException(
+          HttpStatus.BAD_REQUEST,
+          BOOKING_ERROR_CODES.SEAT_ALREADY_BOOKED,
+          `Ghế ${seatId} đã được đặt/bán`,
+        );
+      }
+    }
+
     const failedSeats: number[] = [];
     const successSeats: number[] = [];
 
@@ -94,21 +113,27 @@ export class BookingService {
     const now = new Date();
     const expiredAt = new Date(now.getTime() + 5 * 60 * 1000);
 
-    for (const seatId of dto.seatIds) {
-      await this.seatHoldRepository.delete({
-        showtimeId: dto.showtimeId,
-        seatId,
-      });
+    try {
+      for (const seatId of dto.seatIds) {
+        await this.seatHoldRepository.delete({
+          showtimeId: dto.showtimeId,
+          seatId,
+          status: In([ESeatHoldStatus.HOLDING, ESeatHoldStatus.RELEASED]),
+        });
 
-      const seatHold = this.seatHoldRepository.create({
-        showtimeId: dto.showtimeId,
-        seatId,
-        userId,
-        heldAt: now,
-        expiredAt,
-        status: ESeatHoldStatus.HOLDING,
-      });
-      await this.seatHoldRepository.save(seatHold);
+        const seatHold = this.seatHoldRepository.create({
+          showtimeId: dto.showtimeId,
+          seatId,
+          userId,
+          heldAt: now,
+          expiredAt,
+          status: ESeatHoldStatus.HOLDING,
+        });
+        await this.seatHoldRepository.save(seatHold);
+      }
+    } catch (error) {
+      await this.redisService.releaseSeats(dto.showtimeId, successSeats);
+      throw error;
     }
 
     // Emit seat-update realtime cho tất cả client đang xem suất chiếu này
