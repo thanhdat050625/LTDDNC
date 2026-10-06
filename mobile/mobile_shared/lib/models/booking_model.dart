@@ -23,12 +23,12 @@ class BookingModel extends Equatable {
 
   factory BookingModel.fromJson(Map<String, dynamic> json) {
     return BookingModel(
-      id: json['id'] as int,
+      id: ((json['id'] ?? json['bookingId']) as num?)?.toInt() ?? 0,
       bookingCode: json['bookingCode'] as String? ?? '',
-      showtimeId: json['showtimeId'] as int,
+      showtimeId: (json['showtimeId'] as num?)?.toInt() ?? 0,
       totalAmount: (json['totalAmount'] as num?)?.toDouble() ?? 0.0,
       discountAmount: (json['discountAmount'] as num?)?.toDouble() ?? 0.0,
-      pointsUsed: json['pointsUsed'] as int? ?? 0,
+      pointsUsed: (json['pointsUsed'] as num?)?.toInt() ?? 0,
       status: json['status'] as String? ?? 'PENDING',
       expiredAt: json['expiredAt'] != null ? DateTime.parse(json['expiredAt'] as String).toLocal() : null,
     );

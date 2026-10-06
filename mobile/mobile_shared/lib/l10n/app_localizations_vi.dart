@@ -274,6 +274,24 @@ class AppLocalizationsVi extends AppLocalizations {
   String get createBooking => 'Tạo đơn hàng';
 
   @override
+  String get bookingSeatAlreadyHeld => 'Ghế đã có người giữ hoặc đã được đặt';
+
+  @override
+  String get bookingMaxSeatsExceeded =>
+      'Chỉ được chọn tối đa 8 ghế mỗi đơn hàng';
+
+  @override
+  String get bookingShowtimeExpired =>
+      'Suất chiếu đã bắt đầu hoặc không còn khả dụng';
+
+  @override
+  String get bookingSeatRoomMismatch =>
+      'Ghế được chọn không thuộc phòng chiếu này';
+
+  @override
+  String get bookingHoldExpired => 'Đơn đặt vé đã hết thời gian giữ chỗ';
+
+  @override
   String get concessions => 'Bắp nước';
 
   @override
@@ -386,10 +404,25 @@ class AppLocalizationsVi extends AppLocalizations {
   String get applyPromotion => 'Áp dụng';
 
   @override
+  String get removePromotion => 'Gỡ bỏ';
+
+  @override
   String get promotionApplied => 'Đã áp dụng mã khuyến mãi';
 
   @override
+  String get promotionRemoved => 'Đã gỡ bỏ mã khuyến mãi';
+
+  @override
   String get promotionInvalid => 'Mã khuyến mãi không hợp lệ';
+
+  @override
+  String get retryPayment => 'Đổi phương thức thanh toán';
+
+  @override
+  String get reselectSeats => 'Quay lại chọn ghế';
+
+  @override
+  String get concessionUpdateFailed => 'Cập nhật bắp nước thất bại';
 
   @override
   String get redeemWithPoints => 'Đổi điểm';

@@ -604,6 +604,36 @@ abstract class AppLocalizations {
   /// **'Tạo đơn hàng'**
   String get createBooking;
 
+  /// No description provided for @bookingSeatAlreadyHeld.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ghế đã có người giữ hoặc đã được đặt'**
+  String get bookingSeatAlreadyHeld;
+
+  /// No description provided for @bookingMaxSeatsExceeded.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chỉ được chọn tối đa 8 ghế mỗi đơn hàng'**
+  String get bookingMaxSeatsExceeded;
+
+  /// No description provided for @bookingShowtimeExpired.
+  ///
+  /// In vi, this message translates to:
+  /// **'Suất chiếu đã bắt đầu hoặc không còn khả dụng'**
+  String get bookingShowtimeExpired;
+
+  /// No description provided for @bookingSeatRoomMismatch.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ghế được chọn không thuộc phòng chiếu này'**
+  String get bookingSeatRoomMismatch;
+
+  /// No description provided for @bookingHoldExpired.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đơn đặt vé đã hết thời gian giữ chỗ'**
+  String get bookingHoldExpired;
+
   /// No description provided for @concessions.
   ///
   /// In vi, this message translates to:
@@ -820,17 +850,47 @@ abstract class AppLocalizations {
   /// **'Áp dụng'**
   String get applyPromotion;
 
+  /// No description provided for @removePromotion.
+  ///
+  /// In vi, this message translates to:
+  /// **'Gỡ bỏ'**
+  String get removePromotion;
+
   /// No description provided for @promotionApplied.
   ///
   /// In vi, this message translates to:
   /// **'Đã áp dụng mã khuyến mãi'**
   String get promotionApplied;
 
+  /// No description provided for @promotionRemoved.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã gỡ bỏ mã khuyến mãi'**
+  String get promotionRemoved;
+
   /// No description provided for @promotionInvalid.
   ///
   /// In vi, this message translates to:
   /// **'Mã khuyến mãi không hợp lệ'**
   String get promotionInvalid;
+
+  /// No description provided for @retryPayment.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đổi phương thức thanh toán'**
+  String get retryPayment;
+
+  /// No description provided for @reselectSeats.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quay lại chọn ghế'**
+  String get reselectSeats;
+
+  /// No description provided for @concessionUpdateFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cập nhật bắp nước thất bại'**
+  String get concessionUpdateFailed;
 
   /// No description provided for @redeemWithPoints.
   ///

@@ -33,7 +33,7 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
       ),
       body: BlocConsumer<SeatBookingBloc, SeatBookingState>(
         listener: (context, state) {
-          if (state is SeatsHeld) {
+          if (state is SeatsHeld && state.bookingId > 0) {
             context.push('/concessions/${state.bookingId}');
           } else if (state is SeatBookingError) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
