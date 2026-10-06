@@ -55,6 +55,17 @@ class _MovieManagementScreenState extends State<MovieManagementScreen> {
       ),
       body: Column(
         children: [
+          // Core Operational KPI Cards
+          BlocBuilder<MovieManagementCubit, MovieManagementState>(
+            buildWhen: (prev, curr) => curr is MovieManagementLoaded,
+            builder: (context, state) {
+              if (state is! MovieManagementLoaded) {
+                return const SizedBox.shrink();
+              }
+              return _buildKpiSection(context, state);
+            },
+          ),
+
           // Search & Filter Bar
           Container(
             padding: const EdgeInsets.fromLTRB(12, 8, 12, 6),
@@ -70,17 +81,6 @@ class _MovieManagementScreenState extends State<MovieManagementScreen> {
                 });
               },
             ),
-          ),
-          
-          // Core Operational KPI Cards
-          BlocBuilder<MovieManagementCubit, MovieManagementState>(
-            buildWhen: (prev, curr) => curr is MovieManagementLoaded,
-            builder: (context, state) {
-              if (state is! MovieManagementLoaded) {
-                return const SizedBox.shrink();
-              }
-              return _buildKpiSection(context, state);
-            },
           ),
           
           // Movie List
@@ -123,7 +123,7 @@ class _MovieManagementScreenState extends State<MovieManagementScreen> {
                     }
                     return ListView.separated(
                       physics: const AlwaysScrollableScrollPhysics(),
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      padding: const EdgeInsets.fromLTRB(12, 8, 12, 96),
                       itemCount: movies.length,
                       separatorBuilder: (_, __) => const SizedBox(height: 8),
                       itemBuilder: (context, index) {

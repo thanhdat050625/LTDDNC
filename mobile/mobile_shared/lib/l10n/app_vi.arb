@@ -990,6 +990,42 @@
   "vnpayPaymentDesc": "Thẻ ATM / VNPAY-QR",
   "enterCashReceivedHint": "Nhập số tiền khách đưa",
   "insufficientCashReceived": "Số tiền khách đưa không đủ thanh toán",
+  "posPointsAvailable": "Điểm hiện có",
+  "posPointsToUse": "Điểm sử dụng",
+  "posPointsRemaining": "Điểm còn lại",
+  "posDiscountValue": "Giá trị giảm",
+  "posUsingPointsBadge": "Đang sử dụng {points} điểm",
+  "@posUsingPointsBadge": {
+    "placeholders": {
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "posCancelPoints": "Hủy",
+  "posSearchCustomer": "Tìm khách hàng",
+  "posSearchCustomerHint": "Nhập email hoặc số điện thoại...",
+  "posCustomerNotFound": "Không tìm thấy khách hàng",
+  "posChangeCustomer": "Đổi khách hàng",
+  "posPointsExceedBalance": "Số điểm sử dụng không được vượt quá số dư hiện có",
+  "posPointsExceedLimit": "Số điểm sử dụng vượt quá giới hạn giảm giá (tối đa 20% tổng đơn)",
+  "posPointsInvalid": "Số điểm phải là số nguyên dương",
+  "posCustomerLoyaltyBalance": "Điểm tích lũy: {points}",
+  "@posCustomerLoyaltyBalance": {
+    "placeholders": {
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "posWaitingMomoPayment": "Đang chờ thanh toán MoMo",
+  "posOpenMomo": "Mở cổng thanh toán MoMo",
+  "posCheckingPayment": "Đang kiểm tra thanh toán...",
+  "posPaymentPendingHint": "Vui lòng quét mã trên cổng MoMo, sau đó bấm Kiểm tra thanh toán.",
+  "posCheckPaymentStatus": "Kiểm tra thanh toán",
+  "posPaymentFailedPrompt": "Thanh toán không thành công. Quý khách có thể thử lại.",
+  "posRetryPayment": "Thử lại thanh toán",
+  "posPaymentCancelledPrompt": "Giao dịch thanh toán đã bị hủy.",
   "scanSoundTitle": "Âm báo khi quét mã",
   "scanHapticTitle": "Rung khi quét mã",
   "seatUnit": "ghế",

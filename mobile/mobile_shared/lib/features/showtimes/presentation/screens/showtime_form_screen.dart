@@ -7,8 +7,9 @@ import 'package:mobile_shared/mobile_shared.dart';
 
 class ShowtimeFormScreen extends StatefulWidget {
   final ShowtimeModel? showtime;
+  final Widget? drawer;
 
-  const ShowtimeFormScreen({super.key, this.showtime});
+  const ShowtimeFormScreen({super.key, this.showtime, this.drawer});
 
   @override
   State<ShowtimeFormScreen> createState() => _ShowtimeFormScreenState();
@@ -65,7 +66,8 @@ class _ShowtimeFormScreenState extends State<ShowtimeFormScreen> {
         'roomId': _roomId,
         'format': _format,
         'status': _status,
-        'publicStartTime': _publicStartTime!.toIso8601String(),
+        // Gửi UTC ISO string để backend lưu đúng múi giờ
+        'publicStartTime': _publicStartTime!.toUtc().toIso8601String(),
         'preShowMinutes': _preShowMinutes,
         'postMovieBufferMinutes': _postMovieBufferMinutes,
       };
@@ -113,6 +115,14 @@ class _ShowtimeFormScreenState extends State<ShowtimeFormScreen> {
     return AppScaffold(
       title: isEditMode ? l10n.editShowtime : l10n.addShowtime,
       showBackButton: true,
+      drawer: widget.drawer,
+      actions: [
+        IconButton(
+          icon: const Icon(LucideIcons.x),
+          tooltip: l10n.cancel,
+          onPressed: () => context.pop(),
+        ),
+      ],
       body: BlocConsumer<ShowtimeFormCubit, ShowtimeFormState>(
         listener: (context, state) {
           if (state is ShowtimeFormSuccess) {

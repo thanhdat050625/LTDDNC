@@ -245,10 +245,12 @@ export class ShowtimeService {
       });
     }
 
-    // 3. Tính toán vòng lặp ngày & giờ
-    const startDate = new Date(dto.startDate);
+    // 3. Tính toán vòng lặp ngày & giờ (theo múi giờ Việt Nam UTC+7)
+    const VN_OFFSET_MS = 7 * 60 * 60 * 1000;
+    // startDate/endDate từ FE là "yyyy-MM-dd" (ngày VN), parse như UTC midnight rồi shift
+    const startDate = new Date(dto.startDate); // "2026-10-08" → 2026-10-08T00:00:00Z
     const endDate = new Date(dto.endDate);
-    endDate.setHours(23, 59, 59, 999); // Đảm bảo lấy hết ngày cuối
+    endDate.setUTCHours(23, 59, 59, 999); // hết ngày cuối theo UTC date string
 
     const createdShowtimes: Showtime[] = [];
     const failedSlots: { date: string; reason: string }[] = [];
@@ -256,17 +258,19 @@ export class ShowtimeService {
     const preShow = dto.preShowMinutes ?? 10;
     const postBuffer = dto.postMovieBufferMinutes ?? 15;
 
-    // Duyệt từng ngày
+    // Duyệt từng ngày (theo UTC date string = VN date)
     for (
       let d = new Date(startDate);
       d <= endDate;
-      d.setDate(d.getDate() + 1)
+      d.setUTCDate(d.getUTCDate() + 1)
     ) {
-      // Duyệt từng khung giờ
+      // Duyệt từng khung giờ (giờ VN → UTC)
       for (const timeSlot of dto.timeSlots) {
         const [hours, minutes] = timeSlot.split(':').map(Number);
-        const publicStart = new Date(d);
-        publicStart.setHours(hours, minutes, 0, 0);
+        // Tạo thời điểm VN: ngày UTC + giờ VN → chuyển sang UTC
+        const publicStart = new Date(
+          Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), hours, minutes, 0, 0) - VN_OFFSET_MS
+        );
 
         // Kiểm tra screeningEndDate của phim
         if (movie.screeningEndDate) {
@@ -649,7 +653,11 @@ export class ShowtimeService {
   }
 
   async getByCinemaId(cinemaId: number): Promise<ApiResponse<any>> {
-    const now = new Date();
+    const VN_OFFSET_MS = 7 * 60 * 60 * 1000;
+    const vnNow = new Date(Date.now() + VN_OFFSET_MS);
+    const startOfToday = new Date(
+      Date.UTC(vnNow.getUTCFullYear(), vnNow.getUTCMonth(), vnNow.getUTCDate(), 0, 0, 0, 0) - VN_OFFSET_MS,
+    );
     const showtimes = await this.showtimeRepository
       .createQueryBuilder('showtime')
       .leftJoinAndSelect('showtime.movie', 'movie')
@@ -661,7 +669,7 @@ export class ShowtimeService {
         { released: ESeatHoldStatus.RELEASED },
       )
       .where('room.cinemaId = :cinemaId', { cinemaId })
-      .andWhere('showtime.publicStartTime >= :now', { now })
+      .andWhere('showtime.publicStartTime >= :startOfToday', { startOfToday })
       .andWhere('showtime.status IN (:...statuses)', {
         statuses: [EShowtimeStatus.SCHEDULED, EShowtimeStatus.ACTIVE],
       })
@@ -704,10 +712,11 @@ export class ShowtimeService {
 
   private groupByDate(showtimes: Showtime[]): Record<string, Showtime[]> {
     const grouped: Record<string, Showtime[]> = {};
+    // Sử dụng múi giờ Việt Nam (UTC+7) để key ngày khớp với client
+    const VN_OFFSET_MS = 7 * 60 * 60 * 1000;
     for (const showtime of showtimes) {
-      const dateKey = new Date(showtime.publicStartTime)
-        .toISOString()
-        .split('T')[0];
+      const vnTime = new Date(new Date(showtime.publicStartTime).getTime() + VN_OFFSET_MS);
+      const dateKey = vnTime.toISOString().split('T')[0];
       if (!grouped[dateKey]) {
         grouped[dateKey] = [];
       }

@@ -7,8 +7,13 @@ import 'package:mobile_shared/mobile_shared.dart';
 
 class ShowtimeBulkCreateScreen extends StatefulWidget {
   final int? initialCinemaId;
+  final Widget? drawer;
 
-  const ShowtimeBulkCreateScreen({super.key, this.initialCinemaId});
+  const ShowtimeBulkCreateScreen({
+    super.key,
+    this.initialCinemaId,
+    this.drawer,
+  });
 
   @override
   State<ShowtimeBulkCreateScreen> createState() =>
@@ -219,6 +224,14 @@ class _ShowtimeBulkCreateScreenState extends State<ShowtimeBulkCreateScreen> {
     return AppScaffold(
       title: l10n.showtimeBulkCreateTitle,
       showBackButton: true,
+      drawer: widget.drawer,
+      actions: [
+        IconButton(
+          icon: const Icon(LucideIcons.x),
+          tooltip: l10n.cancel,
+          onPressed: () => context.pop(),
+        ),
+      ],
       body: BlocConsumer<ShowtimeBulkCreateCubit, ShowtimeBulkCreateState>(
         listener: (context, state) {
           if (state is ShowtimeBulkCreateError) {

@@ -67,6 +67,31 @@ class BookingManagementRepository {
         : response.data;
   }
 
+  Future<Map<String, dynamic>> getPaymentStatus(int bookingId) async {
+    final response = await _dioClient.get('/payments/status/$bookingId');
+    final raw = response.data;
+    final data = (raw is Map && raw.containsKey('data')) ? raw['data'] : raw;
+    if (data is Map<String, dynamic>) {
+      return data;
+    }
+    return {};
+  }
+
+  Future<List<UserModel>> searchCustomers(String keyword) async {
+    final response = await _dioClient.get(
+      '/users/search',
+      queryParameters: {'keyword': keyword},
+    );
+    final raw = response.data;
+    final data = (raw is Map && raw.containsKey('data')) ? raw['data'] : raw;
+    if (data is List) {
+      return data
+          .map((e) => UserModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+    }
+    return [];
+  }
+
   Future<void> confirmBooking(int bookingId, String paymentMethod) async {
     await _dioClient.post(
       '/bookings/$bookingId/confirm',
