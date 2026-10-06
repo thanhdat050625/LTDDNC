@@ -401,21 +401,6 @@ export class ShowtimeService {
       }
     }
 
-    const seats = (showtime.room.seats ?? [])
-      .sort((a, b) => a.row.localeCompare(b.row) || a.number - b.number)
-      .map((seat) => ({
-        seatId: seat.id,
-        row: seat.row,
-        column: seat.number,
-        status: this.resolveShowtimeSeatStatus(
-          seat.status,
-          holdStatusBySeatId.get(seat.id),
-        ),
-        isCouple: showtime.room.roomType === ERoomType.COUPLE,
-      }));
-
-    const roomType = this.toClientRoomType(showtime.room.roomType);
-
     const dayOfWeek = new Date(showtime.publicStartTime).getDay();
     const dayType = (dayOfWeek === 0 || dayOfWeek === 6) ? EDayType.WEEKEND : EDayType.WEEKDAY;
     
@@ -426,7 +411,50 @@ export class ShowtimeService {
       },
     });
     
-    const pricePerSeat = ticketPriceObj ? ticketPriceObj.price : 75000;
+    const pricePerSeat = ticketPriceObj ? ticketPriceObj.price : 60000;
+
+    const vipPriceObj = await this.ticketPriceRepository.findOne({
+      where: { roomType: ERoomType.VIP, dayType },
+    });
+    const couplePriceObj = await this.ticketPriceRepository.findOne({
+      where: { roomType: ERoomType.COUPLE, dayType },
+    });
+    const standardPriceObj = await this.ticketPriceRepository.findOne({
+      where: { roomType: ERoomType.STANDARD, dayType },
+    });
+
+    const defaultStandardPrice = standardPriceObj ? standardPriceObj.price : pricePerSeat;
+    const defaultVipPrice = vipPriceObj ? vipPriceObj.price : defaultStandardPrice + 20000;
+    const defaultCouplePrice = couplePriceObj ? couplePriceObj.price : defaultStandardPrice + 30000;
+
+    const isRoomVip = showtime.room.roomType === ERoomType.VIP;
+    const isRoomCouple = showtime.room.roomType === ERoomType.COUPLE;
+
+    const seats = (showtime.room.seats ?? [])
+      .sort((a, b) => a.row.localeCompare(b.row) || a.number - b.number)
+      .map((seat) => {
+        const isVipSeat = isRoomVip || (showtime.room.rows >= 6 && ['D', 'E', 'F'].includes(seat.row.toUpperCase()));
+        const isCoupleSeat = isRoomCouple || (showtime.room.isCouple && seat.row.toUpperCase() === String.fromCharCode(65 + showtime.room.rows - 1));
+        const seatType = isCoupleSeat ? 'COUPLE' : (isVipSeat ? 'VIP' : 'STANDARD');
+        const seatPrice = isCoupleSeat ? defaultCouplePrice : (isVipSeat ? defaultVipPrice : defaultStandardPrice);
+
+        return {
+          seatId: seat.id,
+          row: seat.row,
+          column: seat.number,
+          label: seat.label || `${seat.row}${seat.number}`,
+          status: this.resolveShowtimeSeatStatus(
+            seat.status,
+            holdStatusBySeatId.get(seat.id),
+          ),
+          isCouple: isCoupleSeat,
+          isVip: isVipSeat,
+          type: seatType,
+          price: seatPrice,
+        };
+      });
+
+    const roomType = this.toClientRoomType(showtime.room.roomType);
 
     const responseData = {
       id: showtime.id,

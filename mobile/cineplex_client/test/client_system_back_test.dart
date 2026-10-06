@@ -39,7 +39,7 @@ class _FakeMovieRepo extends MovieRepository {
   _FakeMovieRepo(super.dioClient);
   @override
   Future<({List<MovieModel> movies, int totalPages})> getAllMovies(
-      int page, int pageSize, {String? genre}) async {
+      int page, int pageSize, {String? genre, String? search, String? status}) async {
     return (movies: <MovieModel>[], totalPages: 1);
   }
 }

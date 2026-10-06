@@ -77,6 +77,27 @@ class SeatMapLoaded extends SeatBookingState {
     this.bookingId,
   });
 
+  double get totalPrice {
+    double total = 0.0;
+    for (final seatId in selectedSeatIds) {
+      final seat = seats.where((s) => s.seatId == seatId).firstOrNull;
+      if (seat != null) {
+        if (seat.price > 0) {
+          total += seat.price;
+        } else if (seat.isCouple) {
+          total += pricePerSeat + 30000;
+        } else if (seat.isVip) {
+          total += pricePerSeat + 20000;
+        } else {
+          total += pricePerSeat;
+        }
+      } else {
+        total += pricePerSeat;
+      }
+    }
+    return total;
+  }
+
   SeatMapLoaded copyWith({
     List<SeatModel>? seats,
     List<int>? selectedSeatIds,
@@ -149,19 +170,47 @@ class SeatBookingBloc extends Bloc<SeatBookingEvent, SeatBookingState> {
         add(SeatUpdateReceived(data));
       });
 
-      // Simulating API call for showtime detail which contains seats
-      // Normally would call repository.getShowtimeDetail but we use unavailable seats as proxy
+      // 1. Lấy thông tin phòng chiếu và ghế thật từ Backend API
+      Map<String, dynamic> showtimeDetail = {};
+      try {
+        showtimeDetail = await _repository.getShowtimeDetail(event.showtimeId);
+      } catch (_) {
+        // Fallback cho test/mạng
+      }
+
+      final roomData = showtimeDetail['room'] as Map<String, dynamic>?;
+      final roomInfo = roomData != null ? RoomModel.fromJson(roomData) : null;
+      final rawSeats = (showtimeDetail['seats'] as List<dynamic>?) ??
+          (roomData != null ? (roomData['seats'] as List<dynamic>?) : null) ??
+          [];
+      final List<SeatModel> seats = rawSeats
+          .map((e) => SeatModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+      final double pricePerSeat =
+          (showtimeDetail['pricePerSeat'] as num?)?.toDouble() ?? 50000.0;
+
+      // 2. Lấy danh sách ghế đang bị giữ (Redis) hoặc đã đặt (CONFIRMED)
       final unavailable = await _repository.getUnavailableSeats(event.showtimeId);
-      
-      // Mocked seats since we don't have getShowtimeDetail in BookingRepository
-      // Real app would fetch full detail here
-      final List<SeatModel> seats = [];
-      
+      final heldSeatIds = List<int>.from(unavailable['heldSeatIds'] ?? []);
+      final bookedSeatIds = List<int>.from(unavailable['bookedSeatIds'] ?? []);
+
+      // 3. Cập nhật status của từng seat trong list
+      final updatedSeats = seats.map((seat) {
+        if (bookedSeatIds.contains(seat.seatId)) {
+          return seat.copyWith(status: SeatStatus.booked);
+        }
+        if (heldSeatIds.contains(seat.seatId)) {
+          return seat.copyWith(status: SeatStatus.held);
+        }
+        return seat;
+      }).toList();
+
       emit(SeatMapLoaded(
-        seats: seats,
-        heldSeatIds: List<int>.from(unavailable['heldSeatIds'] ?? []),
-        bookedSeatIds: List<int>.from(unavailable['bookedSeatIds'] ?? []),
-        pricePerSeat: 50000,
+        seats: updatedSeats,
+        heldSeatIds: heldSeatIds,
+        bookedSeatIds: bookedSeatIds,
+        roomInfo: roomInfo,
+        pricePerSeat: pricePerSeat,
       ));
     } catch (e) {
       emit(SeatBookingError(e.toString()));
@@ -169,67 +218,73 @@ class SeatBookingBloc extends Bloc<SeatBookingEvent, SeatBookingState> {
   }
 
   void _onSelectSeat(SelectSeat event, Emitter<SeatBookingState> emit) {
-    if (state is SeatMapLoaded) {
-      final s = state as SeatMapLoaded;
-      if (s.selectedSeatIds.length >= 8) {
-        emit(const SeatBookingError('Chỉ được chọn tối đa 8 ghế mỗi đơn hàng'));
-        emit(s);
-        return;
-      }
-      if (s.heldSeatIds.contains(event.seatId) || s.bookedSeatIds.contains(event.seatId)) {
-        return;
-      }
-      emit(s.copyWith(selectedSeatIds: [...s.selectedSeatIds, event.seatId]));
+    if (state is! SeatMapLoaded) return;
+    final s = state as SeatMapLoaded;
+
+    if (s.selectedSeatIds.length >= 8) {
+      emit(const SeatBookingError('Chỉ được chọn tối đa 8 ghế mỗi đơn hàng'));
+      emit(s);
+      return;
     }
+    if (s.heldSeatIds.contains(event.seatId) || s.bookedSeatIds.contains(event.seatId)) {
+      return;
+    }
+
+    emit(s.copyWith(selectedSeatIds: [...s.selectedSeatIds, event.seatId]));
   }
 
   Future<void> _onDeselectSeat(DeselectSeat event, Emitter<SeatBookingState> emit) async {
-    if (state is SeatMapLoaded) {
-      final s = state as SeatMapLoaded;
-      emit(s.copyWith(selectedSeatIds: s.selectedSeatIds.where((id) => id != event.seatId).toList()));
+    if (state is! SeatMapLoaded) return;
+    final s = state as SeatMapLoaded;
 
-      if (_currentShowtimeId != null) {
-        try {
-          await _repository.releaseSeats(_currentShowtimeId!, [event.seatId]);
-        } catch (_) {
-          // Lỗi mạng không được chặn UI (UC07 A3.1)
-        }
+    final newSelected = s.selectedSeatIds.where((id) => id != event.seatId).toList();
+    emit(s.copyWith(selectedSeatIds: newSelected));
+
+    if (newSelected.isEmpty) {
+      _timerSubscription?.cancel();
+      emit(s.copyWith(selectedSeatIds: newSelected, secondsRemaining: null));
+    }
+
+    if (_currentShowtimeId != null) {
+      try {
+        await _repository.releaseSeats(_currentShowtimeId!, [event.seatId]);
+      } catch (_) {
+        // Lỗi mạng không được chặn UI (UC07 A3.1)
       }
     }
   }
 
   Future<void> _onHoldSelectedSeats(HoldSelectedSeats event, Emitter<SeatBookingState> emit) async {
-    if (state is SeatMapLoaded && _currentShowtimeId != null) {
-      final s = state as SeatMapLoaded;
-      if (s.selectedSeatIds.isEmpty) return;
-      
-      try {
-        final res = await _repository.holdSeats(_currentShowtimeId!, s.selectedSeatIds);
-        DateTime? holdExpiredAt;
-        if (res['expiredAt'] != null) {
-          holdExpiredAt = DateTime.parse(res['expiredAt'].toString()).toLocal();
-        }
+    if (state is! SeatMapLoaded || _currentShowtimeId == null) return;
+    final s = state as SeatMapLoaded;
+    if (s.selectedSeatIds.isEmpty) return;
 
-        final booking = await _repository.createBooking(CreateBookingDto(
-          showtimeId: _currentShowtimeId!,
-          seatIds: s.selectedSeatIds,
-        ));
-
-        if (booking.id <= 0) {
-          emit(const SeatBookingError('Không thể tạo đơn đặt vé'));
-          emit(s);
-          return;
-        }
-
-        final expiredAt = booking.expiredAt ?? holdExpiredAt ?? DateTime.now().add(const Duration(minutes: 5));
-        final diff = expiredAt.difference(DateTime.now()).inSeconds;
-        _startTimer(diff > 0 ? diff : 300);
-
-        emit(SeatsHeld(booking.id, expiredAt));
-      } catch (e) {
-        emit(SeatBookingError(_mapBookingError(e)));
-        emit(s);
+    try {
+      final res = await _repository.holdSeats(_currentShowtimeId!, s.selectedSeatIds);
+      DateTime? holdExpiredAt;
+      if (res['expiredAt'] != null) {
+        holdExpiredAt = DateTime.tryParse(res['expiredAt'].toString())?.toLocal();
       }
+
+      final booking = await _repository.createBooking(CreateBookingDto(
+        showtimeId: _currentShowtimeId!,
+        seatIds: s.selectedSeatIds,
+      ));
+
+      if (booking.id <= 0) {
+        emit(const SeatBookingError('Không thể tạo đơn đặt vé'));
+        emit(s);
+        return;
+      }
+
+      final expiredAt = booking.expiredAt ?? holdExpiredAt ?? DateTime.now().add(const Duration(minutes: 5));
+      final diff = expiredAt.difference(DateTime.now()).inSeconds;
+      _startTimer(diff > 0 ? diff : 300);
+
+      emit(SeatsHeld(booking.id, expiredAt));
+    } catch (e) {
+      emit(SeatBookingError(_mapBookingError(e)));
+      emit(s);
     }
   }
 
@@ -258,11 +313,24 @@ class SeatBookingBloc extends Bloc<SeatBookingEvent, SeatBookingState> {
       final s = state as SeatMapLoaded;
       final held = List<int>.from(event.data['heldSeatIds'] ?? []);
       final booked = List<int>.from(event.data['bookedSeatIds'] ?? []);
-      
-      // Remove any selected seats that are now held/booked by others
-      final newSelected = s.selectedSeatIds.where((id) => !held.contains(id) && !booked.contains(id)).toList();
-      
+
+      final newSelected = s.selectedSeatIds.where((id) => !booked.contains(id)).toList();
+
+      final updatedSeats = s.seats.map((seat) {
+        if (booked.contains(seat.seatId)) {
+          return seat.copyWith(status: SeatStatus.booked);
+        }
+        if (held.contains(seat.seatId) && !newSelected.contains(seat.seatId)) {
+          return seat.copyWith(status: SeatStatus.held);
+        }
+        if (!held.contains(seat.seatId) && !booked.contains(seat.seatId)) {
+          return seat.copyWith(status: SeatStatus.available);
+        }
+        return seat;
+      }).toList();
+
       emit(s.copyWith(
+        seats: updatedSeats,
         heldSeatIds: held,
         bookedSeatIds: booked,
         selectedSeatIds: newSelected,

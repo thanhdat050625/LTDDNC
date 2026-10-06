@@ -12,6 +12,7 @@ class SeatModel extends Equatable {
   final bool isCouple;
   final bool isVip;
   final SeatType type;
+  final double price;
 
   const SeatModel({
     required this.seatId,
@@ -22,6 +23,7 @@ class SeatModel extends Equatable {
     required this.isCouple,
     this.isVip = false,
     SeatType? type,
+    this.price = 0.0,
   }) : type = type ?? (isCouple ? SeatType.couple : (isVip ? SeatType.vip : SeatType.standard));
 
   factory SeatModel.fromJson(Map<String, dynamic> json) {
@@ -52,6 +54,7 @@ class SeatModel extends Equatable {
     final SeatType type = isCouple
         ? SeatType.couple
         : (isVip ? SeatType.vip : SeatType.standard);
+    final double price = (json['price'] as num?)?.toDouble() ?? 0.0;
 
     return SeatModel(
       seatId: seatId,
@@ -62,6 +65,7 @@ class SeatModel extends Equatable {
       isCouple: isCouple,
       isVip: isVip,
       type: type,
+      price: price,
     );
   }
 
@@ -74,6 +78,7 @@ class SeatModel extends Equatable {
     bool? isCouple,
     bool? isVip,
     SeatType? type,
+    double? price,
   }) {
     return SeatModel(
       seatId: seatId ?? this.seatId,
@@ -84,9 +89,10 @@ class SeatModel extends Equatable {
       isCouple: isCouple ?? this.isCouple,
       isVip: isVip ?? this.isVip,
       type: type ?? this.type,
+      price: price ?? this.price,
     );
   }
 
   @override
-  List<Object?> get props => [seatId, row, column, label, status, isCouple, isVip, type];
+  List<Object?> get props => [seatId, row, column, label, status, isCouple, isVip, type, price];
 }

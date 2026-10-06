@@ -10,6 +10,7 @@ import { CustomException } from '../../core/exceptions/custom.exception';
 import { RedisService } from '../redis/redis.service';
 import { EBookingStatus, EBookingSource, ESeatHoldStatus } from './enums/booking.enum';
 import { Seat } from '../cinema/entities/seat.entity';
+import { ERoomType } from '../cinema/enums/cinema.enum';
 import { TicketPrice } from '../ticket/entities/ticket-price.entity';
 import { ConcessionProduct } from '../concession/entities/concession-product.entity';
 import { Promotion } from '../promotion/entities/promotion.entity';
@@ -239,12 +240,36 @@ export class BookingService {
     // Tính tổng tiền vé
     let ticketTotal = 0;
     for (const seat of seats) {
-      const ticketPrice = await this.ticketPriceRepository.findOne({
+      const isVipSeat =
+        seat.room?.roomType === ERoomType.VIP ||
+        (seat.room?.roomType === ERoomType.STANDARD &&
+          (seat.room?.rows ?? 0) >= 6 &&
+          ['D', 'E', 'F'].includes(seat.row.toUpperCase()));
+      const isCoupleSeat =
+        seat.room?.roomType === ERoomType.COUPLE ||
+        (seat.room?.isCouple &&
+          seat.row.toUpperCase() ===
+            String.fromCharCode(65 + (seat.room?.rows ?? 0) - 1));
+      const targetRoomType = isCoupleSeat
+        ? ERoomType.COUPLE
+        : isVipSeat
+          ? ERoomType.VIP
+          : seat.room?.roomType ?? ERoomType.STANDARD;
+
+      let ticketPrice = await this.ticketPriceRepository.findOne({
         where: {
-          roomType: seat.room?.roomType,
+          roomType: targetRoomType,
           dayType: dayType as any,
         },
       });
+      if (!ticketPrice) {
+        ticketPrice = await this.ticketPriceRepository.findOne({
+          where: {
+            roomType: seat.room?.roomType,
+            dayType: dayType as any,
+          },
+        });
+      }
       if (!ticketPrice) {
         throw new CustomException(
           HttpStatus.BAD_REQUEST,

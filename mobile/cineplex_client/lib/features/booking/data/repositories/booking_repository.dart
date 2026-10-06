@@ -5,6 +5,13 @@ class BookingRepository {
 
   BookingRepository(this._dioClient);
 
+  Future<Map<String, dynamic>> getShowtimeDetail(int showtimeId) async {
+    final response = await _dioClient.get('/showtimes/$showtimeId');
+    final raw = response.data;
+    final data = (raw is Map && raw.containsKey('data')) ? raw['data'] : raw;
+    return (data as Map<String, dynamic>?) ?? {};
+  }
+
   Future<Map<String, dynamic>> holdSeats(int showtimeId, List<int> seatIds) async {
     final response = await _dioClient.post('/bookings/hold-seats', data: {
       'showtimeId': showtimeId,
