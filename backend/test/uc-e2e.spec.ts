@@ -407,7 +407,52 @@ describe('E2E Xuyên UC07 - UC08 - UC09 - UC10 (Online Booking -> Concessions ->
       useValue: createStatefulRepository(map, dbEngine, name),
     });
 
+    const createMockQueryBuilder = () => ({
+      update: jest.fn().mockReturnThis(),
+      set: jest.fn(function (setObj: any) {
+        this.setObj = setObj;
+        return this;
+      }),
+      where: jest.fn(function (whereStr: any, params: any) {
+        this.params = params;
+        return this;
+      }),
+      execute: jest.fn(async function () {
+        if (this.params?.productId) {
+          const prod = dbEngine.concessionProducts.get(this.params.productId);
+          if (prod) {
+            const fnVal = typeof this.setObj?.stockQuantity === 'function'
+              ? this.setObj.stockQuantity()
+              : this.setObj?.stockQuantity;
+            const fnStr = String(fnVal || '');
+            const match = fnStr.match(/GREATEST\(stockQuantity\s*-\s*(\d+)/i) || fnStr.match(/-\s*(\d+)/);
+            const subQty = match ? parseInt(match[1], 10) : 1;
+            prod.stockQuantity = Math.max(prod.stockQuantity - subQty, 0);
+          }
+        }
+        if (this.params?.id && dbEngine.promotions.has(this.params.id)) {
+          const promo = dbEngine.promotions.get(this.params.id);
+          if (this.setObj?.usedCount) {
+            const fnVal = typeof this.setObj.usedCount === 'function' ? this.setObj.usedCount() : this.setObj.usedCount;
+            const fnStr = String(fnVal || '');
+            if (fnStr.includes('+ 1') || fnStr.includes('+1')) {
+              if (promo.maxUsage && promo.usedCount >= promo.maxUsage) {
+                return { affected: 0 };
+              }
+              promo.usedCount = (promo.usedCount || 0) + 1;
+              return { affected: 1 };
+            } else if (fnStr.includes('GREATEST') || fnStr.includes('- 1') || fnStr.includes('-1')) {
+              promo.usedCount = Math.max((promo.usedCount || 0) - 1, 0);
+              return { affected: 1 };
+            }
+          }
+        }
+        return { affected: 1 };
+      }),
+    });
+
     const mockDataSource = {
+      createQueryBuilder: jest.fn(createMockQueryBuilder),
       createQueryRunner: jest.fn(() => ({
         connect: jest.fn(),
         startTransaction: jest.fn(),
@@ -481,32 +526,7 @@ describe('E2E Xuyên UC07 - UC08 - UC09 - UC10 (Online Booking -> Concessions ->
             const repo = createStatefulRepository(map, dbEngine, entity.name);
             return repo.create(dto);
           }),
-          createQueryBuilder: jest.fn(() => ({
-            update: jest.fn().mockReturnThis(),
-            set: jest.fn(function (setObj: any) {
-              this.setObj = setObj;
-              return this;
-            }),
-            where: jest.fn(function (whereStr: any, params: any) {
-              this.params = params;
-              return this;
-            }),
-            execute: jest.fn(async function () {
-              if (this.params?.productId) {
-                const prod = dbEngine.concessionProducts.get(this.params.productId);
-                if (prod) {
-                  const fnVal = typeof this.setObj?.stockQuantity === 'function'
-                    ? this.setObj.stockQuantity()
-                    : this.setObj?.stockQuantity;
-                  const fnStr = String(fnVal || '');
-                  const match = fnStr.match(/GREATEST\(stockQuantity\s*-\s*(\d+)/i) || fnStr.match(/-\s*(\d+)/);
-                  const subQty = match ? parseInt(match[1], 10) : 1;
-                  prod.stockQuantity = Math.max(prod.stockQuantity - subQty, 0);
-                }
-              }
-              return { affected: 1 };
-            }),
-          })),
+          createQueryBuilder: jest.fn(createMockQueryBuilder),
         },
       })),
     };
@@ -824,7 +844,7 @@ describe('E2E Xuyên UC07 - UC08 - UC09 - UC10 (Online Booking -> Concessions ->
       expect(dbEngine.users.get(1).loyaltyPoints).toBe(userBefore);
     });
 
-    it.failing('[MISSING-FEATURE][BUG-03] Timeout khi đơn có dùng Voucher: Phải hoàn lại lượt usedCount của Promotion', async () => {
+    it('[BUG-03] Timeout khi đơn có dùng Voucher: Phải hoàn lại lượt usedCount của Promotion', async () => {
       const promoBefore = dbEngine.promotions.get(1).usedCount; // 0
       await bookingService.holdSeats(1, { showtimeId: 1, seatIds: [1] });
 
@@ -851,7 +871,7 @@ describe('E2E Xuyên UC07 - UC08 - UC09 - UC10 (Online Booking -> Concessions ->
   // KỊCH BẢN 4: E2E-LateIPN (IPN đến sau khi booking đã EXPIRED)
   // Đặc tả E7.1: Giao dịch bất thường cần gắn cờ Pending Refund, không kích hoạt vé
   // ==========================================================================
-  it.failing('[MISSING-FEATURE][BUG-04] E2E-LateIPN: IPN thành công gửi tới sau khi đơn đã EXPIRED phải ghi nhận cờ hoàn tiền', async () => {
+  it('[BUG-04] E2E-LateIPN: IPN thành công gửi tới sau khi đơn đã EXPIRED phải ghi nhận cờ hoàn tiền', async () => {
     await bookingService.holdSeats(1, { showtimeId: 1, seatIds: [1] });
     const bookingRes = await bookingService.createBooking(1, { showtimeId: 1, seatIds: [1] });
     const booking = bookingRes.data!;
@@ -926,7 +946,7 @@ describe('E2E Xuyên UC07 - UC08 - UC09 - UC10 (Online Booking -> Concessions ->
   // ==========================================================================
   // KỊCH BẢN 6: E2E-PayFail-Retry (Thanh toán lỗi khi còn hạn và cho phép thử lại)
   // ==========================================================================
-  it.failing('[MISSING-FEATURE][BUG-06] E2E-PayFail-Retry: Thanh toán lỗi khi còn thời hạn 5 phút phải cho phép đổi phương thức thử lại', async () => {
+  it('[BUG-06] E2E-PayFail-Retry: Thanh toán lỗi khi còn thời hạn 5 phút phải cho phép đổi phương thức thử lại', async () => {
     await bookingService.holdSeats(1, { showtimeId: 1, seatIds: [1] });
     const bookingRes = await bookingService.createBooking(1, { showtimeId: 1, seatIds: [1] });
     const booking = bookingRes.data!;
@@ -1017,7 +1037,7 @@ describe('E2E Xuyên UC07 - UC08 - UC09 - UC10 (Online Booking -> Concessions ->
       expect(failures).toHaveLength(9);
     });
 
-    it.failing('[MISSING-FEATURE][BUG-07] Concurrency-2: Áp voucher chỉ còn 1 lượt dùng cho 2 đơn song song -> Chỉ 1 đơn được thành công', async () => {
+    it('[BUG-07] Concurrency-2: Áp voucher chỉ còn 1 lượt dùng cho 2 đơn song song -> Chỉ 1 đơn được thành công', async () => {
       // Voucher LIMITED1 chỉ có maxUsage = 1
       // User 1 và User 2 cùng hold 2 ghế khác nhau
       await bookingService.holdSeats(1, { showtimeId: 1, seatIds: [1] });
