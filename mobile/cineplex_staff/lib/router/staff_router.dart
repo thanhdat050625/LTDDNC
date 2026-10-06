@@ -28,7 +28,7 @@ GoRouter createStaffRouter(
   final shellKey = shellNavKey ?? staffShellNavigatorKey;
   return GoRouter(
     navigatorKey: rootKey,
-    initialLocation: '/dashboard',
+    initialLocation: '/scanner',
     refreshListenable: _StaffAuthRefreshNotifier(authBloc),
     redirect: (context, state) {
       final authState = authBloc.state;
@@ -42,8 +42,12 @@ GoRouter createStaffRouter(
       if (isAuth && isOnLogin) {
         final role = authState.user.role.toUpperCase();
         if (role == 'STAFF' || role == 'ADMIN') {
-          return '/dashboard';
+          return '/scanner';
         }
+      }
+
+      if (state.matchedLocation == '/dashboard') {
+        return '/scanner';
       }
 
       if (state.matchedLocation == '/ticket-sale') {

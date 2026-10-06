@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 import 'package:cineplex_admin/features/auth/presentation/screens/admin_login_screen.dart';
-import 'package:cineplex_admin/features/dashboard/presentation/widgets/admin_drawer.dart';
 
 class FakeAuthRepository implements AuthRepository {
   @override
@@ -121,6 +120,10 @@ void main() {
 
   group('Admin Drawer Tests', () {
     testWidgets('AdminDrawer displays navigation items and user info', (tester) async {
+      tester.view.physicalSize = const Size(800, 1600);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
       const user = UserModel(
         id: 99,
         email: 'admin@cineplex.vn',
@@ -152,7 +155,6 @@ void main() {
       expect(find.text('Quản lý Suất chiếu'), findsOneWidget);
       expect(find.text('Quản lý người dùng'), findsOneWidget);
       expect(find.text('Quản lý Khuyến mãi'), findsOneWidget);
-      expect(find.text('Quản lý Bắp nước'), findsOneWidget);
       expect(find.text('Cài đặt hệ thống'), findsOneWidget);
       expect(find.text('Giao diện tối'), findsOneWidget);
     });

@@ -4,12 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 
-import '../cubit/ticket_management_cubit.dart';
-import '../cubit/ticket_management_state.dart';
-import '../widgets/booking_ticket_card.dart';
-import '../widgets/booking_detail_bottom_sheet.dart';
-import '../widgets/ticket_price_table.dart';
-
 class TicketManagementScreen extends StatefulWidget {
   final Widget? drawer;
 

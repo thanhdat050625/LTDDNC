@@ -110,11 +110,6 @@ class CineplexDrawer extends StatelessWidget {
             : [
               // Staff top navigation items
               AppDrawerItem(
-                icon: LucideIcons.layoutDashboard,
-                title: l10n.staffDashboard,
-                route: '/dashboard',
-              ),
-              AppDrawerItem(
                 icon: LucideIcons.scanLine,
                 title: l10n.scanTicket,
                 route: '/scanner',

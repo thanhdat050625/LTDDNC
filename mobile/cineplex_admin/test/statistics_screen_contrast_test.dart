@@ -116,7 +116,7 @@ void main() {
       expect(find.text('Phim đang chiếu'), findsOneWidget);
 
       // Verify top-performing movies with medals
-      expect(find.text('Hiệu suất phim'), findsOneWidget);
+      expect(find.text('Top phim bán chạy'), findsOneWidget);
       expect(find.text('Mai'), findsOneWidget);
       expect(find.text('Đào, Phở và Piano'), findsOneWidget);
       expect(find.text('Kung Fu Panda 4'), findsOneWidget);

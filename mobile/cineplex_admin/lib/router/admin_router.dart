@@ -8,7 +8,6 @@ import '../features/users/presentation/screens/user_management_screen.dart';
 import '../features/statistics/presentation/screens/statistics_screen.dart';
 import '../features/profile/presentation/screens/admin_profile_screen.dart';
 import '../features/settings/presentation/screens/admin_settings_screen.dart';
-import '../features/dashboard/presentation/widgets/admin_drawer.dart';
 
 final adminRootNavigatorKey = GlobalKey<NavigatorState>();
 

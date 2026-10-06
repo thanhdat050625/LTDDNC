@@ -1,5 +1,4 @@
 import 'package:cineplex_staff/core/widgets/staff_shell_scaffold.dart';
-import 'package:cineplex_staff/features/home/presentation/widgets/staff_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -124,7 +123,7 @@ void main() {
       expect(find.text(l10n.staffBadge), findsOneWidget);
 
       // Verify Top Navigation Destinations
-      expect(find.text(l10n.staffDashboard), findsOneWidget);
+      expect(find.text(l10n.staffDashboard), findsNothing);
       expect(find.text(l10n.scanTicket), findsOneWidget);
       expect(find.text(l10n.counterSale), findsOneWidget);
       expect(find.text(l10n.ticketManagement), findsOneWidget);

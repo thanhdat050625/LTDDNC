@@ -18,7 +18,6 @@ import 'package:cineplex_staff/features/ticket_sale/presentation/screens/checkou
 import 'package:cineplex_staff/features/ticket_sale/data/models/checkout_args.dart';
 import 'package:cineplex_staff/features/ticket_sale/presentation/cubit/ticket_sale_cubit.dart';
 import 'package:cineplex_staff/features/ticket_sale/presentation/cubit/ticket_sale_state.dart';
-import 'package:cineplex_staff/features/showtimes/presentation/screens/showtime_occupancy_screen.dart';
 import 'package:cineplex_staff/features/profile/presentation/screens/staff_profile_screen.dart';
 
 // ============================================================================

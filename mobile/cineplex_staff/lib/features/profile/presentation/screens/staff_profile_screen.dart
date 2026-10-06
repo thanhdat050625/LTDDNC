@@ -3,8 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 
-import 'package:cineplex_staff/features/home/presentation/widgets/staff_drawer.dart';
-
 class StaffProfileScreen extends StatefulWidget {
   const StaffProfileScreen({super.key});
 

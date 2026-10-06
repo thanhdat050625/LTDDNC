@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:mobile_shared/mobile_shared.dart';
-import 'package:cineplex_staff/features/home/presentation/widgets/staff_drawer.dart';
 
 import '../cubit/staff_cubit.dart';
 import '../widgets/scan_result_sheet.dart';
@@ -35,12 +34,17 @@ class _StaffScannerScreenState extends State<StaffScannerScreen>
     _laserController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 2200),
-    )..repeat(reverse: true);
+    );
     _scannerController.addListener(_onScannerStateChanged);
   }
 
   void _onScannerStateChanged() {
     final state = _scannerController.value;
+    if (state.isInitialized && state.isRunning && !_laserController.isAnimating) {
+      _laserController.repeat(reverse: true);
+    } else if ((!state.isRunning || state.error != null) && _laserController.isAnimating) {
+      _laserController.stop();
+    }
     debugPrint(
       '[QR_SCAN] State changed -> '
       'isInitialized: ${state.isInitialized}, '
