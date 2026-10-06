@@ -38,4 +38,20 @@ class PaymentRepository {
     final raw = response.data;
     return (raw is Map && raw.containsKey('data')) ? raw['data'] : raw;
   }
+
+  Future<Map<String, dynamic>> applyPromotion(String bookingId, String code) async {
+    final response = await _dioClient.post('/bookings/$bookingId/promotion', data: {
+      'code': code,
+    });
+    final raw = response.data;
+    final data = (raw is Map && raw.containsKey('data')) ? raw['data'] : raw;
+    return (data as Map<String, dynamic>?) ?? {};
+  }
+
+  Future<Map<String, dynamic>> removePromotion(String bookingId) async {
+    final response = await _dioClient.delete('/bookings/$bookingId/promotion');
+    final raw = response.data;
+    final data = (raw is Map && raw.containsKey('data')) ? raw['data'] : raw;
+    return (data as Map<String, dynamic>?) ?? {};
+  }
 }

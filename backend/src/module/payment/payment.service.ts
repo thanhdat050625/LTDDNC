@@ -313,6 +313,7 @@ export class PaymentService {
       canRetry: !!canRetry,
       isExpired: !!isExpired,
       expiredAt: booking.expiredAt,
+      showtimeId: booking.showtimeId,
     });
   }
 
@@ -358,6 +359,7 @@ export class PaymentService {
       canRetry: !!canRetry,
       isExpired: !!isExpired,
       expiredAt: booking.expiredAt,
+      showtimeId: booking.showtimeId,
     });
   }
 

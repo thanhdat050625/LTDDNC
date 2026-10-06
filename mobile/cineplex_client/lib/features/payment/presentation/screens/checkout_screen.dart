@@ -49,6 +49,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             context.push('/payment-webview?url=${Uri.encodeComponent(state.payUrl)}&bookingId=${widget.bookingId}');
           } else if (state is PaymentSuccess) {
             context.go('/payment-result/${widget.bookingId}');
+          } else if (state is PaymentFailed) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.message)),
+            );
           }
         },
         builder: (context, state) {
@@ -65,7 +69,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
           if (state is CheckoutPrepared) {
             final data = state.data;
-            final finalAmount = (data.totalAmount - (data.discountAmount) - (_usePoints ? data.pointsUsed : 0)).clamp(0, double.infinity);
+            final isPromoApplied = (state.appliedPromoCode != null && state.appliedPromoCode!.isNotEmpty) || data.discountAmount > 0;
+            final originalAmount = data.totalAmount + data.discountAmount;
+            final finalAmount = (data.totalAmount - (_usePoints ? data.pointsUsed : 0)).clamp(0, double.infinity);
 
             return SingleChildScrollView(
               padding: const EdgeInsets.all(16),
@@ -126,7 +132,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         const SizedBox(height: 12),
                         const Divider(height: 1),
                         const SizedBox(height: 12),
-                        _buildRow(l10n.ticketTotal, FormatUtils.formatCurrency(data.totalAmount.toInt()), colors),
+                        _buildRow(l10n.ticketTotal, FormatUtils.formatCurrency(originalAmount.toInt()), colors),
                         if (data.discountAmount > 0) ...[
                           const SizedBox(height: 8),
                           _buildRow(
@@ -182,40 +188,84 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   Container(
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
-                      color: colors.surface,
+                      color: isPromoApplied ? colors.primary.withValues(alpha: 0.08) : colors.surface,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: colors.textSecondary.withValues(alpha: 0.12)),
+                      border: Border.all(
+                        color: isPromoApplied
+                            ? colors.primary.withValues(alpha: 0.3)
+                            : colors.textSecondary.withValues(alpha: 0.12),
+                      ),
                     ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.local_offer_outlined, color: colors.primary, size: 22),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: TextField(
-                            controller: _promoCtrl,
-                            decoration: InputDecoration(
-                              hintText: l10n.promotionCode,
-                              isDense: true,
-                              contentPadding: const EdgeInsets.symmetric(vertical: 8),
-                              border: InputBorder.none,
-                            ),
+                    child: isPromoApplied
+                        ? Row(
+                            children: [
+                              Icon(Icons.check_circle_outline, color: colors.primary, size: 22),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      state.appliedPromoCode ?? l10n.promotionApplied,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: colors.textPrimary,
+                                        fontSize: 15,
+                                      ),
+                                    ),
+                                    if (data.discountAmount > 0)
+                                      Text(
+                                        '-${FormatUtils.formatCurrency(data.discountAmount.toInt())}',
+                                        style: TextStyle(
+                                          color: colors.primary,
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  _promoCtrl.clear();
+                                  context.read<PaymentCubit>().removePromotion(widget.bookingId);
+                                },
+                                child: Text(
+                                  l10n.removePromotion,
+                                  style: TextStyle(fontWeight: FontWeight.bold, color: colors.error),
+                                ),
+                              ),
+                            ],
+                          )
+                        : Row(
+                            children: [
+                              Icon(Icons.local_offer_outlined, color: colors.primary, size: 22),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: TextField(
+                                  controller: _promoCtrl,
+                                  decoration: InputDecoration(
+                                    hintText: l10n.promotionCode,
+                                    isDense: true,
+                                    contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                                    border: InputBorder.none,
+                                  ),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  final code = _promoCtrl.text.trim();
+                                  if (code.isNotEmpty) {
+                                    context.read<PaymentCubit>().applyPromotion(widget.bookingId, code);
+                                  }
+                                },
+                                child: Text(
+                                  l10n.applyPromotion,
+                                  style: TextStyle(fontWeight: FontWeight.bold, color: colors.primary),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            if (_promoCtrl.text.isNotEmpty) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(l10n.promotionApplied)),
-                              );
-                            }
-                          },
-                          child: Text(
-                            l10n.applyPromotion,
-                            style: TextStyle(fontWeight: FontWeight.bold, color: colors.primary),
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
 
                   if (data.pointsUsed > 0) ...[

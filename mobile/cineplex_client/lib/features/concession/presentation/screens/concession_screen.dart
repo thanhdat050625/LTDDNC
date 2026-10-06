@@ -65,7 +65,7 @@ class _ConcessionScreenState extends State<ConcessionScreen> {
         actions: [
           TextButton(
             onPressed: () {
-              context.push('/checkout/${widget.bookingId}');
+              context.read<ConcessionCubit>().submitConcessions(widget.bookingId);
             },
             child: Text(
               l10n.skipConcession,
@@ -77,7 +77,16 @@ class _ConcessionScreenState extends State<ConcessionScreen> {
           ),
         ],
       ),
-      body: BlocBuilder<ConcessionCubit, ConcessionState>(
+      body: BlocConsumer<ConcessionCubit, ConcessionState>(
+        listener: (context, state) {
+          if (state is ConcessionSubmitSuccess) {
+            context.push('/checkout/${state.bookingId}');
+          } else if (state is ConcessionError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.message)),
+            );
+          }
+        },
         builder: (context, state) {
           if (state is ConcessionLoading) {
             return const Center(child: AppLoading());
@@ -203,9 +212,12 @@ class _ConcessionScreenState extends State<ConcessionScreen> {
                         AppButton(
                           text: l10n.checkout,
                           width: 150,
-                          onPressed: () {
-                            context.push('/checkout/${widget.bookingId}');
-                          },
+                          isLoading: state.isSubmitting,
+                          onPressed: state.isSubmitting
+                              ? null
+                              : () {
+                                  context.read<ConcessionCubit>().submitConcessions(widget.bookingId);
+                                },
                         ),
                       ],
                     ),

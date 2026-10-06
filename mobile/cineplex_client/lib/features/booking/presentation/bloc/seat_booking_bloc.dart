@@ -172,7 +172,8 @@ class SeatBookingBloc extends Bloc<SeatBookingEvent, SeatBookingState> {
     if (state is SeatMapLoaded) {
       final s = state as SeatMapLoaded;
       if (s.selectedSeatIds.length >= 8) {
-        // Max seats
+        emit(const SeatBookingError('Chỉ được chọn tối đa 8 ghế mỗi đơn hàng'));
+        emit(s);
         return;
       }
       if (s.heldSeatIds.contains(event.seatId) || s.bookedSeatIds.contains(event.seatId)) {
@@ -182,10 +183,18 @@ class SeatBookingBloc extends Bloc<SeatBookingEvent, SeatBookingState> {
     }
   }
 
-  void _onDeselectSeat(DeselectSeat event, Emitter<SeatBookingState> emit) {
+  Future<void> _onDeselectSeat(DeselectSeat event, Emitter<SeatBookingState> emit) async {
     if (state is SeatMapLoaded) {
       final s = state as SeatMapLoaded;
       emit(s.copyWith(selectedSeatIds: s.selectedSeatIds.where((id) => id != event.seatId).toList()));
+
+      if (_currentShowtimeId != null) {
+        try {
+          await _repository.releaseSeats(_currentShowtimeId!, [event.seatId]);
+        } catch (_) {
+          // Lỗi mạng không được chặn UI (UC07 A3.1)
+        }
+      }
     }
   }
 
@@ -196,16 +205,52 @@ class SeatBookingBloc extends Bloc<SeatBookingEvent, SeatBookingState> {
       
       try {
         final res = await _repository.holdSeats(_currentShowtimeId!, s.selectedSeatIds);
-        final expiredAt = DateTime.parse(res['expiredAt']).toLocal();
-        final bookingId = res['bookingId'] ?? 0;
-        
-        _startTimer(300);
-        
-        emit(SeatsHeld(bookingId, expiredAt));
+        DateTime? holdExpiredAt;
+        if (res['expiredAt'] != null) {
+          holdExpiredAt = DateTime.parse(res['expiredAt'].toString()).toLocal();
+        }
+
+        final booking = await _repository.createBooking(CreateBookingDto(
+          showtimeId: _currentShowtimeId!,
+          seatIds: s.selectedSeatIds,
+        ));
+
+        if (booking.id <= 0) {
+          emit(const SeatBookingError('Không thể tạo đơn đặt vé'));
+          emit(s);
+          return;
+        }
+
+        final expiredAt = booking.expiredAt ?? holdExpiredAt ?? DateTime.now().add(const Duration(minutes: 5));
+        final diff = expiredAt.difference(DateTime.now()).inSeconds;
+        _startTimer(diff > 0 ? diff : 300);
+
+        emit(SeatsHeld(booking.id, expiredAt));
       } catch (e) {
-        emit(SeatBookingError(e.toString()));
+        emit(SeatBookingError(_mapBookingError(e)));
+        emit(s);
       }
     }
+  }
+
+  String _mapBookingError(Object e) {
+    if (e is ServerException) {
+      switch (e.code) {
+        case 'SEAT_ALREADY_BOOKED':
+        case 'SEAT_ALREADY_HELD':
+        case 'SEAT_NOT_HELD':
+          return 'Ghế đã có người giữ hoặc đã được đặt';
+        case 'MAX_SEATS_EXCEEDED':
+          return 'Chỉ được chọn tối đa 8 ghế mỗi đơn hàng';
+        case 'SHOWTIME_EXPIRED':
+          return 'Suất chiếu đã bắt đầu hoặc không còn khả dụng';
+        case 'SEAT_ROOM_MISMATCH':
+          return 'Ghế được chọn không thuộc phòng chiếu này';
+        default:
+          return e.message;
+      }
+    }
+    return e.toString();
   }
 
   void _onSeatUpdateReceived(SeatUpdateReceived event, Emitter<SeatBookingState> emit) {

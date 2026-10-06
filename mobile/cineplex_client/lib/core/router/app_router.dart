@@ -144,8 +144,10 @@ GoRouter createRouter(
           final bookingId = int.parse(state.pathParameters['bookingId']!);
           return BlocProvider(
             create: (ctx) =>
-                ConcessionCubit(ctx.read<ConcessionRepository>())
-                  ..loadConcessions(),
+                ConcessionCubit(
+                  ctx.read<ConcessionRepository>(),
+                  ctx.read<BookingRepository>(),
+                )..loadConcessions(),
             child: ConcessionScreen(bookingId: bookingId),
           );
         },
