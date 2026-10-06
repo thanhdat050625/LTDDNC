@@ -1,0 +1,12 @@
+export enum EStaffShiftRole {
+  TICKET_COUNTER = 'TICKET_COUNTER',
+  SCANNER_GATE = 'SCANNER_GATE',
+  CONCESSION = 'CONCESSION',
+  GENERAL = 'GENERAL',
+}
+
+export enum EScheduleStatus {
+  SCHEDULED = 'SCHEDULED',
+  COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED',
+}
