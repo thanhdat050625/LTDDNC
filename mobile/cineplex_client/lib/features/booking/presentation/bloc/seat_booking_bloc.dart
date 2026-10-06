@@ -172,7 +172,8 @@ class SeatBookingBloc extends Bloc<SeatBookingEvent, SeatBookingState> {
     if (state is SeatMapLoaded) {
       final s = state as SeatMapLoaded;
       if (s.selectedSeatIds.length >= 8) {
-        // Max seats
+        emit(const SeatBookingError('Chỉ được chọn tối đa 8 ghế mỗi đơn hàng'));
+        emit(s);
         return;
       }
       if (s.heldSeatIds.contains(event.seatId) || s.bookedSeatIds.contains(event.seatId)) {
@@ -216,6 +217,7 @@ class SeatBookingBloc extends Bloc<SeatBookingEvent, SeatBookingState> {
 
         if (booking.id <= 0) {
           emit(const SeatBookingError('Không thể tạo đơn đặt vé'));
+          emit(s);
           return;
         }
 
@@ -226,6 +228,7 @@ class SeatBookingBloc extends Bloc<SeatBookingEvent, SeatBookingState> {
         emit(SeatsHeld(booking.id, expiredAt));
       } catch (e) {
         emit(SeatBookingError(_mapBookingError(e)));
+        emit(s);
       }
     }
   }
