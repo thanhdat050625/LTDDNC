@@ -6,8 +6,13 @@ import 'package:mobile_shared/mobile_shared.dart';
 
 class TicketManagementScreen extends StatefulWidget {
   final Widget? drawer;
+  final bool? showScannerAction;
 
-  const TicketManagementScreen({super.key, this.drawer});
+  const TicketManagementScreen({
+    super.key,
+    this.drawer,
+    this.showScannerAction,
+  });
 
   @override
   State<TicketManagementScreen> createState() => _TicketManagementScreenState();
@@ -37,16 +42,19 @@ class _TicketManagementScreenState extends State<TicketManagementScreen>
     final colors = Theme.of(context).extension<CineplexColors>()!;
     final colorScheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
+    final showScanner =
+        widget.showScannerAction ?? (widget.drawer is! AdminDrawer);
 
     return AppScaffold(
       title: l10n.manageTickets,
       drawer: widget.drawer,
       actions: [
-        IconButton(
-          icon: const Icon(LucideIcons.scanLine),
-          tooltip: l10n.ticketOpenScanner,
-          onPressed: () => context.push('/scanner'),
-        ),
+        if (showScanner)
+          IconButton(
+            icon: const Icon(LucideIcons.scanLine),
+            tooltip: l10n.ticketOpenScanner,
+            onPressed: () => context.push('/scanner'),
+          ),
       ],
       body: Column(
         children: [

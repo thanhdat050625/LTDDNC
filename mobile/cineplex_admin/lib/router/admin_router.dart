@@ -293,7 +293,10 @@ GoRouter createAdminRouter(
           create: (context) => TicketManagementCubit(
             BookingManagementRepository(context.read<DioClient>()),
           ),
-          child: const TicketManagementScreen(drawer: AdminDrawer()),
+          child: const TicketManagementScreen(
+            drawer: AdminDrawer(),
+            showScannerAction: false,
+          ),
         ),
       ),
       // Showtime Occupancy
