@@ -84,6 +84,15 @@ GoRouter createStaffRouter(
             builder: (context, state) => const ShowtimeOccupancyScreen(),
           ),
           GoRoute(
+            path: '/my-schedule',
+            builder: (context, state) => BlocProvider(
+              create: (context) => StaffMyScheduleCubit(
+                ShiftRepository(context.read<DioClient>()),
+              ),
+              child: const StaffMyScheduleScreen(drawer: StaffDrawer()),
+            ),
+          ),
+          GoRoute(
             path: '/profile',
             builder: (context, state) => const StaffProfileScreen(),
           ),

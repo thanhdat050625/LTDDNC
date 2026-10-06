@@ -536,6 +536,12 @@ class _StaffDashboardScreenState extends State<StaffDashboardScreen> {
         'color': theme.info,
         'onTap': () => context.go('/showtimes-occupancy'),
       },
+      {
+        'title': l10n.shiftMySchedule,
+        'icon': LucideIcons.calendarCheck,
+        'color': const Color(0xFF10B981),
+        'onTap': () => context.go('/my-schedule'),
+      },
     ];
 
     return Row(

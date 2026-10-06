@@ -148,5 +148,8 @@ export 'features/tickets/presentation/widgets/ticket_price_table.dart';
 // Shifts Management
 export 'features/shifts/cubit/staff_shift_management_cubit.dart';
 export 'features/shifts/cubit/staff_shift_management_state.dart';
+export 'features/shifts/cubit/staff_my_schedule_cubit.dart';
+export 'features/shifts/cubit/staff_my_schedule_state.dart';
 export 'features/shifts/presentation/screens/staff_shift_management_screen.dart';
+export 'features/shifts/presentation/screens/staff_my_schedule_screen.dart';
 export 'features/shifts/presentation/widgets/assign_shift_dialog.dart';
