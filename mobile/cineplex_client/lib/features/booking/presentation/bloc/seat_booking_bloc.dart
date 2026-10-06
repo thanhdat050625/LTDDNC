@@ -182,10 +182,18 @@ class SeatBookingBloc extends Bloc<SeatBookingEvent, SeatBookingState> {
     }
   }
 
-  void _onDeselectSeat(DeselectSeat event, Emitter<SeatBookingState> emit) {
+  Future<void> _onDeselectSeat(DeselectSeat event, Emitter<SeatBookingState> emit) async {
     if (state is SeatMapLoaded) {
       final s = state as SeatMapLoaded;
       emit(s.copyWith(selectedSeatIds: s.selectedSeatIds.where((id) => id != event.seatId).toList()));
+
+      if (_currentShowtimeId != null) {
+        try {
+          await _repository.releaseSeats(_currentShowtimeId!, [event.seatId]);
+        } catch (_) {
+          // Lỗi mạng không được chặn UI (UC07 A3.1)
+        }
+      }
     }
   }
 

@@ -15,6 +15,16 @@ class BookingRepository {
     return (data as Map<String, dynamic>?) ?? {};
   }
 
+  Future<Map<String, dynamic>> releaseSeats(int showtimeId, List<int> seatIds) async {
+    final response = await _dioClient.post('/bookings/release-seats', data: {
+      'showtimeId': showtimeId,
+      'seatIds': seatIds,
+    });
+    final raw = response.data;
+    final data = (raw is Map && raw.containsKey('data')) ? raw['data'] : raw;
+    return (data as Map<String, dynamic>?) ?? {};
+  }
+
   Future<BookingModel> createBooking(CreateBookingDto dto) async {
     final response = await _dioClient.post('/bookings', data: dto.toJson());
     final raw = response.data;
