@@ -55,9 +55,12 @@ export 'models/ticket_model.dart';
 export 'models/concession_model.dart';
 export 'models/home_data_model.dart';
 export 'models/statistics_model.dart';
+export 'models/shift_model.dart';
+export 'models/staff_schedule_model.dart';
 
 // Repositories
 export 'repositories/auth_repository.dart';
+export 'features/shifts/data/repositories/shift_repository.dart';
 export 'features/ticket_sale/data/repositories/booking_management_repository.dart';
 
 // Bloc
@@ -141,3 +144,12 @@ export 'features/tickets/presentation/screens/ticket_management_screen.dart';
 export 'features/tickets/presentation/widgets/booking_ticket_card.dart';
 export 'features/tickets/presentation/widgets/booking_detail_bottom_sheet.dart';
 export 'features/tickets/presentation/widgets/ticket_price_table.dart';
+
+// Shifts Management
+export 'features/shifts/cubit/staff_shift_management_cubit.dart';
+export 'features/shifts/cubit/staff_shift_management_state.dart';
+export 'features/shifts/cubit/staff_my_schedule_cubit.dart';
+export 'features/shifts/cubit/staff_my_schedule_state.dart';
+export 'features/shifts/presentation/screens/staff_shift_management_screen.dart';
+export 'features/shifts/presentation/screens/staff_my_schedule_screen.dart';
+export 'features/shifts/presentation/widgets/assign_shift_dialog.dart';

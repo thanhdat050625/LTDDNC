@@ -304,6 +304,18 @@ GoRouter createAdminRouter(
         path: '/showtimes-occupancy',
         builder: (context, state) => const ShowtimeOccupancyScreen(drawer: AdminDrawer()),
       ),
+      // Staff Shifts Management
+      GoRoute(
+        path: '/staff-shifts',
+        builder: (context, state) => BlocProvider(
+          create: (context) => StaffShiftManagementCubit(
+            ShiftRepository(context.read<DioClient>()),
+            CinemaManagementRepository(context.read<DioClient>()),
+            context.read<DioClient>(),
+          ),
+          child: const StaffShiftManagementScreen(drawer: AdminDrawer()),
+        ),
+      ),
     ],
   );
 }

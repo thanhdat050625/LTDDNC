@@ -4617,6 +4617,192 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Nhập giá vé mới (VNĐ)'**
   String get ticketPriceEnterNew;
+
+  /// No description provided for @shiftTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ca làm việc'**
+  String get shiftTitle;
+
+  /// No description provided for @shiftManagement.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quản lý ca làm việc'**
+  String get shiftManagement;
+
+  /// No description provided for @shiftSchedule.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lịch ca nhân viên'**
+  String get shiftSchedule;
+
+  /// No description provided for @shiftMySchedule.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lịch làm việc của tôi'**
+  String get shiftMySchedule;
+
+  /// No description provided for @shiftAssignNew.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phân ca mới'**
+  String get shiftAssignNew;
+
+  /// No description provided for @shiftEdit.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chỉnh sửa ca làm'**
+  String get shiftEdit;
+
+  /// No description provided for @shiftDelete.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hủy phân ca'**
+  String get shiftDelete;
+
+  /// No description provided for @shiftDeleteConfirm.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn có chắc chắn muốn hủy phân ca làm việc này?'**
+  String get shiftDeleteConfirm;
+
+  /// No description provided for @shiftAssignSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phân ca làm việc thành công'**
+  String get shiftAssignSuccess;
+
+  /// No description provided for @shiftUpdateSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cập nhật phân ca thành công'**
+  String get shiftUpdateSuccess;
+
+  /// No description provided for @shiftDeleteSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hủy phân ca thành công'**
+  String get shiftDeleteSuccess;
+
+  /// No description provided for @shiftSelectStaff.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn nhân viên'**
+  String get shiftSelectStaff;
+
+  /// No description provided for @shiftSelectCinema.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn cụm rạp'**
+  String get shiftSelectCinema;
+
+  /// No description provided for @shiftSelectShift.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn ca làm'**
+  String get shiftSelectShift;
+
+  /// No description provided for @shiftSelectRole.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vị trí phân công'**
+  String get shiftSelectRole;
+
+  /// No description provided for @shiftSelectDate.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn ngày làm việc'**
+  String get shiftSelectDate;
+
+  /// No description provided for @shiftNote.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ghi chú phân công'**
+  String get shiftNote;
+
+  /// No description provided for @shiftNoteHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhập ghi chú cho nhân viên (không bắt buộc)...'**
+  String get shiftNoteHint;
+
+  /// No description provided for @shiftRoleTicketCounter.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bán vé tại quầy'**
+  String get shiftRoleTicketCounter;
+
+  /// No description provided for @shiftRoleScannerGate.
+  ///
+  /// In vi, this message translates to:
+  /// **'Soát vé tại cửa'**
+  String get shiftRoleScannerGate;
+
+  /// No description provided for @shiftRoleConcession.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quầy bắp nước'**
+  String get shiftRoleConcession;
+
+  /// No description provided for @shiftRoleGeneral.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhân viên tổng hợp'**
+  String get shiftRoleGeneral;
+
+  /// No description provided for @shiftStatusScheduled.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã lên lịch'**
+  String get shiftStatusScheduled;
+
+  /// No description provided for @shiftStatusCompleted.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hoàn thành'**
+  String get shiftStatusCompleted;
+
+  /// No description provided for @shiftStatusCancelled.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã hủy'**
+  String get shiftStatusCancelled;
+
+  /// No description provided for @shiftEmptyList.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có nhân viên nào được phân ca trong ngày này'**
+  String get shiftEmptyList;
+
+  /// No description provided for @shiftEmptyMySchedule.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn chưa có ca làm việc nào trong tuần này'**
+  String get shiftEmptyMySchedule;
+
+  /// No description provided for @shiftCurrentWeek.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tuần này'**
+  String get shiftCurrentWeek;
+
+  /// No description provided for @shiftNextWeek.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tuần sau'**
+  String get shiftNextWeek;
+
+  /// No description provided for @shiftPreviousWeek.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tuần trước'**
+  String get shiftPreviousWeek;
+
+  /// No description provided for @shiftAssignedBy.
+  ///
+  /// In vi, this message translates to:
+  /// **'Người phân ca'**
+  String get shiftAssignedBy;
 }
 
 class _AppLocalizationsDelegate

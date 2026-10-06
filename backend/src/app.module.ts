@@ -26,6 +26,7 @@ import { ShowtimeModule } from './module/showtime/showtime.module';
 import { TicketModule } from './module/ticket/ticket.module';
 import { UsersModule } from './module/users/users.module';
 import { StatisticsModule } from './module/statistics/statistics.module';
+import { ShiftModule } from './module/shift/shift.module';
 
 @Module({
   imports: [
@@ -90,6 +91,7 @@ import { StatisticsModule } from './module/statistics/statistics.module';
     TicketModule,
     UsersModule,
     StatisticsModule,
+    ShiftModule,
   ],
   controllers: [],
   providers: [

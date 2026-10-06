@@ -104,6 +104,11 @@ class CineplexDrawer extends StatelessWidget {
                 title: l10n.userManagement,
                 route: '/users',
               ),
+              AppDrawerItem(
+                icon: LucideIcons.calendarClock,
+                title: l10n.shiftSchedule,
+                route: '/staff-shifts',
+              ),
               // The rest taken from Staff in exact same order (quét vé and bán vé tại quầy are omitted)
               ...commonManagementItems,
             ]
@@ -118,6 +123,11 @@ class CineplexDrawer extends StatelessWidget {
                 icon: LucideIcons.shoppingBag,
                 title: l10n.counterSale,
                 route: '/pos',
+              ),
+              AppDrawerItem(
+                icon: LucideIcons.calendarCheck,
+                title: l10n.shiftMySchedule,
+                route: '/my-schedule',
               ),
               ...commonManagementItems,
             ];
