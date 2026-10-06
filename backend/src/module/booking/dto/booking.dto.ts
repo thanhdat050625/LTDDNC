@@ -111,3 +111,9 @@ export class ReleaseSeatsDto {
   @IsNotEmpty()
   seatIds: number[];
 }
+
+export class ApplyPromotionDto {
+  @IsNotEmpty({ message: 'Mã khuyến mãi không được để trống' })
+  @IsString({ message: 'Mã khuyến mãi phải là chuỗi' })
+  code: string;
+}

@@ -187,7 +187,7 @@ describe('UC09 - Áp dụng khuyến mãi (Apply Promotion / Voucher)', () => {
      * Đặc tả UC09 Pre-Conditions: "Actor đang ở trong luồng Đặt vé trực tuyến (UC7) và tổng tiền đơn hàng > 0".
      * Code hiện tại: createBooking không kiểm tra nếu totalAmount trước giảm giá = 0 thì không cho phép áp voucher.
      */
-    it.failing('[MISSING-FEATURE] UC09 - Pre.1b - Đơn hàng có tổng tiền ban đầu = 0 -> Từ chối áp dụng voucher với lỗi ORDER_TOTAL_ZERO (400)', async () => {
+    it('UC09 - Pre.1b - Đơn hàng có tổng tiền ban đầu = 0 -> Từ chối áp dụng voucher với lỗi ORDER_TOTAL_ZERO (400)', async () => {
       // Code cần sửa: Trong createBooking, if ((ticketTotal + concessionTotal) <= 0 && dto.promotionCode) throw CustomException.
       mockTicketPriceRepo.findOne.mockResolvedValue(createMockTicketPrice('STANDARD', 'WEEKDAY', 0)); // Vé 0 đồng
       mockPromotionRepo.findOne.mockResolvedValue(createMockPromotion({ code: 'EXTRA10' }));
@@ -410,20 +410,29 @@ describe('UC09 - Áp dụng khuyến mãi (Apply Promotion / Voucher)', () => {
     });
 
     /**
-     * [MISSING-FEATURE] UC09 - A2.1: Gỡ bỏ mã khuyến mãi đã áp dụng
+     * UC09 - A2.1: Gỡ bỏ mã khuyến mãi đã áp dụng
      * Đặc tả UC09 A2.1: "Nếu trước đó Actor đã áp dụng một mã, Actor có thể nhấn 'Gỡ bỏ'.
      * Hệ thống hủy mã khỏi đơn hàng và tính lại tổng tiền về nguyên giá ban đầu."
-     * Code hiện tại: Backend chỉ tính voucher 1 lần lúc createBooking, không có endpoint riêng gỡ voucher cho đơn PENDING.
      */
-    it.failing('[MISSING-FEATURE][BUG-06] UC09 - A2.1 - Khách gỡ bỏ voucher khỏi đơn PENDING -> Hủy discount, khôi phục giá gốc và hoàn lại usedCount', async () => {
-      // Code cần sửa: Thêm endpoint DELETE /bookings/:id/promotion để gỡ voucher và hoàn usedCount.
+    it('UC09 - A2.1 - Khách gỡ bỏ voucher khỏi đơn PENDING -> Hủy discount, khôi phục giá gốc và hoàn lại usedCount', async () => {
+      const mockBooking = createMockBooking({
+        id: 100,
+        userId: 1,
+        status: EBookingStatus.PENDING,
+        promotionId: 77,
+        discountAmount: 20000,
+        totalAmount: 180000,
+      });
+      mockBookingRepo.findOne.mockResolvedValue(mockBooking);
+
       const removePromoMethod = (bookingService as any).removePromotionFromBooking;
       expect(removePromoMethod).toBeDefined();
 
-      await removePromoMethod.call(bookingService, 1, 100);
+      const res = await removePromoMethod.call(bookingService, 1, 100);
+      expect(res.success).toBe(true);
       expect(mockBookingRepo.update).toHaveBeenCalledWith(
         { id: 100 },
-        expect.objectContaining({ promotionId: null, discountAmount: 0 }),
+        expect.objectContaining({ promotionId: null, discountAmount: 0, totalAmount: 200000 }),
       );
     });
   });

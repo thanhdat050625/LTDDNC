@@ -3,7 +3,7 @@ import {
   Query, UseGuards, HttpCode, HttpStatus, Request,
 } from '@nestjs/common';
 import { BookingService } from './booking.service';
-import { HoldSeatsDto, CreateBookingDto, ReleaseSeatsDto } from './dto/booking.dto';
+import { HoldSeatsDto, CreateBookingDto, ReleaseSeatsDto, ApplyPromotionDto } from './dto/booking.dto';
 import { UpdateBookingConcessionsDto } from './dto/update-concessions.dto';
 import { JwtAuthGuard } from '../../core/security/jwt/jwt-auth.guard';
 import { RolesGuard } from '../../core/security/roles/roles.guard';
@@ -44,6 +44,27 @@ export class BookingController {
   @HttpCode(HttpStatus.CREATED)
   async createBooking(@Request() req, @Body() dto: CreateBookingDto) {
     return this.bookingService.createBooking(req.user.id, dto);
+  }
+
+  @Post(':id/promotion')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async applyPromotion(
+    @Request() req,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: ApplyPromotionDto,
+  ) {
+    return this.bookingService.applyPromotionToBooking(req.user.id, id, dto.code);
+  }
+
+  @Delete(':id/promotion')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async removePromotion(
+    @Request() req,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.bookingService.removePromotionFromBooking(req.user.id, id);
   }
 
   @Post('staff/hold-seats')

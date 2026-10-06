@@ -803,6 +803,175 @@ export class BookingService {
     return new ApiResponse(true, 'Nhả ghế thành công', { releasedSeatIds });
   }
 
+  // ─── APPLY PROMOTION (BUG-05) ─────────────────────────────────────────
+  async applyPromotionToBooking(userId: number, bookingId: number, code: string): Promise<ApiResponse<any>> {
+    const booking = await this.bookingRepository.findOne({
+      where: { id: bookingId },
+      relations: ['showtime', 'showtime.movie', 'bookingConcessions', 'promotion'],
+    });
+
+    if (!booking) {
+      throw new CustomException(HttpStatus.NOT_FOUND, 'BOOKING_NOT_FOUND', 'Không tìm thấy đơn đặt vé');
+    }
+
+    if (booking.userId !== userId) {
+      throw new CustomException(HttpStatus.FORBIDDEN, 'FORBIDDEN', 'Bạn không có quyền thao tác trên đơn này');
+    }
+
+    if (booking.status !== EBookingStatus.PENDING) {
+      throw new CustomException(HttpStatus.BAD_REQUEST, 'BOOKING_NOT_PENDING', 'Chỉ có thể áp dụng mã cho đơn chờ thanh toán');
+    }
+
+    if (booking.expiredAt && new Date(booking.expiredAt) < new Date()) {
+      throw new CustomException(HttpStatus.BAD_REQUEST, 'BOOKING_EXPIRED', 'Đơn hàng đã hết hạn thanh toán');
+    }
+
+    const originalOrderTotal = booking.totalAmount + booking.discountAmount + (booking.pointsUsed || 0);
+
+    if (originalOrderTotal <= 0) {
+      throw new CustomException(HttpStatus.BAD_REQUEST, 'ORDER_TOTAL_ZERO', 'Tổng tiền đơn hàng bằng 0 không thể áp dụng voucher');
+    }
+
+    const promotion = await this.promotionRepository.findOne({
+      where: { code },
+      relations: ['movie'],
+    });
+
+    const validatedPromo = validatePromotion(promotion, booking.showtime?.movieId);
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      if (booking.promotionId && booking.promotionId !== validatedPromo.id) {
+        await queryRunner.manager
+          .createQueryBuilder(Promotion, 'promotion')
+          .update()
+          .set({ usedCount: () => 'GREATEST(used_count - 1, 0)' })
+          .where('id = :id', { id: booking.promotionId })
+          .execute();
+      }
+
+      if (booking.promotionId !== validatedPromo.id) {
+        const updateRes = await queryRunner.manager
+          .createQueryBuilder(Promotion, 'promotion')
+          .update()
+          .set({ usedCount: () => 'used_count + 1' })
+          .where('id = :id AND (max_usage IS NULL OR used_count < max_usage)', { id: validatedPromo.id })
+          .execute();
+
+        if (!updateRes || updateRes.affected === 0) {
+          throw new CustomException(
+            HttpStatus.BAD_REQUEST,
+            'PROMOTION_MAX_USAGE',
+            'Mã khuyến mãi đã hết lượt sử dụng',
+          );
+        }
+      }
+
+      const discountAmount = calculateDiscount(validatedPromo, originalOrderTotal);
+      const newTotalAmount = Math.max(0, originalOrderTotal - discountAmount - (booking.pointsUsed || 0));
+
+      await queryRunner.manager.update(Booking, { id: booking.id }, {
+        promotionId: validatedPromo.id,
+        discountAmount,
+        totalAmount: newTotalAmount,
+      });
+
+      await queryRunner.commitTransaction();
+
+      await this.bookingRepository.update({ id: booking.id }, {
+        promotionId: validatedPromo.id,
+        discountAmount,
+        totalAmount: newTotalAmount,
+      });
+
+      return new ApiResponse(true, 'Áp dụng mã khuyến mãi thành công', {
+        totalAmount: newTotalAmount,
+        discountAmount,
+        promotionCode: validatedPromo.code,
+      });
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      if (err instanceof CustomException) throw err;
+      throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, 'APPLY_PROMOTION_FAILED', 'Áp dụng mã khuyến mãi thất bại');
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  // ─── REMOVE PROMOTION (UC09 A2.1 / BUG-05) ────────────────────────────
+  async removePromotionFromBooking(userId: number, bookingId: number): Promise<ApiResponse<any>> {
+    const booking = await this.bookingRepository.findOne({
+      where: { id: bookingId },
+      relations: ['promotion'],
+    });
+
+    if (!booking) {
+      throw new CustomException(HttpStatus.NOT_FOUND, 'BOOKING_NOT_FOUND', 'Không tìm thấy đơn đặt vé');
+    }
+
+    if (booking.userId !== userId) {
+      throw new CustomException(HttpStatus.FORBIDDEN, 'FORBIDDEN', 'Bạn không có quyền thao tác trên đơn này');
+    }
+
+    if (booking.status !== EBookingStatus.PENDING) {
+      throw new CustomException(HttpStatus.BAD_REQUEST, 'BOOKING_NOT_PENDING', 'Chỉ có thể gỡ mã cho đơn chờ thanh toán');
+    }
+
+    if (booking.expiredAt && new Date(booking.expiredAt) < new Date()) {
+      throw new CustomException(HttpStatus.BAD_REQUEST, 'BOOKING_EXPIRED', 'Đơn hàng đã hết hạn thanh toán');
+    }
+
+    if (!booking.promotionId) {
+      return new ApiResponse(true, 'Đơn hàng chưa áp dụng mã khuyến mãi', {
+        totalAmount: booking.totalAmount,
+        discountAmount: 0,
+      });
+    }
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await queryRunner.manager
+        .createQueryBuilder(Promotion, 'promotion')
+        .update()
+        .set({ usedCount: () => 'GREATEST(used_count - 1, 0)' })
+        .where('id = :id', { id: booking.promotionId })
+        .execute();
+
+      const newTotalAmount = booking.totalAmount + booking.discountAmount;
+
+      await queryRunner.manager.update(Booking, { id: booking.id }, {
+        promotionId: null as any,
+        discountAmount: 0,
+        totalAmount: newTotalAmount,
+      });
+
+      await queryRunner.commitTransaction();
+
+      await this.bookingRepository.update({ id: booking.id }, {
+        promotionId: null as any,
+        discountAmount: 0,
+        totalAmount: newTotalAmount,
+      });
+
+      return new ApiResponse(true, 'Gỡ bỏ mã khuyến mãi thành công', {
+        totalAmount: newTotalAmount,
+        discountAmount: 0,
+      });
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      if (err instanceof CustomException) throw err;
+      throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, 'REMOVE_PROMOTION_FAILED', 'Gỡ bỏ mã khuyến mãi thất bại');
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
   private generateBookingCode(): string {
     const prefix = 'BK';
     const timestamp = Date.now().toString(36).toUpperCase();
