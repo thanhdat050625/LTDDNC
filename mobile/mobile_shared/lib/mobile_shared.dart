@@ -144,3 +144,9 @@ export 'features/tickets/presentation/screens/ticket_management_screen.dart';
 export 'features/tickets/presentation/widgets/booking_ticket_card.dart';
 export 'features/tickets/presentation/widgets/booking_detail_bottom_sheet.dart';
 export 'features/tickets/presentation/widgets/ticket_price_table.dart';
+
+// Shifts Management
+export 'features/shifts/cubit/staff_shift_management_cubit.dart';
+export 'features/shifts/cubit/staff_shift_management_state.dart';
+export 'features/shifts/presentation/screens/staff_shift_management_screen.dart';
+export 'features/shifts/presentation/widgets/assign_shift_dialog.dart';
