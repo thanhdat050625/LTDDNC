@@ -5,6 +5,10 @@ class FormatUtils {
     return '${NumberFormat('#,###', 'vi_VN').format(amount)} đ';
   }
 
+  static String formatNumber(num number) {
+    return NumberFormat('#,###', 'vi_VN').format(number);
+  }
+
   static String formatDate(DateTime date) {
     return DateFormat('dd/MM/yyyy').format(date);
   }

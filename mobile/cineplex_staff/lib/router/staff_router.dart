@@ -81,7 +81,8 @@ GoRouter createStaffRouter(
           ),
           GoRoute(
             path: '/showtimes-occupancy',
-            builder: (context, state) => const ShowtimeOccupancyScreen(),
+            builder: (context, state) =>
+                const ShowtimeOccupancyScreen(drawer: StaffDrawer()),
           ),
           GoRoute(
             path: '/my-schedule',
@@ -197,7 +198,7 @@ GoRouter createStaffRouter(
             MovieManagementRepository(context.read<DioClient>()),
             CinemaManagementRepository(context.read<DioClient>()),
           ),
-          child: const ShowtimeFormScreen(),
+          child: const ShowtimeFormScreen(drawer: StaffDrawer()),
         ),
       ),
       GoRoute(
@@ -208,7 +209,7 @@ GoRouter createStaffRouter(
             MovieManagementRepository(context.read<DioClient>()),
             CinemaManagementRepository(context.read<DioClient>()),
           ),
-          child: const ShowtimeBulkCreateScreen(),
+          child: const ShowtimeBulkCreateScreen(drawer: StaffDrawer()),
         ),
       ),
       GoRoute(
@@ -221,7 +222,7 @@ GoRouter createStaffRouter(
               MovieManagementRepository(context.read<DioClient>()),
               CinemaManagementRepository(context.read<DioClient>()),
             ),
-            child: ShowtimeFormScreen(showtime: extra),
+            child: ShowtimeFormScreen(showtime: extra, drawer: const StaffDrawer()),
           );
         },
       ),

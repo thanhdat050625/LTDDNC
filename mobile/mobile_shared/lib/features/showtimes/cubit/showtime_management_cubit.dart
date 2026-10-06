@@ -65,6 +65,11 @@ class ShowtimeManagementCubit extends Cubit<ShowtimeManagementState> {
     }
 
     List<ShowtimeModel> filtered = List.from(byDate);
+    if (_selectedCinemaId != null) {
+      filtered = filtered
+          .where((st) => st.room?.cinemaId == _selectedCinemaId)
+          .toList();
+    }
     if (_selectedStatus != null) {
       filtered = filtered.where((st) {
         if (_selectedStatus == 'ACTIVE') {

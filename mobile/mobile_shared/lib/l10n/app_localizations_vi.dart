@@ -2153,6 +2153,80 @@ class AppLocalizationsVi extends AppLocalizations {
       'Số tiền khách đưa không đủ thanh toán';
 
   @override
+  String get posPointsAvailable => 'Điểm hiện có';
+
+  @override
+  String get posPointsToUse => 'Điểm sử dụng';
+
+  @override
+  String get posPointsRemaining => 'Điểm còn lại';
+
+  @override
+  String get posDiscountValue => 'Giá trị giảm';
+
+  @override
+  String posUsingPointsBadge(String points) {
+    return 'Đang sử dụng $points điểm';
+  }
+
+  @override
+  String get posCancelPoints => 'Hủy';
+
+  @override
+  String get posSearchCustomer => 'Tìm khách hàng';
+
+  @override
+  String get posSearchCustomerHint => 'Nhập email hoặc số điện thoại...';
+
+  @override
+  String get posCustomerNotFound => 'Không tìm thấy khách hàng';
+
+  @override
+  String get posChangeCustomer => 'Đổi khách hàng';
+
+  @override
+  String get posPointsExceedBalance =>
+      'Số điểm sử dụng không được vượt quá số dư hiện có';
+
+  @override
+  String get posPointsExceedLimit =>
+      'Số điểm sử dụng vượt quá giới hạn giảm giá (tối đa 20% tổng đơn)';
+
+  @override
+  String get posPointsInvalid => 'Số điểm phải là số nguyên dương';
+
+  @override
+  String posCustomerLoyaltyBalance(String points) {
+    return 'Điểm tích lũy: $points';
+  }
+
+  @override
+  String get posWaitingMomoPayment => 'Đang chờ thanh toán MoMo';
+
+  @override
+  String get posOpenMomo => 'Mở cổng thanh toán MoMo';
+
+  @override
+  String get posCheckingPayment => 'Đang kiểm tra thanh toán...';
+
+  @override
+  String get posPaymentPendingHint =>
+      'Vui lòng quét mã trên cổng MoMo, sau đó bấm Kiểm tra thanh toán.';
+
+  @override
+  String get posCheckPaymentStatus => 'Kiểm tra thanh toán';
+
+  @override
+  String get posPaymentFailedPrompt =>
+      'Thanh toán không thành công. Quý khách có thể thử lại.';
+
+  @override
+  String get posRetryPayment => 'Thử lại thanh toán';
+
+  @override
+  String get posPaymentCancelledPrompt => 'Giao dịch thanh toán đã bị hủy.';
+
+  @override
   String get scanSoundTitle => 'Âm báo khi quét mã';
 
   @override

@@ -280,7 +280,7 @@ export class PaymentService {
       throw new CustomException(HttpStatus.NOT_FOUND, 'BOOKING_NOT_FOUND', 'Không tìm thấy đơn đặt vé');
     }
 
-    if (booking.userId !== userId) {
+    if (booking.userId !== userId && booking.staffId !== userId) {
       throw new CustomException(HttpStatus.FORBIDDEN, 'FORBIDDEN', 'Bạn không có quyền xem đơn này');
     }
 

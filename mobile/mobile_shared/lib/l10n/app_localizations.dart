@@ -4168,6 +4168,138 @@ abstract class AppLocalizations {
   /// **'Số tiền khách đưa không đủ thanh toán'**
   String get insufficientCashReceived;
 
+  /// No description provided for @posPointsAvailable.
+  ///
+  /// In vi, this message translates to:
+  /// **'Điểm hiện có'**
+  String get posPointsAvailable;
+
+  /// No description provided for @posPointsToUse.
+  ///
+  /// In vi, this message translates to:
+  /// **'Điểm sử dụng'**
+  String get posPointsToUse;
+
+  /// No description provided for @posPointsRemaining.
+  ///
+  /// In vi, this message translates to:
+  /// **'Điểm còn lại'**
+  String get posPointsRemaining;
+
+  /// No description provided for @posDiscountValue.
+  ///
+  /// In vi, this message translates to:
+  /// **'Giá trị giảm'**
+  String get posDiscountValue;
+
+  /// No description provided for @posUsingPointsBadge.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang sử dụng {points} điểm'**
+  String posUsingPointsBadge(String points);
+
+  /// No description provided for @posCancelPoints.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hủy'**
+  String get posCancelPoints;
+
+  /// No description provided for @posSearchCustomer.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tìm khách hàng'**
+  String get posSearchCustomer;
+
+  /// No description provided for @posSearchCustomerHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhập email hoặc số điện thoại...'**
+  String get posSearchCustomerHint;
+
+  /// No description provided for @posCustomerNotFound.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không tìm thấy khách hàng'**
+  String get posCustomerNotFound;
+
+  /// No description provided for @posChangeCustomer.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đổi khách hàng'**
+  String get posChangeCustomer;
+
+  /// No description provided for @posPointsExceedBalance.
+  ///
+  /// In vi, this message translates to:
+  /// **'Số điểm sử dụng không được vượt quá số dư hiện có'**
+  String get posPointsExceedBalance;
+
+  /// No description provided for @posPointsExceedLimit.
+  ///
+  /// In vi, this message translates to:
+  /// **'Số điểm sử dụng vượt quá giới hạn giảm giá (tối đa 20% tổng đơn)'**
+  String get posPointsExceedLimit;
+
+  /// No description provided for @posPointsInvalid.
+  ///
+  /// In vi, this message translates to:
+  /// **'Số điểm phải là số nguyên dương'**
+  String get posPointsInvalid;
+
+  /// No description provided for @posCustomerLoyaltyBalance.
+  ///
+  /// In vi, this message translates to:
+  /// **'Điểm tích lũy: {points}'**
+  String posCustomerLoyaltyBalance(String points);
+
+  /// No description provided for @posWaitingMomoPayment.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang chờ thanh toán MoMo'**
+  String get posWaitingMomoPayment;
+
+  /// No description provided for @posOpenMomo.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mở cổng thanh toán MoMo'**
+  String get posOpenMomo;
+
+  /// No description provided for @posCheckingPayment.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang kiểm tra thanh toán...'**
+  String get posCheckingPayment;
+
+  /// No description provided for @posPaymentPendingHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vui lòng quét mã trên cổng MoMo, sau đó bấm Kiểm tra thanh toán.'**
+  String get posPaymentPendingHint;
+
+  /// No description provided for @posCheckPaymentStatus.
+  ///
+  /// In vi, this message translates to:
+  /// **'Kiểm tra thanh toán'**
+  String get posCheckPaymentStatus;
+
+  /// No description provided for @posPaymentFailedPrompt.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thanh toán không thành công. Quý khách có thể thử lại.'**
+  String get posPaymentFailedPrompt;
+
+  /// No description provided for @posRetryPayment.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thử lại thanh toán'**
+  String get posRetryPayment;
+
+  /// No description provided for @posPaymentCancelledPrompt.
+  ///
+  /// In vi, this message translates to:
+  /// **'Giao dịch thanh toán đã bị hủy.'**
+  String get posPaymentCancelledPrompt;
+
   /// No description provided for @scanSoundTitle.
   ///
   /// In vi, this message translates to:

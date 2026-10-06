@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mobile_shared/mobile_shared.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../data/models/checkout_args.dart';
 
@@ -21,20 +22,30 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   int _receivedAmount = 0;
   final TextEditingController _cashReceivedController = TextEditingController();
   final TextEditingController _pointsController = TextEditingController();
+  final TextEditingController _customerSearchController = TextEditingController();
+
+  UserModel? _customer;
+  bool _isSearchingCustomer = false;
   int _usedPoints = 0;
 
   @override
   void initState() {
     super.initState();
+    _customer = widget.args?.customer;
     final total = widget.args?.grandTotal ?? 0;
     _receivedAmount = total;
     _cashReceivedController.text = total > 0 ? '$total' : '';
+    _usedPoints = widget.args?.pointsToUse ?? 0;
+    if (_usedPoints > 0) {
+      _pointsController.text = '$_usedPoints';
+    }
   }
 
   @override
   void dispose() {
     _cashReceivedController.dispose();
     _pointsController.dispose();
+    _customerSearchController.dispose();
     super.dispose();
   }
 
@@ -423,58 +434,366 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   Widget _buildLoyaltyCard(CineplexColors theme, AppLocalizations l10n) {
+    final customer = _customer;
+    final orderSubtotal = _ticketTotal + _concessionTotal;
+    final maxAllowedDiscount = (orderSubtotal * 0.2).floor();
+
     return AppCard(
       backgroundColor: theme.accent.withValues(alpha: 0.08),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Icon(LucideIcons.star, color: theme.accent, size: 18),
-              const SizedBox(width: 8),
-              Text(
-                l10n.loyaltyPoints,
-                style: TextStyle(
-                  color: theme.textPrimary,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13,
+              Expanded(
+                child: Row(
+                  children: [
+                    Icon(LucideIcons.star, color: theme.accent, size: 18),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        l10n.loyaltyPoints,
+                        style: TextStyle(
+                          color: theme.textPrimary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
                 ),
               ),
+              if (customer != null)
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _customer = null;
+                      _usedPoints = 0;
+                      _pointsController.clear();
+                    });
+                  },
+                  style: TextButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                    padding: EdgeInsets.zero,
+                  ),
+                  child: Text(
+                    l10n.posChangeCustomer,
+                    style: TextStyle(fontSize: 12, color: theme.accent),
+                  ),
+                ),
             ],
           ),
           const SizedBox(height: 6),
-          Text(
-            l10n.loyaltyPrompt('20.000'),
-            style: TextStyle(color: theme.textSecondary, fontSize: 12),
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: AppTextField(
-                  controller: _pointsController,
-                  hintText: l10n.enterPoints,
-                  keyboardType: TextInputType.number,
+
+          // If no customer is identified yet: provide lookup input
+          if (customer == null) ...[
+            Text(
+              l10n.searchCustomerHint,
+              style: TextStyle(color: theme.textSecondary, fontSize: 12),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: AppTextField(
+                    controller: _customerSearchController,
+                    hintText: l10n.posSearchCustomerHint,
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                AppButton(
+                  text: l10n.posSearchCustomer,
+                  isLoading: _isSearchingCustomer,
+                  backgroundColor: theme.primary,
+                  textColor: Colors.white,
+                  width: 90,
+                  onPressed: _isSearchingCustomer
+                      ? null
+                      : () => _searchCustomer(theme, l10n),
+                ),
+              ],
+            ),
+          ] else ...[
+            // Customer is identified: display real customer info and points
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              decoration: BoxDecoration(
+                color: theme.surface,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: theme.borderSubtle),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          customer.fullName.isNotEmpty
+                              ? customer.fullName
+                              : customer.email,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                            color: theme.textPrimary,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: theme.accent.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          '${FormatUtils.formatNumber(customer.loyaltyPoints)} ${l10n.pointsSuffix}',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: theme.accent,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (customer.email.isNotEmpty && customer.fullName.isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      customer.email,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: theme.textSecondary,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            // If points are currently applied: show active badge and Cancel button
+            if (_usedPoints > 0) ...[
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: theme.success.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border:
+                      Border.all(color: theme.success.withValues(alpha: 0.3)),
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Icon(LucideIcons.checkCircle2,
+                                  size: 16, color: theme.success),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  l10n.posUsingPointsBadge(
+                                      FormatUtils.formatNumber(_usedPoints)),
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: theme.success,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              _usedPoints = 0;
+                              _pointsController.clear();
+                            });
+                          },
+                          style: TextButton.styleFrom(
+                            visualDensity: VisualDensity.compact,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                          ),
+                          child: Text(
+                            l10n.posCancelPoints,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: theme.error,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Divider(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(l10n.posPointsAvailable,
+                            style: TextStyle(
+                                fontSize: 11, color: theme.textSecondary)),
+                        Text(
+                          '${FormatUtils.formatNumber(customer.loyaltyPoints)} ${l10n.pointsSuffix}',
+                          style: TextStyle(
+                              fontSize: 11, color: theme.textPrimary),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(l10n.posPointsRemaining,
+                            style: TextStyle(
+                                fontSize: 11, color: theme.textSecondary)),
+                        Text(
+                          '${FormatUtils.formatNumber(customer.loyaltyPoints - _usedPoints)} ${l10n.pointsSuffix}',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: theme.textPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(l10n.posDiscountValue,
+                            style:
+                                TextStyle(fontSize: 11, color: theme.success)),
+                        Text(
+                          FormatUtils.formatCurrency(_usedPoints),
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: theme.success,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(width: 10),
-              AppButton(
-                text: l10n.usePoints,
-                backgroundColor: theme.primary,
-                textColor: Colors.white,
-                width: 100,
-                onPressed: () {
-                  final pts = int.tryParse(_pointsController.text.trim()) ?? 0;
-                  if (pts > 0) {
-                    setState(() => _usedPoints = pts.clamp(0, 50000));
-                  }
-                },
+            ] else ...[
+              // Prompt to enter points
+              Text(
+                l10n.posCustomerLoyaltyBalance(
+                    FormatUtils.formatNumber(customer.loyaltyPoints)),
+                style: TextStyle(color: theme.textSecondary, fontSize: 12),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: AppTextField(
+                      controller: _pointsController,
+                      hintText: l10n.enterPoints,
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  AppButton(
+                    text: l10n.usePoints,
+                    backgroundColor: theme.primary,
+                    textColor: Colors.white,
+                    width: 100,
+                    onPressed: () {
+                      final input = _pointsController.text.trim();
+                      final pts =
+                          int.tryParse(input.replaceAll(RegExp(r'[^0-9]'), ''));
+                      if (pts == null || pts <= 0) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(l10n.posPointsInvalid),
+                            backgroundColor: theme.error,
+                          ),
+                        );
+                        return;
+                      }
+                      if (pts > customer.loyaltyPoints) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(l10n.posPointsExceedBalance),
+                            backgroundColor: theme.error,
+                          ),
+                        );
+                        return;
+                      }
+                      if (maxAllowedDiscount > 0 && pts > maxAllowedDiscount) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(l10n.posPointsExceedLimit),
+                            backgroundColor: theme.error,
+                          ),
+                        );
+                        return;
+                      }
+                      // Valid! Update state locally ONLY (No API call, no DB deduction yet)
+                      setState(() {
+                        _usedPoints = pts;
+                      });
+                    },
+                  ),
+                ],
               ),
             ],
-          ),
+          ],
         ],
       ),
     );
+  }
+
+  Future<void> _searchCustomer(
+    CineplexColors theme,
+    AppLocalizations l10n,
+  ) async {
+    final query = _customerSearchController.text.trim();
+    if (query.isEmpty) return;
+
+    setState(() => _isSearchingCustomer = true);
+    final bookingRepo = BookingManagementRepository(context.read<DioClient>());
+    try {
+      final results = await bookingRepo.searchCustomers(query);
+      if (!mounted) return;
+      if (results.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.posCustomerNotFound),
+            backgroundColor: theme.error,
+          ),
+        );
+      } else {
+        setState(() {
+          _customer = results.first;
+          _usedPoints = 0;
+          _pointsController.clear();
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: theme.error,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isSearchingCustomer = false);
+    }
   }
 
   Widget _buildSeatChip(CineplexColors theme, String seat) {
@@ -560,26 +879,52 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       final booking = await bookingRepo.createStaffBooking(
         args.showtime.id,
         seatIds,
-        customerId: args.customer?.id,
+        customerId: _customer?.id,
         concessions: concessionsPayload.isNotEmpty ? concessionsPayload : null,
         pointsToUse: _usedPoints > 0 ? _usedPoints : null,
         source: 'OFFLINE',
       );
 
+      final bookingCode = booking.bookingCode.isNotEmpty
+          ? booking.bookingCode
+          : 'BK-${booking.id}';
+
       // Step 2: Checkout payment
-      await bookingRepo.checkoutPayment(
+      final checkoutRes = await bookingRepo.checkoutPayment(
         bookingId: booking.id,
         method: _selectedMethod,
       );
 
       if (!context.mounted) return;
 
-      final bookingCode = booking.bookingCode.isNotEmpty
-          ? booking.bookingCode
-          : 'BK-${booking.id}';
+      final isOnline = _selectedMethod != 'CASH';
+      final paymentRequired = checkoutRes is Map &&
+          (checkoutRes['paymentRequired'] == true ||
+              (checkoutRes['payUrl'] != null &&
+                  checkoutRes['payUrl'].toString().isNotEmpty));
 
-      // Step 3: Show receipt confirmation dialog
-      _showSuccessDialog(context, bookingCode, theme, l10n);
+      if (isOnline && paymentRequired) {
+        // Online Gateway (MoMo / VNPay)
+        final payUrl = checkoutRes['payUrl']?.toString() ?? '';
+        if (payUrl.isNotEmpty) {
+          try {
+            await launchUrl(Uri.parse(payUrl),
+                mode: LaunchMode.externalApplication);
+          } catch (_) {}
+        }
+        if (!context.mounted) return;
+        _showWaitingPaymentDialog(
+          context,
+          bookingId: booking.id,
+          bookingCode: bookingCode,
+          payUrl: payUrl,
+          theme: theme,
+          l10n: l10n,
+        );
+      } else {
+        // CASH payment - Completed immediately
+        _showSuccessDialog(context, bookingCode, theme, l10n);
+      }
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -589,6 +934,170 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
+  }
+
+  void _showWaitingPaymentDialog(
+    BuildContext context, {
+    required int bookingId,
+    required String bookingCode,
+    required String payUrl,
+    required CineplexColors theme,
+    required AppLocalizations l10n,
+  }) {
+    bool isChecking = false;
+    String statusMessage = l10n.posPaymentPendingHint;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogCtx) => StatefulBuilder(
+        builder: (context, setDialogState) {
+          Future<void> checkStatus() async {
+            if (isChecking) return;
+            setDialogState(() => isChecking = true);
+            try {
+              final bookingRepo =
+                  BookingManagementRepository(context.read<DioClient>());
+              final res = await bookingRepo.getPaymentStatus(bookingId);
+              final status = res['status']?.toString();
+
+              if (!dialogCtx.mounted) return;
+
+              if (status == 'PAID') {
+                Navigator.pop(dialogCtx);
+                _showSuccessDialog(context, bookingCode, theme, l10n);
+              } else if (status == 'FAILED') {
+                setDialogState(() {
+                  statusMessage = l10n.posPaymentFailedPrompt;
+                });
+              } else if (status == 'EXPIRED') {
+                Navigator.pop(dialogCtx);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(l10n.paymentExpired),
+                    backgroundColor: theme.error,
+                  ),
+                );
+              } else {
+                setDialogState(() {
+                  statusMessage = l10n.posPaymentPendingHint;
+                });
+              }
+            } catch (_) {
+              // ignore network blips during status check
+            } finally {
+              if (dialogCtx.mounted) {
+                setDialogState(() => isChecking = false);
+              }
+            }
+          }
+
+          return AlertDialog(
+            backgroundColor: theme.surface,
+            title: Row(
+              children: [
+                Icon(LucideIcons.loader2, color: theme.accent, size: 22),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    _selectedMethod == 'MOMO'
+                        ? l10n.posWaitingMomoPayment
+                        : l10n.paymentPending,
+                    style: TextStyle(
+                      color: theme.textPrimary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.posOrderSuccessPrompt(bookingCode),
+                  style: TextStyle(
+                    color: theme.textPrimary,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  '${l10n.totalAmount}: ${FormatUtils.formatCurrency(_grandTotal)}',
+                  style: TextStyle(
+                    color: theme.accent,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  statusMessage,
+                  style: TextStyle(color: theme.textSecondary, fontSize: 13),
+                ),
+                if (payUrl.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      icon: const Icon(LucideIcons.externalLink, size: 16),
+                      label: Text(
+                        _selectedMethod == 'MOMO'
+                            ? l10n.posOpenMomo
+                            : l10n.paymentMethod,
+                      ),
+                      onPressed: () {
+                        launchUrl(
+                          Uri.parse(payUrl),
+                          mode: LaunchMode.externalApplication,
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(dialogCtx);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(l10n.posPaymentCancelledPrompt),
+                      backgroundColor: theme.warning,
+                    ),
+                  );
+                },
+                child: Text(
+                  l10n.cancel,
+                  style: TextStyle(color: theme.textMuted),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: isChecking ? null : checkStatus,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.primary,
+                  foregroundColor: Colors.white,
+                ),
+                child: isChecking
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : Text(l10n.posCheckPaymentStatus),
+              ),
+            ],
+          );
+        },
+      ),
+    );
   }
 
   void _showSuccessDialog(
