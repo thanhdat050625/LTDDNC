@@ -85,6 +85,7 @@ class PaymentStatusModel extends Equatable {
   final String? paymentMethod;
   final bool canRetry;
   final bool isExpired;
+  final int? showtimeId;
 
   const PaymentStatusModel({
     required this.bookingId,
@@ -93,6 +94,7 @@ class PaymentStatusModel extends Equatable {
     this.paymentMethod,
     this.canRetry = false,
     this.isExpired = false,
+    this.showtimeId,
   });
 
   factory PaymentStatusModel.fromJson(Map<String, dynamic> json) {
@@ -103,9 +105,10 @@ class PaymentStatusModel extends Equatable {
       paymentMethod: json['paymentMethod'],
       canRetry: json['canRetry'] == true,
       isExpired: json['isExpired'] == true,
+      showtimeId: json['showtimeId'] as int?,
     );
   }
 
   @override
-  List<Object?> get props => [bookingId, bookingCode, status, paymentMethod, canRetry, isExpired];
+  List<Object?> get props => [bookingId, bookingCode, status, paymentMethod, canRetry, isExpired, showtimeId];
 }

@@ -151,8 +151,12 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
           }
 
           if (state is PaymentFailed) {
+            final isExpired = state.status?.isExpired == true || state.status?.status == 'EXPIRED';
+            final title = isExpired ? l10n.paymentExpired : l10n.paymentFailed;
+            final message = isExpired ? l10n.bookingHoldExpired : state.message;
+
             return Center(
-              child: Padding(
+              child: SingleChildScrollView(
                 padding: const EdgeInsets.all(24.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -164,11 +168,16 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
                         color: colors.error.withValues(alpha: 0.12),
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(Icons.error_outline_rounded, color: colors.error, size: 54),
+                      child: Icon(
+                        isExpired ? Icons.timer_off_outlined : Icons.error_outline_rounded,
+                        color: colors.error,
+                        size: 54,
+                      ),
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      l10n.paymentFailed,
+                      title,
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
@@ -177,15 +186,42 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      state.message,
+                      message,
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 14, color: colors.textSecondary),
                     ),
                     const SizedBox(height: 28),
-                    AppButton(
-                      text: l10n.retry,
-                      onPressed: () => context.pop(),
-                    ),
+                    if (isExpired) ...[
+                      AppButton(
+                        text: l10n.reselectSeats,
+                        onPressed: () {
+                          final showtimeId = state.status?.showtimeId;
+                          if (showtimeId != null && showtimeId > 0) {
+                            context.go('/booking/$showtimeId');
+                          } else {
+                            context.go('/home');
+                          }
+                        },
+                      ),
+                    ] else ...[
+                      AppButton(
+                        text: l10n.retryPayment,
+                        onPressed: () => context.go('/checkout/${widget.bookingId}'),
+                      ),
+                      const SizedBox(height: 12),
+                      AppButton(
+                        text: l10n.reselectSeats,
+                        isOutlined: true,
+                        onPressed: () {
+                          final showtimeId = state.status?.showtimeId;
+                          if (showtimeId != null && showtimeId > 0) {
+                            context.go('/booking/$showtimeId');
+                          } else {
+                            context.go('/home');
+                          }
+                        },
+                      ),
+                    ],
                   ],
                 ),
               ),
