@@ -50,13 +50,13 @@ class _ConcessionManagementScreenState
     return AppScaffold(
       title: l10n.manageConcessions,
       drawer: widget.drawer,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _reloadAfterPush(context.push('/concessions/new')),
-        backgroundColor: theme.accent,
-        tooltip: l10n.addProduct,
-        elevation: theme.elevationSm,
-        child: const Icon(LucideIcons.plus, color: Colors.white),
-      ),
+      actions: [
+        IconButton(
+          icon: const Icon(LucideIcons.plus),
+          tooltip: l10n.addProduct,
+          onPressed: () => _reloadAfterPush(context.push('/concessions/new')),
+        ),
+      ],
       body: BlocBuilder<ConcessionManagementCubit, ConcessionManagementState>(
         builder: (context, state) {
           if (state is ConcessionManagementLoading) {
@@ -259,8 +259,8 @@ class _ConcessionManagementScreenState
                       ),
                     ),
 
-                  // Bottom padding for FAB
-                  const SliverToBoxAdapter(child: SizedBox(height: 72)),
+                  // Bottom padding
+                  const SliverToBoxAdapter(child: SizedBox(height: 16)),
                 ],
               ),
             );

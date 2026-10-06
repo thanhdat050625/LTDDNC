@@ -34,11 +34,13 @@ class _CinemaManagementScreenState extends State<CinemaManagementScreen> {
     return AppScaffold(
       title: l10n.manageCinemas,
       drawer: widget.drawer,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _reloadAfterPush(context.push('/cinemas/new')),
-        backgroundColor: theme.accent,
-        child: const Icon(Icons.add, color: Colors.white),
-      ),
+      actions: [
+        IconButton(
+          icon: const Icon(LucideIcons.plus),
+          tooltip: l10n.addCinema,
+          onPressed: () => _reloadAfterPush(context.push('/cinemas/new')),
+        ),
+      ],
       body: Column(
         children: [
           // 4 Core Operational KPI Cards
@@ -87,7 +89,7 @@ class _CinemaManagementScreenState extends State<CinemaManagementScreen> {
                     }
                     return ListView.separated(
                       physics: const AlwaysScrollableScrollPhysics(),
-                      padding: const EdgeInsets.fromLTRB(12, 8, 12, 88),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       itemCount: cinemas.length,
                       separatorBuilder: (_, __) => const SizedBox(height: 8),
                       itemBuilder: (context, index) {

@@ -40,19 +40,20 @@ class _MovieManagementScreenState extends State<MovieManagementScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = CineplexColors.of(context);
     final l10n = AppLocalizations.of(context)!;
 
     return AppScaffold(
       title: l10n.movieManagement,
       drawer: widget.drawer,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _reloadAfterPush(context.push('/movies/new'));
-        },
-        backgroundColor: theme.accent,
-        child: const Icon(Icons.add, color: Colors.white),
-      ),
+      actions: [
+        IconButton(
+          icon: const Icon(LucideIcons.plus),
+          tooltip: l10n.addMovieTitle,
+          onPressed: () {
+            _reloadAfterPush(context.push('/movies/new'));
+          },
+        ),
+      ],
       body: Column(
         children: [
           // Core Operational KPI Cards
@@ -67,9 +68,8 @@ class _MovieManagementScreenState extends State<MovieManagementScreen> {
           ),
 
           // Search & Filter Bar
-          Container(
-            padding: const EdgeInsets.fromLTRB(12, 8, 12, 6),
-            color: theme.surface,
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 0, 12, 6),
             child: AppTextField(
               controller: _searchController,
               hintText: l10n.searchMoviesPlaceholder,
@@ -123,7 +123,7 @@ class _MovieManagementScreenState extends State<MovieManagementScreen> {
                     }
                     return ListView.separated(
                       physics: const AlwaysScrollableScrollPhysics(),
-                      padding: const EdgeInsets.fromLTRB(12, 8, 12, 96),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       itemCount: movies.length,
                       separatorBuilder: (_, __) => const SizedBox(height: 8),
                       itemBuilder: (context, index) {

@@ -60,14 +60,14 @@ class _ShowtimeManagementScreenState extends State<ShowtimeManagementScreen> {
             _reloadAfterPush(context.push('/showtimes/bulk'));
           },
         ),
+        IconButton(
+          icon: const Icon(LucideIcons.plus),
+          tooltip: l10n.addShowtime,
+          onPressed: () {
+            _reloadAfterPush(context.push('/showtimes/new'));
+          },
+        ),
       ],
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _reloadAfterPush(context.push('/showtimes/new'));
-        },
-        backgroundColor: theme.accent,
-        child: const Icon(Icons.add, color: Colors.white),
-      ),
       body: Column(
         children: [
           // Horizontal Date Carousel & Calendar Picker
@@ -170,7 +170,7 @@ class _ShowtimeManagementScreenState extends State<ShowtimeManagementScreen> {
                         }
                         return ListView.separated(
                           physics: const AlwaysScrollableScrollPhysics(),
-                          padding: const EdgeInsets.fromLTRB(12, 8, 12, 88),
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                           itemCount: showtimes.length,
                           separatorBuilder: (_, __) =>
                               const SizedBox(height: 8),

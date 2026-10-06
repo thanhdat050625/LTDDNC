@@ -39,11 +39,13 @@ class _RoomManagementScreenState extends State<RoomManagementScreen> {
           ? '${widget.cinema!.name} - ${l10n.manageRooms}'
           : l10n.manageRooms,
       showBackButton: true,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _reloadAfterPush(context.push('/cinemas/${widget.cinemaId}/rooms/new')),
-        backgroundColor: theme.accent,
-        child: const Icon(Icons.add, color: Colors.white),
-      ),
+      actions: [
+        IconButton(
+          icon: const Icon(LucideIcons.plus),
+          tooltip: l10n.addRoom,
+          onPressed: () => _reloadAfterPush(context.push('/cinemas/${widget.cinemaId}/rooms/new')),
+        ),
+      ],
       body: Column(
         children: [
           // 4 Core Operational KPI Cards
@@ -93,7 +95,7 @@ class _RoomManagementScreenState extends State<RoomManagementScreen> {
                     }
                     return ListView.separated(
                       physics: const AlwaysScrollableScrollPhysics(),
-                      padding: const EdgeInsets.fromLTRB(12, 8, 12, 88),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       itemCount: rooms.length,
                       separatorBuilder: (_, __) => const SizedBox(height: 8),
                       itemBuilder: (context, index) {

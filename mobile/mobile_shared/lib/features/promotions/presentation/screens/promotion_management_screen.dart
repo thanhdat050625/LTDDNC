@@ -34,12 +34,13 @@ class _PromotionManagementScreenState extends State<PromotionManagementScreen> {
     return AppScaffold(
       title: l10n.managePromotions,
       drawer: widget.drawer,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _reloadAfterPush(context.push('/promotions/new')),
-        backgroundColor: theme.accent,
-        tooltip: l10n.addPromotion,
-        child: const Icon(LucideIcons.plus, color: Colors.white),
-      ),
+      actions: [
+        IconButton(
+          icon: const Icon(LucideIcons.plus),
+          tooltip: l10n.addPromotion,
+          onPressed: () => _reloadAfterPush(context.push('/promotions/new')),
+        ),
+      ],
       body: RefreshIndicator(
         onRefresh: () => context.read<PromotionManagementCubit>().loadPromotions(),
         child: BlocBuilder<PromotionManagementCubit, PromotionManagementState>(
