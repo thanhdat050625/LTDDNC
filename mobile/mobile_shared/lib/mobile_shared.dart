@@ -55,9 +55,12 @@ export 'models/ticket_model.dart';
 export 'models/concession_model.dart';
 export 'models/home_data_model.dart';
 export 'models/statistics_model.dart';
+export 'models/shift_model.dart';
+export 'models/staff_schedule_model.dart';
 
 // Repositories
 export 'repositories/auth_repository.dart';
+export 'features/shifts/data/repositories/shift_repository.dart';
 export 'features/ticket_sale/data/repositories/booking_management_repository.dart';
 
 // Bloc

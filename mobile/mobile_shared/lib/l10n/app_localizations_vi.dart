@@ -2387,4 +2387,100 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get ticketPriceEnterNew => 'Nhập giá vé mới (VNĐ)';
+
+  @override
+  String get shiftTitle => 'Ca làm việc';
+
+  @override
+  String get shiftManagement => 'Quản lý ca làm việc';
+
+  @override
+  String get shiftSchedule => 'Lịch ca nhân viên';
+
+  @override
+  String get shiftMySchedule => 'Lịch làm việc của tôi';
+
+  @override
+  String get shiftAssignNew => 'Phân ca mới';
+
+  @override
+  String get shiftEdit => 'Chỉnh sửa ca làm';
+
+  @override
+  String get shiftDelete => 'Hủy phân ca';
+
+  @override
+  String get shiftDeleteConfirm =>
+      'Bạn có chắc chắn muốn hủy phân ca làm việc này?';
+
+  @override
+  String get shiftAssignSuccess => 'Phân ca làm việc thành công';
+
+  @override
+  String get shiftUpdateSuccess => 'Cập nhật phân ca thành công';
+
+  @override
+  String get shiftDeleteSuccess => 'Hủy phân ca thành công';
+
+  @override
+  String get shiftSelectStaff => 'Chọn nhân viên';
+
+  @override
+  String get shiftSelectCinema => 'Chọn cụm rạp';
+
+  @override
+  String get shiftSelectShift => 'Chọn ca làm';
+
+  @override
+  String get shiftSelectRole => 'Vị trí phân công';
+
+  @override
+  String get shiftSelectDate => 'Chọn ngày làm việc';
+
+  @override
+  String get shiftNote => 'Ghi chú phân công';
+
+  @override
+  String get shiftNoteHint => 'Nhập ghi chú cho nhân viên (không bắt buộc)...';
+
+  @override
+  String get shiftRoleTicketCounter => 'Bán vé tại quầy';
+
+  @override
+  String get shiftRoleScannerGate => 'Soát vé tại cửa';
+
+  @override
+  String get shiftRoleConcession => 'Quầy bắp nước';
+
+  @override
+  String get shiftRoleGeneral => 'Nhân viên tổng hợp';
+
+  @override
+  String get shiftStatusScheduled => 'Đã lên lịch';
+
+  @override
+  String get shiftStatusCompleted => 'Hoàn thành';
+
+  @override
+  String get shiftStatusCancelled => 'Đã hủy';
+
+  @override
+  String get shiftEmptyList =>
+      'Chưa có nhân viên nào được phân ca trong ngày này';
+
+  @override
+  String get shiftEmptyMySchedule =>
+      'Bạn chưa có ca làm việc nào trong tuần này';
+
+  @override
+  String get shiftCurrentWeek => 'Tuần này';
+
+  @override
+  String get shiftNextWeek => 'Tuần sau';
+
+  @override
+  String get shiftPreviousWeek => 'Tuần trước';
+
+  @override
+  String get shiftAssignedBy => 'Người phân ca';
 }
