@@ -18,7 +18,7 @@ import {
   ERoomType,
   ESeatStatus,
 } from '../cinema/enums/cinema.enum';
-import { EMovieFormat } from '../movie/enums/movie.enum';
+import { EMovieFormat, EMovieStatus } from '../movie/enums/movie.enum';
 import { ESeatHoldStatus } from '../booking/enums/booking.enum';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TicketPrice } from '../ticket/entities/ticket-price.entity';
@@ -96,6 +96,14 @@ export class ShowtimeService {
         HttpStatus.NOT_FOUND,
         'MOVIE_NOT_FOUND',
         'Không tìm thấy phim',
+      );
+    }
+
+    if (movie.status === EMovieStatus.STOPPED) {
+      throw new CustomException(
+        HttpStatus.BAD_REQUEST,
+        'MOVIE_STOPPED',
+        `Phim "${movie.title}" đã ngừng chiếu, không thể tạo thêm suất chiếu`,
       );
     }
 
@@ -186,6 +194,14 @@ export class ShowtimeService {
         HttpStatus.NOT_FOUND,
         'MOVIE_NOT_FOUND',
         'Không tìm thấy phim',
+      );
+    }
+
+    if (movie.status === EMovieStatus.STOPPED) {
+      throw new CustomException(
+        HttpStatus.BAD_REQUEST,
+        'MOVIE_STOPPED',
+        `Phim "${movie.title}" đã ngừng chiếu, không thể tạo thêm suất chiếu`,
       );
     }
 
@@ -471,6 +487,27 @@ export class ShowtimeService {
         'SHOWTIME_NOT_FOUND',
         'Không tìm thấy suất chiếu',
       );
+    }
+
+    if (dto.publicStartTime) {
+      if (showtime.movie?.status === EMovieStatus.STOPPED) {
+        throw new CustomException(
+          HttpStatus.BAD_REQUEST,
+          'MOVIE_STOPPED',
+          `Phim "${showtime.movie.title}" đã ngừng chiếu, không thể dời lịch suất chiếu`,
+        );
+      }
+      if (showtime.movie?.screeningEndDate) {
+        const endDate = new Date(showtime.movie.screeningEndDate);
+        endDate.setHours(23, 59, 59, 999);
+        if (new Date(dto.publicStartTime) > endDate) {
+          throw new CustomException(
+            HttpStatus.BAD_REQUEST,
+            'MOVIE_SCREENING_EXPIRED',
+            `Phim "${showtime.movie.title}" chỉ được chiếu đến ngày ${new Date(showtime.movie.screeningEndDate).toLocaleDateString('vi-VN')}`,
+          );
+        }
+      }
     }
 
     // 2. Merge các field được gửi lên

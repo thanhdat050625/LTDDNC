@@ -14,15 +14,19 @@ class MovieManagementLoading extends MovieManagementState {}
 
 class MovieManagementLoaded extends MovieManagementState {
   final List<MovieModel> movies;
+  final List<MovieModel> allMovies;
+  final String? selectedStatus;
   final bool isSearching;
 
   const MovieManagementLoaded({
     required this.movies,
+    this.allMovies = const [],
+    this.selectedStatus,
     this.isSearching = false,
   });
 
   @override
-  List<Object?> get props => [movies, isSearching];
+  List<Object?> get props => [movies, allMovies, selectedStatus, isSearching];
 }
 
 class MovieManagementError extends MovieManagementState {

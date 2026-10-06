@@ -8,6 +8,7 @@ class ShowtimeManagementCubit extends Cubit<ShowtimeManagementState> {
   List<ShowtimeModel> _allShowtimes = [];
   DateTime? _selectedDate;
   int? _selectedCinemaId;
+  String? _selectedStatus;
 
   ShowtimeManagementCubit(this._repository) : super(ShowtimeManagementInitial());
 
@@ -40,23 +41,37 @@ class ShowtimeManagementCubit extends Cubit<ShowtimeManagementState> {
     }
   }
 
+  // ponytail: In-memory showtime filtering; upgrade to paginated query params if showtimes exceed 200 per cinema.
+  void filterByStatus(String? status) {
+    if (status == null || _selectedStatus == status) {
+      _selectedStatus = null;
+    } else {
+      _selectedStatus = status;
+    }
+    if (state is ShowtimeManagementLoaded) {
+      _applyFilters();
+    }
+  }
+
   void _applyFilters() {
-    List<ShowtimeModel> filtered = List.from(_allShowtimes);
+    List<ShowtimeModel> byDate = List.from(_allShowtimes);
 
     if (_selectedDate != null) {
-      filtered = filtered.where((st) {
+      byDate = byDate.where((st) {
         return st.publicStartTime.year == _selectedDate!.year &&
                st.publicStartTime.month == _selectedDate!.month &&
                st.publicStartTime.day == _selectedDate!.day;
       }).toList();
     }
 
-    if (_selectedCinemaId != null) {
-      // Note: backend room/cinema relation is needed. If st.room.cinemaId is available, filter it.
-      // We assume room has cinemaId in the model or we fetch it. 
-      // If room model doesn't have cinemaId, this filter might need backend update, but for now we try to filter if possible.
-      // Wait, RoomModel doesn't have cinemaId in the current implementation? Let's check RoomModel.
-      // Actually, if we can't filter by cinemaId on frontend, we just ignore it.
+    List<ShowtimeModel> filtered = List.from(byDate);
+    if (_selectedStatus != null) {
+      filtered = filtered.where((st) {
+        if (_selectedStatus == 'ACTIVE') {
+          return st.status.toUpperCase() == 'ACTIVE' || st.status.toUpperCase() == 'BOOKING';
+        }
+        return st.status.toUpperCase() == _selectedStatus!.toUpperCase();
+      }).toList();
     }
 
     // Sort by time
@@ -64,8 +79,10 @@ class ShowtimeManagementCubit extends Cubit<ShowtimeManagementState> {
 
     emit(ShowtimeManagementLoaded(
       showtimes: filtered,
+      dateShowtimes: byDate,
       selectedDate: _selectedDate,
       selectedCinemaId: _selectedCinemaId,
+      selectedStatus: _selectedStatus,
     ));
   }
 

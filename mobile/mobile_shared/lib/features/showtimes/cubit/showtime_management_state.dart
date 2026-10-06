@@ -14,17 +14,27 @@ class ShowtimeManagementLoading extends ShowtimeManagementState {}
 
 class ShowtimeManagementLoaded extends ShowtimeManagementState {
   final List<ShowtimeModel> showtimes;
+  final List<ShowtimeModel> dateShowtimes;
   final DateTime? selectedDate;
   final int? selectedCinemaId;
+  final String? selectedStatus;
 
   const ShowtimeManagementLoaded({
     required this.showtimes,
+    this.dateShowtimes = const [],
     this.selectedDate,
     this.selectedCinemaId,
+    this.selectedStatus,
   });
 
   @override
-  List<Object?> get props => [showtimes, selectedDate, selectedCinemaId];
+  List<Object?> get props => [
+        showtimes,
+        dateShowtimes,
+        selectedDate,
+        selectedCinemaId,
+        selectedStatus,
+      ];
 }
 
 class ShowtimeManagementError extends ShowtimeManagementState {

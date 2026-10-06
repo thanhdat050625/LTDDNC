@@ -927,6 +927,18 @@ class AppLocalizationsVi extends AppLocalizations {
   String get manageShowtimes => 'Quản lý Suất chiếu';
 
   @override
+  String get showtimeTotal => 'Tổng suất chiếu';
+
+  @override
+  String get showtimeBooking => 'Đang mở bán';
+
+  @override
+  String get showtimeScheduled => 'Sắp chiếu';
+
+  @override
+  String get showtimeCancelled => 'Đã hủy';
+
+  @override
   String get addShowtime => 'Thêm Suất chiếu';
 
   @override
@@ -1794,6 +1806,9 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get searchMoviesPlaceholder => 'Tìm kiếm tên phim...';
+
+  @override
+  String get movieTotal => 'Tổng số phim';
 
   @override
   String get statusNowShowing => 'Đang chiếu';

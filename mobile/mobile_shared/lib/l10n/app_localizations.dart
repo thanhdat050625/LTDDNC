@@ -1828,6 +1828,30 @@ abstract class AppLocalizations {
   /// **'Quản lý Suất chiếu'**
   String get manageShowtimes;
 
+  /// No description provided for @showtimeTotal.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tổng suất chiếu'**
+  String get showtimeTotal;
+
+  /// No description provided for @showtimeBooking.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang mở bán'**
+  String get showtimeBooking;
+
+  /// No description provided for @showtimeScheduled.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sắp chiếu'**
+  String get showtimeScheduled;
+
+  /// No description provided for @showtimeCancelled.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã hủy'**
+  String get showtimeCancelled;
+
   /// No description provided for @addShowtime.
   ///
   /// In vi, this message translates to:
@@ -3489,6 +3513,12 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Tìm kiếm tên phim...'**
   String get searchMoviesPlaceholder;
+
+  /// No description provided for @movieTotal.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tổng số phim'**
+  String get movieTotal;
 
   /// No description provided for @statusNowShowing.
   ///

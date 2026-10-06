@@ -72,6 +72,17 @@ class _MovieManagementScreenState extends State<MovieManagementScreen> {
             ),
           ),
           
+          // Core Operational KPI Cards
+          BlocBuilder<MovieManagementCubit, MovieManagementState>(
+            buildWhen: (prev, curr) => curr is MovieManagementLoaded,
+            builder: (context, state) {
+              if (state is! MovieManagementLoaded) {
+                return const SizedBox.shrink();
+              }
+              return _buildKpiSection(context, state);
+            },
+          ),
+          
           // Movie List
           Expanded(
             child: RefreshIndicator(
@@ -139,6 +150,143 @@ class _MovieManagementScreenState extends State<MovieManagementScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildKpiSection(BuildContext context, MovieManagementLoaded state) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = CineplexColors.of(context);
+    final all = state.allMovies;
+    final totalCount = all.length;
+    final nowShowingCount = all.where((m) => m.status.toUpperCase() == 'NOW_SHOWING').length;
+    final comingSoonCount = all.where((m) => m.status.toUpperCase() == 'COMING_SOON').length;
+    final stoppedCount = all.where((m) => m.status.toUpperCase() == 'STOPPED').length;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+      child: GridView.count(
+        crossAxisCount: 2,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+        childAspectRatio: 2.3,
+        children: [
+          _buildKpiCard(
+            context,
+            title: l10n.movieTotal,
+            count: totalCount,
+            icon: LucideIcons.film,
+            accentColor: theme.primary,
+            isSelected: state.selectedStatus == null,
+            onTap: () => context.read<MovieManagementCubit>().filterByStatus(null),
+          ),
+          _buildKpiCard(
+            context,
+            title: l10n.statusNowShowing,
+            count: nowShowingCount,
+            icon: LucideIcons.playCircle,
+            accentColor: theme.success,
+            isSelected: state.selectedStatus == 'NOW_SHOWING',
+            onTap: () => context.read<MovieManagementCubit>().filterByStatus('NOW_SHOWING'),
+          ),
+          _buildKpiCard(
+            context,
+            title: l10n.statusComingSoon,
+            count: comingSoonCount,
+            icon: LucideIcons.calendarClock,
+            accentColor: theme.info,
+            isSelected: state.selectedStatus == 'COMING_SOON',
+            onTap: () => context.read<MovieManagementCubit>().filterByStatus('COMING_SOON'),
+          ),
+          _buildKpiCard(
+            context,
+            title: l10n.statusStopped,
+            count: stoppedCount,
+            icon: LucideIcons.archive,
+            accentColor: theme.textMuted,
+            isSelected: state.selectedStatus == 'STOPPED',
+            onTap: () => context.read<MovieManagementCubit>().filterByStatus('STOPPED'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildKpiCard(
+    BuildContext context, {
+    required String title,
+    required int count,
+    required IconData icon,
+    required Color accentColor,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    final theme = CineplexColors.of(context);
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(10),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? accentColor.withValues(alpha: 0.1) : theme.card,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: isSelected ? accentColor : theme.cardBorder,
+            width: isSelected ? 1.5 : 1.0,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: theme.shadowColor.withValues(alpha: 0.04),
+              blurRadius: 4,
+              offset: const Offset(0, 1),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: accentColor.withValues(alpha: 0.14),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Icon(icon, color: accentColor, size: 14),
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                      color: isSelected ? accentColor : theme.textSecondary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Text(
+              '$count',
+              maxLines: 1,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: theme.textPrimary,
+                letterSpacing: -0.2,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
