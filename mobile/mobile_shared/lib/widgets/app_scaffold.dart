@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppScaffold extends StatelessWidget {
   final String title;
+  final Widget? titleWidget;
   final Widget body;
   final bool showBackButton;
   final List<Widget>? actions;
@@ -13,6 +14,7 @@ class AppScaffold extends StatelessWidget {
   const AppScaffold({
     super.key,
     required this.title,
+    this.titleWidget,
     required this.body,
     this.showBackButton = true,
     this.actions,
@@ -26,7 +28,11 @@ class AppScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: titleWidget ??
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(title),
+            ),
         automaticallyImplyLeading: showBackButton,
         actions: actions,
       ),

@@ -1062,10 +1062,10 @@ class AppLocalizationsVi extends AppLocalizations {
   String get emptyRoom => 'Phòng trống';
 
   @override
-  String get statusScheduled => 'Sắp xếp';
+  String get statusScheduled => 'Đã lên lịch';
 
   @override
-  String get statusBooking => 'Mở bán';
+  String get statusBooking => 'Đang chiếu';
 
   @override
   String get statusFull => 'Kín chỗ';
@@ -1074,7 +1074,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get statusCancelled => 'Đã hủy';
 
   @override
-  String get statusCompleted => 'Hoàn thành';
+  String get statusCompleted => 'Đã kết thúc';
 
   @override
   String get updateSuccess => 'Cập nhật thành công!';

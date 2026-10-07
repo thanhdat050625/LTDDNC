@@ -2089,13 +2089,13 @@ abstract class AppLocalizations {
   /// No description provided for @statusScheduled.
   ///
   /// In vi, this message translates to:
-  /// **'Sắp xếp'**
+  /// **'Đã lên lịch'**
   String get statusScheduled;
 
   /// No description provided for @statusBooking.
   ///
   /// In vi, this message translates to:
-  /// **'Mở bán'**
+  /// **'Đang chiếu'**
   String get statusBooking;
 
   /// No description provided for @statusFull.
@@ -2113,7 +2113,7 @@ abstract class AppLocalizations {
   /// No description provided for @statusCompleted.
   ///
   /// In vi, this message translates to:
-  /// **'Hoàn thành'**
+  /// **'Đã kết thúc'**
   String get statusCompleted;
 
   /// No description provided for @updateSuccess.

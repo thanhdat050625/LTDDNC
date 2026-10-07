@@ -512,11 +512,15 @@ class _ShowtimeBulkCreateScreenState extends State<ShowtimeBulkCreateScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        l10n.showtimeBulkStartDate,
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          color: theme.textSecondary,
+                                      FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          l10n.showtimeBulkStartDate,
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            color: theme.textSecondary,
+                                          ),
                                         ),
                                       ),
                                       const SizedBox(height: 4),
@@ -529,17 +533,19 @@ class _ShowtimeBulkCreateScreenState extends State<ShowtimeBulkCreateScreen> {
                                           ),
                                           const SizedBox(width: 6),
                                           Expanded(
-                                            child: Text(
-                                              _startDate != null
-                                                  ? DateFormat('dd/MM/yyyy')
-                                                      .format(_startDate!)
-                                                  : l10n.showtimeBulkSelectDate,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w600,
-                                                color: theme.textPrimary,
+                                            child: FittedBox(
+                                              fit: BoxFit.scaleDown,
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                _startDate != null
+                                                    ? DateFormat('dd/MM/yyyy')
+                                                        .format(_startDate!)
+                                                    : l10n.showtimeBulkSelectDate,
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: theme.textPrimary,
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -573,11 +579,15 @@ class _ShowtimeBulkCreateScreenState extends State<ShowtimeBulkCreateScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        l10n.showtimeBulkEndDate,
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          color: theme.textSecondary,
+                                      FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          l10n.showtimeBulkEndDate,
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            color: theme.textSecondary,
+                                          ),
                                         ),
                                       ),
                                       const SizedBox(height: 4),
@@ -590,17 +600,19 @@ class _ShowtimeBulkCreateScreenState extends State<ShowtimeBulkCreateScreen> {
                                           ),
                                           const SizedBox(width: 6),
                                           Expanded(
-                                            child: Text(
-                                              _endDate != null
-                                                  ? DateFormat('dd/MM/yyyy')
-                                                      .format(_endDate!)
-                                                  : l10n.showtimeBulkSelectDate,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w600,
-                                                color: theme.textPrimary,
+                                            child: FittedBox(
+                                              fit: BoxFit.scaleDown,
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                _endDate != null
+                                                    ? DateFormat('dd/MM/yyyy')
+                                                        .format(_endDate!)
+                                                    : l10n.showtimeBulkSelectDate,
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: theme.textPrimary,
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -617,44 +629,80 @@ class _ShowtimeBulkCreateScreenState extends State<ShowtimeBulkCreateScreen> {
                         Row(
                           children: [
                             Expanded(
-                              child: TextFormField(
-                                controller: _preShowController,
-                                keyboardType: TextInputType.number,
-                                decoration: InputDecoration(
-                                  isDense: true,
-                                  labelText: l10n.showtimeBulkPreShowMinutes,
-                                  labelStyle: TextStyle(
-                                    color: theme.textSecondary,
-                                    fontSize: 12,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      l10n.showtimeBulkPreShowMinutes,
+                                      style: TextStyle(
+                                        color: theme.textSecondary,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
                                   ),
-                                  prefixIcon: Icon(
-                                    LucideIcons.playCircle,
-                                    color: theme.textSecondary,
-                                    size: 18,
+                                  const SizedBox(height: 6),
+                                  TextFormField(
+                                    controller: _preShowController,
+                                    keyboardType: TextInputType.number,
+                                    decoration: InputDecoration(
+                                      isDense: true,
+                                      prefixIcon: Icon(
+                                        LucideIcons.playCircle,
+                                        color: theme.textSecondary,
+                                        size: 18,
+                                      ),
+                                      prefixIconConstraints:
+                                          const BoxConstraints(
+                                        minWidth: 36,
+                                        minHeight: 36,
+                                      ),
+                                    ),
+                                    style: TextStyle(color: theme.textPrimary),
                                   ),
-                                ),
-                                style: TextStyle(color: theme.textPrimary),
+                                ],
                               ),
                             ),
                             const SizedBox(width: 12),
                             Expanded(
-                              child: TextFormField(
-                                controller: _postBufferController,
-                                keyboardType: TextInputType.number,
-                                decoration: InputDecoration(
-                                  isDense: true,
-                                  labelText: l10n.showtimeBulkPostBufferMinutes,
-                                  labelStyle: TextStyle(
-                                    color: theme.textSecondary,
-                                    fontSize: 12,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      l10n.showtimeBulkPostBufferMinutes,
+                                      style: TextStyle(
+                                        color: theme.textSecondary,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
                                   ),
-                                  prefixIcon: Icon(
-                                    LucideIcons.sparkles,
-                                    color: theme.textSecondary,
-                                    size: 18,
+                                  const SizedBox(height: 6),
+                                  TextFormField(
+                                    controller: _postBufferController,
+                                    keyboardType: TextInputType.number,
+                                    decoration: InputDecoration(
+                                      isDense: true,
+                                      prefixIcon: Icon(
+                                        LucideIcons.sparkles,
+                                        color: theme.textSecondary,
+                                        size: 18,
+                                      ),
+                                      prefixIconConstraints:
+                                          const BoxConstraints(
+                                        minWidth: 36,
+                                        minHeight: 36,
+                                      ),
+                                    ),
+                                    style: TextStyle(color: theme.textPrimary),
                                   ),
-                                ),
-                                style: TextStyle(color: theme.textPrimary),
+                                ],
                               ),
                             ),
                           ],
