@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { join } from 'path';
+import { ENV_VARS } from './constants/env.constants';
 
 // Infrastructure Modules
 import { RedisModule } from './module/redis/redis.module';
@@ -25,6 +26,7 @@ import { ShowtimeModule } from './module/showtime/showtime.module';
 import { TicketModule } from './module/ticket/ticket.module';
 import { UsersModule } from './module/users/users.module';
 import { StatisticsModule } from './module/statistics/statistics.module';
+import { ShiftModule } from './module/shift/shift.module';
 
 @Module({
   imports: [
@@ -39,27 +41,39 @@ import { StatisticsModule } from './module/statistics/statistics.module';
 
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
+      envFilePath: ['.env', 'backend/.env'],
       expandVariables: true,
     }),
 
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        type: 'mysql',
-        host: config.get<string>('DB_HOST'),
-        port: config.get<number>('DB_PORT'),
-        username: config.get<string>('DB_USER'),
-        password: config.get<string>('DB_PASS'),
-        database: config.get<string>('DB_NAME'),
-        autoLoadEntities: true,
-        synchronize: true,
-        migrationsRun: true,
-        migrations: [
-          join(__dirname, 'migrations/*.js'),
-          join(__dirname, 'migrations/*.ts'),
-        ],
-      }),
+      useFactory: (config: ConfigService) => {
+        const host = config.get<string>(ENV_VARS.DB_HOST);
+        const port = config.get<number>(ENV_VARS.DB_PORT);
+        const username = config.get<string>(ENV_VARS.DB_USER);
+        const password = config.get<string>(ENV_VARS.DB_PASS);
+        const database = config.get<string>(ENV_VARS.DB_NAME);
+
+        if (!host || !port || !username || !password || !database) {
+          throw new Error('Thiếu biến môi trường kết nối cơ sở dữ liệu: DB_HOST, DB_PORT, DB_USER, DB_PASS, DB_NAME');
+        }
+
+        return {
+          type: 'mysql',
+          host,
+          port,
+          username,
+          password,
+          database,
+          autoLoadEntities: true,
+          synchronize: config.get<string>('NODE_ENV') !== 'production',
+          migrationsRun: true,
+          migrations: [
+            join(__dirname, 'migrations/*.js'),
+            join(__dirname, 'migrations/*.ts'),
+          ],
+        };
+      },
     }),
 
     RedisModule,
@@ -77,6 +91,7 @@ import { StatisticsModule } from './module/statistics/statistics.module';
     TicketModule,
     UsersModule,
     StatisticsModule,
+    ShiftModule,
   ],
   controllers: [],
   providers: [

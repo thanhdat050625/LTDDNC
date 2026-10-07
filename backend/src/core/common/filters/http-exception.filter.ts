@@ -14,7 +14,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     }
 
     const message = Array.isArray(exceptionResponse.message)
-      ? exceptionResponse.message[0]
+      ? exceptionResponse.message.join('. ')
       : exceptionResponse.message || exception.message;
 
     response.status(status).json({

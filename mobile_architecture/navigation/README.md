@@ -1,41 +1,72 @@
-# Navigation & Routing Guide (`GoRouter Flutter`)
+# Navigation & Routing Guide (`GoRouter Flutter Monorepo`)
 
-Tài liệu này chuẩn hóa quy tắc điều hướng (Routing) trong ứng dụng CINEPLEX Mobile sử dụng package `go_router`.
-
----
-
-## 1. Cấu hình GoRouter tập trung (`core/router/app_router.dart`)
-
-- Khai báo toàn bộ route tĩnh và động trong singleton `GoRouter`.
-- Phân nhóm routes theo vai trò:
-  - Public Routes: Splash, Login, Register, Home, Movie Detail, Showtimes.
-  - Protected Customer Routes: Seat Booking, Checkout, My Tickets, Profile.
-  - Staff Only Routes: Staff QR Scanner, Ticket Validation Result.
+Mỗi ứng dụng trong hệ thống CINEPLEX Mobile sở hữu một cấu hình `GoRouter` độc lập, phản ánh đúng vai trò và quyền hạn của người dùng.
 
 ---
 
-## 2. Route Guards & Redirection
+## 1. Cấu hình GoRouter trong từng ứng dụng
 
-Tự động kiểm tra trạng thái đăng nhập qua `refreshListenable` từ `AuthBloc`:
+### A. Customer App (`cineplex_client/lib/core/router/app_router.dart`)
+- **Root Navigator & StatefulShellRoute:** Quản lý Bottom Navigation Bar với 4 tabs:
+  - Tab 1: Trang chủ (`/home`)
+  - Tab 2: Danh sách Phim (`/movies`)
+  - Tab 3: Vé của tôi (`/my-tickets`)
+  - Tab 4: Cá nhân (`/profile`)
+- **Pushed Routes (Mở đè không có thanh điều hướng dưới):**
+  - Chi tiết phim: `/movie/:id`
+  - Chọn suất chiếu: `/showtimes`
+  - Giữ ghế: `/booking/:showtimeId`
+  - Bắp nước: `/concessions/:bookingId`
+  - Thanh toán: `/checkout/:bookingId`
+  - Kết quả thanh toán: `/payment/result`
+  - Chi tiết vé: `/tickets/:id`
+  - Thông báo: `/notifications`
+  - Chỉnh sửa hồ sơ: `/edit-profile`
+- **Route Guard:** Bắt buộc đăng nhập với các route thao tác thanh toán, vé và hồ sơ cá nhân.
+
+---
+
+### B. Staff App (`cineplex_staff/lib/router/staff_router.dart`)
+- **Routes:**
+  - Đăng nhập Nhân viên: `/login`
+  - Quét mã QR soát vé: `/scanner`
+- **Route Guard:**
+  - Nếu chưa đăng nhập: chuyển hướng về `/login`.
+  - Nếu đã đăng nhập với vai trò `STAFF` hoặc `ADMIN`: chuyển hướng vào `/scanner`.
+  - Nếu tài khoản không có quyền nhân viên: hiển thị lỗi truy cập và đăng xuất.
+
+---
+
+### C. Admin App (`cineplex_admin/lib/router/admin_router.dart`)
+- **Routes:**
+  - Đăng nhập Quản trị: `/login`
+  - Bảng điều khiển trung tâm: `/dashboard`
+  - Quản lý người dùng: `/users`
+  - Báo cáo thống kê: `/statistics`
+- **Route Guard:**
+  - Nếu chưa đăng nhập: chuyển hướng về `/login`.
+  - Chỉ cho phép tài khoản có vai trò `ADMIN` truy cập `/dashboard` và các module quản trị.
+
+---
+
+## 2. Đồng bộ Auth State (`Listenable`)
+
+Cả 3 ứng dụng đều sử dụng `ChangeNotifier` lắng nghe luồng sự kiện từ `AuthBloc` trong `mobile_shared`:
+
 ```dart
-redirect: (BuildContext context, GoRouterState state) {
-  final authState = context.read<AuthBloc>().state;
-  final isLoggingIn = state.matchedLocation == '/login';
+class _AuthRefreshNotifier extends ChangeNotifier {
+  late final StreamSubscription _subscription;
 
-  if (authState is! AuthAuthenticatedState) {
-    if (state.matchedLocation.startsWith('/checkout') ||
-        state.matchedLocation.startsWith('/staff')) {
-      return '/login';
-    }
+  _AuthRefreshNotifier(AuthBloc bloc) {
+    _subscription = bloc.stream.listen((_) => notifyListeners());
   }
-  return null;
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
 }
 ```
 
----
-
-## 3. Deep Linking Vé xem phim
-
-Hỗ trợ mở trực tiếp vé xem phim từ liên kết mã QR hoặc thông báo đẩy:
-- URL Scheme: `cineplex://tickets/:id`
-- Mở thẳng màn hình `TicketDetailScreen(ticketId: id)`.
+Khi trạng thái chuyển từ `AuthUnauthenticated` sang `AuthAuthenticated` (hoặc ngược lại), GoRouter tự động kích hoạt `redirect` callback mà không cần reload app thủ công.

@@ -1,9 +1,12 @@
 import {
-  Controller, Get, Put, Param, Body, Query,
+  Controller, Get, Post, Put, Param, Body, Query,
   ParseIntPipe, UseGuards, HttpCode, HttpStatus, Request,
+  UploadedFile, UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import multer from 'multer';
 import { UsersService } from './users.service';
-import { UpdateProfileDto, UpdateUserStatusDto } from './dto/users.dto';
+import { CreateStaffDto, GetUsersQueryDto, UpdateProfileDto, UpdateUserStatusDto } from './dto/users.dto';
 import { JwtAuthGuard } from '../../core/security/jwt/jwt-auth.guard';
 import { RolesGuard } from '../../core/security/roles/roles.guard';
 import { Roles } from '../../core/security/roles/roles.decorator';
@@ -17,11 +20,16 @@ export class UsersController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(EUserRole.ADMIN, EUserRole.STAFF)
   @HttpCode(HttpStatus.OK)
-  async getAllUsers(
-    @Query('page') page: number = 1,
-    @Query('pageSize') pageSize: number = 10,
-  ) {
-    return this.usersService.getAllUsers(page, pageSize);
+  async getAllUsers(@Query() query: GetUsersQueryDto) {
+    return this.usersService.getAllUsers(query);
+  }
+
+  @Post('staff')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(EUserRole.ADMIN)
+  @HttpCode(HttpStatus.CREATED)
+  async createStaff(@Body() dto: CreateStaffDto) {
+    return this.usersService.createStaff(dto);
   }
 
   @Get('search')
@@ -48,9 +56,19 @@ export class UsersController {
 
   @Put('profile')
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(
+    FileInterceptor('avatar', {
+      storage: multer.memoryStorage(),
+      limits: { fileSize: 5 * 1024 * 1024 },
+    }),
+  )
   @HttpCode(HttpStatus.OK)
-  async updateProfile(@Request() req, @Body() dto: UpdateProfileDto) {
-    return this.usersService.updateProfile(req.user.id, dto);
+  async updateProfile(
+    @Request() req,
+    @Body() dto: UpdateProfileDto,
+    @UploadedFile() avatar?: Express.Multer.File,
+  ) {
+    return this.usersService.updateProfile(req.user.id, dto, avatar);
   }
 
   @Put(':id/status')
@@ -60,7 +78,8 @@ export class UsersController {
   async updateUserStatus(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateUserStatusDto,
+    @Request() req,
   ) {
-    return this.usersService.updateUserStatus(id, dto.status);
+    return this.usersService.updateUserStatus(id, dto.status, req.user?.id);
   }
 }

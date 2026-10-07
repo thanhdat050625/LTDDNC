@@ -1,5 +1,5 @@
-import { IsDateString, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-validator';
-import { EUserStatus } from '../enums/user.enum';
+import { IsDateString, IsEmail, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, Min, MinLength } from 'class-validator';
+import { EUserRole, EUserStatus } from '../enums/user.enum';
 import { Type } from 'class-transformer';
 
 export class GetUsersQueryDto {
@@ -14,6 +14,36 @@ export class GetUsersQueryDto {
   @IsOptional()
   @Min(1)
   pageSize?: number = 10;
+
+  @IsEnum(EUserRole)
+  @IsOptional()
+  role?: EUserRole;
+
+  @IsEnum(EUserStatus)
+  @IsOptional()
+  status?: EUserStatus;
+
+  @IsString()
+  @IsOptional()
+  keyword?: string;
+}
+
+export class CreateStaffDto {
+  @IsString()
+  @IsNotEmpty({ message: 'Vui lòng nhập họ và tên' })
+  fullName: string;
+
+  @IsEmail({}, { message: 'Email không hợp lệ' })
+  @IsNotEmpty({ message: 'Vui lòng nhập email' })
+  email: string;
+
+  @IsString()
+  @MinLength(6, { message: 'Mật khẩu phải có ít nhất 6 ký tự' })
+  password: string;
+
+  @IsString()
+  @IsOptional()
+  phone?: string;
 }
 
 export class UpdateUserStatusDto {
@@ -38,4 +68,8 @@ export class UpdateProfileDto {
   @IsDateString()
   @IsOptional()
   dateOfBirth?: string | null;
+
+  @IsString()
+  @IsOptional()
+  avatar?: string | null;
 }

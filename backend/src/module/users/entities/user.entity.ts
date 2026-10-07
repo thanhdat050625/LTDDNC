@@ -21,6 +21,9 @@ export class User {
   @Column({ nullable: true })
   phone: string;
 
+  @Column({ type: 'text', nullable: true })
+  avatar: string;
+
   @Column({ unique: true })
   email: string;
 

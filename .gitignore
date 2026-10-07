@@ -13,6 +13,7 @@ logs/
 .env.prod
 .env.*
 !.env.example
+!.env.prod.example
 
 # OS files
 .DS_Store
@@ -24,17 +25,14 @@ Thumbs.db
 !.vscode/extensions.json
 !.vscode/settings.json
 
-# Flutter / Dart Mobile artifacts
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-.packages
-.pub-cache/
-.pub/
-*.apk
-*.aab
-*.ipa
-
 # Testing & Coverage
 coverage/
 .nyc_output/
+
+# Keystore & Android signing properties
+*.jks
+*.keystore
+key.properties
+
+# Agents Teamwork
+.agents/teamwork

@@ -1,0 +1,1183 @@
+{
+  "@@locale": "vi",
+  "appTitle": "CINEPLEX",
+  "appName": "Cineplex",
+  "login": "Đăng nhập",
+  "register": "Đăng ký",
+  "email": "Email",
+  "password": "Mật khẩu",
+  "confirmPassword": "Xác nhận mật khẩu",
+  "forgotPassword": "Quên mật khẩu?",
+  "sendOtp": "Gửi mã OTP",
+  "otpCode": "Mã OTP",
+  "otpSent": "Mã OTP đã được gửi",
+  "otpVerify": "Xác thực OTP",
+  "registerSuccess": "Đăng ký thành công",
+  "resetPasswordSuccess": "Đặt lại mật khẩu thành công",
+  "changePassword": "Đổi mật khẩu",
+  "oldPassword": "Mật khẩu cũ",
+  "newPassword": "Mật khẩu mới",
+  "changePasswordSuccess": "Đổi mật khẩu thành công",
+  "changePasswordDescription": "Để bảo mật tài khoản, vui lòng nhập mật khẩu cũ và đặt mật khẩu mới có ít nhất 6 ký tự.",
+  "oldPasswordRequired": "Vui lòng nhập mật khẩu cũ",
+  "newPasswordRequired": "Vui lòng nhập mật khẩu mới",
+  "confirmPasswordRequired": "Vui lòng xác nhận mật khẩu mới",
+  "newPasswordSameAsOld": "Mật khẩu mới phải khác mật khẩu cũ",
+  "logout": "Đăng xuất",
+  "logoutConfirm": "Bạn có chắc chắn muốn đăng xuất?",
+  "rememberMe": "Ghi nhớ đăng nhập",
+  "noAccount": "Chưa có tài khoản?",
+  "haveAccount": "Đã có tài khoản?",
+  "emailRequired": "Email không được để trống",
+  "passwordRequired": "Mật khẩu không được để trống",
+  "passwordMinLength": "Mật khẩu phải có ít nhất 6 ký tự",
+  "passwordMismatch": "Mật khẩu không khớp",
+  "emailInvalid": "Email không hợp lệ",
+  "home": "Trang chủ",
+  "nowShowing": "Đang chiếu",
+  "comingSoon": "Sắp chiếu",
+  "audiencePick": "Khán giả bình chọn",
+  "seeAll": "Xem tất cả",
+  "welcome": "Xin chào",
+  "totalCinemas": "Tổng số rạp",
+  "todayShowtimes": "Suất chiếu hôm nay",
+  "movies": "Phim",
+  "movieDetail": "Chi tiết phim",
+  "duration": "Thời lượng",
+  "durationMinutes": "{minutes} phút",
+  "@durationMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "ageLimit": "Độ tuổi",
+  "genre": "Thể loại",
+  "director": "Đạo diễn",
+  "cast": "Diễn viên",
+  "language": "Ngôn ngữ",
+  "releaseDate": "Ngày khởi chiếu",
+  "description": "Nội dung",
+  "trailer": "Trailer",
+  "bookNow": "Đặt vé ngay",
+  "noMovies": "Không có phim nào",
+  "movieSearchHint": "Tìm kiếm phim...",
+  "movieNowShowing": "Đang chiếu",
+  "movieComingSoon": "Sắp chiếu",
+  "movieAll": "Tất cả",
+  "movieNoResults": "Không tìm thấy phim phù hợp",
+  "movieSearchError": "Có lỗi khi tải danh sách phim",
+  "movieFilterStatus": "Trạng thái",
+  "movieFilterGenre": "Thể loại",
+  "rating": "Đánh giá",
+  "searchMovies": "Tìm kiếm phim",
+  "filterByGenre": "Lọc theo thể loại",
+  "allGenres": "Tất cả thể loại",
+  "selectShowtime": "Chọn suất chiếu",
+  "selectDate": "Chọn ngày",
+  "selectCinema": "Chọn rạp",
+  "format2D": "2D",
+  "format3D": "3D",
+  "formatIMAX": "IMAX",
+  "noShowtimes": "Không có suất chiếu nào",
+  "showtimeAt": "Suất chiếu lúc {time}",
+  "@showtimeAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "seatSelection": "Chọn ghế",
+  "seatMapTitle": "Sơ đồ phòng chiếu",
+  "selectSeats": "Vui lòng chọn ghế",
+  "seatStandard": "Thường",
+  "seatNormal": "Thường",
+  "seatVIP": "VIP",
+  "seatVip": "VIP",
+  "seatCouple": "Ghế đôi",
+  "seatSelected": "Đang chọn",
+  "seatHeld": "Đang giữ",
+  "seatBooked": "Đã đặt",
+  "seatAvailable": "Trống",
+  "seatMaxSelection": "Bạn chỉ có thể chọn tối đa 8 ghế.",
+  "seatLoadError": "Không thể tải sơ đồ ghế",
+  "seatEmpty": "Không tìm thấy sơ đồ ghế cho suất chiếu này.",
+  "seatReleaseError": "Không thể nhả ghế, vui lòng thử lại",
+  "holdSeatExpired": "Hết thời gian giữ ghế",
+  "holdTimerLabel": "Thời gian giữ ghế:",
+  "holdTimerMinutes": "{minutes}:{seconds}",
+  "@holdTimerMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      },
+      "seconds": {
+        "type": "String"
+      }
+    }
+  },
+  "continueBtn": "Tiếp tục",
+  "maxSeatsReached": "Đã đạt số lượng ghế tối đa",
+  "seatHeldByOther": "Ghế đã có người chọn",
+  "seatsSelected": "Các ghế đã chọn:",
+  "totalPrice": "Tổng tiền: {price}",
+  "@totalPrice": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "createBooking": "Tạo đơn hàng",
+  "bookingSeatAlreadyHeld": "Ghế đã có người giữ hoặc đã được đặt",
+  "bookingMaxSeatsExceeded": "Chỉ được chọn tối đa 8 ghế mỗi đơn hàng",
+  "bookingShowtimeExpired": "Suất chiếu đã bắt đầu hoặc không còn khả dụng",
+  "bookingSeatRoomMismatch": "Ghế được chọn không thuộc phòng chiếu này",
+  "bookingHoldExpired": "Đơn đặt vé đã hết thời gian giữ chỗ",
+  "concessions": "Bắp nước",
+  "popcornDrinks": "Bắp & Nước",
+  "addToOrder": "Thêm vào đơn",
+  "removeFromOrder": "Bỏ khỏi đơn",
+  "quantity": "Số lượng",
+  "subtotal": "Tạm tính",
+  "skipConcession": "Bỏ qua",
+  "skip": "Bỏ qua",
+  "availableSeatsCount": "{available}/{total} ghế",
+  "@availableSeatsCount": {
+    "placeholders": {
+      "available": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "concessionTotal": "Tổng bắp nước",
+  "checkout": "Thanh toán",
+  "orderSummary": "Tóm tắt đơn hàng",
+  "paymentMethod": "Phương thức thanh toán",
+  "selectPaymentMethod": "Chọn phương thức thanh toán",
+  "momo": "Ví MoMo",
+  "vnpay": "VNPAY",
+  "paypal": "PayPal",
+  "cash": "Tiền mặt",
+  "payNow": "Thanh toán ngay",
+  "processing": "Đang xử lý...",
+  "paymentSuccess": "Thanh toán thành công",
+  "paymentFailed": "Thanh toán thất bại",
+  "paymentPending": "Đang chờ thanh toán",
+  "paymentExpired": "Thanh toán hết hạn",
+  "bookingCode": "Mã đặt vé",
+  "secondsRemaining": "{seconds} giây",
+  "@secondsRemaining": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "loyaltyPoints": "Điểm tích luỹ",
+  "usePoints": "Sử dụng điểm",
+  "pointsDiscount": "Giảm giá từ điểm",
+  "maxPointsDiscount": "Giảm tối đa",
+  "totalAmount": "Tổng cộng",
+  "discountAmount": "Giảm giá",
+  "ticketTotal": "Tổng tiền vé",
+  "concessionTotalLabel": "Tổng tiền bắp nước",
+  "promotionCode": "Mã khuyến mãi",
+  "applyPromotion": "Áp dụng",
+  "removePromotion": "Gỡ bỏ",
+  "promotionApplied": "Đã áp dụng mã khuyến mãi",
+  "promotionRemoved": "Đã gỡ bỏ mã khuyến mãi",
+  "promotionInvalid": "Mã khuyến mãi không hợp lệ",
+  "promoNotFound": "Mã khuyến mãi không tồn tại",
+  "promoInactive": "Mã khuyến mãi đã ngưng hoạt động",
+  "promoExpired": "Mã khuyến mãi đã hết hạn hoặc chưa bắt đầu",
+  "promoMaxUsage": "Mã khuyến mãi đã hết lượt sử dụng",
+  "promoMovieMismatch": "Mã khuyến mãi không áp dụng cho phim này",
+  "promoOrderTotalZero": "Đơn hàng có tổng tiền bằng 0 không thể áp dụng mã",
+  "promoBookingNotPending": "Đơn hàng không ở trạng thái chờ thanh toán",
+  "promoBookingExpired": "Đơn hàng đã hết hạn thanh toán",
+  "retryPayment": "Đổi phương thức thanh toán",
+  "reselectSeats": "Quay lại chọn ghế",
+  "concessionUpdateFailed": "Cập nhật bắp nước thất bại",
+  "redeemWithPoints": "Đổi điểm",
+  "myTickets": "Vé của tôi",
+  "ticketDetail": "Chi tiết vé",
+  "qrCode": "Mã QR",
+  "seatInfo": "Thông tin ghế",
+  "noTickets": "Chưa có vé nào",
+  "checkedIn": "Đã check-in",
+  "checkedInAt": "Check-in lúc {time}",
+  "@checkedInAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "notCheckedIn": "Chưa check-in",
+  "ticketActive": "Khả dụng",
+  "ticketUsed": "Đã sử dụng",
+  "ticketCancelled": "Đã hủy",
+  "upcomingTickets": "Sắp diễn ra",
+  "pastTickets": "Đã qua",
+  "bookingHistory": "Lịch sử đặt vé",
+  "notifications": "Thông báo",
+  "noNotifications": "Không có thông báo nào",
+  "markAllRead": "Đánh dấu tất cả đã đọc",
+  "unreadCount": "{count} chưa đọc",
+  "@unreadCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationTicketConfirm": "Xác nhận đặt vé",
+  "notificationPromotion": "Khuyến mãi",
+  "notificationReminder": "Nhắc nhở",
+  "notificationSystem": "Hệ thống",
+  "notificationPaymentFailed": "Thanh toán thất bại",
+  "profile": "Tài khoản",
+  "editProfile": "Chỉnh sửa thông tin",
+  "fullName": "Họ và tên",
+  "phone": "Số điện thoại",
+  "gender": "Giới tính",
+  "dateOfBirth": "Ngày sinh",
+  "male": "Nam",
+  "female": "Nữ",
+  "other": "Khác",
+  "saveChanges": "Lưu thay đổi",
+  "profileUpdated": "Cập nhật thành công",
+  "loyaltyInfo": "Thông tin thẻ thành viên",
+  "earnRate": "Tỉ lệ tích điểm",
+  "pointValue": "Giá trị điểm",
+  "settings": "Cài đặt",
+  "darkMode": "Chế độ tối",
+  "lightMode": "Chế độ sáng",
+  "vietnamese": "Tiếng Việt",
+  "english": "English",
+  "appVersion": "Phiên bản ứng dụng",
+  "about": "Về chúng tôi",
+  "staffDashboard": "Tổng quan",
+  "qrScanner": "Quét mã QR",
+  "scanTicket": "Quét vé",
+  "scanResult": "Kết quả quét",
+  "ticketValid": "Vé hợp lệ",
+  "ticketInvalid": "Vé không hợp lệ",
+  "ticketAlreadyChecked": "Vé đã được kiểm tra",
+  "counterSale": "Bán tại quầy",
+  "selectCustomer": "Chọn khách hàng",
+  "searchCustomer": "Tìm kiếm khách hàng",
+  "statistics": "Thống kê",
+  "revenue": "Doanh thu",
+  "revenueReport": "Báo cáo doanh thu",
+  "movieStats": "Thống kê phim",
+  "systemSummary": "Tổng quan hệ thống",
+  "timeFrame": "Khung thời gian",
+  "day": "Ngày",
+  "week": "Tuần",
+  "month": "Tháng",
+  "year": "Năm",
+  "ticketsSold": "Số vé đã bán",
+  "occupancyRate": "Tỉ lệ lấp đầy",
+  "activeMovies": "Phim đang chiếu",
+  "totalRevenue": "Tổng doanh thu",
+  "loading": "Đang tải...",
+  "error": "Đã xảy ra lỗi",
+  "retry": "Thử lại",
+  "cancel": "Hủy",
+  "confirm": "Xác nhận",
+  "save": "Lưu",
+  "delete": "Xóa",
+  "back": "Quay lại",
+  "next": "Tiếp theo",
+  "search": "Tìm kiếm",
+  "noData": "Không có dữ liệu",
+  "noInternet": "Không có kết nối mạng",
+  "serverError": "Lỗi máy chủ",
+  "unknownError": "Lỗi không xác định",
+  "success": "Thành công",
+  "warning": "Cảnh báo",
+  "info": "Thông tin",
+  "close": "Đóng",
+  "ok": "Đồng ý",
+  "yes": "Có",
+  "no": "Không",
+  "refresh": "Làm mới",
+  "more": "Thêm",
+  "less": "Ẩn bớt",
+  "viewAll": "Xem tất cả",
+  "selectAll": "Chọn tất cả",
+  "clear": "Xóa",
+  "apply": "Áp dụng",
+  "reset": "Đặt lại",
+  "seatCount": "{count} ghế đã chọn",
+  "@seatCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "priceFormat": "{price}",
+  "@priceFormat": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "dateFormat": "{date}",
+  "@dateFormat": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "fullNameRequired": "Vui lòng nhập họ và tên",
+  "loyaltyPolicyTitle": "Chính sách tích & tiêu điểm",
+  "loyaltyPolicyEarn": "Tích lũy: Nhận ngay 10% giá trị đơn hàng sau khi thanh toán thành công.",
+  "loyaltyPolicyDiscount": "Giảm giá: Dùng điểm giảm giá tối đa 20% tổng đơn (1 điểm = 1 VNĐ).",
+  "loyaltyPolicyGifts": "Đổi quà: Dùng điểm quy đổi các Combo bắp nước miễn phí.",
+  "currentPointsBalance": "Số dư điểm hiện tại:",
+  "pointsSuffix": "điểm",
+  "managementSection": "Quản lý & Nghiệp vụ",
+  "userManagement": "Quản lý người dùng",
+  "scanBookingCodeWarning": "Đây là mã đặt vé (BK-), vui lòng quét mã QR của từng vé (bắt đầu bằng TKT-).",
+  "scanAlreadyCheckedIn": "Vé này đã được soát trước đó!",
+  "scanTicketNotActive": "Vé không còn hiệu lực!",
+  "scanTicketNotFound": "Không tìm thấy vé trong hệ thống!",
+  "scanSuccess": "Soát vé thành công",
+  "manualTicketInput": "Nhập mã vé thủ công (TKT-...)",
+  "verifyTicket": "Soát vé",
+  "searchUser": "Tìm kiếm theo email hoặc số điện thoại",
+  "blockUser": "Khóa tài khoản",
+  "unblockUser": "Mở khóa",
+  "confirmBlockUser": "Bạn có chắc chắn muốn khóa tài khoản này?",
+  "confirmUnblockUser": "Bạn có chắc chắn muốn mở khóa tài khoản này?",
+  "userStatusUpdated": "Cập nhật trạng thái người dùng thành công",
+  "moviePerformance": "Top phim bán chạy",
+  "ticketsSoldCol": "Vé bán",
+  "allMonths": "Tất cả các tháng",
+  "monthFormat": "Tháng {month}",
+  "@monthFormat": {
+    "placeholders": {
+      "month": {
+        "type": "int"
+      }
+    }
+  },
+  "ticketListEmptyPrompt": "Bạn chưa có vé xem phim nào",
+  "selectGender": "Chọn giới tính",
+  "phoneInvalid": "Số điện thoại không hợp lệ",
+  "orderStatus": "Trạng thái",
+  "orderCode": "Mã đơn hàng",
+  "screeningRoom": "Phòng chiếu",
+  "totalUsersCount": "Tổng số: {count}",
+  "@totalUsersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "blockedUsersCount": "Đã khóa: {count}",
+  "@blockedUsersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noMatchingUsers": "Không tìm thấy người dùng phù hợp",
+  "confirmBlockUserWithName": "Bạn có chắc chắn muốn khóa tài khoản {name}? Người dùng sẽ không thể đăng nhập hoặc đặt vé.",
+  "@confirmBlockUserWithName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmUnblockUserWithName": "Bạn có chắc chắn muốn mở khóa tài khoản {name}?",
+  "@confirmUnblockUserWithName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "qrCodeAvailableAfterPayment": "Mã QR chỉ khả dụng sau khi đơn hàng được thanh toán thành công.",
+  "noRevenueInPeriod": "Không có phát sinh doanh thu trong giai đoạn này",
+  "scanSuccessDetail": "{successMsg}!\nGhế: {seat} • Mã: {code}",
+  "@scanSuccessDetail": {
+    "placeholders": {
+      "successMsg": {
+        "type": "String"
+      },
+      "seat": {
+        "type": "String"
+      },
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "scanTicketSubtitle": "Soát vé vào phòng chiếu",
+  "staffLoginTitle": "Quản Lý Rạp",
+  "staffLoginSubtitle": "Nhân Viên",
+  "adminLoginTitle": "Quản Trị Hệ Thống",
+  "adminLoginSubtitle": "Admin",
+  "userManagementSubtitle": "Danh sách & Quản lý tài khoản",
+  "statisticsSubtitle": "Báo cáo & Thống kê doanh thu",
+  "accessDenied": "Truy cập bị từ chối. Không đủ quyền hạn.",
+  "counterSaleDesc": "Bán vé & Thanh toán",
+  "screen": "MÀN HÌNH",
+  "popcornOnly": "Bắp rang bơ",
+  "largeDrinkOnly": "Nước ngọt lớn",
+  "combo1Popcorn2Drinks": "Combo 1 bắp 2 nước",
+  "movieTicket": "Vé xem phim ({count} ghế)",
+  "@movieTicket": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "discountPointsTitle": "Giảm giá (Điểm)",
+  "enterPoints": "Nhập số điểm",
+  "loyaltyPrompt": "Khách hàng có {points} điểm. Dùng điểm để giảm giá?",
+  "@loyaltyPrompt": {
+    "placeholders": {
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentSuccessPrompt": "Thanh toán thành công. Đã tạo mã vé {code}.",
+  "@paymentSuccessPrompt": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "cineplexDistrict1": "Cineplex Quận 1",
+  "today": "Hôm nay",
+  "roomPrefix": "Phòng {id}",
+  "@roomPrefix": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "standard2D": "Standard • 2D",
+  "manageShowtimes": "Quản lý Suất chiếu",
+  "showtimeTotal": "Tổng suất chiếu",
+  "showtimeBooking": "Đang mở bán",
+  "showtimeScheduled": "Sắp chiếu",
+  "showtimeCancelled": "Đã hủy",
+  "addShowtime": "Thêm Suất chiếu",
+  "editShowtime": "Chỉnh sửa Suất chiếu",
+  "filterByDate": "Lọc theo ngày",
+  "noShowtimesFound": "Không có suất chiếu nào.",
+  "confirmDelete": "Xác nhận xóa",
+  "confirmDeleteShowtimeDesc": "Bạn có chắc muốn xóa suất chiếu này không?",
+  "unknownMovie": "Phim không xác định",
+  "emptyRoom": "Phòng trống",
+  "statusScheduled": "Đã lên lịch",
+  "statusBooking": "Đang chiếu",
+  "statusFull": "Kín chỗ",
+  "statusCancelled": "Đã hủy",
+  "statusCompleted": "Đã kết thúc",
+  "updateSuccess": "Cập nhật thành công!",
+  "addSuccess": "Thêm suất chiếu thành công!",
+  "fillRequiredFields": "Vui lòng điền đầy đủ thông tin bắt buộc",
+  "movieLabel": "Phim",
+  "selectMovieReq": "Vui lòng chọn phim",
+  "cinemaLabel": "Rạp",
+  "selectCinemaReq": "Vui lòng chọn rạp",
+  "roomLabel": "Phòng chiếu",
+  "selectRoomReq": "Vui lòng chọn phòng chiếu",
+  "formatLabel": "Định dạng",
+  "statusLabel": "Trạng thái",
+  "selectStartTimeReq": "Vui lòng chọn thời gian bắt đầu",
+  "createShowtimeBtn": "Tạo suất chiếu",
+  "showtimeBulkCreate": "Tạo lịch tự động",
+  "showtimeBulkCreateTitle": "Tạo Lịch Chiếu Hàng Loạt",
+  "showtimeBulkStartDate": "Ngày bắt đầu",
+  "showtimeBulkEndDate": "Ngày kết thúc",
+  "showtimeBulkSelectDate": "Chọn ngày",
+  "showtimeBulkPrimaryRoom": "Phòng ưu tiên (Tùy chọn)",
+  "showtimeBulkAutoAssignRoom": "Tự động phân phòng",
+  "showtimeBulkPreShowMinutes": "QC/Trailer (phút)",
+  "showtimeBulkPostBufferMinutes": "Dọn rạp (phút)",
+  "showtimeBulkTimeSlots": "Khung giờ chiếu",
+  "showtimeBulkAddTimeSlot": "Thêm khung giờ",
+  "showtimeBulkSelectTime": "Chọn giờ",
+  "showtimeBulkPreview": "Xem trước",
+  "showtimeBulkPreviewDesc": "{days} ngày × {slots} khung giờ = {total} suất dự kiến",
+  "@showtimeBulkPreviewDesc": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "slots": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "showtimeBulkSubmitBtn": "Tạo lịch hàng loạt",
+  "showtimeBulkSubmitting": "Đang tạo lịch chiếu...",
+  "showtimeBulkSuccessSummary": "Tạo thành công {count} suất chiếu",
+  "@showtimeBulkSuccessSummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "showtimeBulkFailedSummary": "Thất bại {count} suất chiếu",
+  "@showtimeBulkFailedSummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "showtimeBulkResultTitle": "Kết quả tạo lịch tự động",
+  "showtimeBulkDateRangeError": "Ngày kết thúc phải sau hoặc bằng ngày bắt đầu",
+  "showtimeBulkTimeSlotsEmptyError": "Cần ít nhất một khung giờ chiếu",
+  "showtimeBulkDone": "Hoàn tất",
+  "manageCinemas": "Quản lý Rạp",
+  "addCinema": "Thêm Rạp",
+  "editCinema": "Sửa Rạp",
+  "cinemaName": "Tên rạp",
+  "address": "Địa chỉ",
+  "roomTotal": "Tổng số phòng",
+  "roomCount": "Số phòng",
+  "manageRooms": "Phòng chiếu",
+  "addRoom": "Thêm phòng",
+  "editRoom": "Sửa phòng",
+  "roomName": "Tên phòng",
+  "roomType": "Loại phòng",
+  "noCinemas": "Chưa có rạp nào.",
+  "noRooms": "Chưa có phòng nào.",
+  "confirmDeleteCinema": "Bạn có chắc muốn xóa rạp này không?",
+  "confirmDeleteRoom": "Bạn có chắc muốn xóa phòng chiếu này không?",
+  "managePromotions": "Quản lý Khuyến mãi",
+  "addPromotion": "Thêm Khuyến mãi",
+  "editPromotion": "Sửa Khuyến mãi",
+  "promotionSearchPlaceholder": "Tìm kiếm theo mã, mô tả...",
+  "promotionTotal": "Tổng khuyến mãi",
+  "promotionActive": "Đang áp dụng",
+  "promotionExpired": "Đã hết hạn",
+  "promotionPaused": "Tạm dừng",
+  "promoCode": "Mã khuyến mãi",
+  "promoDescription": "Mô tả",
+  "discountType": "Loại giảm giá",
+  "discountValue": "Mức giảm",
+  "percentage": "Phần trăm (%)",
+  "fixedAmount": "Số tiền cố định",
+  "maxUsage": "Số lần dùng tối đa",
+  "noPromotions": "Chưa có khuyến mãi nào.",
+  "confirmDeletePromotion": "Bạn có chắc chắn muốn xóa mã khuyến mãi này không?",
+  "startDate": "Ngày bắt đầu",
+  "endDate": "Ngày kết thúc",
+  "manageConcessions": "Quản lý Bắp nước",
+  "addProduct": "Thêm sản phẩm",
+  "editProduct": "Sửa sản phẩm",
+  "productName": "Tên sản phẩm",
+  "stockQuantity": "Tồn kho",
+  "lowStock": "Sắp hết",
+  "outOfStock": "Hết hàng",
+  "totalProducts": "Tổng sản phẩm",
+  "noConcessions": "Chưa có sản phẩm nào.",
+  "confirmDeleteProduct": "Bạn có chắc muốn xóa sản phẩm này không?",
+  "priceLabel": "Giá",
+  "productImage": "Ảnh sản phẩm",
+  "selectImage": "Chọn ảnh",
+  "changeImage": "Đổi ảnh",
+  "changeAvatar": "Thay đổi ảnh đại diện",
+  "removeImage": "Xóa ảnh",
+  "takePhoto": "Chụp ảnh",
+  "chooseFromGallery": "Chọn từ thư viện",
+  "imageUrlOptional": "Hoặc dán URL ảnh",
+  "enterImageUrl": "Nhập đường dẫn ảnh (URL)",
+  "searchConcessionPlaceholder": "Tìm kiếm bắp nước...",
+  "inStockCount": "Còn {count}",
+  "@inStockCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lowStockCount": "Sắp hết: {count}",
+  "@lowStockCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "manageMovies": "Quản lý Phim",
+  "ticketSaleAtCounter": "Bán vé tại quầy",
+  "staffRole": "Nhân viên",
+  "adminRole": "Quản trị viên",
+  "filterAll": "Tất cả",
+  "imageUploadError": "Không thể tải ảnh lên",
+  "noResultsFound": "Không tìm thấy kết quả",
+  "invalidAmount": "Giá trị không hợp lệ",
+  "customerRole": "Khách hàng",
+  "tabAll": "Tất cả",
+  "tabCustomers": "Khách hàng",
+  "tabStaff": "Nhân viên",
+  "statusAll": "Tất cả",
+  "statusActive": "Hoạt động",
+  "statusBlocked": "Đã khóa",
+  "totalCustomersCount": "Khách hàng: {count}",
+  "@totalCustomersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "totalStaffCount": "Nhân viên: {count}",
+  "@totalStaffCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addStaff": "Thêm nhân viên",
+  "createStaffTitle": "Tạo tài khoản nhân viên",
+  "createStaffSubtitle": "Cấp tài khoản truy cập hệ thống cho nhân viên rạp",
+  "staffCreatedSuccess": "Tạo tài khoản nhân viên thành công",
+  "fullNameLabel": "Họ và tên",
+  "emailLabel": "Email",
+  "phoneLabel": "Số điện thoại",
+  "passwordLabel": "Mật khẩu",
+  "confirmPasswordLabel": "Xác nhận mật khẩu",
+  "saveStaffButton": "Tạo nhân viên",
+  "accountDetailsTitle": "Chi tiết tài khoản",
+  "joinedDateLabel": "Ngày tham gia",
+  "loyaltyPointsTitle": "Điểm tích lũy",
+  "cannotBlockSelf": "Bạn không thể khóa tài khoản của chính mình",
+  "pageIndicator": "Trang {current} / {total}",
+  "@pageIndicator": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "nextPage": "Trang sau",
+  "prevPage": "Trang trước",
+  "confirmPasswordMismatch": "Mật khẩu xác nhận không khớp",
+  "notProvided": "Chưa cập nhật",
+  "genderLabel": "Giới tính",
+  "dobLabel": "Ngày sinh",
+  "accountInfo": "Thông tin tài khoản",
+  "resetFilters": "Đặt lại bộ lọc",
+  "totalAccounts": "Tổng tài khoản",
+  "fieldRequired": "Vui lòng nhập trường này",
+  "errorOccurred": "Có lỗi xảy ra. Vui lòng thử lại.",
+  "productDescription": "Mô tả sản phẩm",
+  "productDetail": "Chi tiết sản phẩm",
+  "revenueStatistics": "Thống kê Doanh thu",
+  "filterByYear": "Theo năm",
+  "filterByMonth": "Theo tháng",
+  "filterByDateRange": "Khoảng ngày",
+  "selectDateRange": "Chọn khoảng ngày",
+  "dateFrom": "Từ ngày",
+  "dateTo": "Đến ngày",
+  "totalRevenueLabel": "Tổng doanh thu kỳ này",
+  "genreAll": "Tất cả",
+  "genreAction": "Hành động",
+  "genreComedy": "Hài hước",
+  "genreDrama": "Chính kịch",
+  "genreHorror": "Kinh dị",
+  "genreSciFi": "Khoa học viễn tưởng",
+  "genreRomance": "Lãng mạn",
+  "genreAnimation": "Hoạt hình",
+  "genreAdventure": "Phiêu lưu",
+  "genreThriller": "Giật gân",
+  "genreFantasy": "Giả tưởng",
+  "genreDocumentary": "Tài liệu",
+  "bookingStatusPending": "Chờ thanh toán",
+  "bookingStatusPaid": "Đã thanh toán",
+  "bookingStatusCancelled": "Đã hủy",
+  "bookingStatusExpired": "Hết hạn",
+  "bookingStatusConfirmed": "Đã xác nhận",
+  "paymentStatusPending": "Đang xử lý",
+  "paymentStatusSuccess": "Thành công",
+  "paymentStatusFailed": "Thất bại",
+  "paymentStatusCancelled": "Đã hủy",
+  "paymentResult": "Kết quả thanh toán",
+  "paymentSuccessful": "Thanh toán thành công!",
+  "viewTickets": "Xem vé của tôi",
+  "bookingCodeWithParam": "Mã đặt vé: {code}",
+  "@bookingCodeWithParam": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "simulateSuccess": "Mô phỏng thanh toán thành công",
+  "webviewPlaceholder": "Cổng thanh toán trực tuyến",
+  "specialDiscount": "Khuyến mãi đặc biệt",
+  "unknownCinema": "Rạp không xác định",
+  "defaultMovieTitle": "Phim Cineplex",
+  "concessionCombo": "Combo bắp nước",
+  "paymentMethodMomo": "Ví MoMo",
+  "paymentMethodVnpay": "Cổng VNPAY",
+  "paymentMethodZaloPay": "Ví ZaloPay",
+  "paymentMethodCard": "Thẻ ATM / Thẻ quốc tế",
+  "paymentMethodCash": "Tiền mặt tại quầy",
+  "epassTitle": "Vé điện tử (E-Pass)",
+  "epassInstruction": "Vui lòng xuất trình mã QR này tại cửa kiểm soát để vào rạp",
+  "ticketFormat2D": "2D",
+  "ticketFormat3D": "3D",
+  "ticketFormatIMAX": "IMAX",
+  "checkinStatusValid": "HỢP LỆ",
+  "checkinStatusAlreadyUsed": "ĐÃ SOÁT TRƯỚC ĐÓ",
+  "checkinStatusInvalid": "KHÔNG HỢP LỆ",
+  "checkinSuccessBanner": "Soát vé thành công - Mời khách vào rạp",
+  "checkinWarningBanner": "Cảnh báo: Vé đã được sử dụng trước đó!",
+  "checkinErrorBanner": "Từ chối: Vé không hợp lệ hoặc đã bị hủy!",
+  "checkinTimeLabel": "Thời gian soát vé",
+  "checkinStaffLabel": "Nhân viên soát vé",
+  "customerNameLabel": "Tên khách hàng",
+  "ticketCodeLabel": "Mã vé",
+  "flashToggle": "Bật/Tắt đèn Flash",
+  "switchCamera": "Đổi camera",
+  "scannerPrompt": "Hướng camera về phía mã QR trên vé của khách",
+  "scanNextTicket": "Quét vé tiếp theo",
+  "manualCodeHint": "Nhập mã vé (VD: TKT-12345)",
+  "verifySuccessPrompt": "Vé {code} đã được xác nhận thành công!",
+  "@verifySuccessPrompt": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "shiftDashboard": "Bảng điều khiển ca trực",
+  "shiftInfo": "Thông tin ca trực",
+  "currentShift": "Ca trực hiện tại",
+  "assignedCinema": "Rạp làm việc",
+  "staffName": "Nhân viên trực",
+  "ticketsScannedToday": "Số vé đã soát hôm nay",
+  "counterRevenueToday": "Doanh thu tại quầy",
+  "upcomingShowtimesCount": "Suất chiếu sắp tới",
+  "quickActions": "Thao tác nhanh",
+  "actionScanTicket": "Soát vé vào rạp",
+  "actionCounterSale": "Bán vé tại quầy",
+  "actionFastPOS": "Bán bắp nước nhanh",
+  "actionRoomStatus": "Tình trạng phòng chiếu",
+  "endShift": "Kết thúc ca trực",
+  "shiftSummary": "Tổng kết ca trực",
+  "fastPosTitle": "Bán bắp nước nhanh",
+  "posCategoryAll": "Tất cả",
+  "posCategoryPopcorn": "Bắp rang bơ",
+  "posCategoryDrink": "Nước giải khát",
+  "posCategoryCombo": "Combo bắp nước",
+  "posCategorySnack": "Đồ ăn nhẹ",
+  "quickOrder": "Đơn hàng nhanh",
+  "cartItemsCount": "{count} món",
+  "@cartItemsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "clearCart": "Xóa giỏ hàng",
+  "confirmOrder": "Xác nhận đơn hàng",
+  "customerPhoneLookup": "Tra cứu SĐT khách hàng",
+  "searchCustomerHint": "Nhập số điện thoại khách hàng...",
+  "customerPointsDisplay": "Điểm tích lũy: {points}",
+  "@customerPointsDisplay": {
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "customerNameDisplay": "Khách hàng: {name}",
+  "@customerNameDisplay": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "payWithCash": "Thanh toán tiền mặt",
+  "printReceipt": "In hóa đơn / Vé",
+  "defaultPopcorn": "Bắp rang bơ lớn",
+  "defaultDrink": "Nước ngọt lớn",
+  "defaultCombo": "Combo 1 bắp 2 nước",
+  "occupancyPercent": "{percent}% lấp đầy",
+  "@occupancyPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "roomStatusScreening": "Đang chiếu",
+  "roomStatusPreparing": "Chuẩn bị chiếu",
+  "roomStatusCleaning": "Dọn dẹp",
+  "roomStatusReady": "Sẵn sàng",
+  "roomStatusEnded": "Đã kết thúc",
+  "showtimesAndOccupancy": "Lịch chiếu & Tình trạng phòng",
+  "viewRoomLayout": "Xem sơ đồ phòng",
+  "totalSeatsInRoom": "{total} ghế",
+  "@totalSeatsInRoom": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "bookedSeatsCount": "{booked}/{total} ghế đã đặt",
+  "@bookedSeatsCount": {
+    "placeholders": {
+      "booked": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "addMovieTitle": "Thêm phim mới",
+  "editMovieTitle": "Cập nhật phim",
+  "addMovieSuccess": "Thêm phim thành công!",
+  "updateMovieSuccess": "Cập nhật phim thành công!",
+  "selectPoster": "Chọn poster",
+  "movieTitleLabel": "Tên phim *",
+  "enterMovieTitle": "Nhập tên phim",
+  "movieTitleRequired": "Vui lòng nhập tên phim",
+  "genreLabel": "Thể loại *",
+  "genrePlaceholder": "Hành động, Hài hước, Kinh dị...",
+  "durationMinutesLabel": "Thời lượng (phút) *",
+  "directorPlaceholder": "Tên đạo diễn",
+  "castPlaceholder": "Tên diễn viên...",
+  "languagePlaceholder": "Tiếng Việt, Tiếng Anh...",
+  "ageLimitPlaceholder": "13, 16, 18...",
+  "releaseDateLabel": "Ngày phát hành",
+  "screeningEndDate": "Ngày kết thúc",
+  "selectDatePrompt": "Chọn ngày",
+  "trailerUrl": "Trailer URL",
+  "trailerUrlPlaceholder": "https://youtube.com/...",
+  "movieDescriptionPlaceholder": "Nội dung phim...",
+  "createMovieBtn": "Tạo phim",
+  "searchMoviesPlaceholder": "Tìm kiếm tên phim...",
+  "movieTotal": "Tổng số phim",
+  "statusNowShowing": "Đang chiếu",
+  "statusComingSoon": "Sắp chiếu",
+  "statusStopped": "Ngừng chiếu",
+  "roomTypeStandard": "Tiêu chuẩn (Standard)",
+  "roomTypeVIP": "Phòng VIP",
+  "roomTypeIMAX": "Phòng IMAX",
+  "roomType4DX": "Phòng 4DX",
+  "roomTypeCouple": "Phòng Sweetbox",
+  "roomStatusActive": "Đang hoạt động",
+  "roomStatusInactive": "Tạm ngưng",
+  "roomStatusMaintenance": "Bảo trì",
+  "viewSeatMap": "Xem sơ đồ ghế",
+  "generateSeatsBtn": "Tạo sơ đồ ghế tự động",
+  "generateSeatsSuccess": "Tạo sơ đồ ghế thành công!",
+  "generateSeatsConfirm": "Hành động này sẽ tạo ma trận ghế tự động cho phòng chiếu. Tiếp tục?",
+  "seatLayoutTitle": "Sơ đồ phòng chiếu",
+  "seatMatrixRows": "Số hàng ghế",
+  "seatMatrixCols": "Số cột ghế",
+  "cinemaStatusActive": "Đang hoạt động",
+  "cinemaStatusInactive": "Tạm dừng",
+  "cinemaStatusMaintenance": "Bảo trì",
+  "format4DX": "4DX",
+  "filterByDatePrompt": "Lọc theo ngày",
+  "millionShort": "{amount} Tr",
+  "@millionShort": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "thousandShort": "{amount} N",
+  "@thousandShort": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "rankBadge": "#{rank}",
+  "@rankBadge": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      }
+    }
+  },
+  "topPerformingMovies": "Top phim doanh thu cao",
+  "chartRevenueUnit": "Đơn vị: VNĐ",
+  "noDataInPeriod": "Không có dữ liệu trong khoảng thời gian này",
+  "adminSettings": "Cài đặt hệ thống",
+  "adminProfile": "Hồ sơ quản trị viên",
+  "themeModeSetting": "Giao diện",
+  "themeModeDark": "Giao diện tối",
+  "themeModeLight": "Giao diện sáng",
+  "themeModeSystem": "Theo hệ thống",
+  "systemInfo": "Thông tin hệ thống",
+  "clearCache": "Xóa bộ nhớ đệm",
+  "clearCacheSuccess": "Đã xóa bộ nhớ đệm thành công",
+  "soundAndHaptic": "Âm thanh & Rung khi quét",
+  "soundAndHapticDesc": "Phát âm báo và rung khi quét mã QR thành công hoặc thất bại",
+  "weekdayMon": "Th 2",
+  "weekdayTue": "Th 3",
+  "weekdayWed": "Th 4",
+  "weekdayThu": "Th 5",
+  "weekdayFri": "Th 6",
+  "weekdaySat": "Th 7",
+  "weekdaySun": "CN",
+  "cameraInitializing": "Đang khởi động máy ảnh...",
+  "cameraPermissionDenied": "Không có quyền truy cập máy ảnh. Vui lòng cấp quyền trong cài đặt thiết bị.",
+  "cameraError": "Không thể khởi động máy ảnh",
+  "cameraErrorHint": "Vui lòng kiểm tra quyền truy cập hoặc sử dụng tính năng nhập mã thủ công bên dưới.",
+  "cameraRetake": "Chụp lại",
+  "cameraUsePhoto": "Sử dụng ảnh",
+  "cameraCapture": "Chụp ảnh",
+  "cameraNoCameras": "Không tìm thấy máy ảnh trên thiết bị",
+  "cameraCircleHint": "Căn chỉnh khuôn mặt vào giữa khung tròn",
+  "staffProfile": "Hồ sơ nhân viên",
+  "posTabTickets": "Vé & Bắp nước",
+  "posTabConcessions": "Bắp nước nhanh",
+  "checkinResultTitle": "Kết quả soát vé",
+  "cashReceived": "Tiền khách đưa",
+  "cashChange": "Tiền thối lại",
+  "exactAmount": "Đủ tiền",
+  "printTicketReceipt": "In vé & Hóa đơn",
+  "posOrderSuccess": "Tạo đơn hàng thành công!",
+  "posOrderSuccessPrompt": "Mã đơn: {code}",
+  "@posOrderSuccessPrompt": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "staffBadge": "NHÂN VIÊN",
+  "seatNumber": "Số ghế",
+  "customer": "Khách hàng",
+  "ticketNumber": "Mã vé",
+  "tomorrow": "Ngày mai",
+  "cashPaymentDesc": "Thanh toán tiền mặt trực tiếp tại quầy",
+  "momoPaymentDesc": "Quét mã MoMo QR tại quầy",
+  "vnpayPaymentDesc": "Thẻ ATM / VNPAY-QR",
+  "enterCashReceivedHint": "Nhập số tiền khách đưa",
+  "insufficientCashReceived": "Số tiền khách đưa không đủ thanh toán",
+  "posPointsAvailable": "Điểm hiện có",
+  "posPointsToUse": "Điểm sử dụng",
+  "posPointsRemaining": "Điểm còn lại",
+  "posDiscountValue": "Giá trị giảm",
+  "posUsingPointsBadge": "Đang sử dụng {points} điểm",
+  "@posUsingPointsBadge": {
+    "placeholders": {
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "posCancelPoints": "Hủy",
+  "posSearchCustomer": "Tìm khách hàng",
+  "posSearchCustomerHint": "Nhập email hoặc số điện thoại...",
+  "posCustomerNotFound": "Không tìm thấy khách hàng",
+  "posChangeCustomer": "Đổi khách hàng",
+  "posPointsExceedBalance": "Số điểm sử dụng không được vượt quá số dư hiện có",
+  "posPointsExceedLimit": "Số điểm sử dụng vượt quá giới hạn giảm giá (tối đa 20% tổng đơn)",
+  "posPointsInvalid": "Số điểm phải là số nguyên dương",
+  "posCustomerLoyaltyBalance": "Điểm tích lũy: {points}",
+  "@posCustomerLoyaltyBalance": {
+    "placeholders": {
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "posWaitingMomoPayment": "Đang chờ thanh toán MoMo",
+  "posOpenMomo": "Mở cổng thanh toán MoMo",
+  "posCheckingPayment": "Đang kiểm tra thanh toán...",
+  "posPaymentPendingHint": "Vui lòng quét mã trên cổng MoMo, sau đó bấm Kiểm tra thanh toán.",
+  "posCheckPaymentStatus": "Kiểm tra thanh toán",
+  "posPaymentFailedPrompt": "Thanh toán không thành công. Quý khách có thể thử lại.",
+  "posRetryPayment": "Thử lại thanh toán",
+  "posPaymentCancelledPrompt": "Giao dịch thanh toán đã bị hủy.",
+  "scanSoundTitle": "Âm báo khi quét mã",
+  "scanHapticTitle": "Rung khi quét mã",
+  "seatUnit": "ghế",
+  "availableCountLabel": "Trống: {count}",
+  "@availableCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bookedCountLabel": "Đã đặt: {count}",
+  "@bookedCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "totalCountLabel": "Tổng: {count}",
+  "@totalCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "counterRevenueSubtitle": "Doanh thu quầy",
+  "upcomingShowtimesSubtitle": "Đang mở bán",
+  "averageSubtitle": "Trung bình",
+  "defaultRoom": "Phòng",
+  "format2DSubtitle": "2D Phụ đề",
+  "format2DDubbed": "2D Lồng tiếng",
+  "format3DDubbed": "3D Lồng tiếng",
+  "movieExhuma": "Exhuma: Quật mộ trùng ma",
+  "adminBadge": "QUẢN TRỊ VIÊN",
+  "userIdLabel": "Mã tài khoản",
+  "roleLabel": "Vai trò",
+  "emailPlaceholder": "nhanvien@cineplex.vn",
+  "phonePlaceholder": "09xxxxxxxx",
+  "passwordPlaceholder": "Nhập mật khẩu",
+  "confirmPasswordPlaceholder": "Nhập lại mật khẩu",
+  "percentDiscountBadge": "GIẢM %",
+  "fixedDiscountBadge": "GIẢM TIỀN",
+  "discountTypePercentage": "Giảm theo phần trăm (%)",
+  "discountTypeFixed": "Giảm số tiền cố định (VNĐ)",
+  "noPromotionsSubtitle": "Chưa có mã khuyến mãi nào được tạo. Nhấn nút bên dưới để tạo mã mới.",
+  "pricePlaceholder": "Ví dụ: 65.000",
+  "stockPlaceholder": "Ví dụ: 100",
+  "movieManagement": "Quản lý phim",
+  "togglePasswordVisibility": "Hiện/ẩn mật khẩu",
+  "unitVnd": "VNĐ",
+  "unitPercent": "%",
+  "screenLabel": "MÀN HÌNH",
+  "shortMonthFormat": "T{month}",
+  "@shortMonthFormat": {
+    "placeholders": {
+      "month": {
+        "type": "int"
+      }
+    }
+  },
+  "startTime": "Thời gian bắt đầu",
+  "statusInactive": "Ngưng hoạt động",
+  "exitAppTitle": "Thoát ứng dụng",
+  "exitAppMessage": "Bạn có chắc chắn muốn thoát ứng dụng không?",
+  "exitAppConfirm": "Thoát",
+  "cameraPermissionRequired": "Ứng dụng cần quyền truy cập máy ảnh để quét vé",
+  "grantPermission": "Cấp quyền máy ảnh",
+  "cameraUnsupported": "Thiết bị không hỗ trợ máy ảnh hoặc đang chạy giả lập. Vui lòng nhập mã vé thủ công.",
+  "addMovie": "Thêm phim mới",
+  "updateMovie": "Cập nhật phim",
+  "movieCreatedSuccess": "Thêm phim thành công!",
+  "movieUpdatedSuccess": "Cập nhật phim thành công!",
+  "movieDescription": "Mô tả phim",
+  "enterMovieDescription": "Nhập nội dung tóm tắt phim...",
+  "status": "Trạng thái",
+  "stoppedShowing": "Ngừng chiếu",
+  "editMovie": "Chỉnh sửa phim",
+  "watchTrailer": "Xem trailer",
+  "noTrailer": "Chưa có trailer",
+  "movieInfo": "Thông tin phim",
+  "copy": "Sao chép",
+  "trailerCopied": "Đã sao chép liên kết trailer",
+  "openInBrowser": "Mở liên kết",
+  "cannotOpenTrailer": "Không thể mở liên kết trailer",
+  "replayTrailer": "Xem lại",
+  "seekBackward10s": "Tua lại 10s",
+  "seekForward10s": "Tua tới 10s",
+  "playPauseTrailer": "Phát / Dừng",
+  "fullscreen": "Toàn màn hình",
+  "exitFullscreen": "Thu nhỏ",
+  "manageTickets": "Quản lý vé",
+  "ticketManagement": "Quản lý toàn bộ vé",
+  "ticketBookingList": "Đơn đặt vé",
+  "ticketPriceConfig": "Cấu hình giá vé",
+  "ticketBookingCode": "Mã đơn",
+  "ticketCustomerName": "Khách hàng",
+  "ticketShowtimeLabel": "Suất chiếu",
+  "ticketSeatLabel": "Ghế ngồi",
+  "ticketPaymentStatus": "Thanh toán",
+  "ticketCheckedInStatus": "Đã soát vé",
+  "ticketNotCheckedInStatus": "Chưa soát vé",
+  "ticketSearchHint": "Tìm theo mã BK, tên, SĐT...",
+  "ticketPriceWeekday": "Ngày thường",
+  "ticketPriceWeekend": "Cuối tuần",
+  "ticketEditPrice": "Cập nhật giá vé",
+  "ticketPriceUpdateSuccess": "Cập nhật giá vé thành công",
+  "ticketStatusConfirmed": "Đã xác nhận",
+  "ticketStatusPending": "Chờ thanh toán",
+  "ticketStatusCancelled": "Đã hủy",
+  "ticketFilterAll": "Tất cả",
+  "ticketConcessionsLabel": "Bắp nước",
+  "ticketDetailTitle": "Chi tiết đơn vé",
+  "ticketOpenScanner": "Soát vé QR",
+  "ticketEmptyList": "Chưa có đơn vé nào",
+  "ticketPriceEmpty": "Chưa có cấu hình giá vé",
+  "ticketPriceEnterNew": "Nhập giá vé mới (VNĐ)",
+  "shiftTitle": "Ca làm việc",
+  "shiftManagement": "Quản lý ca làm việc",
+  "shiftSchedule": "Lịch ca nhân viên",
+  "shiftMySchedule": "Lịch làm việc của tôi",
+  "shiftAssignNew": "Phân ca mới",
+  "shiftEdit": "Chỉnh sửa ca làm",
+  "shiftDelete": "Hủy phân ca",
+  "shiftDeleteConfirm": "Bạn có chắc chắn muốn hủy phân ca làm việc này?",
+  "shiftAssignSuccess": "Phân ca làm việc thành công",
+  "shiftUpdateSuccess": "Cập nhật phân ca thành công",
+  "shiftDeleteSuccess": "Hủy phân ca thành công",
+  "shiftSelectStaff": "Chọn nhân viên",
+  "shiftSelectCinema": "Chọn cụm rạp",
+  "shiftSelectShift": "Chọn ca làm",
+  "shiftSelectRole": "Vị trí phân công",
+  "shiftSelectDate": "Chọn ngày làm việc",
+  "shiftNote": "Ghi chú phân công",
+  "shiftNoteHint": "Nhập ghi chú cho nhân viên (không bắt buộc)...",
+  "shiftRoleTicketCounter": "Bán vé tại quầy",
+  "shiftRoleScannerGate": "Soát vé tại cửa",
+  "shiftRoleConcession": "Quầy bắp nước",
+  "shiftRoleGeneral": "Nhân viên tổng hợp",
+  "shiftStatusScheduled": "Đã lên lịch",
+  "shiftStatusCompleted": "Hoàn thành",
+  "shiftStatusCancelled": "Đã hủy",
+  "shiftEmptyList": "Chưa có nhân viên nào được phân ca trong ngày này",
+  "shiftEmptyMySchedule": "Bạn chưa có ca làm việc nào trong tuần này",
+  "shiftCurrentWeek": "Tuần này",
+  "shiftNextWeek": "Tuần sau",
+  "shiftPreviousWeek": "Tuần trước",
+  "shiftAssignedBy": "Người phân ca"
+}

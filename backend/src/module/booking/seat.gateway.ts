@@ -50,23 +50,24 @@ export class SeatGateway
    */
   @SubscribeMessage('join-showtime')
   async handleJoinShowtime(
-    @MessageBody() data: { showtimeId: number },
+    @MessageBody() data: any,
     @ConnectedSocket() client: Socket,
   ) {
-    const { showtimeId } = data;
+    const rawId = typeof data === 'object' && data !== null ? data.showtimeId : data;
+    const showtimeId = Number(rawId);
 
-    if (!showtimeId || isNaN(Number(showtimeId))) {
+    if (!showtimeId || isNaN(showtimeId)) {
       client.emit('error', { message: 'showtimeId không hợp lệ' });
       return;
     }
 
-    const room = this.getRoomName(Number(showtimeId));
+    const room = this.getRoomName(showtimeId);
     await client.join(room);
 
     this.logger.debug(`Client ${client.id} joined room: ${room}`);
 
     client.emit('joined', {
-      showtimeId: Number(showtimeId),
+      showtimeId,
       message: `Đã join room suất chiếu #${showtimeId}. Lắng nghe event "seat-update" để nhận trạng thái ghế realtime.`,
     });
   }
@@ -76,13 +77,16 @@ export class SeatGateway
    */
   @SubscribeMessage('leave-showtime')
   async handleLeaveShowtime(
-    @MessageBody() data: { showtimeId: number },
+    @MessageBody() data: any,
     @ConnectedSocket() client: Socket,
   ) {
-    const { showtimeId } = data;
-    const room = this.getRoomName(Number(showtimeId));
-    await client.leave(room);
-    this.logger.debug(`Client ${client.id} left room: ${room}`);
+    const rawId = typeof data === 'object' && data !== null ? data.showtimeId : data;
+    const showtimeId = Number(rawId);
+    if (!isNaN(showtimeId) && showtimeId > 0) {
+      const room = this.getRoomName(showtimeId);
+      await client.leave(room);
+      this.logger.debug(`Client ${client.id} left room: ${room}`);
+    }
   }
 
   // ─── Server → Client Broadcasts ───────────────────────────────────────

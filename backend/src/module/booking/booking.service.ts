@@ -4,21 +4,24 @@ import { Repository, In, DataSource } from 'typeorm';
 import { Booking } from './entities/booking.entity';
 import { BookingConcession } from './entities/booking-concession.entity';
 import { SeatHold } from './entities/seat-hold.entity';
-import { HoldSeatsDto, CreateBookingDto } from './dto/booking.dto';
+import { HoldSeatsDto, CreateBookingDto, ReleaseSeatsDto } from './dto/booking.dto';
 import { ApiResponse } from '../../core/dto/ApiResponse.dto';
 import { CustomException } from '../../core/exceptions/custom.exception';
 import { RedisService } from '../redis/redis.service';
 import { EBookingStatus, EBookingSource, ESeatHoldStatus } from './enums/booking.enum';
 import { Seat } from '../cinema/entities/seat.entity';
+import { ERoomType } from '../cinema/enums/cinema.enum';
 import { TicketPrice } from '../ticket/entities/ticket-price.entity';
 import { ConcessionProduct } from '../concession/entities/concession-product.entity';
 import { Promotion } from '../promotion/entities/promotion.entity';
 import { EDiscountType } from '../promotion/enums/promotion.enum';
+import { validatePromotion, calculateDiscount } from '../promotion/promotion.service';
 import { Showtime } from '../showtime/entities/showtime.entity';
 import { SeatGateway } from './seat.gateway';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ENotificationType } from '../notification/enums/notification.enum';
 import { User } from '../users/entities/user.entity';
+import { BOOKING_ERROR_CODES, MAX_SEATS_PER_BOOKING } from './constants/booking.constant';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -57,6 +60,14 @@ export class BookingService {
   // ─── SEAT HOLD ────────────────────────────────────────────────────────
 
   async holdSeats(userId: number, dto: HoldSeatsDto): Promise<ApiResponse<any>> {
+    if (!dto.seatIds || dto.seatIds.length === 0 || dto.seatIds.length > MAX_SEATS_PER_BOOKING) {
+      throw new CustomException(
+        HttpStatus.BAD_REQUEST,
+        BOOKING_ERROR_CODES.MAX_SEATS_EXCEEDED,
+        `Chỉ được chọn tối đa ${MAX_SEATS_PER_BOOKING} ghế mỗi đơn`,
+      );
+    }
+
     // Kiểm tra showtime còn có thể đặt vé không
     const showtime = await this.showtimeRepository.findOne({ where: { id: dto.showtimeId } });
     if (!showtime) {
@@ -68,6 +79,43 @@ export class BookingService {
         'SHOWTIME_NOT_BOOKABLE',
         'Suất chiếu này đã kết thúc hoặc bị huỷ, không thể đặt vé',
       );
+    }
+    if (showtime.publicStartTime && new Date(showtime.publicStartTime) <= new Date()) {
+      throw new CustomException(
+        HttpStatus.BAD_REQUEST,
+        BOOKING_ERROR_CODES.SHOWTIME_EXPIRED,
+        'Suất chiếu đã bắt đầu hoặc quá hạn đặt vé',
+      );
+    }
+
+    // E3.3: Kiểm tra mọi seatId thuộc phòng của suất chiếu
+    const seats = await this.seatRepository.find({
+      where: { id: In(dto.seatIds) },
+    });
+    if (seats.length !== dto.seatIds.length || seats.some(s => s.roomId !== showtime.roomId)) {
+      throw new CustomException(
+        HttpStatus.BAD_REQUEST,
+        BOOKING_ERROR_CODES.SEAT_ROOM_MISMATCH,
+        'Một số ghế không thuộc phòng chiếu của suất chiếu này',
+      );
+    }
+
+    // BUG-01: Kiểm tra xem có ghế nào đã có SeatHold CONFIRMED (đơn đang chờ thanh toán hoặc đã bán)
+    for (const seatId of dto.seatIds) {
+      const confirmedHold = await this.seatHoldRepository.findOne({
+        where: {
+          showtimeId: dto.showtimeId,
+          seatId,
+          status: ESeatHoldStatus.CONFIRMED,
+        },
+      });
+      if (confirmedHold) {
+        throw new CustomException(
+          HttpStatus.BAD_REQUEST,
+          BOOKING_ERROR_CODES.SEAT_ALREADY_BOOKED,
+          `Ghế ${seatId} đã được đặt/bán`,
+        );
+      }
     }
 
     const failedSeats: number[] = [];
@@ -94,21 +142,27 @@ export class BookingService {
     const now = new Date();
     const expiredAt = new Date(now.getTime() + 5 * 60 * 1000);
 
-    for (const seatId of dto.seatIds) {
-      await this.seatHoldRepository.delete({
-        showtimeId: dto.showtimeId,
-        seatId,
-      });
+    try {
+      for (const seatId of dto.seatIds) {
+        await this.seatHoldRepository.delete({
+          showtimeId: dto.showtimeId,
+          seatId,
+          status: In([ESeatHoldStatus.HOLDING, ESeatHoldStatus.RELEASED]),
+        });
 
-      const seatHold = this.seatHoldRepository.create({
-        showtimeId: dto.showtimeId,
-        seatId,
-        userId,
-        heldAt: now,
-        expiredAt,
-        status: ESeatHoldStatus.HOLDING,
-      });
-      await this.seatHoldRepository.save(seatHold);
+        const seatHold = this.seatHoldRepository.create({
+          showtimeId: dto.showtimeId,
+          seatId,
+          userId,
+          heldAt: now,
+          expiredAt,
+          status: ESeatHoldStatus.HOLDING,
+        });
+        await this.seatHoldRepository.save(seatHold);
+      }
+    } catch (error) {
+      await this.redisService.releaseSeats(dto.showtimeId, successSeats);
+      throw error;
     }
 
     // Emit seat-update realtime cho tất cả client đang xem suất chiếu này
@@ -124,6 +178,14 @@ export class BookingService {
   // ─── CREATE BOOKING ───────────────────────────────────────────────────
 
   async createBooking(userId: number | null, dto: CreateBookingDto | any, staffId?: number): Promise<ApiResponse<Booking>> {
+    if (!dto.seatIds || dto.seatIds.length === 0 || dto.seatIds.length > MAX_SEATS_PER_BOOKING) {
+      throw new CustomException(
+        HttpStatus.BAD_REQUEST,
+        BOOKING_ERROR_CODES.MAX_SEATS_EXCEEDED,
+        `Chỉ được chọn tối đa ${MAX_SEATS_PER_BOOKING} ghế mỗi đơn`,
+      );
+    }
+
     const holderId = staffId || userId;
     // Verify tất cả ghế đang được hold bởi user này
     for (const seatId of dto.seatIds) {
@@ -137,13 +199,7 @@ export class BookingService {
       }
     }
 
-    // Lấy thông tin ghế
-    const seats = await this.seatRepository.find({
-      where: { id: In(dto.seatIds) },
-      relations: ['room'],
-    });
-
-    // Xác định dayType
+    // Xác định showtime
     const showtime = await this.showtimeRepository.findOne({ where: { id: dto.showtimeId } });
     if (!showtime) {
       throw new CustomException(HttpStatus.NOT_FOUND, 'SHOWTIME_NOT_FOUND', 'Không tìm thấy suất chiếu');
@@ -155,6 +211,27 @@ export class BookingService {
         'Suất chiếu này đã kết thúc hoặc bị huỷ, không thể đặt vé',
       );
     }
+    if (showtime.publicStartTime && new Date(showtime.publicStartTime) <= new Date()) {
+      throw new CustomException(
+        HttpStatus.BAD_REQUEST,
+        BOOKING_ERROR_CODES.SHOWTIME_EXPIRED,
+        'Suất chiếu đã bắt đầu hoặc quá hạn đặt vé',
+      );
+    }
+
+    // Lấy thông tin ghế
+    const seats = await this.seatRepository.find({
+      where: { id: In(dto.seatIds) },
+      relations: ['room'],
+    });
+
+    if (seats.filter(s => s.roomId === showtime.roomId).length !== dto.seatIds.length) {
+      throw new CustomException(
+        HttpStatus.BAD_REQUEST,
+        BOOKING_ERROR_CODES.SEAT_ROOM_MISMATCH,
+        'Một số ghế không thuộc phòng chiếu của suất chiếu này',
+      );
+    }
 
     const now = new Date();
     const dayOfWeek = new Date(showtime.publicStartTime).getDay();
@@ -163,12 +240,36 @@ export class BookingService {
     // Tính tổng tiền vé
     let ticketTotal = 0;
     for (const seat of seats) {
-      const ticketPrice = await this.ticketPriceRepository.findOne({
+      const isVipSeat =
+        seat.room?.roomType === ERoomType.VIP ||
+        (seat.room?.roomType === ERoomType.STANDARD &&
+          (seat.room?.rows ?? 0) >= 6 &&
+          ['D', 'E', 'F'].includes(seat.row.toUpperCase()));
+      const isCoupleSeat =
+        seat.room?.roomType === ERoomType.COUPLE ||
+        (seat.room?.isCouple &&
+          seat.row.toUpperCase() ===
+            String.fromCharCode(65 + (seat.room?.rows ?? 0) - 1));
+      const targetRoomType = isCoupleSeat
+        ? ERoomType.COUPLE
+        : isVipSeat
+          ? ERoomType.VIP
+          : seat.room?.roomType ?? ERoomType.STANDARD;
+
+      let ticketPrice = await this.ticketPriceRepository.findOne({
         where: {
-          roomType: seat.room?.roomType,
+          roomType: targetRoomType,
           dayType: dayType as any,
         },
       });
+      if (!ticketPrice) {
+        ticketPrice = await this.ticketPriceRepository.findOne({
+          where: {
+            roomType: seat.room?.roomType,
+            dayType: dayType as any,
+          },
+        });
+      }
       if (!ticketPrice) {
         throw new CustomException(
           HttpStatus.BAD_REQUEST,
@@ -180,61 +281,31 @@ export class BookingService {
     }
 
     // Tính tổng tiền bắp nước
-    let concessionTotal = 0;
-    const concessionItems: { productId: number; quantity: number; unitPrice: number; subtotal: number }[] = [];
-
-    if (dto.concessions && dto.concessions.length > 0) {
-      for (const item of dto.concessions) {
-        const product = await this.concessionProductRepository.findOne({
-          where: { id: item.productId },
-        });
-        if (!product) {
-          throw new CustomException(HttpStatus.BAD_REQUEST, 'PRODUCT_NOT_FOUND', `Sản phẩm #${item.productId} không tồn tại`);
-        }
-        const subtotal = product.price * item.quantity;
-        concessionTotal += subtotal;
-        concessionItems.push({
-          productId: item.productId,
-          quantity: item.quantity,
-          unitPrice: product.price,
-          subtotal,
-        });
-      }
-    }
+    const validatedConcessionData = await this.buildConcessionItems(dto.concessions || []);
+    const concessionItems = [...validatedConcessionData.concessionItems];
+    let concessionTotal = validatedConcessionData.concessionTotal;
 
     // Tính discount nếu có promotion
-    const validatedConcessionData = await this.buildConcessionItems(dto.concessions);
-    concessionItems.length = 0;
-    concessionItems.push(...validatedConcessionData.concessionItems);
-    concessionTotal = validatedConcessionData.concessionTotal;
-
     let discountAmount = 0;
     let promotionId: number | undefined = undefined;
 
     if (dto.promotionCode) {
+      if (ticketTotal + concessionTotal <= 0) {
+        throw new CustomException(
+          HttpStatus.BAD_REQUEST,
+          'ORDER_TOTAL_ZERO',
+          'Tổng tiền đơn hàng bằng 0 không thể áp dụng voucher',
+        );
+      }
+
       const promotion = await this.promotionRepository.findOne({
         where: { code: dto.promotionCode },
+        relations: ['movie'],
       });
 
-      if (promotion && promotion.isActive) {
-        const startDate = new Date(promotion.startDate);
-        const endDate = new Date(promotion.endDate);
-        const isValid = now >= startDate && now <= endDate;
-        const hasUsage = !promotion.maxUsage || promotion.usedCount < promotion.maxUsage;
-
-        if (isValid && hasUsage) {
-          promotionId = promotion.id;
-          if (promotion.discountType === EDiscountType.PERCENTAGE) {
-            discountAmount = Math.floor((ticketTotal + concessionTotal) * promotion.discountValue / 100);
-          } else {
-            discountAmount = promotion.discountValue;
-          }
-
-          // Cập nhật usedCount
-          promotion.usedCount += 1;
-          await this.promotionRepository.save(promotion);
-        }
-      }
+      const validatedPromo = validatePromotion(promotion, showtime.movieId);
+      promotionId = validatedPromo.id;
+      discountAmount = calculateDiscount(validatedPromo, ticketTotal + concessionTotal);
     }
 
     // ─── LOYALTY POINTS LOGIC ──────────────────────────────────────────────
@@ -368,9 +439,30 @@ export class BookingService {
         await queryRunner.manager.save(BookingConcession, bookingConcessions);
       }
 
+      // Tăng atomic usedCount nếu có promotion
+      if (promotionId) {
+        const updatePromoRes = await queryRunner.manager
+          .createQueryBuilder(Promotion, 'promotion')
+          .update()
+          .set({ usedCount: () => 'used_count + 1' })
+          .where('id = :id AND (max_usage IS NULL OR used_count < max_usage)', { id: promotionId })
+          .execute();
+
+        if (!updatePromoRes || updatePromoRes.affected === 0) {
+          throw new CustomException(
+            HttpStatus.BAD_REQUEST,
+            'PROMOTION_MAX_USAGE',
+            'Mã khuyến mãi đã hết lượt sử dụng',
+          );
+        }
+      }
+
       await queryRunner.commitTransaction();
     } catch (err) {
       await queryRunner.rollbackTransaction();
+      if (err instanceof CustomException) {
+        throw err;
+      }
       throw new CustomException(
         HttpStatus.INTERNAL_SERVER_ERROR,
         'BOOKING_CREATE_FAILED',
@@ -442,6 +534,10 @@ export class BookingService {
         'showtime.room',
         'seatHolds',
         'seatHolds.seat',
+        'tickets',
+        'tickets.seat',
+        'bookingConcessions',
+        'bookingConcessions.product',
         'payment',
       ],
       order: { createdAt: 'DESC' },
@@ -503,43 +599,20 @@ export class BookingService {
       throw new CustomException(HttpStatus.BAD_REQUEST, 'INVALID_STATUS', 'Chỉ có thể cập nhật đơn chờ thanh toán');
     }
 
+    if (booking.expiredAt && new Date(booking.expiredAt) < new Date()) {
+      throw new CustomException(HttpStatus.BAD_REQUEST, 'BOOKING_EXPIRED', 'Đơn đặt vé đã quá hạn giữ chỗ');
+    }
+
     const oldConcessionsTotal = booking.bookingConcessions.reduce((sum, bc) => sum + bc.subtotal, 0);
     const ticketTotal = booking.totalAmount + booking.discountAmount - oldConcessionsTotal;
 
-    let newConcessionTotal = 0;
-    const concessionItems: any[] = [];
-
-    if (dto.concessions && dto.concessions.length > 0) {
-      for (const item of dto.concessions) {
-        const product = await this.concessionProductRepository.findOne({
-          where: { id: item.productId },
-        });
-        if (!product) {
-          throw new CustomException(HttpStatus.BAD_REQUEST, 'PRODUCT_NOT_FOUND', `Sản phẩm #${item.productId} không tồn tại`);
-        }
-        const subtotal = product.price * item.quantity;
-        newConcessionTotal += subtotal;
-        concessionItems.push({
-          productId: item.productId,
-          quantity: item.quantity,
-          unitPrice: product.price,
-          subtotal,
-        });
-      }
-    }
-
-    const validatedConcessionData = await this.buildConcessionItems(dto.concessions);
-    concessionItems.length = 0;
-    concessionItems.push(...validatedConcessionData.concessionItems);
-    newConcessionTotal = validatedConcessionData.concessionTotal;
+    const validatedConcessionData = await this.buildConcessionItems(dto.concessions || []);
+    const concessionItems = [...validatedConcessionData.concessionItems];
+    let newConcessionTotal = validatedConcessionData.concessionTotal;
 
     let promotionDiscount = 0;
     if (booking.promotion) {
-      if (booking.promotion.discountType === EDiscountType.PERCENTAGE) {
-        promotionDiscount = Math.floor((ticketTotal + newConcessionTotal) * booking.promotion.discountValue / 100);
-      } else {
-        promotionDiscount = booking.promotion.discountValue;
-      }
+      promotionDiscount = calculateDiscount(booking.promotion, ticketTotal + newConcessionTotal);
     }
 
     let pointsUsed = booking.pointsUsed || 0;
@@ -680,13 +753,16 @@ export class BookingService {
       const productId = Number(item.productId);
       const quantity = Number(item.quantity);
 
-      if (!Number.isInteger(productId) || !Number.isInteger(quantity) || quantity <= 0) {
+      if (!Number.isInteger(productId) || !Number.isInteger(quantity) || quantity < 0) {
         throw new CustomException(
           HttpStatus.BAD_REQUEST,
           'INVALID_CONCESSION_QUANTITY',
           'So luong bap nuoc khong hop le',
         );
       }
+
+      // Bỏ qua item quantity = 0
+      if (quantity === 0) continue;
 
       quantityByProduct.set(productId, (quantityByProduct.get(productId) ?? 0) + quantity);
     }
@@ -726,6 +802,199 @@ export class BookingService {
     }
 
     return { concessionItems, concessionTotal };
+  }
+
+  // ─── RELEASE SEATS (UC07 A3.1) ─────────────────────────────────────────
+  async releaseSeats(userId: number, dto: ReleaseSeatsDto): Promise<ApiResponse<any>> {
+    const { showtimeId, seatIds } = dto;
+    const releasedSeatIds: number[] = [];
+
+    for (const seatId of seatIds) {
+      const holder = await this.redisService.getSeatHolder(showtimeId, seatId);
+      if (!holder || Number(holder) === Number(userId)) {
+        await this.redisService.releaseSeat(showtimeId, seatId);
+        await this.seatHoldRepository.update(
+          { showtimeId, seatId, status: ESeatHoldStatus.HOLDING },
+          { status: ESeatHoldStatus.RELEASED },
+        );
+        releasedSeatIds.push(seatId);
+      }
+    }
+
+    if (releasedSeatIds.length > 0) {
+      await this.broadcastSeatUpdate(showtimeId);
+    }
+
+    return new ApiResponse(true, 'Nhả ghế thành công', { releasedSeatIds });
+  }
+
+  // ─── APPLY PROMOTION (BUG-05) ─────────────────────────────────────────
+  async applyPromotionToBooking(userId: number, bookingId: number, code: string): Promise<ApiResponse<any>> {
+    const booking = await this.bookingRepository.findOne({
+      where: { id: bookingId },
+      relations: ['showtime', 'showtime.movie', 'bookingConcessions', 'promotion'],
+    });
+
+    if (!booking) {
+      throw new CustomException(HttpStatus.NOT_FOUND, 'BOOKING_NOT_FOUND', 'Không tìm thấy đơn đặt vé');
+    }
+
+    if (booking.userId !== userId) {
+      throw new CustomException(HttpStatus.FORBIDDEN, 'FORBIDDEN', 'Bạn không có quyền thao tác trên đơn này');
+    }
+
+    if (booking.status !== EBookingStatus.PENDING) {
+      throw new CustomException(HttpStatus.BAD_REQUEST, 'BOOKING_NOT_PENDING', 'Chỉ có thể áp dụng mã cho đơn chờ thanh toán');
+    }
+
+    if (booking.expiredAt && new Date(booking.expiredAt) < new Date()) {
+      throw new CustomException(HttpStatus.BAD_REQUEST, 'BOOKING_EXPIRED', 'Đơn hàng đã hết hạn thanh toán');
+    }
+
+    const originalOrderTotal = booking.totalAmount + booking.discountAmount + (booking.pointsUsed || 0);
+
+    if (originalOrderTotal <= 0) {
+      throw new CustomException(HttpStatus.BAD_REQUEST, 'ORDER_TOTAL_ZERO', 'Tổng tiền đơn hàng bằng 0 không thể áp dụng voucher');
+    }
+
+    const promotion = await this.promotionRepository.findOne({
+      where: { code },
+      relations: ['movie'],
+    });
+
+    const validatedPromo = validatePromotion(promotion, booking.showtime?.movieId);
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      if (booking.promotionId && booking.promotionId !== validatedPromo.id) {
+        await queryRunner.manager
+          .createQueryBuilder(Promotion, 'promotion')
+          .update()
+          .set({ usedCount: () => 'GREATEST(used_count - 1, 0)' })
+          .where('id = :id', { id: booking.promotionId })
+          .execute();
+      }
+
+      if (booking.promotionId !== validatedPromo.id) {
+        const updateRes = await queryRunner.manager
+          .createQueryBuilder(Promotion, 'promotion')
+          .update()
+          .set({ usedCount: () => 'used_count + 1' })
+          .where('id = :id AND (max_usage IS NULL OR used_count < max_usage)', { id: validatedPromo.id })
+          .execute();
+
+        if (!updateRes || updateRes.affected === 0) {
+          throw new CustomException(
+            HttpStatus.BAD_REQUEST,
+            'PROMOTION_MAX_USAGE',
+            'Mã khuyến mãi đã hết lượt sử dụng',
+          );
+        }
+      }
+
+      const discountAmount = calculateDiscount(validatedPromo, originalOrderTotal);
+      const newTotalAmount = Math.max(0, originalOrderTotal - discountAmount - (booking.pointsUsed || 0));
+
+      await queryRunner.manager.update(Booking, { id: booking.id }, {
+        promotionId: validatedPromo.id,
+        discountAmount,
+        totalAmount: newTotalAmount,
+      });
+
+      await queryRunner.commitTransaction();
+
+      await this.bookingRepository.update({ id: booking.id }, {
+        promotionId: validatedPromo.id,
+        discountAmount,
+        totalAmount: newTotalAmount,
+      });
+
+      return new ApiResponse(true, 'Áp dụng mã khuyến mãi thành công', {
+        totalAmount: newTotalAmount,
+        discountAmount,
+        promotionCode: validatedPromo.code,
+      });
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      if (err instanceof CustomException) throw err;
+      throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, 'APPLY_PROMOTION_FAILED', 'Áp dụng mã khuyến mãi thất bại');
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  // ─── REMOVE PROMOTION (UC09 A2.1 / BUG-05) ────────────────────────────
+  async removePromotionFromBooking(userId: number, bookingId: number): Promise<ApiResponse<any>> {
+    const booking = await this.bookingRepository.findOne({
+      where: { id: bookingId },
+      relations: ['promotion'],
+    });
+
+    if (!booking) {
+      throw new CustomException(HttpStatus.NOT_FOUND, 'BOOKING_NOT_FOUND', 'Không tìm thấy đơn đặt vé');
+    }
+
+    if (booking.userId !== userId) {
+      throw new CustomException(HttpStatus.FORBIDDEN, 'FORBIDDEN', 'Bạn không có quyền thao tác trên đơn này');
+    }
+
+    if (booking.status !== EBookingStatus.PENDING) {
+      throw new CustomException(HttpStatus.BAD_REQUEST, 'BOOKING_NOT_PENDING', 'Chỉ có thể gỡ mã cho đơn chờ thanh toán');
+    }
+
+    if (booking.expiredAt && new Date(booking.expiredAt) < new Date()) {
+      throw new CustomException(HttpStatus.BAD_REQUEST, 'BOOKING_EXPIRED', 'Đơn hàng đã hết hạn thanh toán');
+    }
+
+    if (!booking.promotionId) {
+      return new ApiResponse(true, 'Đơn hàng chưa áp dụng mã khuyến mãi', {
+        totalAmount: booking.totalAmount,
+        discountAmount: 0,
+      });
+    }
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await queryRunner.manager
+        .createQueryBuilder(Promotion, 'promotion')
+        .update()
+        .set({ usedCount: () => 'GREATEST(used_count - 1, 0)' })
+        .where('id = :id', { id: booking.promotionId })
+        .execute();
+
+      const newTotalAmount = booking.totalAmount + booking.discountAmount;
+
+      await queryRunner.manager.update(Booking, { id: booking.id }, {
+        promotionId: null as any,
+        discountAmount: 0,
+        totalAmount: newTotalAmount,
+      });
+
+      await queryRunner.commitTransaction();
+
+      await this.bookingRepository.update({ id: booking.id }, {
+        promotionId: null as any,
+        discountAmount: 0,
+        totalAmount: newTotalAmount,
+      });
+
+      return new ApiResponse(true, 'Gỡ bỏ mã khuyến mãi thành công', {
+        totalAmount: newTotalAmount,
+        discountAmount: 0,
+      });
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      if (err instanceof CustomException) throw err;
+      throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, 'REMOVE_PROMOTION_FAILED', 'Gỡ bỏ mã khuyến mãi thất bại');
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   private generateBookingCode(): string {

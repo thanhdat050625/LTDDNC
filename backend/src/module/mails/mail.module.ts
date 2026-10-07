@@ -7,20 +7,32 @@ import { ENV_VARS } from 'src/constants/env.constants';
   imports: [
     MailerModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        transport: {
-          host: config.get<string>(ENV_VARS.MAIL_HOST),
-          port: config.get<number>(ENV_VARS.MAIL_PORT),
-          secure: config.get<number>(ENV_VARS.MAIL_PORT) === 465,
-          auth: {
-            user: config.get<string>(ENV_VARS.MAIL_USER),
-            pass: config.get<string>(ENV_VARS.MAIL_PASS),
+      useFactory: (config: ConfigService) => {
+        const host = config.get<string>(ENV_VARS.MAIL_HOST);
+        const port = config.get<number>(ENV_VARS.MAIL_PORT);
+        const user = config.get<string>(ENV_VARS.MAIL_USER);
+        const pass = config.get<string>(ENV_VARS.MAIL_PASS);
+        const from = config.get<string>(ENV_VARS.MAIL_FROM);
+
+        if (!host || !port || !user || !pass || !from) {
+          throw new Error('Thiếu biến môi trường cấu hình mail: MAIL_HOST, MAIL_PORT, MAIL_USER, MAIL_PASS, MAIL_FROM');
+        }
+
+        return {
+          transport: {
+            host,
+            port,
+            secure: port === 465,
+            auth: {
+              user,
+              pass,
+            },
           },
-        },
-        defaults: {
-          from: config.get<string>(ENV_VARS.MAIL_FROM),
-        },
-      }),
+          defaults: {
+            from,
+          },
+        };
+      },
     }),
   ],
   exports: [MailerModule],

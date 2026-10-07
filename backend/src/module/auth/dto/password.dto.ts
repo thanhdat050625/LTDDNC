@@ -47,17 +47,18 @@ export class ResetPasswordDto {
 }
 
 export class ChangePasswordDto {
-  @IsNotEmpty({ message: 'Vui long nhap mat khau cu' })
-  @IsString()
+  @IsNotEmpty({ message: 'Vui lòng nhập mật khẩu cũ' })
+  @IsString({ message: 'Mật khẩu cũ phải là chuỗi ký tự' })
   oldPassword: string;
 
-  @IsNotEmpty({ message: 'Vui long nhap mat khau moi' })
-  @IsString()
-  @MinLength(6, { message: 'Mat khau moi toi thieu 6 ky tu' })
+  @IsNotEmpty({ message: 'Vui lòng nhập mật khẩu mới' })
+  @IsString({ message: 'Mật khẩu mới phải là chuỗi ký tự' })
+  @MinLength(6, { message: 'Mật khẩu mới phải có ít nhất 6 ký tự' })
   newPassword: string;
 
-  @IsNotEmpty({ message: 'Vui long nhap xac nhan mat khau moi' })
-  @IsString()
-  @Match('newPassword', { message: 'Mat khau xac nhan khong khop' })
+  @IsNotEmpty({ message: 'Vui lòng xác nhận mật khẩu mới' })
+  @IsString({ message: 'Mật khẩu xác nhận phải là chuỗi ký tự' })
+  @Match('newPassword', { message: 'Mật khẩu xác nhận không khớp' })
   confirmPassword: string;
 }
+

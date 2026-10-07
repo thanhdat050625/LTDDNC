@@ -10,18 +10,24 @@ export class CloudinaryService {
   private readonly folder: string;
 
   constructor(private readonly configService: ConfigService) {
-    cloudinary.config({
-      cloud_name: this.configService.get<string>(
-        ENV_VARS.CLOUDINARY_CLOUD_NAME,
-      ),
-      api_key: this.configService.get<string>(ENV_VARS.CLOUDINARY_API_KEY),
-      api_secret: this.configService.get<string>(
-        ENV_VARS.CLOUDINARY_API_SECRET,
-      ),
-    });
+    const cloudName = this.getRequiredEnv(ENV_VARS.CLOUDINARY_CLOUD_NAME);
+    const apiKey = this.getRequiredEnv(ENV_VARS.CLOUDINARY_API_KEY);
+    const apiSecret = this.getRequiredEnv(ENV_VARS.CLOUDINARY_API_SECRET);
+    this.folder = this.getRequiredEnv(ENV_VARS.CLOUDINARY_FOLDER);
 
-    this.folder =
-      this.configService.get<string>(ENV_VARS.CLOUDINARY_FOLDER) || 'qlda';
+    cloudinary.config({
+      cloud_name: cloudName,
+      api_key: apiKey,
+      api_secret: apiSecret,
+    });
+  }
+
+  private getRequiredEnv(key: string): string {
+    const value = this.configService.get<string>(key);
+    if (!value) {
+      throw new InternalServerErrorException(`Thiếu biến môi trường: ${key}`);
+    }
+    return value;
   }
 
   uploadImage(file: Express.Multer.File): Promise<UploadApiResponse> {

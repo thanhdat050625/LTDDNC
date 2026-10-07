@@ -1,6 +1,18 @@
-import { IsNumber, IsNotEmpty, IsArray, IsOptional, IsString, IsEnum, Min } from 'class-validator';
+import {
+  IsNumber,
+  IsNotEmpty,
+  IsArray,
+  IsOptional,
+  IsString,
+  IsEnum,
+  Min,
+  ArrayMinSize,
+  ArrayMaxSize,
+  ArrayUnique,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { EBookingSource } from '../enums/booking.enum';
+import { MAX_SEATS_PER_BOOKING } from '../constants/booking.constant';
 
 export class HoldSeatsDto {
   @Type(() => Number)
@@ -9,6 +21,9 @@ export class HoldSeatsDto {
   showtimeId: number;
 
   @IsArray()
+  @ArrayMinSize(1, { message: 'Phải chọn ít nhất 1 ghế' })
+  @ArrayMaxSize(MAX_SEATS_PER_BOOKING, { message: `Chỉ được chọn tối đa ${MAX_SEATS_PER_BOOKING} ghế mỗi đơn` })
+  @ArrayUnique({ message: 'Danh sách ghế không được trùng lặp' })
   @IsNumber({}, { each: true })
   @IsNotEmpty()
   seatIds: number[];
@@ -39,6 +54,9 @@ export class CreateBookingDto {
   showtimeId: number;
 
   @IsArray()
+  @ArrayMinSize(1, { message: 'Phải chọn ít nhất 1 ghế' })
+  @ArrayMaxSize(MAX_SEATS_PER_BOOKING, { message: `Chỉ được chọn tối đa ${MAX_SEATS_PER_BOOKING} ghế mỗi đơn` })
+  @ArrayUnique({ message: 'Danh sách ghế không được trùng lặp' })
   @IsNumber({}, { each: true })
   @IsNotEmpty()
   seatIds: number[];
@@ -79,4 +97,23 @@ export class CreateBookingDto {
   @IsNumber()
   @IsOptional()
   customerId?: number;
+}
+
+export class ReleaseSeatsDto {
+  @Type(() => Number)
+  @IsNumber()
+  @IsNotEmpty()
+  showtimeId: number;
+
+  @IsArray()
+  @ArrayMinSize(1, { message: 'Phải chọn ít nhất 1 ghế để hủy giữ' })
+  @IsNumber({}, { each: true })
+  @IsNotEmpty()
+  seatIds: number[];
+}
+
+export class ApplyPromotionDto {
+  @IsNotEmpty({ message: 'Mã khuyến mãi không được để trống' })
+  @IsString({ message: 'Mã khuyến mãi phải là chuỗi' })
+  code: string;
 }

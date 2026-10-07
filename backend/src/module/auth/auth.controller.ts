@@ -1,4 +1,4 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, UseGuards, Request, Res } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus, UseGuards, Request, Res, InternalServerErrorException } from '@nestjs/common';
 import type { Response } from 'express';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -27,7 +27,10 @@ export class AuthController {
     const result = await this.authService.login(loginDto);
 
     if (result.success && result.data?.accessToken) {
-      const expiresStr = this.configService.get<StringValue>(ENV_VARS.JWT_ACCESS_EXPIRES_IN) || '7d';
+      const expiresStr = this.configService.get<StringValue>(ENV_VARS.JWT_ACCESS_EXPIRES_IN);
+      if (!expiresStr) {
+        throw new InternalServerErrorException(`Thiếu biến môi trường: ${ENV_VARS.JWT_ACCESS_EXPIRES_IN}`);
+      }
       res.cookie('accessToken', result.data.accessToken, {
         httpOnly: true, // Chống XSS (JavaScript không đọc được)
         secure: process.env.NODE_ENV === 'production',
