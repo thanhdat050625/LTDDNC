@@ -1247,6 +1247,21 @@ class AppLocalizationsVi extends AppLocalizations {
   String get editPromotion => 'Sửa Khuyến mãi';
 
   @override
+  String get promotionSearchPlaceholder => 'Tìm kiếm theo mã, mô tả...';
+
+  @override
+  String get promotionTotal => 'Tổng khuyến mãi';
+
+  @override
+  String get promotionActive => 'Đang áp dụng';
+
+  @override
+  String get promotionExpired => 'Đã hết hạn';
+
+  @override
+  String get promotionPaused => 'Tạm dừng';
+
+  @override
   String get promoCode => 'Mã khuyến mãi';
 
   @override

@@ -2440,6 +2440,36 @@ abstract class AppLocalizations {
   /// **'Sửa Khuyến mãi'**
   String get editPromotion;
 
+  /// No description provided for @promotionSearchPlaceholder.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tìm kiếm theo mã, mô tả...'**
+  String get promotionSearchPlaceholder;
+
+  /// No description provided for @promotionTotal.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tổng khuyến mãi'**
+  String get promotionTotal;
+
+  /// No description provided for @promotionActive.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang áp dụng'**
+  String get promotionActive;
+
+  /// No description provided for @promotionExpired.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã hết hạn'**
+  String get promotionExpired;
+
+  /// No description provided for @promotionPaused.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tạm dừng'**
+  String get promotionPaused;
+
   /// No description provided for @promoCode.
   ///
   /// In vi, this message translates to:

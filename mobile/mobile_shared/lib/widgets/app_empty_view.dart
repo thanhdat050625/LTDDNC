@@ -35,7 +35,8 @@ class AppEmptyView extends StatelessWidget {
     final displayTitle = title ?? l10n?.noData ?? 'Không có dữ liệu';
 
     return Center(
-      child: Padding(
+      child: SingleChildScrollView(
+        physics: const ClampingScrollPhysics(),
         padding: padding,
         child: Column(
           mainAxisSize: MainAxisSize.min,

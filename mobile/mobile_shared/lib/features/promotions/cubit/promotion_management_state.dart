@@ -10,10 +10,20 @@ abstract class PromotionManagementState extends Equatable {
 class PromotionManagementInitial extends PromotionManagementState {}
 class PromotionManagementLoading extends PromotionManagementState {}
 class PromotionManagementLoaded extends PromotionManagementState {
+  final List<PromotionModel> allPromotions;
   final List<PromotionModel> promotions;
-  const PromotionManagementLoaded(this.promotions);
+  final String? selectedFilter;
+  final String searchQuery;
+
+  const PromotionManagementLoaded({
+    required this.allPromotions,
+    required this.promotions,
+    this.selectedFilter,
+    this.searchQuery = '',
+  });
+
   @override
-  List<Object?> get props => [promotions];
+  List<Object?> get props => [allPromotions, promotions, selectedFilter, searchQuery];
 }
 class PromotionManagementError extends PromotionManagementState {
   final String message;
