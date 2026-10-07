@@ -119,7 +119,7 @@ class CinemaListItem extends StatelessWidget {
                 Icon(LucideIcons.monitorPlay, size: 14, color: theme.textSecondary),
                 const SizedBox(width: 4),
                 Text(
-                  '${cinema.roomsCount} ${l10n.roomCount.toLowerCase()}',
+                  '${cinema.roomsCount ?? cinema.rooms?.length ?? 0} ${l10n.roomCount.toLowerCase()}',
                   style: TextStyle(color: theme.textSecondary, fontSize: 12.5),
                 ),
               ],

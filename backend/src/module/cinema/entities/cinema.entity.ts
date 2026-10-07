@@ -30,5 +30,7 @@ export class Cinema {
 
   @OneToMany(() => Room, (room) => room.cinema)
   rooms: Room[];
+
+  roomsCount?: number;
 }
 

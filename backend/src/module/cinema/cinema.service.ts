@@ -132,7 +132,9 @@ export class CinemaService {
     const page = query.page ?? 1;
     const pageSize = query.pageSize ?? 10;
     const skip = (page - 1) * pageSize;
-    const builder = this.cinemaRepository.createQueryBuilder('cinema');
+    const builder = this.cinemaRepository
+      .createQueryBuilder('cinema')
+      .loadRelationCountAndMap('cinema.roomsCount', 'cinema.rooms');
 
     if (query.name) {
       builder.andWhere('LOWER(cinema.name) LIKE :name', {

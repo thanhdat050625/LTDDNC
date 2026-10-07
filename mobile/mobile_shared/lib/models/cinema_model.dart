@@ -22,6 +22,10 @@ class CinemaModel extends Equatable {
   });
 
   factory CinemaModel.fromJson(Map<String, dynamic> json) {
+    final roomsList = (json['rooms'] as List<dynamic>?)
+        ?.map((e) => RoomModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+    final count = (json['roomsCount'] as num?)?.toInt() ?? roomsList?.length ?? 0;
     return CinemaModel(
       id: json['id'] as int,
       name: json['name'] as String,
@@ -29,8 +33,8 @@ class CinemaModel extends Equatable {
       phone: json['phone'] as String? ?? '',
       email: json['email'] as String? ?? '',
       status: json['status'] as String? ?? 'ACTIVE',
-      rooms: (json['rooms'] as List<dynamic>?)?.map((e) => RoomModel.fromJson(e as Map<String, dynamic>)).toList(),
-      roomsCount: json['roomsCount'] as int?,
+      rooms: roomsList,
+      roomsCount: count,
     );
   }
 
