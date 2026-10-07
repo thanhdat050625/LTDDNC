@@ -9,10 +9,12 @@ import 'package:cineplex_client/features/concession/presentation/cubit/concessio
 class MockConcessionRepository extends Mock implements ConcessionRepository {}
 class MockBookingRepository extends Mock implements BookingRepository {}
 class FakeUpdateBookingConcessionsDto extends Fake implements UpdateBookingConcessionsDto {}
+class FakeCreateBookingDto extends Fake implements CreateBookingDto {}
 
 void main() {
   setUpAll(() {
     registerFallbackValue(FakeUpdateBookingConcessionsDto());
+    registerFallbackValue(FakeCreateBookingDto());
   });
 
   late MockConcessionRepository concessionRepo;
@@ -147,6 +149,40 @@ void main() {
         isA<ConcessionError>().having((e) => e.message, 'message', contains('Cập nhật bắp nước thất bại')),
         isA<ConcessionLoaded>().having((s) => s.isSubmitting, 'isSubmitting', false),
       ],
+    );
+
+    blocTest<ConcessionCubit, ConcessionState>(
+      '6. Submit concessions when bookingId is 0 creates booking via createBooking and emits success',
+      build: () {
+        when(() => bookingRepo.createBooking(any())).thenAnswer((_) async => BookingModel(
+          id: 555,
+          bookingCode: 'BK-555',
+          showtimeId: 101,
+          totalAmount: 220000,
+          discountAmount: 0,
+          pointsUsed: 0,
+          status: 'PENDING',
+          expiredAt: DateTime.now().add(const Duration(minutes: 5)),
+        ));
+        return ConcessionCubit(concessionRepo, bookingRepo);
+      },
+      seed: () => ConcessionLoaded(
+        products: sampleProducts,
+        selectedItems: const {1: 1},
+        totalPrice: 60000.0,
+      ),
+      act: (cubit) async => cubit.submitConcessions(0, 101, [1, 2]),
+      expect: () => [
+        isA<ConcessionLoaded>().having((s) => s.isSubmitting, 'isSubmitting', true),
+        isA<ConcessionSubmitSuccess>().having((s) => s.bookingId, 'bookingId', 555),
+      ],
+      verify: (_) {
+        verify(() => bookingRepo.createBooking(any(that: isA<CreateBookingDto>().having(
+          (dto) => dto.showtimeId,
+          'showtimeId',
+          101,
+        )))).called(1);
+      },
     );
   });
 }

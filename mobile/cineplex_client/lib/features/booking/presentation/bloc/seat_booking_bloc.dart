@@ -134,9 +134,20 @@ class SeatBookingError extends SeatBookingState {
 class SeatsHeld extends SeatBookingState {
   final int bookingId;
   final DateTime expiredAt;
-  const SeatsHeld(this.bookingId, this.expiredAt);
+  final int showtimeId;
+  final List<int> seatIds;
+  final double seatPrice;
+
+  const SeatsHeld(
+    this.bookingId,
+    this.expiredAt, {
+    this.showtimeId = 0,
+    this.seatIds = const [],
+    this.seatPrice = 0.0,
+  });
+
   @override
-  List<Object?> get props => [bookingId, expiredAt];
+  List<Object?> get props => [bookingId, expiredAt, showtimeId, seatIds, seatPrice];
 }
 
 class BookingCreated extends SeatBookingState {
@@ -266,22 +277,18 @@ class SeatBookingBloc extends Bloc<SeatBookingEvent, SeatBookingState> {
         holdExpiredAt = DateTime.tryParse(res['expiredAt'].toString())?.toLocal();
       }
 
-      final booking = await _repository.createBooking(CreateBookingDto(
-        showtimeId: _currentShowtimeId!,
-        seatIds: s.selectedSeatIds,
-      ));
-
-      if (booking.id <= 0) {
-        emit(const SeatBookingError('Không thể tạo đơn đặt vé'));
-        emit(s);
-        return;
-      }
-
-      final expiredAt = booking.expiredAt ?? holdExpiredAt ?? DateTime.now().add(const Duration(minutes: 5));
+      final expiredAt = holdExpiredAt ?? DateTime.now().add(const Duration(minutes: 5));
       final diff = expiredAt.difference(DateTime.now()).inSeconds;
       _startTimer(diff > 0 ? diff : 300);
 
-      emit(SeatsHeld(booking.id, expiredAt));
+      // ponytail: Only hold seats here; booking order is created at payment/checkout step.
+      emit(SeatsHeld(
+        0,
+        expiredAt,
+        showtimeId: _currentShowtimeId!,
+        seatIds: s.selectedSeatIds,
+        seatPrice: s.totalPrice,
+      ));
     } catch (e) {
       emit(SeatBookingError(_mapBookingError(e)));
       emit(s);

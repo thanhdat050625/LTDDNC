@@ -5,10 +5,25 @@ import 'package:mobile_shared/mobile_shared.dart';
 import 'package:cineplex_client/features/concession/presentation/cubit/concession_cubit.dart';
 import 'package:cineplex_client/features/concession/presentation/widgets/concession_item_card.dart';
 
-class ConcessionScreen extends StatefulWidget {
+class ConcessionScreenArgs {
+  final int showtimeId;
+  final List<int> seatIds;
+  final double seatPrice;
   final int bookingId;
 
-  const ConcessionScreen({super.key, required this.bookingId});
+  const ConcessionScreenArgs({
+    this.showtimeId = 0,
+    this.seatIds = const [],
+    this.seatPrice = 0.0,
+    this.bookingId = 0,
+  });
+}
+
+class ConcessionScreen extends StatefulWidget {
+  final int bookingId;
+  final ConcessionScreenArgs? args;
+
+  const ConcessionScreen({super.key, this.bookingId = 0, this.args});
 
   @override
   State<ConcessionScreen> createState() => _ConcessionScreenState();
@@ -16,6 +31,11 @@ class ConcessionScreen extends StatefulWidget {
 
 class _ConcessionScreenState extends State<ConcessionScreen> {
   int _selectedCategoryIndex = 0;
+
+  int get effectiveBookingId => widget.args?.bookingId ?? widget.bookingId;
+  int get showtimeId => widget.args?.showtimeId ?? 0;
+  List<int> get seatIds => widget.args?.seatIds ?? const [];
+  double get seatPrice => widget.args?.seatPrice ?? 0.0;
 
   @override
   void initState() {
@@ -65,7 +85,12 @@ class _ConcessionScreenState extends State<ConcessionScreen> {
         actions: [
           TextButton(
             onPressed: () {
-              context.read<ConcessionCubit>().submitConcessions(widget.bookingId);
+              context.read<ConcessionCubit>().submitConcessions(
+                effectiveBookingId,
+                showtimeId,
+                seatIds,
+                true,
+              );
             },
             child: Text(
               l10n.skipConcession,
@@ -184,40 +209,102 @@ class _ConcessionScreenState extends State<ConcessionScreen> {
                   ),
                   child: SafeArea(
                     top: false,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              l10n.subtotal,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: colors.textSecondary,
+                        if (seatPrice > 0) ...[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                seatIds.isNotEmpty
+                                    ? '${l10n.ticketTotal} (${seatIds.length} ${l10n.seatUnit})'
+                                    : l10n.ticketTotal,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: colors.textSecondary,
+                                ),
                               ),
+                              Text(
+                                FormatUtils.formatCurrency(seatPrice),
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: colors.textPrimary,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                l10n.concessionTotalLabel,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: colors.textSecondary,
+                                ),
+                              ),
+                              Text(
+                                FormatUtils.formatCurrency(state.totalPrice),
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: colors.textPrimary,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: Divider(
+                              height: 1,
+                              thickness: 0.5,
+                              color: colors.borderSubtle,
                             ),
-                            const SizedBox(height: 2),
-                            Text(
-                              FormatUtils.formatCurrency(state.totalPrice),
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: colors.primary,
-                              ),
+                          ),
+                        ],
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  seatPrice > 0 ? l10n.totalAmount : l10n.subtotal,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: colors.textSecondary,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  FormatUtils.formatCurrency(seatPrice > 0 ? (seatPrice + state.totalPrice) : state.totalPrice),
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: colors.primary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            AppButton(
+                              text: l10n.checkout,
+                              width: 150,
+                              isLoading: state.isSubmitting,
+                              onPressed: state.isSubmitting
+                                  ? null
+                                  : () {
+                                      context.read<ConcessionCubit>().submitConcessions(
+                                        effectiveBookingId,
+                                        showtimeId,
+                                        seatIds,
+                                      );
+                                    },
                             ),
                           ],
-                        ),
-                        AppButton(
-                          text: l10n.checkout,
-                          width: 150,
-                          isLoading: state.isSubmitting,
-                          onPressed: state.isSubmitting
-                              ? null
-                              : () {
-                                  context.read<ConcessionCubit>().submitConcessions(widget.bookingId);
-                                },
                         ),
                       ],
                     ),

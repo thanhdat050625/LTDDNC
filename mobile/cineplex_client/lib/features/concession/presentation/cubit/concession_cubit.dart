@@ -102,28 +102,45 @@ class ConcessionCubit extends Cubit<ConcessionState> {
     }
   }
 
-  Future<bool> submitConcessions(int bookingId) async {
+  Future<bool> submitConcessions([
+    int bookingId = 0,
+    int showtimeId = 0,
+    List<int> seatIds = const [],
+    bool skip = false,
+  ]) async {
     if (state is ConcessionLoaded) {
       final currentState = state as ConcessionLoaded;
       emit(currentState.copyWith(isSubmitting: true));
 
       try {
-        final items = currentState.selectedItems.entries
-            .where((item) => item.value > 0)
-            .map((item) => ConcessionItemDto(
-                  concessionId: item.key,
-                  quantity: item.value,
-                ))
-            .toList();
+        final items = skip
+            ? <ConcessionItemDto>[]
+            : currentState.selectedItems.entries
+                .where((item) => item.value > 0)
+                .map((item) => ConcessionItemDto(
+                      concessionId: item.key,
+                      quantity: item.value,
+                    ))
+                .toList();
 
-        if (_bookingRepository != null) {
+        int targetBookingId = bookingId;
+
+        // ponytail: Create booking only when user confirms payment/concessions step.
+        if (targetBookingId <= 0 && showtimeId > 0 && seatIds.isNotEmpty && _bookingRepository != null) {
+          final booking = await _bookingRepository.createBooking(CreateBookingDto(
+            showtimeId: showtimeId,
+            seatIds: seatIds,
+            concessions: items,
+          ));
+          targetBookingId = booking.id;
+        } else if (targetBookingId > 0 && _bookingRepository != null && !skip) {
           await _bookingRepository.updateBookingConcessions(
-            bookingId,
+            targetBookingId,
             UpdateBookingConcessionsDto(concessions: items),
           );
         }
 
-        emit(ConcessionSubmitSuccess(bookingId));
+        emit(ConcessionSubmitSuccess(targetBookingId));
         return true;
       } catch (e) {
         emit(ConcessionError(e.toString()));

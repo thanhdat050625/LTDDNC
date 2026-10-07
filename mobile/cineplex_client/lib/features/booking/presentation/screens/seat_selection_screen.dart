@@ -6,6 +6,8 @@ import 'package:cineplex_client/features/booking/presentation/bloc/seat_booking_
 import 'package:cineplex_client/features/booking/presentation/widgets/seat_layout_widget.dart';
 import 'package:cineplex_client/features/booking/presentation/widgets/booking_timer_widget.dart';
 
+import 'package:cineplex_client/features/concession/presentation/screens/concession_screen.dart';
+
 class SeatSelectionScreen extends StatefulWidget {
   final int showtimeId;
 
@@ -34,8 +36,16 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
       ),
       body: BlocConsumer<SeatBookingBloc, SeatBookingState>(
         listener: (context, state) {
-          if (state is SeatsHeld && state.bookingId > 0) {
-            context.push('/concessions/${state.bookingId}');
+          if (state is SeatsHeld) {
+            context.push(
+              '/concessions/${state.bookingId}',
+              extra: ConcessionScreenArgs(
+                showtimeId: state.showtimeId > 0 ? state.showtimeId : widget.showtimeId,
+                seatIds: state.seatIds,
+                seatPrice: state.seatPrice,
+                bookingId: state.bookingId,
+              ),
+            );
           } else if (state is SeatBookingError) {
             String errorMsg = state.message;
             if (state.message == 'MAX_SEATS_EXCEEDED') {
