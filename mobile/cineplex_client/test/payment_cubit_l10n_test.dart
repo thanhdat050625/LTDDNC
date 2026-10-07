@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 import 'package:cineplex_client/features/payment/presentation/cubit/payment_cubit.dart';
 import 'package:cineplex_client/features/payment/data/repositories/payment_repository.dart';
 import 'package:cineplex_client/features/payment/data/models/payment_model.dart';
@@ -23,13 +24,29 @@ class FakePaymentRepository implements PaymentRepository {
   Future<PaymentResponseModel> checkout(String bookingId, String method) async => throw UnimplementedError();
 
   @override
-  Future<dynamic> checkPromotion(String code, {String? movieId}) async => throw UnimplementedError();
+  Future<CheckoutPrepareModel> prepareCheckoutDraft({
+    required int showtimeId,
+    required List<int> seatIds,
+    List<Map<String, dynamic>> concessions = const [],
+  }) async => throw UnimplementedError();
+
+  @override
+  Future<dynamic> checkPromotion(String code, {String? movieId, num? orderTotal}) async => throw UnimplementedError();
 
   @override
   Future<Map<String, dynamic>> applyPromotion(String bookingId, String code) async => throw UnimplementedError();
 
   @override
   Future<Map<String, dynamic>> removePromotion(String bookingId) async => throw UnimplementedError();
+
+  @override
+  Future<List<PromotionModel>> getActivePromotions() async => [];
+
+  @override
+  Future<Map<String, dynamic>> applyLoyaltyPoints(String bookingId, int pointsToUse) async => {};
+
+  @override
+  Future<Map<String, dynamic>> removeLoyaltyPoints(String bookingId) async => {};
 }
 
 void main() {

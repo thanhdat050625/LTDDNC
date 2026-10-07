@@ -572,6 +572,15 @@ class AppLocalizationsVi extends AppLocalizations {
   String get notificationPaymentFailed => 'Thanh toán thất bại';
 
   @override
+  String get notificationAccount => 'Tài khoản';
+
+  @override
+  String get notificationDetail => 'Chi tiết thông báo';
+
+  @override
+  String get notificationOpenLink => 'Xem chi tiết liên kết';
+
+  @override
   String get profile => 'Tài khoản';
 
   @override
@@ -1643,6 +1652,35 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get paymentMethodCash => 'Tiền mặt tại quầy';
+
+  @override
+  String get paymentSelectVoucher => 'Chọn voucher';
+
+  @override
+  String get paymentAvailableVouchers => 'Mã khuyến mãi khả dụng';
+
+  @override
+  String get paymentNoVouchers => 'Không có mã khuyến mãi khả dụng';
+
+  @override
+  String paymentEarnedPointsNotice(int points) {
+    return 'Tích lũy +$points điểm khi hoàn tất';
+  }
+
+  @override
+  String paymentUseLoyaltyPoints(int points) {
+    return 'Dùng điểm tích lũy ($points điểm)';
+  }
+
+  @override
+  String paymentSeatsLabel(String seats) {
+    return 'Ghế: $seats';
+  }
+
+  @override
+  String paymentTicketsCount(int count) {
+    return '$count vé xem phim';
+  }
 
   @override
   String get epassTitle => 'Vé điện tử (E-Pass)';

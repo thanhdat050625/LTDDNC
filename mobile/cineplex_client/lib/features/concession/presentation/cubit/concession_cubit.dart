@@ -44,11 +44,21 @@ class ConcessionLoaded extends ConcessionState {
   List<Object?> get props => [products, selectedItems, totalPrice, isSubmitting];
 }
 
-class ConcessionSubmitSuccess extends ConcessionState {
+class ConcessionSubmitSuccess extends ConcessionLoaded {
   final int bookingId;
-  const ConcessionSubmitSuccess(this.bookingId);
+  final List<ConcessionItemDto> concessions;
+
+  const ConcessionSubmitSuccess(
+    this.bookingId, {
+    this.concessions = const [],
+    super.products = const [],
+    super.selectedItems = const {},
+    super.totalPrice = 0.0,
+    super.isSubmitting = false,
+  });
+
   @override
-  List<Object?> get props => [bookingId];
+  List<Object?> get props => [bookingId, concessions, products, selectedItems, totalPrice, isSubmitting];
 }
 
 class ConcessionError extends ConcessionState {
@@ -123,24 +133,24 @@ class ConcessionCubit extends Cubit<ConcessionState> {
                     ))
                 .toList();
 
-        int targetBookingId = bookingId;
+        final targetBookingId = bookingId;
 
-        // ponytail: Create booking only when user confirms payment/concessions step.
-        if (targetBookingId <= 0 && showtimeId > 0 && seatIds.isNotEmpty && _bookingRepository != null) {
-          final booking = await _bookingRepository.createBooking(CreateBookingDto(
-            showtimeId: showtimeId,
-            seatIds: seatIds,
-            concessions: items,
-          ));
-          targetBookingId = booking.id;
-        } else if (targetBookingId > 0 && _bookingRepository != null && !skip) {
+        // ponytail: Order creation is deferred to "Thanh toán ngay" on CheckoutScreen.
+        if (targetBookingId > 0 && _bookingRepository != null && !skip) {
           await _bookingRepository.updateBookingConcessions(
             targetBookingId,
             UpdateBookingConcessionsDto(concessions: items),
           );
         }
 
-        emit(ConcessionSubmitSuccess(targetBookingId));
+        emit(ConcessionSubmitSuccess(
+          targetBookingId,
+          concessions: items,
+          products: currentState.products,
+          selectedItems: currentState.selectedItems,
+          totalPrice: currentState.totalPrice,
+          isSubmitting: false,
+        ));
         return true;
       } catch (e) {
         emit(ConcessionError(e.toString()));

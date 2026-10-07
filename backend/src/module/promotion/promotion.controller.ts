@@ -32,6 +32,12 @@ export class PromotionController {
     return this.promotionService.findAll(page, pageSize);
   }
 
+  @Get('active')
+  @HttpCode(HttpStatus.OK)
+  async getActivePromotions() {
+    return this.promotionService.getActivePromotions();
+  }
+
   @Get(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(EUserRole.ADMIN, EUserRole.STAFF)

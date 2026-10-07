@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 import 'package:cineplex_client/features/concession/presentation/cubit/concession_cubit.dart';
 import 'package:cineplex_client/features/concession/presentation/widgets/concession_item_card.dart';
+import 'package:cineplex_client/features/payment/data/models/payment_model.dart';
 
 class ConcessionScreenArgs {
   final int showtimeId;
@@ -105,7 +106,15 @@ class _ConcessionScreenState extends State<ConcessionScreen> {
       body: BlocConsumer<ConcessionCubit, ConcessionState>(
         listener: (context, state) {
           if (state is ConcessionSubmitSuccess) {
-            context.push('/checkout/${state.bookingId}');
+            context.push(
+              '/checkout/${state.bookingId}',
+              extra: CheckoutScreenArgs(
+                showtimeId: showtimeId,
+                seatIds: seatIds,
+                seatPrice: seatPrice,
+                concessions: state.concessions,
+              ),
+            );
           } else if (state is ConcessionError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.message)),

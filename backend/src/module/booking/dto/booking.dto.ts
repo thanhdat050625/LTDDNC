@@ -117,3 +117,11 @@ export class ApplyPromotionDto {
   @IsString({ message: 'Mã khuyến mãi phải là chuỗi' })
   code: string;
 }
+
+export class ApplyLoyaltyPointsDto {
+  @Type(() => Number)
+  @IsNumber()
+  @IsNotEmpty({ message: 'Số điểm không được để trống' })
+  @Min(0, { message: 'Số điểm không hợp lệ' })
+  pointsToUse: number;
+}

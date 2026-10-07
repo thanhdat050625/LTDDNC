@@ -242,6 +242,9 @@
   "notificationReminder": "Nhắc nhở",
   "notificationSystem": "Hệ thống",
   "notificationPaymentFailed": "Thanh toán thất bại",
+  "notificationAccount": "Tài khoản",
+  "notificationDetail": "Chi tiết thông báo",
+  "notificationOpenLink": "Xem chi tiết liên kết",
   "profile": "Tài khoản",
   "editProfile": "Chỉnh sửa thông tin",
   "fullName": "Họ và tên",
@@ -750,6 +753,41 @@
   "paymentMethodZaloPay": "Ví ZaloPay",
   "paymentMethodCard": "Thẻ ATM / Thẻ quốc tế",
   "paymentMethodCash": "Tiền mặt tại quầy",
+  "paymentSelectVoucher": "Chọn voucher",
+  "paymentAvailableVouchers": "Mã khuyến mãi khả dụng",
+  "paymentNoVouchers": "Không có mã khuyến mãi khả dụng",
+  "paymentEarnedPointsNotice": "Tích lũy +{points} điểm khi hoàn tất",
+  "@paymentEarnedPointsNotice": {
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "paymentUseLoyaltyPoints": "Dùng điểm tích lũy ({points} điểm)",
+  "@paymentUseLoyaltyPoints": {
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "paymentSeatsLabel": "Ghế: {seats}",
+  "@paymentSeatsLabel": {
+    "placeholders": {
+      "seats": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentTicketsCount": "{count} vé xem phim",
+  "@paymentTicketsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "epassTitle": "Vé điện tử (E-Pass)",
   "epassInstruction": "Vui lòng xuất trình mã QR này tại cửa kiểm soát để vào rạp",
   "ticketFormat2D": "2D",

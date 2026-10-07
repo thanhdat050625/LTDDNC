@@ -1,4 +1,4 @@
-import { Injectable, HttpStatus, Optional } from '@nestjs/common';
+import { Injectable, HttpStatus, Optional, Logger } from '@nestjs/common';
 import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, In, DataSource } from 'typeorm';
 import { Booking } from './entities/booking.entity';
@@ -11,6 +11,8 @@ import { RedisService } from '../redis/redis.service';
 import { EBookingStatus, EBookingSource, ESeatHoldStatus } from './enums/booking.enum';
 import { Seat } from '../cinema/entities/seat.entity';
 import { ERoomType } from '../cinema/enums/cinema.enum';
+import { Payment } from '../payment/entities/payment.entity';
+import { EPaymentStatus } from '../payment/enums/payment.enum';
 import { TicketPrice } from '../ticket/entities/ticket-price.entity';
 import { ConcessionProduct } from '../concession/entities/concession-product.entity';
 import { Promotion } from '../promotion/entities/promotion.entity';
@@ -32,6 +34,8 @@ const LOYALTY_MAX_DISCOUNT_RATE = 0.20;
 
 @Injectable()
 export class BookingService {
+  private readonly logger = new Logger(BookingService.name);
+
   constructor(
     @InjectRepository(Booking)
     private readonly bookingRepository: Repository<Booking>,
@@ -108,13 +112,30 @@ export class BookingService {
           seatId,
           status: ESeatHoldStatus.CONFIRMED,
         },
+        relations: ['booking'],
       });
       if (confirmedHold) {
-        throw new CustomException(
-          HttpStatus.BAD_REQUEST,
-          BOOKING_ERROR_CODES.SEAT_ALREADY_BOOKED,
-          `Ghế ${seatId} đã được đặt/bán`,
-        );
+        const now = new Date();
+        const isCancelledOrExpired =
+          confirmedHold.booking &&
+          (confirmedHold.booking.status === EBookingStatus.CANCELLED ||
+            confirmedHold.booking.status === EBookingStatus.EXPIRED ||
+            (confirmedHold.booking.status === EBookingStatus.PENDING &&
+              confirmedHold.booking.expiredAt &&
+              new Date(confirmedHold.booking.expiredAt) <= now));
+
+        if (isCancelledOrExpired) {
+          await this.seatHoldRepository.update(
+            { id: confirmedHold.id },
+            { status: ESeatHoldStatus.RELEASED },
+          );
+        } else {
+          throw new CustomException(
+            HttpStatus.BAD_REQUEST,
+            BOOKING_ERROR_CODES.SEAT_ALREADY_BOOKED,
+            `Ghế ${seatId} đã được đặt/bán`,
+          );
+        }
       }
     }
 
@@ -444,8 +465,8 @@ export class BookingService {
         const updatePromoRes = await queryRunner.manager
           .createQueryBuilder(Promotion, 'promotion')
           .update()
-          .set({ usedCount: () => 'used_count + 1' })
-          .where('id = :id AND (max_usage IS NULL OR used_count < max_usage)', { id: promotionId })
+          .set({ usedCount: () => 'usedCount + 1' })
+          .where('id = :id AND (maxUsage IS NULL OR usedCount < maxUsage)', { id: promotionId })
           .execute();
 
         if (!updatePromoRes || updatePromoRes.affected === 0) {
@@ -502,16 +523,44 @@ export class BookingService {
     // Ghế đang bị hold trong Redis
     const heldSeatIds = await this.redisService.getHeldSeatIds(showtimeId);
 
-    // Ghế đã được đặt (booking PAID)
+    // Ghế đã được đặt (booking PAID hoặc PENDING còn hạn)
     const bookedSeats = await this.seatHoldRepository.find({
       where: {
         showtimeId,
         status: In([ESeatHoldStatus.CONFIRMED]),
       },
-      relations: ['seat'],
+      relations: ['seat', 'booking'],
     });
 
-    const bookedSeatIds = bookedSeats.map(h => h.seatId);
+    const now = new Date();
+    const activeBookedSeats = bookedSeats.filter(h => {
+      if (!h.booking) return true;
+      if (h.booking.status === EBookingStatus.CANCELLED || h.booking.status === EBookingStatus.EXPIRED) {
+        return false;
+      }
+      if (h.booking.status === EBookingStatus.PENDING && h.booking.expiredAt && new Date(h.booking.expiredAt) < now) {
+        return false;
+      }
+      return true;
+    });
+
+    // Dọn dẹp các SeatHold thuộc đơn đã hủy hoặc hết hạn
+    const invalidHoldIds = bookedSeats
+      .filter(h => h.booking && (
+        h.booking.status === EBookingStatus.CANCELLED ||
+        h.booking.status === EBookingStatus.EXPIRED ||
+        (h.booking.status === EBookingStatus.PENDING && h.booking.expiredAt && new Date(h.booking.expiredAt) < now)
+      ))
+      .map(h => h.id);
+
+    if (invalidHoldIds.length > 0) {
+      await this.seatHoldRepository.update(
+        { id: In(invalidHoldIds) },
+        { status: ESeatHoldStatus.RELEASED },
+      );
+    }
+
+    const bookedSeatIds = activeBookedSeats.map(h => h.seatId);
 
     return new ApiResponse(true, 'Lấy danh sách ghế đã đặt/giữ thành công', {
       heldSeatIds,
@@ -554,6 +603,30 @@ export class BookingService {
       totalPages,
     };
     return response;
+  }
+
+  async getBookingById(id: number, user?: any): Promise<ApiResponse<Booking>> {
+    const booking = await this.bookingRepository.findOne({
+      where: { id },
+      relations: [
+        'user',
+        'staff',
+        'showtime',
+        'showtime.movie',
+        'showtime.room',
+        'seatHolds',
+        'seatHolds.seat',
+        'tickets',
+        'tickets.seat',
+        'bookingConcessions',
+        'bookingConcessions.product',
+        'payment',
+      ],
+    });
+    if (!booking) {
+      throw new CustomException(HttpStatus.NOT_FOUND, 'BOOKING_NOT_FOUND', 'Không tìm thấy đơn đặt vé');
+    }
+    return new ApiResponse(true, 'Lấy chi tiết đơn đặt vé thành công', booking);
   }
 
   async getUserBookingHistory(userId: number, page: number = 1, pageSize: number = 10): Promise<ApiResponse<Booking[]>> {
@@ -828,6 +901,77 @@ export class BookingService {
     return new ApiResponse(true, 'Nhả ghế thành công', { releasedSeatIds });
   }
 
+  // ─── CANCEL BOOKING ──────────────────────────────────────────────────
+  async cancelBooking(userId: number, bookingId: number): Promise<ApiResponse<any>> {
+    const booking = await this.bookingRepository.findOne({
+      where: { id: bookingId },
+      relations: ['payment', 'seatHolds'],
+    });
+
+    if (!booking) {
+      throw new CustomException(HttpStatus.NOT_FOUND, 'BOOKING_NOT_FOUND', 'Không tìm thấy đơn đặt vé');
+    }
+
+    if (booking.userId && booking.userId !== userId && booking.staffId !== userId) {
+      throw new CustomException(HttpStatus.FORBIDDEN, 'FORBIDDEN', 'Bạn không có quyền hủy đơn này');
+    }
+
+    if (booking.status === EBookingStatus.PAID) {
+      throw new CustomException(HttpStatus.BAD_REQUEST, 'BOOKING_ALREADY_PAID', 'Đơn hàng đã thanh toán, không thể hủy trực tiếp');
+    }
+
+    if (booking.status === EBookingStatus.CANCELLED || booking.status === EBookingStatus.EXPIRED) {
+      return new ApiResponse(true, 'Đơn hàng đã ở trạng thái hủy/hết hạn', {
+        bookingId: booking.id,
+        status: booking.status,
+      });
+    }
+
+    await this.bookingRepository.update({ id: booking.id }, { status: EBookingStatus.CANCELLED });
+
+    if (booking.payment && booking.payment.status !== EPaymentStatus.SUCCESS) {
+      await this.dataSource.getRepository(Payment).update({ id: booking.payment.id }, { status: EPaymentStatus.FAILED });
+    }
+
+    if (booking.promotionId) {
+      await this.dataSource
+        .createQueryBuilder()
+        .update(Promotion)
+        .set({ usedCount: () => 'GREATEST(usedCount - 1, 0)' })
+        .where('id = :id', { id: booking.promotionId })
+        .execute();
+    }
+
+    if (booking.pointsUsed > 0 && booking.userId) {
+      await this.userRepository.update(
+        { id: booking.userId },
+        { loyaltyPoints: () => `loyaltyPoints + ${booking.pointsUsed}` },
+      );
+    }
+
+    await this.seatHoldRepository.update(
+      { bookingId: booking.id },
+      { status: ESeatHoldStatus.RELEASED },
+    );
+
+    const showtimeId = booking.showtimeId;
+    const seatHolds = booking.seatHolds?.length
+      ? booking.seatHolds
+      : await this.seatHoldRepository.find({ where: { bookingId: booking.id } });
+    const seatIds = seatHolds.map(h => h.seatId);
+
+    if (seatIds.length > 0) {
+      await this.redisService.releaseSeats(showtimeId, seatIds);
+    }
+
+    await this.broadcastSeatUpdate(showtimeId);
+
+    return new ApiResponse(true, 'Hủy đơn hàng thành công, ghế đã được giải phóng', {
+      bookingId: booking.id,
+      status: EBookingStatus.CANCELLED,
+    });
+  }
+
   // ─── APPLY PROMOTION (BUG-05) ─────────────────────────────────────────
   async applyPromotionToBooking(userId: number, bookingId: number, code: string): Promise<ApiResponse<any>> {
     const booking = await this.bookingRepository.findOne({
@@ -873,7 +1017,7 @@ export class BookingService {
         await queryRunner.manager
           .createQueryBuilder(Promotion, 'promotion')
           .update()
-          .set({ usedCount: () => 'GREATEST(used_count - 1, 0)' })
+          .set({ usedCount: () => 'GREATEST(usedCount - 1, 0)' })
           .where('id = :id', { id: booking.promotionId })
           .execute();
       }
@@ -882,8 +1026,8 @@ export class BookingService {
         const updateRes = await queryRunner.manager
           .createQueryBuilder(Promotion, 'promotion')
           .update()
-          .set({ usedCount: () => 'used_count + 1' })
-          .where('id = :id AND (max_usage IS NULL OR used_count < max_usage)', { id: validatedPromo.id })
+          .set({ usedCount: () => 'usedCount + 1' })
+          .where('id = :id AND (maxUsage IS NULL OR usedCount < maxUsage)', { id: validatedPromo.id })
           .execute();
 
         if (!updateRes || updateRes.affected === 0) {
@@ -918,7 +1062,10 @@ export class BookingService {
         promotionCode: validatedPromo.code,
       });
     } catch (err) {
-      await queryRunner.rollbackTransaction();
+      this.logger.error(`applyPromotionToBooking failed for booking ${bookingId}, code ${code}:`, err);
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction();
+      }
       if (err instanceof CustomException) throw err;
       throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, 'APPLY_PROMOTION_FAILED', 'Áp dụng mã khuyến mãi thất bại');
     } finally {
@@ -964,7 +1111,7 @@ export class BookingService {
       await queryRunner.manager
         .createQueryBuilder(Promotion, 'promotion')
         .update()
-        .set({ usedCount: () => 'GREATEST(used_count - 1, 0)' })
+        .set({ usedCount: () => 'GREATEST(usedCount - 1, 0)' })
         .where('id = :id', { id: booking.promotionId })
         .execute();
 
@@ -989,9 +1136,159 @@ export class BookingService {
         discountAmount: 0,
       });
     } catch (err) {
-      await queryRunner.rollbackTransaction();
+      this.logger.error(`removePromotionFromBooking failed for booking ${bookingId}:`, err);
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction();
+      }
       if (err instanceof CustomException) throw err;
       throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, 'REMOVE_PROMOTION_FAILED', 'Gỡ bỏ mã khuyến mãi thất bại');
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  // ─── APPLY LOYALTY POINTS TO BOOKING ──────────────────────────────────
+  async applyLoyaltyPointsToBooking(userId: number, bookingId: number, pointsToUse: number): Promise<ApiResponse<any>> {
+    const booking = await this.bookingRepository.findOne({
+      where: { id: bookingId },
+      relations: ['promotion'],
+    });
+
+    if (!booking) {
+      throw new CustomException(HttpStatus.NOT_FOUND, 'BOOKING_NOT_FOUND', 'Không tìm thấy đơn đặt vé');
+    }
+
+    if (booking.userId !== userId) {
+      throw new CustomException(HttpStatus.FORBIDDEN, 'FORBIDDEN', 'Bạn không có quyền thao tác trên đơn này');
+    }
+
+    if (booking.status !== EBookingStatus.PENDING) {
+      throw new CustomException(HttpStatus.BAD_REQUEST, 'BOOKING_NOT_PENDING', 'Chỉ có thể áp dụng điểm cho đơn chờ thanh toán');
+    }
+
+    if (booking.expiredAt && new Date(booking.expiredAt) < new Date()) {
+      throw new CustomException(HttpStatus.BAD_REQUEST, 'BOOKING_EXPIRED', 'Đơn hàng đã hết hạn thanh toán');
+    }
+
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new CustomException(HttpStatus.NOT_FOUND, 'USER_NOT_FOUND', 'Không tìm thấy người dùng');
+    }
+
+    if (pointsToUse <= 0) {
+      return this.removeLoyaltyPointsFromBooking(userId, bookingId);
+    }
+
+    const availablePoints = user.loyaltyPoints + (booking.pointsUsed || 0);
+    if (availablePoints < pointsToUse) {
+      throw new CustomException(HttpStatus.BAD_REQUEST, 'INSUFFICIENT_POINTS', 'Số điểm tích lũy không đủ');
+    }
+
+    const originalOrderTotal = booking.totalAmount + booking.discountAmount + (booking.pointsUsed || 0);
+    const maxPointDiscount = Math.floor(originalOrderTotal * LOYALTY_MAX_DISCOUNT_RATE);
+    const requestedDiscount = Math.floor(pointsToUse * LOYALTY_POINT_VALUE);
+    const pointsDiscountAmount = Math.min(requestedDiscount, maxPointDiscount);
+    const actualPointsUsed = Math.min(Math.ceil(pointsDiscountAmount / LOYALTY_POINT_VALUE), availablePoints);
+
+    const newTotalAmount = Math.max(0, originalOrderTotal - booking.discountAmount - actualPointsUsed);
+    const pointsDifference = actualPointsUsed - (booking.pointsUsed || 0);
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await queryRunner.manager.update(Booking, { id: booking.id }, {
+        pointsUsed: actualPointsUsed,
+        totalAmount: newTotalAmount,
+      });
+
+      if (pointsDifference !== 0) {
+        await queryRunner.manager.update(User, { id: user.id }, {
+          loyaltyPoints: () => `loyaltyPoints - ${pointsDifference}`,
+        });
+      }
+
+      await queryRunner.commitTransaction();
+
+      return new ApiResponse(true, 'Áp dụng điểm tích lũy thành công', {
+        totalAmount: newTotalAmount,
+        discountAmount: booking.discountAmount,
+        pointsUsed: actualPointsUsed,
+        loyaltyPoints: availablePoints - actualPointsUsed,
+      });
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      if (err instanceof CustomException) throw err;
+      throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, 'APPLY_POINTS_FAILED', 'Áp dụng điểm tích lũy thất bại');
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  // ─── REMOVE LOYALTY POINTS FROM BOOKING ───────────────────────────────
+  async removeLoyaltyPointsFromBooking(userId: number, bookingId: number): Promise<ApiResponse<any>> {
+    const booking = await this.bookingRepository.findOne({
+      where: { id: bookingId },
+    });
+
+    if (!booking) {
+      throw new CustomException(HttpStatus.NOT_FOUND, 'BOOKING_NOT_FOUND', 'Không tìm thấy đơn đặt vé');
+    }
+
+    if (booking.userId !== userId) {
+      throw new CustomException(HttpStatus.FORBIDDEN, 'FORBIDDEN', 'Bạn không có quyền thao tác trên đơn này');
+    }
+
+    if (booking.status !== EBookingStatus.PENDING) {
+      throw new CustomException(HttpStatus.BAD_REQUEST, 'BOOKING_NOT_PENDING', 'Chỉ có thể gỡ điểm cho đơn chờ thanh toán');
+    }
+
+    if (booking.expiredAt && new Date(booking.expiredAt) < new Date()) {
+      throw new CustomException(HttpStatus.BAD_REQUEST, 'BOOKING_EXPIRED', 'Đơn hàng đã hết hạn thanh toán');
+    }
+
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!booking.pointsUsed || booking.pointsUsed <= 0) {
+      return new ApiResponse(true, 'Đơn hàng chưa sử dụng điểm tích lũy', {
+        totalAmount: booking.totalAmount,
+        discountAmount: booking.discountAmount,
+        pointsUsed: 0,
+        loyaltyPoints: user ? user.loyaltyPoints : 0,
+      });
+    }
+
+    const pointsToRefund = booking.pointsUsed;
+    const newTotalAmount = booking.totalAmount + pointsToRefund;
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await queryRunner.manager.update(Booking, { id: booking.id }, {
+        pointsUsed: 0,
+        totalAmount: newTotalAmount,
+      });
+
+      if (user) {
+        await queryRunner.manager.update(User, { id: user.id }, {
+          loyaltyPoints: () => `loyaltyPoints + ${pointsToRefund}`,
+        });
+      }
+
+      await queryRunner.commitTransaction();
+
+      return new ApiResponse(true, 'Gỡ bỏ điểm tích lũy thành công', {
+        totalAmount: newTotalAmount,
+        discountAmount: booking.discountAmount,
+        pointsUsed: 0,
+        loyaltyPoints: user ? user.loyaltyPoints + pointsToRefund : 0,
+      });
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      if (err instanceof CustomException) throw err;
+      throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, 'REMOVE_POINTS_FAILED', 'Gỡ bỏ điểm tích lũy thất bại');
     } finally {
       await queryRunner.release();
     }
@@ -1020,9 +1317,16 @@ export class BookingService {
     // Ghế đã được đặt chính thức (CONFIRMED)
     const confirmedHolds = await this.seatHoldRepository.find({
       where: { showtimeId, status: ESeatHoldStatus.CONFIRMED },
-      select: ['seatId'],
+      relations: ['booking'],
     });
-    const bookedSeatIds = confirmedHolds.map((h) => h.seatId);
+    const now = new Date();
+    const validConfirmed = confirmedHolds.filter((h) => {
+      if (!h.booking) return true;
+      if (h.booking.status === EBookingStatus.CANCELLED || h.booking.status === EBookingStatus.EXPIRED) return false;
+      if (h.booking.status === EBookingStatus.PENDING && h.booking.expiredAt && new Date(h.booking.expiredAt) < now) return false;
+      return true;
+    });
+    const bookedSeatIds = validConfirmed.map((h) => h.seatId);
     this.seatGateway.emitSeatUpdate(showtimeId, heldSeatIds, bookedSeatIds);
   }
 

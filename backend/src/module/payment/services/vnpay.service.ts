@@ -9,8 +9,8 @@ export class VnpayService {
 
   constructor(private readonly configService: ConfigService) {}
 
-  private getRequiredEnv(key: string): string {
-    const value = this.configService.get<string>(key);
+  private getRequiredEnv(key: string, alias?: string): string {
+    const value = this.configService.get<string>(key) || (alias ? this.configService.get<string>(alias) : undefined);
     if (!value) throw new InternalServerErrorException(`Thiếu biến môi trường: ${key}`);
     return value;
   }
@@ -25,10 +25,10 @@ export class VnpayService {
   }
 
   buildPaymentUrl(bookingCode: string, totalAmount: number, ipAddr: string): string {
-    const tmnCode = this.getRequiredEnv(ENV_VARS.VNP_TMN_CODE);
-    const secretKey = this.getRequiredEnv(ENV_VARS.VNP_HASH_SECRET);
-    const vnpUrl = this.getRequiredEnv(ENV_VARS.VNP_URL);
-    const returnUrl = this.getRequiredEnv(ENV_VARS.VNP_RETURN_URL);
+    const tmnCode = this.getRequiredEnv(ENV_VARS.VNP_TMN_CODE, 'VNPAY_TMN_CODE');
+    const secretKey = this.getRequiredEnv(ENV_VARS.VNP_HASH_SECRET, 'VNPAY_HASH_SECRET');
+    const vnpUrl = this.getRequiredEnv(ENV_VARS.VNP_URL, 'VNPAY_URL');
+    const returnUrl = this.getRequiredEnv(ENV_VARS.VNP_RETURN_URL, 'VNPAY_RETURN_URL');
 
     const now = new Date();
     const createDate = [
@@ -76,7 +76,7 @@ export class VnpayService {
 
   verifyIpnSignature(query: Record<string, any>): boolean {
     try {
-      const secretKey = this.getRequiredEnv(ENV_VARS.VNP_HASH_SECRET);
+      const secretKey = this.getRequiredEnv(ENV_VARS.VNP_HASH_SECRET, 'VNPAY_HASH_SECRET');
 
       const params = { ...query };
       const secureHash = params['vnp_SecureHash'];

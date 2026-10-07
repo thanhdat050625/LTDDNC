@@ -131,23 +131,45 @@ class SeatBookingError extends SeatBookingState {
   List<Object?> get props => [message];
 }
 
-class SeatsHeld extends SeatBookingState {
-  final int bookingId;
+class SeatsHeld extends SeatMapLoaded {
   final DateTime expiredAt;
   final int showtimeId;
   final List<int> seatIds;
   final double seatPrice;
 
+  @override
+  int get bookingId => super.bookingId ?? 0;
+
   const SeatsHeld(
-    this.bookingId,
+    int bookingId,
     this.expiredAt, {
     this.showtimeId = 0,
     this.seatIds = const [],
     this.seatPrice = 0.0,
-  });
+    super.seats = const [],
+    super.selectedSeatIds = const [],
+    super.heldSeatIds = const [],
+    super.bookedSeatIds = const [],
+    super.roomInfo,
+    super.pricePerSeat = 0.0,
+    super.secondsRemaining,
+  }) : super(bookingId: bookingId);
 
   @override
-  List<Object?> get props => [bookingId, expiredAt, showtimeId, seatIds, seatPrice];
+  List<Object?> get props => [
+        bookingId,
+        expiredAt,
+        showtimeId,
+        seatIds,
+        seatPrice,
+        seats,
+        selectedSeatIds,
+        heldSeatIds,
+        bookedSeatIds,
+        roomInfo,
+        pricePerSeat,
+        secondsRemaining,
+      ];
 }
 
 class BookingCreated extends SeatBookingState {
@@ -288,6 +310,13 @@ class SeatBookingBloc extends Bloc<SeatBookingEvent, SeatBookingState> {
         showtimeId: _currentShowtimeId!,
         seatIds: s.selectedSeatIds,
         seatPrice: s.totalPrice,
+        seats: s.seats,
+        selectedSeatIds: s.selectedSeatIds,
+        heldSeatIds: s.heldSeatIds,
+        bookedSeatIds: s.bookedSeatIds,
+        roomInfo: s.roomInfo,
+        pricePerSeat: s.pricePerSeat,
+        secondsRemaining: diff > 0 ? diff : 300,
       ));
     } catch (e) {
       emit(SeatBookingError(_mapBookingError(e)));

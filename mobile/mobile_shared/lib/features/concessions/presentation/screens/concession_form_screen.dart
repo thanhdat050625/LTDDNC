@@ -87,19 +87,15 @@ class _ConcessionFormScreenState extends State<ConcessionFormScreen> {
       ),
       builder: (bCtx) => SafeArea(
         child: Padding(
-          padding: EdgeInsets.all(theme.spacingMd),
+          padding: EdgeInsets.fromLTRB(
+            theme.spacingMd,
+            0,
+            theme.spacingMd,
+            theme.spacingMd,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: theme.textSecondary.withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              SizedBox(height: theme.spacingMd),
               Text(
                 l10n.productImage,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(

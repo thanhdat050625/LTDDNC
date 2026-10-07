@@ -1,6 +1,8 @@
+import 'dart:math' as math;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:mobile_shared/mobile_shared.dart';
+import 'package:cineplex_client/features/booking/data/repositories/booking_repository.dart';
 import '../../data/models/payment_model.dart';
 import '../../data/repositories/payment_repository.dart';
 
@@ -17,16 +19,38 @@ class PaymentLoading extends PaymentState {}
 class CheckoutPrepared extends PaymentState {
   final CheckoutPrepareModel data;
   final String? appliedPromoCode;
-  const CheckoutPrepared(this.data, {this.appliedPromoCode});
+  final List<PromotionModel> availablePromotions;
+
+  const CheckoutPrepared(
+    this.data, {
+    this.appliedPromoCode,
+    this.availablePromotions = const [],
+  });
+
+  CheckoutPrepared copyWith({
+    CheckoutPrepareModel? data,
+    String? appliedPromoCode,
+    bool clearPromoCode = false,
+    List<PromotionModel>? availablePromotions,
+  }) {
+    return CheckoutPrepared(
+      data ?? this.data,
+      appliedPromoCode: clearPromoCode ? null : (appliedPromoCode ?? this.appliedPromoCode),
+      availablePromotions: availablePromotions ?? this.availablePromotions,
+    );
+  }
+
   @override
-  List<Object?> get props => [data, appliedPromoCode];
+  List<Object?> get props => [data, appliedPromoCode, availablePromotions];
 }
 
 class PaymentUrlReady extends PaymentState {
   final String payUrl;
-  const PaymentUrlReady(this.payUrl);
+  final String? bookingId;
+  final String? bookingCode;
+  const PaymentUrlReady(this.payUrl, {this.bookingId, this.bookingCode});
   @override
-  List<Object?> get props => [payUrl];
+  List<Object?> get props => [payUrl, bookingId, bookingCode];
 }
 
 class PaymentSuccess extends PaymentState {
@@ -48,30 +72,117 @@ class PaymentPolling extends PaymentState {}
 
 class PaymentCubit extends Cubit<PaymentState> {
   final PaymentRepository repository;
+  final BookingRepository? bookingRepository;
+  CheckoutScreenArgs? checkoutArgs;
+  String? createdBookingId;
 
-  PaymentCubit(this.repository) : super(PaymentInitial());
+  PaymentCubit(this.repository, [this.bookingRepository]) : super(PaymentInitial());
 
   Future<void> prepareCheckout(String bookingId) async {
     emit(PaymentLoading());
     try {
       final data = await repository.prepareCheckout(bookingId);
-      emit(CheckoutPrepared(data, appliedPromoCode: data.promotionCode));
+      List<PromotionModel> promos = [];
+      try {
+        promos = await repository.getActivePromotions();
+      } catch (_) {}
+      emit(CheckoutPrepared(
+        data,
+        appliedPromoCode: data.promotionCode,
+        availablePromotions: promos,
+      ));
+    } catch (e) {
+      emit(PaymentFailed(e.toString()));
+    }
+  }
+
+  Future<void> prepareCheckoutDraft(CheckoutScreenArgs args) async {
+    checkoutArgs = args;
+    emit(PaymentLoading());
+    try {
+      final concessionsPayload = args.concessions
+          .map((c) => {'productId': c.concessionId, 'quantity': c.quantity})
+          .toList();
+      final data = await repository.prepareCheckoutDraft(
+        showtimeId: args.showtimeId,
+        seatIds: args.seatIds,
+        concessions: concessionsPayload,
+      );
+      List<PromotionModel> promos = [];
+      try {
+        promos = await repository.getActivePromotions();
+      } catch (_) {}
+      emit(CheckoutPrepared(
+        data,
+        appliedPromoCode: null,
+        availablePromotions: promos,
+      ));
     } catch (e) {
       emit(PaymentFailed(e.toString()));
     }
   }
 
   Future<void> checkout(String bookingId, String method) async {
+    final currentPrepared = state is CheckoutPrepared ? (state as CheckoutPrepared) : null;
     emit(PaymentLoading());
     try {
       final data = await repository.checkout(bookingId, method);
       if (data.paymentRequired && data.payUrl.isNotEmpty) {
-        emit(PaymentUrlReady(data.payUrl));
+        emit(PaymentUrlReady(
+          data.payUrl,
+          bookingId: bookingId,
+          bookingCode: currentPrepared?.data.bookingCode,
+        ));
       } else {
         checkStatus(bookingId);
       }
     } catch (e) {
       emit(PaymentFailed(e.toString()));
+    }
+  }
+
+  Future<void> payNow(String bookingId, String method) async {
+    final effectiveId = (bookingId != '0' && bookingId.isNotEmpty)
+        ? bookingId
+        : (createdBookingId ?? '');
+
+    if (effectiveId.isNotEmpty && effectiveId != '0') {
+      await checkout(effectiveId, method);
+      return;
+    }
+
+    if (state is! CheckoutPrepared || checkoutArgs == null || bookingRepository == null) {
+      emit(const PaymentFailed('Thiếu thông tin đặt vé để tạo đơn'));
+      return;
+    }
+
+    final current = state as CheckoutPrepared;
+    emit(PaymentLoading());
+
+    try {
+      final booking = await bookingRepository!.createBooking(CreateBookingDto(
+        showtimeId: checkoutArgs!.showtimeId,
+        seatIds: checkoutArgs!.seatIds,
+        concessions: checkoutArgs!.concessions,
+        promotionCode: current.appliedPromoCode,
+        pointsToUse: current.data.pointsUsed.toInt(),
+      ));
+
+      createdBookingId = booking.id.toString();
+      final data = await repository.checkout(createdBookingId!, method);
+      if (data.paymentRequired && data.payUrl.isNotEmpty) {
+        emit(PaymentUrlReady(
+          data.payUrl,
+          bookingId: createdBookingId,
+          bookingCode: booking.bookingCode,
+        ));
+      } else {
+        checkStatus(createdBookingId!);
+      }
+    } catch (e) {
+      final errorMsg = _mapPromotionError(e);
+      emit(PaymentFailed(errorMsg));
+      emit(current);
     }
   }
 
@@ -96,40 +207,179 @@ class PaymentCubit extends Cubit<PaymentState> {
 
   Future<void> applyPromotion(String bookingId, String code) async {
     if (state is CheckoutPrepared) {
-      final current = (state as CheckoutPrepared).data;
+      final current = state as CheckoutPrepared;
+      final currentData = current.data;
+      if (bookingId == '0' || bookingId.isEmpty) {
+        try {
+          final subTotal = currentData.ticketTotal + currentData.concessionTotal;
+          final res = await repository.checkPromotion(code, orderTotal: subTotal);
+          final promoData = (res is Map && res.containsKey('data')) ? res['data'] : res;
+          final discountAmount = (promoData is Map && promoData['discountAmount'] != null)
+              ? (promoData['discountAmount'] as num)
+              : 0;
+
+          final maxPointDiscount = ((subTotal - discountAmount) * 0.20).floor();
+          final pointsUsed = currentData.pointsUsed > 0
+              ? math.min(currentData.pointsUsed.toInt(), maxPointDiscount)
+              : 0;
+          final finalTotal = math.max(0, subTotal - discountAmount - pointsUsed);
+          final estimatedPoints = (finalTotal * 0.10).floor();
+
+          final updated = currentData.copyWith(
+            totalAmount: finalTotal,
+            discountAmount: discountAmount,
+            pointsUsed: pointsUsed,
+            promotionCode: code,
+            estimatedPointsEarned: estimatedPoints,
+          );
+          emit(current.copyWith(data: updated, appliedPromoCode: code));
+        } catch (e) {
+          final errorMsg = _mapPromotionError(e);
+          emit(PaymentFailed(errorMsg));
+          emit(current);
+        }
+        return;
+      }
+
       try {
         final res = await repository.applyPromotion(bookingId, code);
-        final totalAmount = (res['totalAmount'] as num?) ?? current.totalAmount;
-        final discountAmount = (res['discountAmount'] as num?) ?? current.discountAmount;
+        final totalAmount = (res['totalAmount'] as num?) ?? currentData.totalAmount;
+        final discountAmount = (res['discountAmount'] as num?) ?? currentData.discountAmount;
         final promoCode = (res['promotionCode'] as String?) ?? code;
-        final updated = current.copyWith(
+        final estimatedPoints = (totalAmount * 0.10).floor();
+        final updated = currentData.copyWith(
           totalAmount: totalAmount,
           discountAmount: discountAmount,
           promotionCode: promoCode,
+          estimatedPointsEarned: estimatedPoints,
         );
-        emit(CheckoutPrepared(updated, appliedPromoCode: promoCode));
+        emit(current.copyWith(
+          data: updated,
+          appliedPromoCode: promoCode,
+        ));
       } catch (e) {
         final errorMsg = _mapPromotionError(e);
         emit(PaymentFailed(errorMsg));
-        emit(CheckoutPrepared(current));
+        emit(current);
       }
     }
   }
 
   Future<void> removePromotion(String bookingId) async {
     if (state is CheckoutPrepared) {
-      final current = (state as CheckoutPrepared).data;
+      final current = state as CheckoutPrepared;
+      final currentData = current.data;
+      if (bookingId == '0' || bookingId.isEmpty) {
+        final subTotal = currentData.ticketTotal + currentData.concessionTotal;
+        final maxPointDiscount = (subTotal * 0.20).floor();
+        final pointsUsed = currentData.pointsUsed > 0
+            ? math.min(currentData.pointsUsed.toInt(), maxPointDiscount)
+            : 0;
+        final finalTotal = math.max(0, subTotal - pointsUsed);
+        final estimatedPoints = (finalTotal * 0.10).floor();
+
+        final updated = currentData.copyWith(
+          totalAmount: finalTotal,
+          discountAmount: 0,
+          pointsUsed: pointsUsed,
+          promotionCode: null,
+          estimatedPointsEarned: estimatedPoints,
+        );
+        emit(current.copyWith(data: updated, clearPromoCode: true));
+        return;
+      }
+
       try {
         final res = await repository.removePromotion(bookingId);
-        final totalAmount = (res['totalAmount'] as num?) ?? (current.totalAmount + current.discountAmount);
-        final updated = current.copyWith(
+        final totalAmount = (res['totalAmount'] as num?) ?? (currentData.totalAmount + currentData.discountAmount);
+        final estimatedPoints = (totalAmount * 0.10).floor();
+        final updated = currentData.copyWith(
           totalAmount: totalAmount,
           discountAmount: 0,
+          promotionCode: null,
+          estimatedPointsEarned: estimatedPoints,
         );
-        emit(CheckoutPrepared(updated, appliedPromoCode: null));
+        emit(current.copyWith(
+          data: updated,
+          clearPromoCode: true,
+        ));
       } catch (e) {
         emit(PaymentFailed(e.toString()));
-        emit(CheckoutPrepared(current));
+        emit(current);
+      }
+    }
+  }
+
+  Future<void> applyLoyaltyPoints(String bookingId, int pointsToUse) async {
+    if (state is CheckoutPrepared) {
+      final current = state as CheckoutPrepared;
+      final currentData = current.data;
+      if (bookingId == '0' || bookingId.isEmpty) {
+        final subTotal = currentData.ticketTotal + currentData.concessionTotal;
+        final totalAfterPromo = math.max(0, subTotal - currentData.discountAmount);
+        final maxPointDiscount = (totalAfterPromo * 0.20).floor();
+        final effectivePoints = math.min(pointsToUse, math.min(currentData.loyaltyPoints.toInt(), maxPointDiscount));
+        final finalTotal = math.max(0, totalAfterPromo - effectivePoints);
+        final estimatedPoints = (finalTotal * 0.10).floor();
+
+        final updated = currentData.copyWith(
+          totalAmount: finalTotal,
+          pointsUsed: effectivePoints,
+          estimatedPointsEarned: estimatedPoints,
+        );
+        emit(current.copyWith(data: updated));
+        return;
+      }
+
+      try {
+        final res = await repository.applyLoyaltyPoints(bookingId, pointsToUse);
+        final totalAmount = (res['totalAmount'] as num?) ?? currentData.totalAmount;
+        final pointsUsed = (res['pointsUsed'] as num?) ?? pointsToUse;
+        final estimatedPoints = (totalAmount * 0.10).floor();
+        final updated = currentData.copyWith(
+          totalAmount: totalAmount,
+          pointsUsed: pointsUsed,
+          estimatedPointsEarned: estimatedPoints,
+        );
+        emit(current.copyWith(data: updated));
+      } catch (e) {
+        emit(PaymentFailed(e.toString()));
+        emit(current);
+      }
+    }
+  }
+
+  Future<void> removeLoyaltyPoints(String bookingId) async {
+    if (state is CheckoutPrepared) {
+      final current = state as CheckoutPrepared;
+      final currentData = current.data;
+      if (bookingId == '0' || bookingId.isEmpty) {
+        final subTotal = currentData.ticketTotal + currentData.concessionTotal;
+        final finalTotal = math.max(0, subTotal - currentData.discountAmount);
+        final estimatedPoints = (finalTotal * 0.10).floor();
+
+        final updated = currentData.copyWith(
+          totalAmount: finalTotal,
+          pointsUsed: 0,
+          estimatedPointsEarned: estimatedPoints,
+        );
+        emit(current.copyWith(data: updated));
+        return;
+      }
+
+      try {
+        final res = await repository.removeLoyaltyPoints(bookingId);
+        final totalAmount = (res['totalAmount'] as num?) ?? (currentData.totalAmount + currentData.pointsUsed);
+        final estimatedPoints = (totalAmount * 0.10).floor();
+        final updated = currentData.copyWith(
+          totalAmount: totalAmount,
+          pointsUsed: 0,
+          estimatedPointsEarned: estimatedPoints,
+        );
+        emit(current.copyWith(data: updated));
+      } catch (e) {
+        emit(PaymentFailed(e.toString()));
+        emit(current);
       }
     }
   }

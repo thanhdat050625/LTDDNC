@@ -35,6 +35,14 @@ export class PaymentController {
     return this.paymentService.prepareCheckout(req.user.id, bookingId);
   }
 
+  // Chuẩn bị thanh toán nháp (khi chưa tạo đơn hàng)
+  @Post('prepare-draft')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async prepareCheckoutDraft(@Request() req, @Body() dto: any) {
+    return this.paymentService.prepareCheckoutDraft(req.user.id, dto);
+  }
+
   // Tạo payUrl, trả về để frontend redirect
   @Post('checkout')
   @UseGuards(JwtAuthGuard)

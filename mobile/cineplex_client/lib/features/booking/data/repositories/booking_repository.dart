@@ -62,4 +62,15 @@ class BookingRepository {
     final data = (raw is Map && raw.containsKey('data')) ? raw['data'] : raw;
     return (data as Map<String, dynamic>?) ?? {};
   }
+
+  Future<Map<String, dynamic>> cancelBooking(int bookingId) async {
+    try {
+      final response = await _dioClient.post('/bookings/$bookingId/cancel');
+      final raw = response.data;
+      final data = (raw is Map && raw.containsKey('data')) ? raw['data'] : raw;
+      return (data as Map<String, dynamic>?) ?? {};
+    } catch (_) {
+      return {};
+    }
+  }
 }

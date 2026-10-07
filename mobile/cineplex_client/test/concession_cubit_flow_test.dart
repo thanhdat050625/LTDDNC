@@ -152,20 +152,8 @@ void main() {
     );
 
     blocTest<ConcessionCubit, ConcessionState>(
-      '6. Submit concessions when bookingId is 0 creates booking via createBooking and emits success',
-      build: () {
-        when(() => bookingRepo.createBooking(any())).thenAnswer((_) async => BookingModel(
-          id: 555,
-          bookingCode: 'BK-555',
-          showtimeId: 101,
-          totalAmount: 220000,
-          discountAmount: 0,
-          pointsUsed: 0,
-          status: 'PENDING',
-          expiredAt: DateTime.now().add(const Duration(minutes: 5)),
-        ));
-        return ConcessionCubit(concessionRepo, bookingRepo);
-      },
+      '6. Submit concessions when bookingId is 0 defers booking creation to checkout and emits success with concessions',
+      build: () => ConcessionCubit(concessionRepo, bookingRepo),
       seed: () => ConcessionLoaded(
         products: sampleProducts,
         selectedItems: const {1: 1},
@@ -174,14 +162,12 @@ void main() {
       act: (cubit) async => cubit.submitConcessions(0, 101, [1, 2]),
       expect: () => [
         isA<ConcessionLoaded>().having((s) => s.isSubmitting, 'isSubmitting', true),
-        isA<ConcessionSubmitSuccess>().having((s) => s.bookingId, 'bookingId', 555),
+        isA<ConcessionSubmitSuccess>()
+            .having((s) => s.bookingId, 'bookingId', 0)
+            .having((s) => s.concessions.length, 'concessions count', 1),
       ],
       verify: (_) {
-        verify(() => bookingRepo.createBooking(any(that: isA<CreateBookingDto>().having(
-          (dto) => dto.showtimeId,
-          'showtimeId',
-          101,
-        )))).called(1);
+        verifyNever(() => bookingRepo.createBooking(any()));
       },
     );
   });

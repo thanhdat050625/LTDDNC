@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_shared/mobile_shared.dart';
+import 'package:cineplex_client/features/booking/data/repositories/booking_repository.dart';
 import '../cubit/payment_cubit.dart';
 
 class PaymentResultScreen extends StatefulWidget {
@@ -195,6 +196,12 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
                       AppButton(
                         text: l10n.reselectSeats,
                         onPressed: () {
+                          final bId = int.tryParse(widget.bookingId);
+                          if (bId != null && bId > 0) {
+                            try {
+                              context.read<BookingRepository>().cancelBooking(bId);
+                            } catch (_) {}
+                          }
                           final showtimeId = state.status?.showtimeId;
                           if (showtimeId != null && showtimeId > 0) {
                             context.go('/booking/$showtimeId');
@@ -213,6 +220,12 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
                         text: l10n.reselectSeats,
                         isOutlined: true,
                         onPressed: () {
+                          final bId = int.tryParse(widget.bookingId);
+                          if (bId != null && bId > 0) {
+                            try {
+                              context.read<BookingRepository>().cancelBooking(bId);
+                            } catch (_) {}
+                          }
                           final showtimeId = state.status?.showtimeId;
                           if (showtimeId != null && showtimeId > 0) {
                             context.go('/booking/$showtimeId');

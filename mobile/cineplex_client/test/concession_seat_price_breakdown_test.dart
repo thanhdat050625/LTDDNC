@@ -93,18 +93,7 @@ void main() {
     expect(find.text('185.000 đ'), findsOneWidget);
   });
 
-  testWidgets('ConcessionScreen checkout creates booking when bookingId is 0', (tester) async {
-    when(() => bookingRepo.createBooking(any())).thenAnswer((_) async => BookingModel(
-      id: 888,
-      bookingCode: 'BK-888',
-      showtimeId: 101,
-      totalAmount: 185000,
-      discountAmount: 0,
-      pointsUsed: 0,
-      status: 'PENDING',
-      expiredAt: DateTime.now().add(const Duration(minutes: 5)),
-    ));
-
+  testWidgets('ConcessionScreen checkout does not create booking when bookingId is 0 (deferred to Pay Now)', (tester) async {
     const args = ConcessionScreenArgs(
       showtimeId: 101,
       seatIds: [1, 2],
@@ -125,11 +114,7 @@ void main() {
     await tester.tap(checkoutBtn);
     await tester.pumpAndSettle();
 
-    // Verify createBooking was called with showtimeId 101 and seatIds [1, 2]
-    verify(() => bookingRepo.createBooking(any(that: isA<CreateBookingDto>().having(
-      (dto) => dto.showtimeId,
-      'showtimeId',
-      101,
-    )))).called(1);
+    // Verify createBooking was NOT called at concession step
+    verifyNever(() => bookingRepo.createBooking(any()));
   });
 }

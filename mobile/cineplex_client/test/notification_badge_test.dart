@@ -8,6 +8,7 @@ import 'package:cineplex_client/features/notification/data/repositories/notifica
 import 'package:cineplex_client/features/notification/data/models/notification_model.dart';
 import 'package:cineplex_client/features/notification/presentation/widgets/in_app_notification_banner.dart';
 import 'package:cineplex_client/features/notification/presentation/widgets/notification_item.dart';
+import 'package:cineplex_client/features/notification/presentation/widgets/notification_detail_bottom_sheet.dart';
 
 class _FakeNotificationRepo extends NotificationRepository {
   _FakeNotificationRepo() : super(DioClient(StorageService()));
@@ -102,6 +103,60 @@ void main() {
     expect(find.text('Đổi mật khẩu thành công'), findsNothing);
   });
 
+  testWidgets('InAppNotificationBanner tap opens NotificationDetailBottomSheet', (tester) async {
+    final notif = NotificationModel(
+      id: '1',
+      subject: 'Đổi mật khẩu thành công',
+      content: 'Mật khẩu của bạn đã được thay đổi',
+      type: 'ACCOUNT',
+      createdAt: DateTime.now(),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: const [Locale('vi')],
+        locale: const Locale('vi'),
+        home: Scaffold(
+          body: Builder(
+            builder: (context) {
+              return ElevatedButton(
+                onPressed: () {
+                  InAppNotificationBanner.show(
+                    context: context,
+                    notification: notif,
+                    onTap: () {
+                      NotificationDetailBottomSheet.show(context, notif);
+                    },
+                  );
+                },
+                child: const Text('Show Banner'),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Show Banner'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Đổi mật khẩu thành công'), findsOneWidget);
+
+    // Tap on banner
+    await tester.tap(find.text('Đổi mật khẩu thành công'));
+    await tester.pumpAndSettle();
+
+    // Verify NotificationDetailBottomSheet is shown
+    expect(find.byType(NotificationDetailBottomSheet), findsOneWidget);
+    expect(find.text('Tài khoản'), findsOneWidget);
+
+    // Close sheet
+    await tester.tap(find.text('Đóng'));
+    await tester.pumpAndSettle();
+    expect(find.byType(NotificationDetailBottomSheet), findsNothing);
+  });
+
   testWidgets('NotificationItem renders without ListTile ColoredBox assertion error', (tester) async {
     final unreadItem = NotificationModel(
       id: 'item-1',
@@ -150,6 +205,16 @@ void main() {
     // Tap unread item to trigger splash and onTap
     await tester.tap(find.text('Thông báo chưa đọc'));
     await tester.pumpAndSettle();
+
+    // Verify NotificationDetailBottomSheet opened with details
+    expect(find.byType(NotificationDetailBottomSheet), findsOneWidget);
+    expect(find.text('Khuyến mãi'), findsOneWidget);
+    expect(find.text('Nội dung thông báo mới'), findsWidgets);
+
+    // Tap close button to dismiss bottom sheet
+    await tester.tap(find.text('Đóng'));
+    await tester.pumpAndSettle();
+    expect(find.byType(NotificationDetailBottomSheet), findsNothing);
   });
 }
 

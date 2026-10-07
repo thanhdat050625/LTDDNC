@@ -15,7 +15,7 @@ class PaymentRepository {
 
   Future<PaymentResponseModel> checkout(String bookingId, String method) async {
     final response = await _dioClient.post('/payments/checkout', data: {
-      'bookingId': bookingId,
+      'bookingId': int.tryParse(bookingId) ?? bookingId,
       'method': method,
     });
     final raw = response.data;
@@ -30,10 +30,26 @@ class PaymentRepository {
     return PaymentStatusModel.fromJson(payload as Map<String, dynamic>);
   }
 
-  Future<dynamic> checkPromotion(String code, {String? movieId}) async {
+  Future<CheckoutPrepareModel> prepareCheckoutDraft({
+    required int showtimeId,
+    required List<int> seatIds,
+    List<Map<String, dynamic>> concessions = const [],
+  }) async {
+    final response = await _dioClient.post('/payments/prepare-draft', data: {
+      'showtimeId': showtimeId,
+      'seatIds': seatIds,
+      'concessions': concessions,
+    });
+    final raw = response.data;
+    final payload = (raw is Map && raw.containsKey('data')) ? raw['data'] : raw;
+    return CheckoutPrepareModel.fromJson(payload as Map<String, dynamic>);
+  }
+
+  Future<dynamic> checkPromotion(String code, {String? movieId, num? orderTotal}) async {
     final response = await _dioClient.post('/promotions/check-promotion', data: {
       'code': code,
-      if (movieId != null) 'movieId': movieId,
+      if (movieId != null) 'movieId': int.tryParse(movieId) ?? movieId,
+      if (orderTotal != null) 'orderTotal': orderTotal,
     });
     final raw = response.data;
     return (raw is Map && raw.containsKey('data')) ? raw['data'] : raw;
@@ -50,6 +66,32 @@ class PaymentRepository {
 
   Future<Map<String, dynamic>> removePromotion(String bookingId) async {
     final response = await _dioClient.delete('/bookings/$bookingId/promotion');
+    final raw = response.data;
+    final data = (raw is Map && raw.containsKey('data')) ? raw['data'] : raw;
+    return (data as Map<String, dynamic>?) ?? {};
+  }
+
+  Future<List<PromotionModel>> getActivePromotions() async {
+    final response = await _dioClient.get('/promotions/active');
+    final raw = response.data;
+    final payload = (raw is Map && raw.containsKey('data')) ? raw['data'] : raw;
+    if (payload is List) {
+      return payload.map((e) => PromotionModel.fromJson(e as Map<String, dynamic>)).toList();
+    }
+    return [];
+  }
+
+  Future<Map<String, dynamic>> applyLoyaltyPoints(String bookingId, int pointsToUse) async {
+    final response = await _dioClient.post('/bookings/$bookingId/loyalty-points', data: {
+      'pointsToUse': pointsToUse,
+    });
+    final raw = response.data;
+    final data = (raw is Map && raw.containsKey('data')) ? raw['data'] : raw;
+    return (data as Map<String, dynamic>?) ?? {};
+  }
+
+  Future<Map<String, dynamic>> removeLoyaltyPoints(String bookingId) async {
+    final response = await _dioClient.delete('/bookings/$bookingId/loyalty-points');
     final raw = response.data;
     final data = (raw is Map && raw.containsKey('data')) ? raw['data'] : raw;
     return (data as Map<String, dynamic>?) ?? {};

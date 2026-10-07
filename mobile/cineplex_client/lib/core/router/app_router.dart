@@ -31,6 +31,7 @@ import 'package:cineplex_client/features/concession/presentation/cubit/concessio
 import 'package:cineplex_client/features/concession/data/repositories/concession_repository.dart';
 import 'package:cineplex_client/features/payment/presentation/cubit/payment_cubit.dart';
 import 'package:cineplex_client/features/payment/data/repositories/payment_repository.dart';
+import 'package:cineplex_client/features/payment/data/models/payment_model.dart';
 import 'package:cineplex_client/core/router/main_shell.dart';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -159,11 +160,21 @@ GoRouter createRouter(
         path: '/checkout/:bookingId',
         builder: (context, state) {
           final bookingId = state.pathParameters['bookingId']!;
+          final args = state.extra is CheckoutScreenArgs ? state.extra as CheckoutScreenArgs : null;
           return BlocProvider(
-            create: (ctx) =>
-                PaymentCubit(ctx.read<PaymentRepository>())
-                  ..prepareCheckout(bookingId),
-            child: CheckoutScreen(bookingId: bookingId),
+            create: (ctx) {
+              final cubit = PaymentCubit(
+                ctx.read<PaymentRepository>(),
+                ctx.read<BookingRepository>(),
+              );
+              if ((bookingId == '0' || bookingId.isEmpty) && args != null) {
+                cubit.prepareCheckoutDraft(args);
+              } else {
+                cubit.prepareCheckout(bookingId);
+              }
+              return cubit;
+            },
+            child: CheckoutScreen(bookingId: bookingId, args: args),
           );
         },
       ),

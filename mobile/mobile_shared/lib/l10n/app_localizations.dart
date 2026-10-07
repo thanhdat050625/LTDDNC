@@ -1174,6 +1174,24 @@ abstract class AppLocalizations {
   /// **'Thanh toán thất bại'**
   String get notificationPaymentFailed;
 
+  /// No description provided for @notificationAccount.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tài khoản'**
+  String get notificationAccount;
+
+  /// No description provided for @notificationDetail.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chi tiết thông báo'**
+  String get notificationDetail;
+
+  /// No description provided for @notificationOpenLink.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem chi tiết liên kết'**
+  String get notificationOpenLink;
+
   /// No description provided for @profile.
   ///
   /// In vi, this message translates to:
@@ -3207,6 +3225,48 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Tiền mặt tại quầy'**
   String get paymentMethodCash;
+
+  /// No description provided for @paymentSelectVoucher.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn voucher'**
+  String get paymentSelectVoucher;
+
+  /// No description provided for @paymentAvailableVouchers.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mã khuyến mãi khả dụng'**
+  String get paymentAvailableVouchers;
+
+  /// No description provided for @paymentNoVouchers.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không có mã khuyến mãi khả dụng'**
+  String get paymentNoVouchers;
+
+  /// No description provided for @paymentEarnedPointsNotice.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tích lũy +{points} điểm khi hoàn tất'**
+  String paymentEarnedPointsNotice(int points);
+
+  /// No description provided for @paymentUseLoyaltyPoints.
+  ///
+  /// In vi, this message translates to:
+  /// **'Dùng điểm tích lũy ({points} điểm)'**
+  String paymentUseLoyaltyPoints(int points);
+
+  /// No description provided for @paymentSeatsLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ghế: {seats}'**
+  String paymentSeatsLabel(String seats);
+
+  /// No description provided for @paymentTicketsCount.
+  ///
+  /// In vi, this message translates to:
+  /// **'{count} vé xem phim'**
+  String paymentTicketsCount(int count);
 
   /// No description provided for @epassTitle.
   ///
