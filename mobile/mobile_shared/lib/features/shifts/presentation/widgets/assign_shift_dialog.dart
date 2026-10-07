@@ -89,10 +89,11 @@ class _AssignShiftDialogState extends State<AssignShiftDialog> {
 
     return Dialog(
       backgroundColor: theme.surface,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(theme.radiusLg)),
       child: Container(
         width: 480,
-        padding: EdgeInsets.all(theme.spacingLg),
+        padding: EdgeInsets.symmetric(horizontal: theme.spacingMd, vertical: theme.spacingLg),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -134,6 +135,7 @@ class _AssignShiftDialogState extends State<AssignShiftDialog> {
               const SizedBox(height: 6),
               DropdownButtonFormField<int>(
                 initialValue: _selectedStaffId,
+                isExpanded: true,
                 dropdownColor: theme.surface,
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.symmetric(horizontal: theme.spacingMd, vertical: theme.spacingSm),
@@ -144,6 +146,8 @@ class _AssignShiftDialogState extends State<AssignShiftDialog> {
                     value: user.id,
                     child: Text(
                       '${user.fullName} (${user.email})',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: textTheme.bodyMedium?.copyWith(color: theme.textPrimary),
                     ),
                   );
@@ -163,6 +167,7 @@ class _AssignShiftDialogState extends State<AssignShiftDialog> {
               const SizedBox(height: 6),
               DropdownButtonFormField<int>(
                 initialValue: _selectedCinemaId,
+                isExpanded: true,
                 dropdownColor: theme.surface,
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.symmetric(horizontal: theme.spacingMd, vertical: theme.spacingSm),
@@ -173,6 +178,8 @@ class _AssignShiftDialogState extends State<AssignShiftDialog> {
                     value: cinema.id,
                     child: Text(
                       cinema.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: textTheme.bodyMedium?.copyWith(color: theme.textPrimary),
                     ),
                   );
@@ -192,6 +199,7 @@ class _AssignShiftDialogState extends State<AssignShiftDialog> {
               const SizedBox(height: 6),
               DropdownButtonFormField<int>(
                 initialValue: _selectedShiftId,
+                isExpanded: true,
                 dropdownColor: theme.surface,
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.symmetric(horizontal: theme.spacingMd, vertical: theme.spacingSm),
@@ -202,6 +210,8 @@ class _AssignShiftDialogState extends State<AssignShiftDialog> {
                     value: shift.id,
                     child: Text(
                       '${shift.name} (${shift.startTime} - ${shift.endTime})',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: textTheme.bodyMedium?.copyWith(color: theme.textPrimary),
                     ),
                   );
@@ -221,6 +231,7 @@ class _AssignShiftDialogState extends State<AssignShiftDialog> {
               const SizedBox(height: 6),
               DropdownButtonFormField<String>(
                 initialValue: _selectedRole,
+                isExpanded: true,
                 dropdownColor: theme.surface,
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.symmetric(horizontal: theme.spacingMd, vertical: theme.spacingSm),
@@ -231,6 +242,8 @@ class _AssignShiftDialogState extends State<AssignShiftDialog> {
                     value: role,
                     child: Text(
                       _getRoleLabel(role, l10n),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: textTheme.bodyMedium?.copyWith(color: theme.textPrimary),
                     ),
                   );
