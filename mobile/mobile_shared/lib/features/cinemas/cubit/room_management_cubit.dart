@@ -52,13 +52,16 @@ class RoomManagementCubit extends Cubit<RoomManagementState> {
   Future<void> deleteRoom(int roomId, int cinemaId) async {
     try {
       await _repository.deleteRoom(roomId);
-      loadRooms(cinemaId);
+      await loadRooms(cinemaId);
     } catch (e) {
-      if (e is ServerException) {
-        emit(RoomManagementError(e.message));
-      } else {
-        emit(RoomManagementError('Lỗi xóa phòng: $e'));
+      if (state is! RoomManagementLoaded) {
+        if (e is ServerException) {
+          emit(RoomManagementError(e.message));
+        } else {
+          emit(RoomManagementError('Lỗi xóa phòng: $e'));
+        }
       }
+      rethrow;
     }
   }
 }

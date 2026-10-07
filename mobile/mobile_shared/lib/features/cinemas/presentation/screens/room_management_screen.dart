@@ -125,9 +125,29 @@ class _RoomManagementScreenState extends State<RoomManagementScreen> {
                                     child: Text(l10n.cancel, style: TextStyle(color: theme.textSecondary)),
                                   ),
                                   ElevatedButton(
-                                    onPressed: () {
+                                    onPressed: () async {
                                       Navigator.pop(dCtx);
-                                      context.read<RoomManagementCubit>().deleteRoom(r.id, widget.cinemaId);
+                                      try {
+                                        await context.read<RoomManagementCubit>().deleteRoom(r.id, widget.cinemaId);
+                                        if (context.mounted) {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text(l10n.updateSuccess),
+                                              backgroundColor: theme.success,
+                                            ),
+                                          );
+                                        }
+                                      } catch (e) {
+                                        if (context.mounted) {
+                                          final msg = e is ServerException ? e.message : '$e';
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text(msg),
+                                              backgroundColor: theme.error,
+                                            ),
+                                          );
+                                        }
+                                      }
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: theme.error,
