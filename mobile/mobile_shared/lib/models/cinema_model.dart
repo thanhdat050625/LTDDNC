@@ -69,16 +69,18 @@ class RoomModel extends Equatable {
 
   factory RoomModel.fromJson(Map<String, dynamic> json) {
     return RoomModel(
-      id: json['id'] as int,
-      cinemaId: json['cinemaId'] as int,
-      name: json['name'] as String,
-      totalSeats: json['totalSeats'] as int? ?? 0,
-      rows: json['rows'] as int? ?? 0,
-      columns: json['columns'] as int? ?? 0,
-      isCouple: json['isCouple'] as bool? ?? false,
-      roomType: json['roomType'] as String? ?? 'STANDARD',
-      status: json['status'] as String? ?? 'ACTIVE',
-      cinema: json['cinema'] != null ? CinemaModel.fromJson(json['cinema'] as Map<String, dynamic>) : null,
+      id: (json['id'] as num?)?.toInt() ?? 0,
+      cinemaId: (json['cinemaId'] ?? json['cinema_id'] ?? json['cinema']?['id'] as num?)?.toInt() ?? 0,
+      name: json['name']?.toString() ?? '',
+      totalSeats: (json['totalSeats'] as num?)?.toInt() ?? 0,
+      rows: (json['rows'] as num?)?.toInt() ?? 0,
+      columns: (json['columns'] as num?)?.toInt() ?? 0,
+      isCouple: json['isCouple'] == true || json['isCouple'] == 1,
+      roomType: json['roomType']?.toString() ?? 'STANDARD',
+      status: json['status']?.toString() ?? 'ACTIVE',
+      cinema: json['cinema'] is Map<String, dynamic>
+          ? CinemaModel.fromJson(json['cinema'] as Map<String, dynamic>)
+          : null,
     );
   }
 

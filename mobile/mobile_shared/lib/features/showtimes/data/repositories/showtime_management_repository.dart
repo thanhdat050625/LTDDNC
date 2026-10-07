@@ -8,10 +8,17 @@ class ShowtimeManagementRepository {
   Future<List<ShowtimeModel>> getAllShowtimes({
     int page = 1,
     int pageSize = 50,
+    String? date,
+    int? cinemaId,
   }) async {
     final response = await _dioClient.get(
       '/showtimes',
-      queryParameters: {'page': page, 'pageSize': pageSize},
+      queryParameters: {
+        'page': page,
+        'pageSize': pageSize,
+        if (date != null) 'date': date,
+        if (cinemaId != null) 'cinemaId': cinemaId,
+      },
     );
     
     final data = response.data;

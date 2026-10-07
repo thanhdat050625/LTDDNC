@@ -65,6 +65,7 @@ class _StaffShiftManagementScreenState extends State<StaffShiftManagementScreen>
         cinemas: state.cinemas,
         staffList: state.staffList,
         initialCinemaId: state.selectedCinemaId,
+        initialShiftId: preselectedShiftId,
         initialDate: state.selectedDate,
         existingSchedule: existingSchedule,
       ),
@@ -141,24 +142,18 @@ class _StaffShiftManagementScreenState extends State<StaffShiftManagementScreen>
       title: l10n.shiftManagement,
       drawer: widget.drawer,
       actions: [
-        IconButton(
-          icon: const Icon(LucideIcons.refreshCw),
-          tooltip: l10n.retry,
-          onPressed: () => context.read<StaffShiftManagementCubit>().loadInitialData(),
+        BlocBuilder<StaffShiftManagementCubit, StaffShiftManagementState>(
+          builder: (context, state) {
+            return IconButton(
+              icon: const Icon(LucideIcons.plus),
+              tooltip: l10n.shiftAssignNew,
+              onPressed: state is StaffShiftManagementLoaded
+                  ? () => _showAssignDialog(context, state)
+                  : null,
+            );
+          },
         ),
       ],
-      floatingActionButton: BlocBuilder<StaffShiftManagementCubit, StaffShiftManagementState>(
-        builder: (context, state) {
-          if (state is! StaffShiftManagementLoaded) return const SizedBox.shrink();
-          return FloatingActionButton.extended(
-            backgroundColor: theme.primary,
-            foregroundColor: Colors.white,
-            icon: const Icon(LucideIcons.plus),
-            label: Text(l10n.shiftAssignNew),
-            onPressed: () => _showAssignDialog(context, state),
-          );
-        },
-      ),
       body: BlocConsumer<StaffShiftManagementCubit, StaffShiftManagementState>(
         listener: (context, state) {
           if (state is StaffShiftManagementError) {

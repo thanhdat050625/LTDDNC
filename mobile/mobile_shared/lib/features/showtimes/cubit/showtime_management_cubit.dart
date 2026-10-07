@@ -12,10 +12,20 @@ class ShowtimeManagementCubit extends Cubit<ShowtimeManagementState> {
 
   ShowtimeManagementCubit(this._repository) : super(ShowtimeManagementInitial());
 
-  Future<void> loadShowtimes() async {
+  Future<void> loadShowtimes({DateTime? date}) async {
     try {
-      emit(ShowtimeManagementLoading());
-      final showtimes = await _repository.getAllShowtimes(pageSize: 200); // Load enough to filter locally
+      if (date != null) {
+        _selectedDate = date;
+      }
+      emit(ShowtimeManagementLoading(selectedDate: _selectedDate));
+      final dateStr = _selectedDate != null
+          ? '${_selectedDate!.year.toString().padLeft(4, '0')}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}'
+          : null;
+
+      final showtimes = await _repository.getAllShowtimes(
+        pageSize: 500,
+        date: dateStr,
+      );
       _allShowtimes = showtimes;
       _applyFilters();
     } catch (e) {
@@ -29,9 +39,7 @@ class ShowtimeManagementCubit extends Cubit<ShowtimeManagementState> {
 
   void filterByDate(DateTime? date) {
     _selectedDate = date;
-    if (state is ShowtimeManagementLoaded) {
-      _applyFilters();
-    }
+    loadShowtimes(date: date);
   }
 
   void filterByCinema(int? cinemaId) {

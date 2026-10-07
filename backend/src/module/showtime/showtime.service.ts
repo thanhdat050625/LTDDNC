@@ -344,14 +344,40 @@ export class ShowtimeService {
   async findAll(
     page: number = 1,
     pageSize: number = 10,
+    date?: string,
+    cinemaId?: number,
   ): Promise<ApiResponse<Showtime[]>> {
     const skip = (page - 1) * pageSize;
-    const [showtimes, totalItems] = await this.showtimeRepository.findAndCount({
-      skip,
-      take: pageSize,
-      order: { publicStartTime: 'ASC' },
-      relations: ['movie', 'room', 'room.cinema'],
-    });
+    const qb = this.showtimeRepository
+      .createQueryBuilder('showtime')
+      .leftJoinAndSelect('showtime.movie', 'movie')
+      .leftJoinAndSelect('showtime.room', 'room')
+      .leftJoinAndSelect('room.cinema', 'cinema');
+
+    if (date) {
+      const VN_OFFSET_MS = 7 * 60 * 60 * 1000;
+      const [y, m, d] = date.split('-').map(Number);
+      const startOfDay = new Date(
+        Date.UTC(y, m - 1, d, 0, 0, 0, 0) - VN_OFFSET_MS,
+      );
+      const endOfDay = new Date(
+        Date.UTC(y, m - 1, d, 23, 59, 59, 999) - VN_OFFSET_MS,
+      );
+      qb.andWhere(
+        'showtime.publicStartTime BETWEEN :startOfDay AND :endOfDay',
+        { startOfDay, endOfDay },
+      );
+    }
+
+    if (cinemaId) {
+      qb.andWhere('room.cinemaId = :cinemaId', { cinemaId });
+    }
+
+    qb.orderBy('showtime.publicStartTime', 'ASC')
+      .skip(skip)
+      .take(pageSize);
+
+    const [showtimes, totalItems] = await qb.getManyAndCount();
     const totalPages = Math.ceil(totalItems / pageSize);
     const response = new ApiResponse(
       true,

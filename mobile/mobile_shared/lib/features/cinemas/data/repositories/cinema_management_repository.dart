@@ -52,13 +52,19 @@ class CinemaManagementRepository {
   Future<RoomModel> createRoom(int cinemaId, Map<String, dynamic> data) async {
     final response = await _dioClient.post('/cinemas/$cinemaId/rooms', data: data);
     final payload = (response.data is Map && response.data.containsKey('data')) ? response.data['data'] : response.data;
-    return RoomModel.fromJson(payload as Map<String, dynamic>);
+    if (payload is! Map) {
+      throw ServerException('Phản hồi tạo phòng không hợp lệ');
+    }
+    return RoomModel.fromJson(Map<String, dynamic>.from(payload));
   }
 
   Future<RoomModel> updateRoom(int roomId, Map<String, dynamic> data) async {
     final response = await _dioClient.put('/cinemas/rooms/$roomId', data: data);
     final payload = (response.data is Map && response.data.containsKey('data')) ? response.data['data'] : response.data;
-    return RoomModel.fromJson(payload as Map<String, dynamic>);
+    if (payload is! Map) {
+      throw ServerException('Phản hồi cập nhật phòng không hợp lệ');
+    }
+    return RoomModel.fromJson(Map<String, dynamic>.from(payload));
   }
 
   Future<void> deleteRoom(int roomId) async {

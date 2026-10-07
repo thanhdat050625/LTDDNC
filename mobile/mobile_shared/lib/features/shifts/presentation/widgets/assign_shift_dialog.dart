@@ -7,6 +7,7 @@ class AssignShiftDialog extends StatefulWidget {
   final List<CinemaModel> cinemas;
   final List<UserModel> staffList;
   final int? initialCinemaId;
+  final int? initialShiftId;
   final DateTime initialDate;
   final StaffScheduleModel? existingSchedule;
 
@@ -16,6 +17,7 @@ class AssignShiftDialog extends StatefulWidget {
     required this.cinemas,
     required this.staffList,
     this.initialCinemaId,
+    this.initialShiftId,
     required this.initialDate,
     this.existingSchedule,
   });
@@ -47,7 +49,7 @@ class _AssignShiftDialogState extends State<AssignShiftDialog> {
     } else {
       _selectedStaffId = widget.staffList.isNotEmpty ? widget.staffList.first.id : null;
       _selectedCinemaId = widget.initialCinemaId ?? (widget.cinemas.isNotEmpty ? widget.cinemas.first.id : null);
-      _selectedShiftId = widget.shifts.isNotEmpty ? widget.shifts.first.id : null;
+      _selectedShiftId = widget.initialShiftId ?? (widget.shifts.isNotEmpty ? widget.shifts.first.id : null);
       _selectedDate = widget.initialDate;
     }
   }
