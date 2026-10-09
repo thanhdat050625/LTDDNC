@@ -314,8 +314,19 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
     setState(() => _isHoldingSeats = true);
     try {
       final cubit = context.read<TicketSaleCubit>();
-      await cubit.holdSelectedSeats();
+      final success = await cubit.holdSelectedSeats();
       if (!context.mounted) return;
+
+      if (!success) {
+        final l10n = AppLocalizations.of(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n?.seatHeldByOther ?? ''),
+            backgroundColor: CineplexColors.of(context).error,
+          ),
+        );
+        return;
+      }
 
       final args = CheckoutArgs(
         showtime: showtime,

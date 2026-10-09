@@ -107,7 +107,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           // Single Unified Scrollable Content
           Expanded(
             child: SingleChildScrollView(
-              padding: EdgeInsets.all(theme.spacingLg),
+              padding: EdgeInsets.all(theme.spacingMd),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -118,7 +118,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       color: theme.textPrimary,
                     ),
                   ),
-                  SizedBox(height: theme.spacingMd),
+                  SizedBox(height: theme.spacingSm),
 
                   // Movie Info
                   if (args != null)
@@ -129,7 +129,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       style: TextStyle(color: theme.textSecondary),
                     ),
 
-                  SizedBox(height: theme.spacingMd),
+                  SizedBox(height: theme.spacingSm),
                   Divider(color: theme.borderSubtle),
                   SizedBox(height: theme.spacingSm),
 
@@ -160,15 +160,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       isDiscount: true,
                     ),
 
-                  SizedBox(height: theme.spacingLg),
+                  SizedBox(height: theme.spacingMd),
 
                   // 2. Voucher / Promo Card
                   _buildVoucherCard(theme, l10n),
-                  SizedBox(height: theme.spacingLg),
+                  const SizedBox(height: 10),
 
                   // 3. Loyalty Points Card
                   _buildLoyaltyCard(theme, l10n),
-                  SizedBox(height: theme.spacingLg),
+                  SizedBox(height: theme.spacingMd),
 
                   // 3. Payment Methods
                   Text(
@@ -177,9 +177,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       color: theme.textPrimary,
                     ),
                   ),
-                  SizedBox(height: theme.spacingMd),
+                  SizedBox(height: theme.spacingSm),
                   ...methods.map((m) => _buildMethodCard(theme, m)),
-                  SizedBox(height: theme.spacingMd),
+                  SizedBox(height: theme.spacingSm),
 
                   // Cash Received Calculator (Visible when CASH is selected)
                   if (_selectedMethod == 'CASH') ...[
@@ -512,6 +512,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     final maxAllowedDiscount = (orderSubtotal * 0.2).floor();
 
     return AppCard(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       backgroundColor: theme.accent.withValues(alpha: 0.08),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -561,11 +562,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
           // If no customer is identified yet: provide lookup input
           if (customer == null) ...[
-            Text(
-              l10n.searchCustomerHint,
-              style: TextStyle(color: theme.textSecondary, fontSize: 12),
-            ),
-            const SizedBox(height: 8),
             Row(
               children: [
                 Expanded(
@@ -863,6 +859,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     final isApplied = _appliedPromoCode != null;
 
     return AppCard(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       backgroundColor: isApplied
           ? theme.primary.withValues(alpha: 0.08)
           : theme.surface,
@@ -874,7 +871,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               Icon(
                 isApplied ? LucideIcons.checkCircle2 : LucideIcons.ticket,
                 color: theme.primary,
-                size: 20,
+                size: 18,
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -913,7 +910,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
 
           if (isApplied) ...[
             Container(
@@ -980,12 +977,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 6),
             InkWell(
               borderRadius: BorderRadius.circular(8),
               onTap: () => _showVoucherPicker(context, theme, l10n),
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
+                padding: const EdgeInsets.symmetric(vertical: 2),
                 child: Row(
                   children: [
                     Icon(LucideIcons.tags, color: theme.primary, size: 16),
@@ -1309,8 +1306,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     final bookingRepo = BookingManagementRepository(context.read<DioClient>());
 
     try {
-      // Step 1: Create staff offline booking
+      // Step 1: Ensure seats are actively held by this staff member, then create offline booking
       final seatIds = args.selectedSeats.map((s) => s.seatId).toList();
+      await bookingRepo.holdSeats(args.showtime.id, seatIds);
+
       final concessionsPayload = args.concessions
           .map((c) => {'productId': c.productId, 'quantity': c.quantity})
           .toList();
