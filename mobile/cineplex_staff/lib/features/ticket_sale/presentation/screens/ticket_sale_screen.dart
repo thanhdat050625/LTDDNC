@@ -408,12 +408,17 @@ class _TicketSaleScreenView extends StatelessWidget {
     }
 
     final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final tomorrow = today.add(const Duration(days: 1));
+    final endOfTomorrow = DateTime(now.year, now.month, now.day + 1, 23, 59, 59, 999);
+
     final movieShowtimes = state.cinemaShowtimes
         .where((st) =>
             st.movie?.id == state.selectedMovieId &&
             st.status != 'COMPLETED' &&
             st.status != 'CANCELLED' &&
-            st.publicStartTime.isAfter(now))
+            st.publicStartTime.isAfter(now) &&
+            st.publicStartTime.isBefore(endOfTomorrow))
         .toList();
 
     if (movieShowtimes.isEmpty) {
@@ -465,6 +470,21 @@ class _TicketSaleScreenView extends StatelessWidget {
           final dateStr = entry.key;
           final list = entry.value;
 
+          final firstSt = list.first;
+          final stDate = DateTime(
+            firstSt.publicStartTime.year,
+            firstSt.publicStartTime.month,
+            firstSt.publicStartTime.day,
+          );
+          final String displayHeader;
+          if (stDate == today) {
+            displayHeader = '${l10n.today} - $dateStr';
+          } else if (stDate == tomorrow) {
+            displayHeader = '${l10n.tomorrow} - $dateStr';
+          } else {
+            displayHeader = dateStr;
+          }
+
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -479,7 +499,7 @@ class _TicketSaleScreenView extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      dateStr,
+                      displayHeader,
                       style: TextStyle(
                         color: theme.textPrimary,
                         fontSize: 14,

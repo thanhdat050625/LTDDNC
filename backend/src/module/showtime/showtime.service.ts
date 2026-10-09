@@ -680,6 +680,13 @@ export class ShowtimeService {
 
   async getByCinemaId(cinemaId: number): Promise<ApiResponse<any>> {
     const now = new Date();
+    const VN_OFFSET_MS = 7 * 60 * 60 * 1000;
+    const vnNow = new Date(Date.now() + VN_OFFSET_MS);
+    // Hết ngày mai theo giờ Việt Nam (UTC+7)
+    const endOfTomorrow = new Date(
+      Date.UTC(vnNow.getUTCFullYear(), vnNow.getUTCMonth(), vnNow.getUTCDate() + 1, 23, 59, 59, 999) - VN_OFFSET_MS,
+    );
+
     const showtimes = await this.showtimeRepository
       .createQueryBuilder('showtime')
       .leftJoinAndSelect('showtime.movie', 'movie')
@@ -692,6 +699,7 @@ export class ShowtimeService {
       )
       .where('room.cinemaId = :cinemaId', { cinemaId })
       .andWhere('showtime.publicStartTime > :now', { now })
+      .andWhere('showtime.publicStartTime <= :endOfTomorrow', { endOfTomorrow })
       .andWhere('showtime.status IN (:...statuses)', {
         statuses: [EShowtimeStatus.SCHEDULED, EShowtimeStatus.ACTIVE],
       })

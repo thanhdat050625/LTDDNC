@@ -133,16 +133,18 @@ class TicketSaleCubit extends Cubit<TicketSaleState> {
   List<ShowtimeModel> _parseShowtimes(Map<String, dynamic> data) {
     final List<ShowtimeModel> allShowtimes = [];
     final now = DateTime.now();
+    final endOfTomorrow = DateTime(now.year, now.month, now.day + 1, 23, 59, 59, 999);
 
     // The backend returns a map keyed by YYYY-MM-DD
     data.forEach((dateString, list) {
       if (list is List) {
         for (var item in list) {
           final st = ShowtimeModel.fromJson(item as Map<String, dynamic>);
-          // Filter out past showtimes or completed/cancelled
+          // Filter: only showtimes from now until end of tomorrow
           if (st.status != 'COMPLETED' &&
               st.status != 'CANCELLED' &&
-              st.publicStartTime.isAfter(now)) {
+              st.publicStartTime.isAfter(now) &&
+              st.publicStartTime.isBefore(endOfTomorrow)) {
             allShowtimes.add(st);
           }
         }
