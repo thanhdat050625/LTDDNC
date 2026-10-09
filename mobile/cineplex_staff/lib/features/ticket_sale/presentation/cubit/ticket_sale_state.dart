@@ -9,6 +9,7 @@ class TicketSaleLoading extends TicketSaleState {}
 class TicketSaleLoaded extends TicketSaleState {
   final List<CinemaModel> cinemas;
   final int? selectedCinemaId;
+  final bool isCinemaFixed;
   final List<ShowtimeModel> cinemaShowtimes;
   final List<MovieModel> moviesForCinema;
   final int? selectedMovieId;
@@ -19,6 +20,7 @@ class TicketSaleLoaded extends TicketSaleState {
   TicketSaleLoaded({
     required this.cinemas,
     this.selectedCinemaId,
+    this.isCinemaFixed = false,
     this.cinemaShowtimes = const [],
     this.moviesForCinema = const [],
     this.selectedMovieId,
@@ -30,6 +32,7 @@ class TicketSaleLoaded extends TicketSaleState {
   TicketSaleLoaded copyWith({
     List<CinemaModel>? cinemas,
     int? selectedCinemaId,
+    bool? isCinemaFixed,
     List<ShowtimeModel>? cinemaShowtimes,
     List<MovieModel>? moviesForCinema,
     int? selectedMovieId,
@@ -40,6 +43,7 @@ class TicketSaleLoaded extends TicketSaleState {
     return TicketSaleLoaded(
       cinemas: cinemas ?? this.cinemas,
       selectedCinemaId: selectedCinemaId ?? this.selectedCinemaId,
+      isCinemaFixed: isCinemaFixed ?? this.isCinemaFixed,
       cinemaShowtimes: cinemaShowtimes ?? this.cinemaShowtimes,
       moviesForCinema: moviesForCinema ?? this.moviesForCinema,
       selectedMovieId: selectedMovieId ?? this.selectedMovieId,

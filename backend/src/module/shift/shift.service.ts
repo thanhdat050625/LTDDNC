@@ -33,40 +33,7 @@ export class ShiftService implements OnModuleInit {
     private readonly cinemaRepo: Repository<Cinema>,
   ) {}
 
-  async onModuleInit() {
-    // Seed các ca làm việc mẫu nếu chưa có
-    try {
-      const count = await this.shiftRepo.count();
-      if (count === 0) {
-        const defaultShifts = [
-          {
-            name: 'Ca sáng',
-            startTime: '08:00',
-            endTime: '16:00',
-            description: 'Ca làm việc buổi sáng (08:00 - 16:00)',
-            isActive: true,
-          },
-          {
-            name: 'Ca chiều',
-            startTime: '16:00',
-            endTime: '23:00',
-            description: 'Ca làm việc buổi chiều tối (16:00 - 23:00)',
-            isActive: true,
-          },
-          {
-            name: 'Ca tối / đêm',
-            startTime: '18:00',
-            endTime: '01:00',
-            description: 'Ca làm việc ca đêm cuối tuần (18:00 - 01:00)',
-            isActive: true,
-          },
-        ];
-        await this.shiftRepo.save(defaultShifts);
-      }
-    } catch {
-      // Bỏ qua lỗi trong quá trình khởi tạo ban đầu nếu DB chưa sẵn sàng
-    }
-  }
+
 
   // --- SHIFTS MASTER DATA ---
   async getAllShifts(): Promise<Shift[]> {

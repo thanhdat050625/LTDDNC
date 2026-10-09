@@ -46,31 +46,6 @@ class _StaffMyScheduleScreenState extends State<StaffMyScheduleScreen> {
     }
   }
 
-  String _getRoleLabel(String role, AppLocalizations l10n) {
-    switch (role) {
-      case 'TICKET_COUNTER':
-        return l10n.shiftRoleTicketCounter;
-      case 'SCANNER_GATE':
-        return l10n.shiftRoleScannerGate;
-      case 'CONCESSION':
-        return l10n.shiftRoleConcession;
-      default:
-        return l10n.shiftRoleGeneral;
-    }
-  }
-
-  Color _getRoleColor(String role) {
-    switch (role) {
-      case 'TICKET_COUNTER':
-        return const Color(0xFFF59E0B);
-      case 'SCANNER_GATE':
-        return const Color(0xFF10B981);
-      case 'CONCESSION':
-        return const Color(0xFFEC4899);
-      default:
-        return const Color(0xFF6366F1);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -280,8 +255,6 @@ class _StaffMyScheduleScreenState extends State<StaffMyScheduleScreen> {
                     )
                   else
                     ...schedulesForDate.map((schedule) {
-                      final roleColor = _getRoleColor(schedule.assignedRole);
-
                       return Container(
                         margin: EdgeInsets.only(bottom: theme.spacingMd),
                         padding: EdgeInsets.all(theme.spacingMd),
@@ -295,46 +268,30 @@ class _StaffMyScheduleScreenState extends State<StaffMyScheduleScreen> {
                           children: [
                             // Shift name & time
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Row(
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                      decoration: BoxDecoration(
-                                        color: theme.primary.withValues(alpha: 0.15),
-                                        borderRadius: BorderRadius.circular(theme.radiusSm),
-                                      ),
-                                      child: Text(
-                                        '${schedule.startTime} - ${schedule.endTime}',
-                                        style: textTheme.labelMedium?.copyWith(
-                                          color: theme.primary,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(width: theme.spacingSm),
-                                    Text(
-                                      schedule.shiftName,
-                                      style: textTheme.titleMedium?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: theme.textPrimary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                   decoration: BoxDecoration(
-                                    color: roleColor.withValues(alpha: 0.15),
+                                    color: theme.primary.withValues(alpha: 0.15),
                                     borderRadius: BorderRadius.circular(theme.radiusSm),
                                   ),
                                   child: Text(
-                                    _getRoleLabel(schedule.assignedRole, l10n),
-                                    style: textTheme.labelSmall?.copyWith(
-                                      color: roleColor,
+                                    '${schedule.startTime} - ${schedule.endTime}',
+                                    style: textTheme.labelMedium?.copyWith(
+                                      color: theme.primary,
                                       fontWeight: FontWeight.bold,
                                     ),
+                                  ),
+                                ),
+                                SizedBox(width: theme.spacingSm),
+                                Expanded(
+                                  child: Text(
+                                    schedule.shiftName,
+                                    style: textTheme.titleMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: theme.textPrimary,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ],

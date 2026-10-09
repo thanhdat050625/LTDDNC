@@ -5307,6 +5307,24 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Chưa có nhân viên'**
   String get shiftNoStaffAssigned;
+
+  /// No description provided for @shiftReadOnly.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chỉ xem'**
+  String get shiftReadOnly;
+
+  /// No description provided for @shiftNoAvailableShifts.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không có ca làm việc nào có thể phân công trong ngày này'**
+  String get shiftNoAvailableShifts;
+
+  /// No description provided for @shiftCannotModifyPastOrCurrent.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể chỉnh sửa, thêm hoặc xóa ca hiện tại hoặc đã qua'**
+  String get shiftCannotModifyPastOrCurrent;
 }
 
 class _AppLocalizationsDelegate

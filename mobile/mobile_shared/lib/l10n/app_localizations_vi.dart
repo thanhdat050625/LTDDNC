@@ -2762,4 +2762,15 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get shiftNoStaffAssigned => 'Chưa có nhân viên';
+
+  @override
+  String get shiftReadOnly => 'Chỉ xem';
+
+  @override
+  String get shiftNoAvailableShifts =>
+      'Không có ca làm việc nào có thể phân công trong ngày này';
+
+  @override
+  String get shiftCannotModifyPastOrCurrent =>
+      'Không thể chỉnh sửa, thêm hoặc xóa ca hiện tại hoặc đã qua';
 }

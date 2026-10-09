@@ -1277,5 +1277,8 @@
     }
   },
   "shiftToday": "Hôm nay",
-  "shiftNoStaffAssigned": "Chưa có nhân viên"
+  "shiftNoStaffAssigned": "Chưa có nhân viên",
+  "shiftReadOnly": "Chỉ xem",
+  "shiftNoAvailableShifts": "Không có ca làm việc nào có thể phân công trong ngày này",
+  "shiftCannotModifyPastOrCurrent": "Không thể chỉnh sửa, thêm hoặc xóa ca hiện tại hoặc đã qua"
 }

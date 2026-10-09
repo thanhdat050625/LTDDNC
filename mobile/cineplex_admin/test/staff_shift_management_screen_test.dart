@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 
 class FakeShiftRepository implements ShiftRepository {
   @override
   Future<List<ShiftModel>> getAllShifts() async => [
-        const ShiftModel(id: 1, name: 'Ca sáng', startTime: '08:00', endTime: '16:00', isActive: true),
-        const ShiftModel(id: 2, name: 'Ca chiều', startTime: '16:00', endTime: '23:00', isActive: true),
+        const ShiftModel(id: 1, name: 'Ca sáng', startTime: '08:00', endTime: '14:00', isActive: true),
+        const ShiftModel(id: 2, name: 'Ca chiều', startTime: '14:00', endTime: '20:00', isActive: true),
+        const ShiftModel(id: 3, name: 'Ca tối / đêm', startTime: '20:00', endTime: '02:00', isActive: true),
       ];
 
   @override
@@ -27,7 +29,7 @@ class FakeShiftRepository implements ShiftRepository {
           shiftId: 1,
           shiftName: 'Ca sáng',
           startTime: '08:00',
-          endTime: '16:00',
+          endTime: '14:00',
           workDate: '2026-10-10',
           assignedRole: 'TICKET_COUNTER',
           status: 'SCHEDULED',
@@ -42,7 +44,7 @@ class FakeShiftRepository implements ShiftRepository {
           shiftId: 1,
           shiftName: 'Ca sáng',
           startTime: '08:00',
-          endTime: '16:00',
+          endTime: '14:00',
           workDate: '2026-10-10',
           assignedRole: 'SCANNER_GATE',
           status: 'SCHEDULED',
@@ -241,9 +243,9 @@ void main() {
       // Headcount badge on Ca chiều (0 staff)
       expect(find.text('0 nhân viên'), findsOneWidget);
 
-      // Role breakdown chips for Ca sáng (1 Bán vé tại quầy, 1 Soát vé tại cửa)
-      expect(find.text('1 Bán vé tại quầy'), findsOneWidget);
-      expect(find.text('1 Soát vé tại cửa'), findsOneWidget);
+      // Roles are removed from shift management
+      expect(find.text('Bán vé tại quầy'), findsNothing);
+      expect(find.text('Soát vé tại cửa'), findsNothing);
 
       // Dense staff rows
       expect(find.text('Nguyễn Văn A'), findsOneWidget);
@@ -316,6 +318,84 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Đã chọn 2 nhân viên'), findsOneWidget);
+    });
+
+    testWidgets('enforces read-only on current and past shifts, only editable from next shift onwards', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(390, 844));
+      // Simulate now is 10:00 AM on 2026-10-10:
+      // Ca sáng (08:00 - 16:00) is the current shift (started at 08:00 <= 10:00).
+      // Ca chiều (16:00 - 23:00) is the next shift (starts at 16:00 > 10:00).
+      await tester.pumpWidget(
+        buildTestWidget(
+          child: StaffShiftManagementScreen(
+            nowProvider: () => DateTime(2026, 10, 10, 10, 0),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Ca sáng is current shift -> read-only:
+      // Shows "Chỉ xem" lock badge
+      expect(find.text('Chỉ xem'), findsOneWidget);
+
+      // Only Ca chiều has the "+ Thêm" button
+      expect(find.text('Thêm'), findsOneWidget);
+
+      // Staff in Ca sáng cannot be edited or deleted (no pencil or trash icons)
+      expect(find.byIcon(LucideIcons.pencil), findsNothing);
+      expect(find.byIcon(LucideIcons.trash2), findsNothing);
+
+      // Empty state button "Phân ca mới" is available only for Ca chiều
+      expect(find.text('Phân ca mới'), findsOneWidget);
+    });
+
+    testWidgets('when all shifts are in the past, all are read-only with zero modify actions', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(390, 844));
+      // Simulate now is 23:30 on 2026-10-10 (all shifts of today have started/ended)
+      await tester.pumpWidget(
+        buildTestWidget(
+          child: StaffShiftManagementScreen(
+            nowProvider: () => DateTime(2026, 10, 10, 23, 30),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Both Ca sáng and Ca chiều show "Chỉ xem"
+      expect(find.text('Chỉ xem'), findsNWidgets(2));
+
+      // Zero "+ Thêm" buttons
+      expect(find.text('Thêm'), findsNothing);
+
+      // Zero edit / delete buttons
+      expect(find.byIcon(LucideIcons.pencil), findsNothing);
+      expect(find.byIcon(LucideIcons.trash2), findsNothing);
+
+      // Zero "Phân ca mới" buttons
+      expect(find.text('Phân ca mới'), findsNothing);
+    });
+
+    testWidgets('AssignShiftDialog filters out current/past shifts when now is 10:00', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(390, 844));
+      // Simulate now is 10:00 AM on 2026-10-10
+      await tester.pumpWidget(
+        buildTestWidget(
+          child: AssignShiftDialog(
+            shifts: sampleShifts,
+            cinemas: sampleCinemas,
+            staffList: sampleStaff,
+            initialCinemaId: 1,
+            initialDate: DateTime(2026, 10, 10),
+            nowProvider: () => DateTime(2026, 10, 10, 10, 0),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Ca sáng (08:00) is filtered out because it is current/past.
+      // Default selected shift is Ca chiều (16:00).
+      expect(find.textContaining('Ca chiều'), findsOneWidget);
+      expect(find.textContaining('Ca sáng'), findsNothing);
     });
   });
 }

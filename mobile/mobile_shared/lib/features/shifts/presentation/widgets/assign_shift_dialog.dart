@@ -10,6 +10,7 @@ class AssignShiftDialog extends StatefulWidget {
   final int? initialShiftId;
   final DateTime initialDate;
   final StaffScheduleModel? existingSchedule;
+  final DateTime Function()? nowProvider;
 
   const AssignShiftDialog({
     super.key,
@@ -20,6 +21,7 @@ class AssignShiftDialog extends StatefulWidget {
     this.initialShiftId,
     required this.initialDate,
     this.existingSchedule,
+    this.nowProvider,
   });
 
   @override
@@ -32,9 +34,30 @@ class _AssignShiftDialogState extends State<AssignShiftDialog> {
   late int? _selectedCinemaId;
   late int? _selectedShiftId;
   late DateTime _selectedDate;
-  String _selectedRole = 'TICKET_COUNTER';
+  String _selectedRole = 'GENERAL';
   final TextEditingController _noteController = TextEditingController();
   final bool _isSubmitting = false;
+
+  DateTime _getNow() {
+    return widget.nowProvider != null ? widget.nowProvider!() : DateTime.now();
+  }
+
+  bool _isShiftAllowed(ShiftModel shift, DateTime date) {
+    final now = _getNow();
+    final dateOnly = DateTime(date.year, date.month, date.day);
+    final todayOnly = DateTime(now.year, now.month, now.day);
+    if (dateOnly.isBefore(todayOnly)) return false;
+    if (dateOnly.isAfter(todayOnly)) return true;
+    final parts = shift.startTime.split(':');
+    final hour = int.tryParse(parts[0]) ?? 0;
+    final minute = parts.length > 1 ? (int.tryParse(parts[1]) ?? 0) : 0;
+    final shiftStart = DateTime(date.year, date.month, date.day, hour, minute);
+    return shiftStart.isAfter(now);
+  }
+
+  List<ShiftModel> get _availableShifts {
+    return widget.shifts.where((s) => _isShiftAllowed(s, _selectedDate)).toList();
+  }
 
   @override
   void initState() {
@@ -53,8 +76,13 @@ class _AssignShiftDialogState extends State<AssignShiftDialog> {
         _selectedStaffIds.add(widget.staffList.first.id);
       }
       _selectedCinemaId = widget.initialCinemaId ?? (widget.cinemas.isNotEmpty ? widget.cinemas.first.id : null);
-      _selectedShiftId = widget.initialShiftId ?? (widget.shifts.isNotEmpty ? widget.shifts.first.id : null);
       _selectedDate = widget.initialDate;
+      final available = _availableShifts;
+      if (widget.initialShiftId != null && available.any((shift) => shift.id == widget.initialShiftId)) {
+        _selectedShiftId = widget.initialShiftId;
+      } else {
+        _selectedShiftId = available.isNotEmpty ? available.first.id : null;
+      }
     }
   }
 
@@ -71,27 +99,12 @@ class _AssignShiftDialogState extends State<AssignShiftDialog> {
     return '$y-$m-$day';
   }
 
-  String _getRoleLabel(String role, AppLocalizations l10n) {
-    switch (role) {
-      case 'TICKET_COUNTER':
-        return l10n.shiftRoleTicketCounter;
-      case 'SCANNER_GATE':
-        return l10n.shiftRoleScannerGate;
-      case 'CONCESSION':
-        return l10n.shiftRoleConcession;
-      default:
-        return l10n.shiftRoleGeneral;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = CineplexColors.of(context);
     final textTheme = Theme.of(context).textTheme;
     final l10n = AppLocalizations.of(context)!;
     final isEditing = widget.existingSchedule != null;
-
-    final roles = ['TICKET_COUNTER', 'SCANNER_GATE', 'CONCESSION', 'GENERAL'];
 
     return Dialog(
       backgroundColor: theme.surface,
@@ -298,59 +311,37 @@ class _AssignShiftDialogState extends State<AssignShiftDialog> {
                 ),
               ),
               const SizedBox(height: 6),
-              DropdownButtonFormField<int>(
-                initialValue: _selectedShiftId,
-                isExpanded: true,
-                dropdownColor: theme.surface,
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(horizontal: theme.spacingMd, vertical: theme.spacingSm),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
+              if (_availableShifts.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Text(
+                    l10n.shiftNoAvailableShifts,
+                    style: textTheme.bodySmall?.copyWith(color: theme.error),
+                  ),
+                )
+              else
+                DropdownButtonFormField<int>(
+                  key: ValueKey('shift_${_selectedDate.year}_${_selectedDate.month}_${_selectedDate.day}_$_selectedShiftId'),
+                  initialValue: _selectedShiftId,
+                  isExpanded: true,
+                  dropdownColor: theme.surface,
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.symmetric(horizontal: theme.spacingMd, vertical: theme.spacingSm),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
+                  ),
+                  items: _availableShifts.map((shift) {
+                    return DropdownMenuItem<int>(
+                      value: shift.id,
+                      child: Text(
+                        '${shift.name} (${shift.startTime} - ${shift.endTime})',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: textTheme.bodyMedium?.copyWith(color: theme.textPrimary),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (val) => setState(() => _selectedShiftId = val),
                 ),
-                items: widget.shifts.map((shift) {
-                  return DropdownMenuItem<int>(
-                    value: shift.id,
-                    child: Text(
-                      '${shift.name} (${shift.startTime} - ${shift.endTime})',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: textTheme.bodyMedium?.copyWith(color: theme.textPrimary),
-                    ),
-                  );
-                }).toList(),
-                onChanged: (val) => setState(() => _selectedShiftId = val),
-              ),
-              SizedBox(height: theme.spacingMd),
-
-              // Chọn Vị trí phân công
-              Text(
-                l10n.shiftSelectRole,
-                style: textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: theme.textPrimary,
-                ),
-              ),
-              const SizedBox(height: 6),
-              DropdownButtonFormField<String>(
-                initialValue: _selectedRole,
-                isExpanded: true,
-                dropdownColor: theme.surface,
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(horizontal: theme.spacingMd, vertical: theme.spacingSm),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
-                ),
-                items: roles.map((role) {
-                  return DropdownMenuItem<String>(
-                    value: role,
-                    child: Text(
-                      _getRoleLabel(role, l10n),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: textTheme.bodyMedium?.copyWith(color: theme.textPrimary),
-                    ),
-                  );
-                }).toList(),
-                onChanged: (val) => setState(() => _selectedRole = val ?? 'GENERAL'),
-              ),
               const SizedBox(height: 10),
 
               // Chọn Ngày
@@ -366,14 +357,22 @@ class _AssignShiftDialogState extends State<AssignShiftDialog> {
                 onTap: isEditing
                     ? null
                     : () async {
+                        final now = _getNow();
+                        final todayStart = DateTime(now.year, now.month, now.day);
                         final picked = await showDatePicker(
                           context: context,
-                          initialDate: _selectedDate,
-                          firstDate: DateTime.now().subtract(const Duration(days: 30)),
-                          lastDate: DateTime.now().add(const Duration(days: 90)),
+                          initialDate: _selectedDate.isBefore(todayStart) ? todayStart : _selectedDate,
+                          firstDate: todayStart,
+                          lastDate: todayStart.add(const Duration(days: 90)),
                         );
                         if (picked != null) {
-                          setState(() => _selectedDate = picked);
+                          setState(() {
+                            _selectedDate = picked;
+                            final available = widget.shifts.where((s) => _isShiftAllowed(s, picked)).toList();
+                            if (_selectedShiftId != null && !available.any((s) => s.id == _selectedShiftId)) {
+                              _selectedShiftId = available.isNotEmpty ? available.first.id : null;
+                            }
+                          });
                         }
                       },
                 child: Container(
@@ -435,6 +434,8 @@ class _AssignShiftDialogState extends State<AssignShiftDialog> {
                     onPressed: _isSubmitting ||
                             _selectedCinemaId == null ||
                             _selectedShiftId == null ||
+                            _availableShifts.isEmpty ||
+                            !_availableShifts.any((s) => s.id == _selectedShiftId) ||
                             (isEditing ? _selectedStaffId == null : _selectedStaffIds.isEmpty)
                         ? null
                         : () {

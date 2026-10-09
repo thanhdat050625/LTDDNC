@@ -5,8 +5,13 @@ import 'package:mobile_shared/mobile_shared.dart';
 
 class StaffShiftManagementScreen extends StatefulWidget {
   final Widget? drawer;
+  final DateTime Function()? nowProvider;
 
-  const StaffShiftManagementScreen({super.key, this.drawer});
+  const StaffShiftManagementScreen({
+    super.key,
+    this.drawer,
+    this.nowProvider,
+  });
 
   @override
   State<StaffShiftManagementScreen> createState() => _StaffShiftManagementScreenState();
@@ -19,6 +24,10 @@ class _StaffShiftManagementScreenState extends State<StaffShiftManagementScreen>
     context.read<StaffShiftManagementCubit>().loadInitialData();
   }
 
+  DateTime _getNow() {
+    return widget.nowProvider != null ? widget.nowProvider!() : DateTime.now();
+  }
+
   String _formatDate(DateTime d) {
     final y = d.year.toString().padLeft(4, '0');
     final m = d.month.toString().padLeft(2, '0');
@@ -27,64 +36,30 @@ class _StaffShiftManagementScreenState extends State<StaffShiftManagementScreen>
   }
 
   bool _isToday(DateTime d) {
-    final now = DateTime.now();
+    final now = _getNow();
     return d.year == now.year && d.month == now.month && d.day == now.day;
   }
 
-  String _getRoleLabel(String role, AppLocalizations l10n) {
-    switch (role) {
-      case 'TICKET_COUNTER':
-        return l10n.shiftRoleTicketCounter;
-      case 'SCANNER_GATE':
-        return l10n.shiftRoleScannerGate;
-      case 'CONCESSION':
-        return l10n.shiftRoleConcession;
-      default:
-        return l10n.shiftRoleGeneral;
-    }
-  }
+  bool _isShiftModifiable(DateTime selectedDate, ShiftModel shift) {
+    final now = _getNow();
+    final dateOnly = DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
+    final todayOnly = DateTime(now.year, now.month, now.day);
 
-  Color _getRoleColor(String role, BuildContext context) {
-    final theme = CineplexColors.of(context);
-    switch (role) {
-      case 'TICKET_COUNTER':
-        return theme.warning;
-      case 'SCANNER_GATE':
-        return theme.success;
-      case 'CONCESSION':
-        return theme.accent;
-      default:
-        return theme.info;
+    if (dateOnly.isBefore(todayOnly)) {
+      return false;
     }
-  }
 
-  Widget _buildRoleCountChip(String label, int count, Color color, TextTheme textTheme) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 5,
-            height: 5,
-            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-          ),
-          const SizedBox(width: 4),
-          Text(
-            '$count $label',
-            style: textTheme.labelSmall?.copyWith(
-              color: color,
-              fontWeight: FontWeight.w600,
-              fontSize: 10.5,
-            ),
-          ),
-        ],
-      ),
-    );
+    if (dateOnly.isAfter(todayOnly)) {
+      return true;
+    }
+
+    // Hôm nay: chỉ cho phép chỉnh, thêm, xóa từ ca kế tiếp (giờ bắt đầu > giờ hiện tại)
+    final parts = shift.startTime.split(':');
+    final hour = int.tryParse(parts[0]) ?? 0;
+    final minute = parts.length > 1 ? (int.tryParse(parts[1]) ?? 0) : 0;
+    final shiftStart = DateTime(selectedDate.year, selectedDate.month, selectedDate.day, hour, minute);
+
+    return shiftStart.isAfter(now);
   }
 
   void _showAssignDialog(
@@ -93,6 +68,25 @@ class _StaffShiftManagementScreenState extends State<StaffShiftManagementScreen>
     int? preselectedShiftId,
     StaffScheduleModel? existingSchedule,
   }) async {
+    final l10n = AppLocalizations.of(context)!;
+    if (existingSchedule != null) {
+      final shift = state.shifts.where((s) => s.id == existingSchedule.shiftId).firstOrNull;
+      if (shift != null && !_isShiftModifiable(state.selectedDate, shift)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.shiftCannotModifyPastOrCurrent)),
+        );
+        return;
+      }
+    } else if (preselectedShiftId != null) {
+      final shift = state.shifts.where((s) => s.id == preselectedShiftId).firstOrNull;
+      if (shift != null && !_isShiftModifiable(state.selectedDate, shift)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.shiftCannotModifyPastOrCurrent)),
+        );
+        return;
+      }
+    }
+
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
       builder: (_) => AssignShiftDialog(
@@ -103,6 +97,7 @@ class _StaffShiftManagementScreenState extends State<StaffShiftManagementScreen>
         initialShiftId: preselectedShiftId,
         initialDate: state.selectedDate,
         existingSchedule: existingSchedule,
+        nowProvider: widget.nowProvider,
       ),
     );
 
@@ -124,7 +119,7 @@ class _StaffShiftManagementScreenState extends State<StaffShiftManagementScreen>
           cinemaId: result['cinemaId'] as int,
           shiftId: result['shiftId'] as int,
           workDate: result['workDate'] as String,
-          assignedRole: result['assignedRole'] as String,
+          assignedRole: (result['assignedRole'] as String?) ?? 'GENERAL',
           note: result['note'] as String?,
         );
         if (success && mounted) {
@@ -136,8 +131,20 @@ class _StaffShiftManagementScreenState extends State<StaffShiftManagementScreen>
     }
   }
 
-  void _confirmDelete(BuildContext context, StaffScheduleModel schedule) async {
+  void _confirmDelete(
+    BuildContext context,
+    StaffScheduleModel schedule, {
+    ShiftModel? shift,
+    DateTime? selectedDate,
+  }) async {
     final l10n = AppLocalizations.of(context)!;
+    if (shift != null && selectedDate != null && !_isShiftModifiable(selectedDate, shift)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.shiftCannotModifyPastOrCurrent)),
+      );
+      return;
+    }
+
     final theme = CineplexColors.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
@@ -372,11 +379,7 @@ class _StaffShiftManagementScreenState extends State<StaffShiftManagementScreen>
                       final schedulesInShift = loadedState.schedules
                           .where((s) => s.shiftId == shift.id)
                           .toList();
-
-                      final ticketCount = schedulesInShift.where((s) => s.assignedRole == 'TICKET_COUNTER').length;
-                      final scannerCount = schedulesInShift.where((s) => s.assignedRole == 'SCANNER_GATE').length;
-                      final concessionCount = schedulesInShift.where((s) => s.assignedRole == 'CONCESSION').length;
-                      final generalCount = schedulesInShift.where((s) => s.assignedRole == 'GENERAL').length;
+                      final isModifiable = _isShiftModifiable(loadedState.selectedDate, shift);
 
                       return Container(
                         margin: const EdgeInsets.only(bottom: 10),
@@ -430,53 +433,75 @@ class _StaffShiftManagementScreenState extends State<StaffShiftManagementScreen>
                                     ),
                                   ),
                                   const SizedBox(width: 6),
-                                  // Nút "+ Thêm nhân viên" trên header ca
-                                  InkWell(
-                                    onTap: () => _showAssignDialog(
-                                      context,
-                                      loadedState,
-                                      preselectedShiftId: shift.id,
-                                    ),
-                                    borderRadius: BorderRadius.circular(theme.radiusSm),
-                                    child: Container(
+                                  // Nút "+ Thêm nhân viên" hoặc nhãn "Chỉ xem" trên header ca
+                                  if (isModifiable)
+                                    InkWell(
+                                      onTap: () => _showAssignDialog(
+                                        context,
+                                        loadedState,
+                                        preselectedShiftId: shift.id,
+                                      ),
+                                      borderRadius: BorderRadius.circular(theme.radiusSm),
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3.5),
+                                        decoration: BoxDecoration(
+                                          color: theme.primary.withValues(alpha: 0.12),
+                                          borderRadius: BorderRadius.circular(theme.radiusSm),
+                                          border: Border.all(color: theme.primary.withValues(alpha: 0.35)),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(LucideIcons.userPlus, size: 12, color: theme.primary),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              l10n.shiftAddStaff,
+                                              style: textTheme.labelSmall?.copyWith(
+                                                color: theme.primary,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 11,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                  else
+                                    Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3.5),
                                       decoration: BoxDecoration(
-                                        color: theme.primary.withValues(alpha: 0.12),
+                                        color: theme.surfaceVariant.withValues(alpha: 0.35),
                                         borderRadius: BorderRadius.circular(theme.radiusSm),
-                                        border: Border.all(color: theme.primary.withValues(alpha: 0.35)),
+                                        border: Border.all(color: theme.borderSubtle),
                                       ),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          Icon(LucideIcons.userPlus, size: 12, color: theme.primary),
+                                          Icon(LucideIcons.lock, size: 11, color: theme.textSecondary),
                                           const SizedBox(width: 4),
                                           Text(
-                                            l10n.shiftAddStaff,
+                                            l10n.shiftReadOnly,
                                             style: textTheme.labelSmall?.copyWith(
-                                              color: theme.primary,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 11,
+                                              color: theme.textSecondary,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 10.5,
                                             ),
                                           ),
                                         ],
                                       ),
                                     ),
-                                  ),
                                 ],
                               ),
                             ),
 
-                            // Tóm tắt số lượng & vị trí trong ca (Role Breakdown Strip)
+                            // Dải hiển thị số lượng nhân viên trong ca
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                               decoration: BoxDecoration(
                                 border: Border(bottom: BorderSide(color: theme.divider)),
                                 color: theme.surfaceVariant.withValues(alpha: 0.15),
                               ),
-                              child: Wrap(
-                                spacing: 8,
-                                runSpacing: 4,
-                                crossAxisAlignment: WrapCrossAlignment.center,
+                              child: Row(
                                 children: [
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
@@ -494,14 +519,6 @@ class _StaffShiftManagementScreenState extends State<StaffShiftManagementScreen>
                                       ),
                                     ),
                                   ),
-                                  if (ticketCount > 0)
-                                    _buildRoleCountChip(l10n.shiftRoleTicketCounter, ticketCount, theme.warning, textTheme),
-                                  if (scannerCount > 0)
-                                    _buildRoleCountChip(l10n.shiftRoleScannerGate, scannerCount, theme.success, textTheme),
-                                  if (concessionCount > 0)
-                                    _buildRoleCountChip(l10n.shiftRoleConcession, concessionCount, theme.accent, textTheme),
-                                  if (generalCount > 0)
-                                    _buildRoleCountChip(l10n.shiftRoleGeneral, generalCount, theme.info, textTheme),
                                 ],
                               ),
                             ),
@@ -520,19 +537,20 @@ class _StaffShiftManagementScreenState extends State<StaffShiftManagementScreen>
                                         style: textTheme.bodySmall?.copyWith(color: theme.textSecondary),
                                       ),
                                     ),
-                                    OutlinedButton.icon(
-                                      icon: const Icon(LucideIcons.userPlus, size: 12),
-                                      label: Text(l10n.shiftAssignNew, style: const TextStyle(fontSize: 11)),
-                                      style: OutlinedButton.styleFrom(
-                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                        minimumSize: const Size(0, 26),
+                                    if (isModifiable)
+                                      OutlinedButton.icon(
+                                        icon: const Icon(LucideIcons.userPlus, size: 12),
+                                        label: Text(l10n.shiftAssignNew, style: const TextStyle(fontSize: 11)),
+                                        style: OutlinedButton.styleFrom(
+                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                          minimumSize: const Size(0, 26),
+                                        ),
+                                        onPressed: () => _showAssignDialog(
+                                          context,
+                                          loadedState,
+                                          preselectedShiftId: shift.id,
+                                        ),
                                       ),
-                                      onPressed: () => _showAssignDialog(
-                                        context,
-                                        loadedState,
-                                        preselectedShiftId: shift.id,
-                                      ),
-                                    ),
                                   ],
                                 ),
                               )
@@ -544,7 +562,6 @@ class _StaffShiftManagementScreenState extends State<StaffShiftManagementScreen>
                                 separatorBuilder: (_, __) => Divider(color: theme.divider, height: 1),
                                 itemBuilder: (context, index) {
                                   final schedule = schedulesInShift[index];
-                                  final roleColor = _getRoleColor(schedule.assignedRole, context);
 
                                   return Padding(
                                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -552,11 +569,11 @@ class _StaffShiftManagementScreenState extends State<StaffShiftManagementScreen>
                                       children: [
                                         CircleAvatar(
                                           radius: 13,
-                                          backgroundColor: roleColor.withValues(alpha: 0.18),
+                                          backgroundColor: theme.primary.withValues(alpha: 0.18),
                                           child: Text(
                                             schedule.staffName.isNotEmpty ? schedule.staffName[0].toUpperCase() : 'S',
                                             style: TextStyle(
-                                              color: roleColor,
+                                              color: theme.primary,
                                               fontWeight: FontWeight.bold,
                                               fontSize: 11,
                                             ),
@@ -577,31 +594,6 @@ class _StaffShiftManagementScreenState extends State<StaffShiftManagementScreen>
                                                 maxLines: 1,
                                                 overflow: TextOverflow.ellipsis,
                                               ),
-                                              const SizedBox(height: 2),
-                                              Row(
-                                                children: [
-                                                  Flexible(
-                                                    child: Container(
-                                                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
-                                                      decoration: BoxDecoration(
-                                                        color: roleColor.withValues(alpha: 0.15),
-                                                        borderRadius: BorderRadius.circular(4),
-                                                        border: Border.all(color: roleColor.withValues(alpha: 0.3)),
-                                                      ),
-                                                      child: Text(
-                                                        _getRoleLabel(schedule.assignedRole, l10n),
-                                                        style: textTheme.labelSmall?.copyWith(
-                                                          color: roleColor,
-                                                          fontWeight: FontWeight.w600,
-                                                          fontSize: 10,
-                                                        ),
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow.ellipsis,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
                                               if (schedule.note != null && schedule.note!.isNotEmpty) ...[
                                                 const SizedBox(height: 2),
                                                 Text(
@@ -618,22 +610,29 @@ class _StaffShiftManagementScreenState extends State<StaffShiftManagementScreen>
                                             ],
                                           ),
                                         ),
-                                        IconButton(
-                                          icon: Icon(LucideIcons.pencil, size: 15, color: theme.textSecondary),
-                                          constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
-                                          padding: EdgeInsets.zero,
-                                          onPressed: () => _showAssignDialog(
-                                            context,
-                                            loadedState,
-                                            existingSchedule: schedule,
+                                        if (isModifiable) ...[
+                                          IconButton(
+                                            icon: Icon(LucideIcons.pencil, size: 15, color: theme.textSecondary),
+                                            constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                                            padding: EdgeInsets.zero,
+                                            onPressed: () => _showAssignDialog(
+                                              context,
+                                              loadedState,
+                                              existingSchedule: schedule,
+                                            ),
                                           ),
-                                        ),
-                                        IconButton(
-                                          icon: Icon(LucideIcons.trash2, size: 15, color: theme.error),
-                                          constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
-                                          padding: EdgeInsets.zero,
-                                          onPressed: () => _confirmDelete(context, schedule),
-                                        ),
+                                          IconButton(
+                                            icon: Icon(LucideIcons.trash2, size: 15, color: theme.error),
+                                            constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                                            padding: EdgeInsets.zero,
+                                            onPressed: () => _confirmDelete(
+                                              context,
+                                              schedule,
+                                              shift: shift,
+                                              selectedDate: loadedState.selectedDate,
+                                            ),
+                                          ),
+                                        ],
                                       ],
                                     ),
                                   );
