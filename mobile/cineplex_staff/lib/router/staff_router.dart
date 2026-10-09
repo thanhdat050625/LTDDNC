@@ -13,6 +13,7 @@ import '../features/scanner/presentation/screens/staff_scanner_screen.dart';
 import '../features/ticket_sale/data/models/checkout_args.dart';
 import '../features/ticket_sale/presentation/cubit/ticket_sale_cubit.dart';
 import '../features/ticket_sale/presentation/screens/checkout_screen.dart';
+import '../features/ticket_sale/presentation/screens/payment_result_screen.dart';
 import '../features/ticket_sale/presentation/screens/seat_selection_screen.dart';
 import '../features/ticket_sale/presentation/screens/ticket_sale_screen.dart';
 
@@ -134,6 +135,28 @@ GoRouter createStaffRouter(
         builder: (context, state) {
           final args = state.extra as CheckoutArgs?;
           return CheckoutScreen(args: args);
+        },
+      ),
+      GoRoute(
+        path: '/ticket-sale/payment-result/:id',
+        builder: (context, state) {
+          final bookingId = state.pathParameters['id'] ?? '0';
+          final extra = state.extra as Map<String, dynamic>?;
+          return StaffPaymentResultScreen(
+            bookingId: bookingId,
+            initialData: extra,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/payment-result/:id',
+        builder: (context, state) {
+          final bookingId = state.pathParameters['id'] ?? '0';
+          final extra = state.extra as Map<String, dynamic>?;
+          return StaffPaymentResultScreen(
+            bookingId: bookingId,
+            initialData: extra,
+          );
         },
       ),
 

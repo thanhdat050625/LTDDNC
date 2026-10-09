@@ -4390,6 +4390,24 @@ abstract class AppLocalizations {
   /// **'Giao dịch thanh toán đã bị hủy.'**
   String get posPaymentCancelledPrompt;
 
+  /// No description provided for @posContinueSale.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tiếp tục bán vé'**
+  String get posContinueSale;
+
+  /// No description provided for @posViewTickets.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem quản lý vé'**
+  String get posViewTickets;
+
+  /// No description provided for @posEarnedPointsSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tích lũy +{points} điểm thành công'**
+  String posEarnedPointsSuccess(int points);
+
   /// No description provided for @scanSoundTitle.
   ///
   /// In vi, this message translates to:

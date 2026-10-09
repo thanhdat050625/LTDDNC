@@ -48,12 +48,48 @@ GoRouter createRouter(
     navigatorKey: rootKey,
     initialLocation: '/home',
     refreshListenable: _AuthRefreshNotifier(authBloc),
+    errorBuilder: (context, state) => const HomeScreen(),
     redirect: (context, state) {
       if (state.uri.scheme == 'cineplex') {
         final hostPart = state.uri.host.isNotEmpty ? '/${state.uri.host}' : '';
         final path = '$hostPart${state.uri.path}'.replaceAll('//', '/');
         final query = state.uri.hasQuery ? '?${state.uri.query}' : '';
+        if (path.startsWith('/booking-history/') ||
+            path.startsWith('/history/') ||
+            path.startsWith('/tickets/')) {
+          final id = path.split('/').last;
+          return '/my-tickets/$id$query';
+        }
+        if (path == '/booking-history' || path == '/history' || path == '/tickets') {
+          return '/my-tickets$query';
+        }
+        if (path == '/' || path.isEmpty) {
+          return '/home$query';
+        }
         return '$path$query';
+      }
+
+      final loc = state.matchedLocation.isNotEmpty ? state.matchedLocation : state.uri.path;
+      if (loc == '/' || state.uri.path == '/') {
+        return '/home';
+      }
+      if (loc.startsWith('/booking-history/') ||
+          state.uri.path.startsWith('/booking-history/') ||
+          loc.startsWith('/history/') ||
+          state.uri.path.startsWith('/history/') ||
+          loc.startsWith('/tickets/') ||
+          state.uri.path.startsWith('/tickets/')) {
+        final targetPath = loc.isNotEmpty ? loc : state.uri.path;
+        final id = targetPath.split('/').last;
+        return '/my-tickets/$id';
+      }
+      if (loc == '/booking-history' ||
+          state.uri.path == '/booking-history' ||
+          loc == '/history' ||
+          state.uri.path == '/history' ||
+          loc == '/tickets' ||
+          state.uri.path == '/tickets') {
+        return '/my-tickets';
       }
 
       final authState = authBloc.state;
@@ -85,6 +121,24 @@ GoRouter createRouter(
       return null;
     },
     routes: [
+      // Aliases & redirects for web / notification deep links
+      GoRoute(path: '/', redirect: (_, __) => '/home'),
+      GoRoute(path: '/booking-history', redirect: (_, __) => '/my-tickets'),
+      GoRoute(path: '/history', redirect: (_, __) => '/my-tickets'),
+      GoRoute(path: '/tickets', redirect: (_, __) => '/my-tickets'),
+      GoRoute(
+        path: '/booking-history/:id',
+        redirect: (_, state) => '/my-tickets/${state.pathParameters['id']}',
+      ),
+      GoRoute(
+        path: '/history/:id',
+        redirect: (_, state) => '/my-tickets/${state.pathParameters['id']}',
+      ),
+      GoRoute(
+        path: '/tickets/:id',
+        redirect: (_, state) => '/my-tickets/${state.pathParameters['id']}',
+      ),
+
       // Auth routes (no shell)
       GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
       GoRoute(path: '/register', builder: (_, __) => const RegisterScreen()),
@@ -206,9 +260,13 @@ GoRouter createRouter(
       ),
       GoRoute(
         path: '/my-tickets/:id',
-        builder: (_, state) {
-          final booking = state.extra as BookingDetailModel;
-          return TicketDetailScreen(booking: booking);
+        builder: (context, state) {
+          final booking = state.extra is BookingDetailModel ? state.extra as BookingDetailModel : null;
+          final bookingId = state.pathParameters['id'] ?? '';
+          return TicketDetailRouteScreen(
+            bookingId: bookingId,
+            initialBooking: booking,
+          );
         },
       ),
       GoRoute(

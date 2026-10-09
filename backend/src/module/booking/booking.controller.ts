@@ -147,8 +147,12 @@ export class BookingController {
   @HttpCode(HttpStatus.OK)
   async getBookingById(
     @Request() req,
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: string,
   ) {
-    return this.bookingService.getBookingById(id, req.user);
+    const numId = Number(id);
+    if (!isNaN(numId)) {
+      return this.bookingService.getBookingById(numId, req.user);
+    }
+    return this.bookingService.getBookingByCode(id, req.user);
   }
 }
