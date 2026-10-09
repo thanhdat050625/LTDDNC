@@ -92,7 +92,7 @@ Future<void> pumpApp(WidgetTester tester) async {
 
 void main() {
   group('Staff System Back Button Integration Tests', () {
-    testWidgets('Pressing back at /scanner triggers exit confirmation dialog', (tester) async {
+    testWidgets('Pressing back at /pos triggers exit confirmation dialog', (tester) async {
       bool exitTriggered = false;
       final authBloc = _StaffTestAuthBloc();
       final rootKey = GlobalKey<NavigatorState>();
@@ -103,8 +103,8 @@ void main() {
         router: router,
         rootNavKey: rootKey,
         shellNavKey: shellKey,
-        defaultRootPath: '/scanner',
-        exitOnPaths: {'/scanner', '/login'},
+        defaultRootPath: '/pos',
+        exitOnPaths: {'/pos', '/login'},
         onExitApp: () {
           exitTriggered = true;
         },
@@ -115,7 +115,7 @@ void main() {
       await tester.pumpWidget(buildStaffTestApp(router: router, authBloc: authBloc));
       await pumpApp(tester);
 
-      // Press back on Scanner
+      // Press back on POS (Ticket Sale)
       final handled = await tester.binding.handlePopRoute();
       await pumpApp(tester);
       expect(handled, isTrue);
@@ -147,8 +147,8 @@ void main() {
         router: router,
         rootNavKey: rootKey,
         shellNavKey: shellKey,
-        defaultRootPath: '/scanner',
-        exitOnPaths: {'/scanner', '/login'},
+        defaultRootPath: '/pos',
+        exitOnPaths: {'/pos', '/login'},
         onExitApp: () {
           exitTriggered = true;
         },
@@ -171,7 +171,7 @@ void main() {
       expect(exitTriggered, isTrue);
     });
 
-    testWidgets('Navigating from /scanner to other destinations returns to /scanner on back', (tester) async {
+    testWidgets('Navigating from /pos to other destinations returns to /pos on back', (tester) async {
       final authBloc = _StaffTestAuthBloc();
       final rootKey = GlobalKey<NavigatorState>();
       final shellKey = GlobalKey<NavigatorState>();
@@ -181,8 +181,8 @@ void main() {
         router: router,
         rootNavKey: rootKey,
         shellNavKey: shellKey,
-        defaultRootPath: '/scanner',
-        exitOnPaths: {'/scanner', '/login'},
+        defaultRootPath: '/pos',
+        exitOnPaths: {'/pos', '/login'},
       )..init();
       addTearDown(backHandler.dispose);
       addTearDown(authBloc.close);
@@ -203,13 +203,13 @@ void main() {
       expect(handled, isTrue);
       expect(router.routerDelegate.currentConfiguration.uri.path, '/showtimes-occupancy');
 
-      // 2. Back: /showtimes-occupancy -> /scanner
+      // 2. Back: /showtimes-occupancy -> /pos
       handled = await tester.binding.handlePopRoute();
       await pumpApp(tester);
       expect(handled, isTrue);
-      expect(router.routerDelegate.currentConfiguration.uri.path, '/scanner');
+      expect(router.routerDelegate.currentConfiguration.uri.path, '/pos');
 
-      // 3. Back on /scanner: shows exit dialog
+      // 3. Back on /pos: shows exit dialog
       handled = await tester.binding.handlePopRoute();
       await pumpApp(tester);
       expect(handled, isTrue);
@@ -229,8 +229,8 @@ void main() {
         router: router,
         rootNavKey: rootKey,
         shellNavKey: shellKey,
-        defaultRootPath: '/scanner',
-        exitOnPaths: {'/scanner', '/login'},
+        defaultRootPath: '/pos',
+        exitOnPaths: {'/pos', '/login'},
       )..init();
       addTearDown(backHandler.dispose);
       addTearDown(authBloc.close);
@@ -250,7 +250,7 @@ void main() {
       expect(find.text('Thoát ứng dụng'), findsNothing);
     });
 
-    testWidgets('After logout from /scanner to /login, back button shows exit dialog immediately', (tester) async {
+    testWidgets('After logout from /pos to /login, back button shows exit dialog immediately', (tester) async {
       final authBloc = _StaffTestAuthBloc();
       final rootKey = GlobalKey<NavigatorState>();
       final shellKey = GlobalKey<NavigatorState>();
@@ -260,15 +260,15 @@ void main() {
         router: router,
         rootNavKey: rootKey,
         shellNavKey: shellKey,
-        defaultRootPath: '/scanner',
-        exitOnPaths: {'/scanner', '/login'},
+        defaultRootPath: '/pos',
+        exitOnPaths: {'/pos', '/login'},
       )..init();
       addTearDown(backHandler.dispose);
       addTearDown(authBloc.close);
 
       await tester.pumpWidget(buildStaffTestApp(router: router, authBloc: authBloc));
       await pumpApp(tester);
-      expect(router.routerDelegate.currentConfiguration.uri.path, '/scanner');
+      expect(router.routerDelegate.currentConfiguration.uri.path, '/pos');
 
       // Logout
       authBloc.emit(AuthUnauthenticated());

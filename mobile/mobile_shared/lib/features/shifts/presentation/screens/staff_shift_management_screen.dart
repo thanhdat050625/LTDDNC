@@ -36,11 +36,6 @@ class _StaffShiftManagementScreenState extends State<StaffShiftManagementScreen>
     return '$day/$m/$y';
   }
 
-  bool _isToday(DateTime d) {
-    final now = _getNow();
-    return d.year == now.year && d.month == now.month && d.day == now.day;
-  }
-
   bool _isShiftModifiable(DateTime selectedDate, ShiftModel shift) {
     final now = _getNow();
     final dateOnly = DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
@@ -331,29 +326,6 @@ class _StaffShiftManagementScreenState extends State<StaffShiftManagementScreen>
                                 ),
                               ),
                             ),
-                            if (!_isToday(loadedState.selectedDate)) ...[
-                              InkWell(
-                                onTap: () => context.read<StaffShiftManagementCubit>().selectDate(DateTime.now()),
-                                borderRadius: BorderRadius.circular(10),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                                  decoration: BoxDecoration(
-                                    color: theme.primary.withValues(alpha: 0.12),
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(color: theme.primary.withValues(alpha: 0.3)),
-                                  ),
-                                  child: Text(
-                                    l10n.shiftToday,
-                                    style: textTheme.labelSmall?.copyWith(
-                                      color: theme.primary,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 11,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 4),
-                            ],
                             IconButton(
                               icon: const Icon(LucideIcons.chevronRight, size: 18),
                               color: theme.textSecondary,

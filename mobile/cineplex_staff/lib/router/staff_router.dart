@@ -30,7 +30,7 @@ GoRouter createStaffRouter(
   final shellKey = shellNavKey ?? staffShellNavigatorKey;
   return GoRouter(
     navigatorKey: rootKey,
-    initialLocation: '/scanner',
+    initialLocation: '/pos',
     refreshListenable: _StaffAuthRefreshNotifier(authBloc),
     redirect: (context, state) {
       if (state.uri.scheme == 'cineplexstaff') {
@@ -51,12 +51,12 @@ GoRouter createStaffRouter(
       if (isAuth && isOnLogin) {
         final role = authState.user.role.toUpperCase();
         if (role == 'STAFF' || role == 'ADMIN') {
-          return '/scanner';
+          return '/pos';
         }
       }
 
       if (state.matchedLocation == '/dashboard') {
-        return '/scanner';
+        return '/pos';
       }
 
       if (state.matchedLocation == '/ticket-sale') {
