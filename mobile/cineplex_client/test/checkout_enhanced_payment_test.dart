@@ -219,7 +219,8 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('DRAFT'), findsOneWidget);
+      expect(find.text('DRAFT'), findsNothing);
+      expect(find.text('Tóm tắt đơn hàng'), findsOneWidget);
       expect(find.text('Thanh toán ngay'), findsOneWidget);
 
       await tester.ensureVisible(find.text('Thanh toán ngay'));
