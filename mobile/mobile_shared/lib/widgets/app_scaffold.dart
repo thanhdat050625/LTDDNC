@@ -5,6 +5,7 @@ class AppScaffold extends StatelessWidget {
   final Widget? titleWidget;
   final Widget body;
   final bool showBackButton;
+  final Widget? leading;
   final List<Widget>? actions;
   final Widget? floatingActionButton;
   final Widget? bottomNavigationBar;
@@ -17,6 +18,7 @@ class AppScaffold extends StatelessWidget {
     this.titleWidget,
     required this.body,
     this.showBackButton = true,
+    this.leading,
     this.actions,
     this.floatingActionButton,
     this.bottomNavigationBar,
@@ -34,6 +36,7 @@ class AppScaffold extends StatelessWidget {
               child: Text(title),
             ),
         automaticallyImplyLeading: showBackButton,
+        leading: leading,
         actions: actions,
       ),
       drawer: drawer,

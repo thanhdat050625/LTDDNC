@@ -27,6 +27,10 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
 
     return AppScaffold(
       title: l10n.paymentResult,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () => context.go('/home'),
+      ),
       body: BlocBuilder<PaymentCubit, PaymentState>(
         builder: (context, state) {
           if (state is PaymentPolling || state is PaymentLoading) {
@@ -143,7 +147,24 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
                     const SizedBox(height: 28),
                     AppButton(
                       text: l10n.viewTickets,
-                      onPressed: () => context.go('/my-tickets'),
+                      onPressed: () {
+                        final targetTicketId = (state.status.bookingId.isNotEmpty && state.status.bookingId != '0')
+                            ? state.status.bookingId
+                            : (state.status.bookingCode.isNotEmpty
+                                ? state.status.bookingCode
+                                : widget.bookingId);
+                        if (targetTicketId.isNotEmpty && targetTicketId != '0') {
+                          context.push('/my-tickets/$targetTicketId');
+                        } else {
+                          context.push('/my-tickets');
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    AppButton(
+                      text: l10n.home,
+                      isOutlined: true,
+                      onPressed: () => context.go('/home'),
                     ),
                   ],
                 ),

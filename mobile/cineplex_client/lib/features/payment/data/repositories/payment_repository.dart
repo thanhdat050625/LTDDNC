@@ -24,7 +24,9 @@ class PaymentRepository {
   }
 
   Future<PaymentStatusModel> getPaymentStatus(String bookingId) async {
-    final response = await _dioClient.get('/payments/status/$bookingId');
+    final isNum = int.tryParse(bookingId) != null;
+    final endpoint = isNum ? '/payments/status/$bookingId' : '/payments/status-by-code/$bookingId';
+    final response = await _dioClient.get(endpoint);
     final raw = response.data;
     final payload = (raw is Map && raw.containsKey('data')) ? raw['data'] : raw;
     return PaymentStatusModel.fromJson(payload as Map<String, dynamic>);

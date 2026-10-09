@@ -43,6 +43,21 @@ class ProfileRepository {
     return {};
   }
 
+  Future<Map<String, dynamic>> getLoyaltyHistory({int page = 1, int pageSize = 20}) async {
+    final response = await _dioClient.get(
+      '/users/loyalty-history',
+      queryParameters: {'page': page, 'pageSize': pageSize},
+    );
+    final raw = response.data;
+    if (raw is Map<String, dynamic>) {
+      if (raw.containsKey('data') && raw['data'] is Map<String, dynamic>) {
+        return raw['data'] as Map<String, dynamic>;
+      }
+      return raw;
+    }
+    return {};
+  }
+
   Future<void> changePassword(String oldPassword, String newPassword, String confirmPassword) async {
     await _dioClient.post('/auth/change-password', data: {
       'oldPassword': oldPassword,

@@ -40,6 +40,11 @@ class FakeProfileRepository implements ProfileRepository {
   }
 
   @override
+  Future<Map<String, dynamic>> getLoyaltyHistory({int page = 1, int pageSize = 20}) async {
+    return {'loyaltyPoints': 250, 'items': []};
+  }
+
+  @override
   Future<void> updateProfile(
     Map<String, dynamic> data, {
     String? avatarPath,

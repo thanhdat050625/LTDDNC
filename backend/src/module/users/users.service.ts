@@ -2,6 +2,8 @@ import { Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
+import { Booking } from '../booking/entities/booking.entity';
+import { EBookingStatus } from '../booking/enums/booking.enum';
 import { ApiResponse } from '../../core/dto/ApiResponse.dto';
 import { CustomException } from '../../core/exceptions/custom.exception';
 import { EUserRole, EUserStatus } from './enums/user.enum';
@@ -17,6 +19,8 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Booking)
+    private readonly bookingRepository: Repository<Booking>,
     private readonly eventEmitter: EventEmitter2,
     private readonly cloudinaryService: CloudinaryService,
   ) {}
@@ -195,7 +199,110 @@ export class UsersService {
       pointValue: 1,           // 1 điểm = 1 VNĐ
       earnRate: 0.10,           // 10% giá trị đơn hàng
       maxDiscountRate: 0.20,    // Tối đa 20% tổng đơn
+      policy: {
+        earnRate: 0.10,
+        earnRatePercent: 10,
+        pointValue: 1,
+        maxDiscountRate: 0.20,
+        maxDiscountPercent: 20,
+      },
     });
+  }
+
+  async getLoyaltyHistory(userId: number, page: number = 1, pageSize: number = 20): Promise<ApiResponse<any>> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new CustomException(HttpStatus.NOT_FOUND, 'USER_NOT_FOUND', 'Không tìm thấy người dùng');
+    }
+
+    const bookings = await this.bookingRepository.find({
+      where: { userId },
+      relations: ['showtime', 'showtime.movie', 'payment'],
+      order: { createdAt: 'DESC' },
+    });
+
+    const history: Array<{
+      id: string;
+      bookingId: number;
+      bookingCode: string;
+      movieTitle?: string;
+      type: 'EARN' | 'REDEEM' | 'REFUND';
+      points: number;
+      title: string;
+      description: string;
+      createdAt: Date;
+    }> = [];
+
+    for (const b of bookings) {
+      const movieTitle = b.showtime?.movie?.title;
+
+      // 1. Dùng điểm giảm giá (REDEEM)
+      if (b.pointsUsed && b.pointsUsed > 0) {
+        history.push({
+          id: `redeem-${b.id}`,
+          bookingId: b.id,
+          bookingCode: b.bookingCode,
+          movieTitle,
+          type: 'REDEEM',
+          points: -b.pointsUsed,
+          title: 'Dùng điểm thanh toán',
+          description: `Đơn hàng #${b.bookingCode}${movieTitle ? ` - ${movieTitle}` : ''}`,
+          createdAt: b.createdAt,
+        });
+      }
+
+      // 2. Tích lũy điểm khi thanh toán thành công (EARN)
+      if (b.status === EBookingStatus.PAID) {
+        const pointsEarned = Math.floor(b.totalAmount * 0.10);
+        if (pointsEarned > 0) {
+          history.push({
+            id: `earn-${b.id}`,
+            bookingId: b.id,
+            bookingCode: b.bookingCode,
+            movieTitle,
+            type: 'EARN',
+            points: pointsEarned,
+            title: 'Tích lũy từ đơn vé',
+            description: `Đơn hàng #${b.bookingCode}${movieTitle ? ` - ${movieTitle}` : ''}`,
+            createdAt: b.payment?.createdAt || b.createdAt,
+          });
+        }
+      }
+
+      // 3. Hoàn lại điểm khi đơn bị hủy hoặc quá hạn (REFUND)
+      if ((b.status === EBookingStatus.CANCELLED || b.status === EBookingStatus.EXPIRED) && b.pointsUsed && b.pointsUsed > 0) {
+        history.push({
+          id: `refund-${b.id}`,
+          bookingId: b.id,
+          bookingCode: b.bookingCode,
+          movieTitle,
+          type: 'REFUND',
+          points: b.pointsUsed,
+          title: 'Hoàn trả điểm tích lũy',
+          description: `Đơn hàng #${b.bookingCode} bị hủy/hết hạn`,
+          createdAt: b.expiredAt || b.createdAt,
+        });
+      }
+    }
+
+    history.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+    const totalItems = history.length;
+    const totalPages = Math.ceil(totalItems / pageSize) || 1;
+    const start = (page - 1) * pageSize;
+    const items = history.slice(start, start + pageSize);
+
+    const response = new ApiResponse(true, 'Lấy lịch sử điểm tích lũy thành công', {
+      loyaltyPoints: user.loyaltyPoints,
+      policy: {
+        earnRatePercent: 10,
+        pointValue: 1,
+        maxDiscountPercent: 20,
+      },
+      items,
+    });
+    response.pagination = { page: Number(page), pageSize: Number(pageSize), totalItems, totalPages };
+    return response;
   }
 
   async searchUser(keyword: string): Promise<ApiResponse<User[]>> {

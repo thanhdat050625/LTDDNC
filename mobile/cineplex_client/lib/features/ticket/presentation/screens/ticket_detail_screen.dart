@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_shared/mobile_shared.dart';
@@ -53,6 +54,16 @@ class TicketDetailScreen extends StatelessWidget {
 
     return AppScaffold(
       title: l10n.ticketDetail,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () {
+          if (Navigator.of(context).canPop()) {
+            Navigator.of(context).pop();
+          } else {
+            context.go('/my-tickets');
+          }
+        },
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -363,6 +374,16 @@ class _TicketDetailRouteScreenState extends State<TicketDetailRouteScreen> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return AppScaffold(
             title: l10n.ticketDetail,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                if (Navigator.of(context).canPop()) {
+                  Navigator.of(context).pop();
+                } else {
+                  context.go('/my-tickets');
+                }
+              },
+            ),
             body: const Center(child: AppLoading()),
           );
         }
@@ -370,6 +391,16 @@ class _TicketDetailRouteScreenState extends State<TicketDetailRouteScreen> {
         if (snapshot.hasError || snapshot.data == null) {
           return AppScaffold(
             title: l10n.ticketDetail,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                if (Navigator.of(context).canPop()) {
+                  Navigator.of(context).pop();
+                } else {
+                  context.go('/my-tickets');
+                }
+              },
+            ),
             body: Center(
               child: AppErrorView(
                 message: l10n.errorOccurred,

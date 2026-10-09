@@ -21,6 +21,7 @@ import 'package:cineplex_client/features/ticket/presentation/cubit/my_tickets_cu
 import 'package:cineplex_client/features/ticket/data/repositories/ticket_repository.dart';
 import 'package:cineplex_client/features/notification/presentation/screens/notification_screen.dart';
 import 'package:cineplex_client/features/profile/presentation/screens/profile_screen.dart';
+import 'package:cineplex_client/features/profile/presentation/screens/loyalty_detail_screen.dart';
 import 'package:cineplex_client/features/profile/presentation/screens/edit_profile_screen.dart';
 import 'package:cineplex_client/features/profile/presentation/screens/change_password_screen.dart';
 import 'package:cineplex_client/features/showtime/presentation/cubit/showtime_cubit.dart';
@@ -249,12 +250,14 @@ GoRouter createRouter(
       GoRoute(
         path: '/payment-result/:bookingId',
         builder: (context, state) {
-          final bookingId = state.pathParameters['bookingId']!;
+          final paramId = state.pathParameters['bookingId'] ?? '';
+          final queryCode = state.uri.queryParameters['bookingCode'] ?? '';
+          final effectiveBookingId = (paramId.isNotEmpty && paramId != '0') ? paramId : (queryCode.isNotEmpty ? queryCode : paramId);
           return BlocProvider(
             create: (ctx) =>
                 PaymentCubit(ctx.read<PaymentRepository>())
-                  ..checkStatus(bookingId),
-            child: PaymentResultScreen(bookingId: bookingId),
+                  ..checkStatus(effectiveBookingId),
+            child: PaymentResultScreen(bookingId: effectiveBookingId),
           );
         },
       ),
@@ -278,6 +281,18 @@ GoRouter createRouter(
       GoRoute(
         path: '/change-password',
         builder: (_, __) => const ChangePasswordScreen(),
+      ),
+      GoRoute(
+        path: '/loyalty',
+        builder: (_, state) {
+          final extra = state.extra is Map<String, dynamic> ? state.extra as Map<String, dynamic> : null;
+          final user = extra?['user'] as Map<String, dynamic>?;
+          final loyalty = extra?['loyalty'] as Map<String, dynamic>?;
+          return LoyaltyDetailScreen(
+            initialUser: user,
+            initialLoyalty: loyalty,
+          );
+        },
       ),
       GoRoute(
         path: '/settings',
