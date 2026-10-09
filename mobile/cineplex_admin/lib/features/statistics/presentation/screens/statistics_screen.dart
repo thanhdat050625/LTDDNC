@@ -590,11 +590,10 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     final maxRevenue = periods.fold<num>(0, (prev, p) => p.revenue > prev ? p.revenue : prev);
     final safeMax = maxRevenue > 0 ? maxRevenue : 1;
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final availableWidth = constraints.maxWidth;
-        final count = periods.length;
-        final bool shouldExpand = count <= 16;
+    // Only year filter with short labels (T1..T12) expands evenly to fill the container width.
+    // Month (28-31 days) and Custom date range always scroll horizontally with touch/drag.
+    final bool shouldExpand = filterType == 'year';
+    final double itemWidth = filterType == 'custom' ? 38.0 : 26.0;
 
         Widget buildColumnItem(RevenuePeriodModel p, {double? fixedWidth}) {
           final hasRevenue = p.revenue > 0;
@@ -646,7 +645,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               Tooltip(
                 message: '${p.period}: ${FormatUtils.formatCurrency(p.revenue)}',
                 child: Container(
-                  width: shouldExpand ? 14.0 : 11.0,
+                  width: shouldExpand ? 14.0 : 14.0,
                   height: barHeight,
                   decoration: BoxDecoration(
                     gradient: hasRevenue
@@ -686,22 +685,20 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           return content;
         }
 
-        if (shouldExpand) {
-          return Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: periods.map((p) => Expanded(child: buildColumnItem(p))).toList(),
-          );
-        }
+    if (shouldExpand) {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: periods.map((p) => Expanded(child: buildColumnItem(p))).toList(),
+      );
+    }
 
-        final itemWidth = (availableWidth / count).clamp(16.0, 32.0);
-        return SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: periods.map((p) => buildColumnItem(p, fixedWidth: itemWidth)).toList(),
-          ),
-        );
-      },
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: periods.map((p) => buildColumnItem(p, fixedWidth: itemWidth)).toList(),
+      ),
     );
   }
 

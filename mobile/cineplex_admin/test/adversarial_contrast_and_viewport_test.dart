@@ -189,10 +189,30 @@ class MockUserManagementRepository implements UserManagementRepository {
     required String email,
     required String password,
     String? phone,
+    String? avatarFilePath,
   }) async {
     return UserModel(
       id: 999,
       email: email,
+      fullName: fullName,
+      role: 'STAFF',
+      status: 'ACTIVE',
+      phone: phone,
+    );
+  }
+
+  @override
+  Future<UserModel> updateStaff({
+    required int staffId,
+    required String fullName,
+    String? email,
+    String? password,
+    String? phone,
+    String? avatarFilePath,
+  }) async {
+    return UserModel(
+      id: staffId,
+      email: email ?? 'staff@cineplex.vn',
       fullName: fullName,
       role: 'STAFF',
       status: 'ACTIVE',

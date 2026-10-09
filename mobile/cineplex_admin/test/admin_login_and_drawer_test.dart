@@ -153,7 +153,7 @@ void main() {
       expect(find.text('Quản lý Phim'), findsOneWidget);
       expect(find.text('Quản lý Rạp'), findsOneWidget);
       expect(find.text('Quản lý Suất chiếu'), findsOneWidget);
-      expect(find.text('Quản lý người dùng'), findsOneWidget);
+      expect(find.text('Quản lý tài khoản'), findsOneWidget);
       expect(find.text('Quản lý Khuyến mãi'), findsOneWidget);
       expect(find.text('Cài đặt hệ thống'), findsOneWidget);
       expect(find.text('Giao diện tối'), findsOneWidget);

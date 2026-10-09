@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 
 class UserManagementResult {
@@ -85,13 +84,59 @@ class UserManagementRepository {
     required String email,
     required String password,
     String? phone,
+    String? avatarFilePath,
   }) async {
-    final response = await _dioClient.post('/users/staff', data: {
+    final payload = <String, dynamic>{
       'fullName': fullName.trim(),
       'email': email.trim(),
       'password': password,
       if (phone != null && phone.trim().isNotEmpty) 'phone': phone.trim(),
-    });
+    };
+
+    dynamic requestData;
+    if (avatarFilePath != null && avatarFilePath.isNotEmpty) {
+      final formData = FormData.fromMap(payload);
+      formData.files.add(
+        MapEntry('avatar', await MultipartFile.fromFile(avatarFilePath)),
+      );
+      requestData = formData;
+    } else {
+      requestData = payload;
+    }
+
+    final response = await _dioClient.post('/users/staff', data: requestData);
+    final raw = response.data as Map<String, dynamic>;
+    final data = raw['data'] as Map<String, dynamic>;
+    return UserModel.fromJson(data);
+  }
+
+  Future<UserModel> updateStaff({
+    required int staffId,
+    required String fullName,
+    String? email,
+    String? password,
+    String? phone,
+    String? avatarFilePath,
+  }) async {
+    final payload = <String, dynamic>{
+      'fullName': fullName.trim(),
+      if (email != null && email.trim().isNotEmpty) 'email': email.trim(),
+      if (password != null && password.trim().isNotEmpty) 'password': password.trim(),
+      'phone': phone?.trim() ?? '',
+    };
+
+    dynamic requestData;
+    if (avatarFilePath != null && avatarFilePath.isNotEmpty) {
+      final formData = FormData.fromMap(payload);
+      formData.files.add(
+        MapEntry('avatar', await MultipartFile.fromFile(avatarFilePath)),
+      );
+      requestData = formData;
+    } else {
+      requestData = payload;
+    }
+
+    final response = await _dioClient.put('/users/staff/$staffId', data: requestData);
     final raw = response.data as Map<String, dynamic>;
     final data = raw['data'] as Map<String, dynamic>;
     return UserModel.fromJson(data);

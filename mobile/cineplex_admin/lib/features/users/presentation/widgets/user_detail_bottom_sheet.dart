@@ -179,13 +179,22 @@ class UserDetailBottomSheet extends StatelessWidget {
                     color: roleColor.withValues(alpha: 0.15),
                   ),
                   alignment: Alignment.center,
-                  child: Text(
-                    firstLetter,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: roleColor,
-                    ),
+                  child: ClipOval(
+                    child: user.avatar != null && user.avatar!.isNotEmpty
+                        ? AppCachedImage(
+                            imageUrl: user.avatar!,
+                            width: 44,
+                            height: 44,
+                            fit: BoxFit.cover,
+                          )
+                        : Text(
+                            firstLetter,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: roleColor,
+                            ),
+                          ),
                   ),
                 ),
                 const SizedBox(width: 10),

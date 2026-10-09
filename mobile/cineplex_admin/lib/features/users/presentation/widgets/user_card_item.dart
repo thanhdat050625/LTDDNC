@@ -7,6 +7,7 @@ class UserCardItem extends StatelessWidget {
   final bool isUpdating;
   final VoidCallback onToggleStatus;
   final VoidCallback onTap;
+  final VoidCallback? onEdit;
 
   const UserCardItem({
     super.key,
@@ -14,6 +15,7 @@ class UserCardItem extends StatelessWidget {
     required this.isUpdating,
     required this.onToggleStatus,
     required this.onTap,
+    this.onEdit,
   });
 
   @override
@@ -81,14 +83,23 @@ class UserCardItem extends StatelessWidget {
                           : roleColor.withValues(alpha: 0.12),
                     ),
                     alignment: Alignment.center,
-                    child: Text(
-                      firstLetter,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: isBlocked ? theme.error : roleColor,
-                      ),
-                    ),
+                    child: (user.avatar != null && user.avatar!.trim().isNotEmpty)
+                        ? ClipOval(
+                            child: AppCachedImage(
+                              imageUrl: user.avatar!.trim(),
+                              width: 42,
+                              height: 42,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : Text(
+                            firstLetter,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: isBlocked ? theme.error : roleColor,
+                            ),
+                          ),
                   ),
                   const SizedBox(width: 12),
 
@@ -298,6 +309,47 @@ class UserCardItem extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 8),
+
+                  // Staff Edit Button
+                  if (user.isStaff && onEdit != null) ...[
+                    InkWell(
+                      onTap: onEdit,
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        constraints: const BoxConstraints(minHeight: 36, minWidth: 44),
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF3A86FF).withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: const Color(0xFF3A86FF).withValues(alpha: 0.3),
+                            width: 0.8,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              LucideIcons.pencil,
+                              size: 13,
+                              color: Color(0xFF3A86FF),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              l10n.edit,
+                              style: const TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF3A86FF),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                  ],
 
                   // Toggle Status Button
                   if (isUpdating)

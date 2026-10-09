@@ -1,6 +1,7 @@
 library;
 
 // Network & API
+export 'package:dio/dio.dart';
 export 'network/dio_client.dart';
 export 'network/api_response.dart';
 

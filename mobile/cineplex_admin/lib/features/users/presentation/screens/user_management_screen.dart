@@ -117,6 +117,24 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
     }
   }
 
+  Future<void> _openEditStaffModal(
+    BuildContext context,
+    UserModel staff,
+    AppLocalizations l10n,
+    CineplexColors theme,
+  ) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final updated = await CreateStaffBottomSheet.show(context, staff: staff);
+    if (updated == true && mounted) {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(l10n.staffUpdatedSuccess),
+          backgroundColor: theme.success,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -313,6 +331,9 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                                   user: user,
                                   isUpdating: state.updatingUserId == user.id,
                                   onToggleStatus: () => _confirmToggleStatus(context, user, l10n, theme),
+                                  onEdit: user.isStaff
+                                      ? () => _openEditStaffModal(context, user, l10n, theme)
+                                      : null,
                                   onTap: () => UserDetailBottomSheet.show(context, user),
                                 );
                               }).toList(),
