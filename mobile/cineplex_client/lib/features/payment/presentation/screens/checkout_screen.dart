@@ -19,7 +19,7 @@ class CheckoutScreen extends StatefulWidget {
 }
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
-  String _selectedMethod = 'MOMO';
+  String _selectedMethod = 'VNPAY';
   final TextEditingController _promoCtrl = TextEditingController();
   CheckoutPrepared? _lastPrepared;
 
@@ -183,8 +183,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     final colors = CineplexColors.of(context);
 
     final paymentMethods = [
-      {'id': 'MOMO', 'name': l10n.paymentMethodMomo, 'icon': Icons.account_balance_wallet_outlined, 'color': const Color(0xFFA50064)},
       {'id': 'VNPAY', 'name': l10n.paymentMethodVnpay, 'icon': Icons.qr_code_2_outlined, 'color': const Color(0xFF005BAA)},
+      {'id': 'MOMO', 'name': l10n.paymentMethodMomo, 'icon': Icons.account_balance_wallet_outlined, 'color': const Color(0xFFA50064)},
     ];
 
     return AppScaffold(
