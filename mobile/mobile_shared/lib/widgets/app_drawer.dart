@@ -115,14 +115,14 @@ class CineplexDrawer extends StatelessWidget {
             : [
               // Staff top navigation items
               AppDrawerItem(
-                icon: LucideIcons.scanLine,
-                title: l10n.scanTicket,
-                route: '/scanner',
-              ),
-              AppDrawerItem(
                 icon: LucideIcons.shoppingBag,
                 title: l10n.counterSale,
                 route: '/pos',
+              ),
+              AppDrawerItem(
+                icon: LucideIcons.scanLine,
+                title: l10n.scanTicket,
+                route: '/scanner',
               ),
               AppDrawerItem(
                 icon: LucideIcons.calendarCheck,
