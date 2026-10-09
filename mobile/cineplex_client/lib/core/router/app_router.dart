@@ -49,6 +49,13 @@ GoRouter createRouter(
     initialLocation: '/home',
     refreshListenable: _AuthRefreshNotifier(authBloc),
     redirect: (context, state) {
+      if (state.uri.scheme == 'cineplex') {
+        final hostPart = state.uri.host.isNotEmpty ? '/${state.uri.host}' : '';
+        final path = '$hostPart${state.uri.path}'.replaceAll('//', '/');
+        final query = state.uri.hasQuery ? '?${state.uri.query}' : '';
+        return '$path$query';
+      }
+
       final authState = authBloc.state;
       final isAuth = authState is AuthAuthenticated;
       final isOnAuth =

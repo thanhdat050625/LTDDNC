@@ -31,6 +31,13 @@ GoRouter createStaffRouter(
     initialLocation: '/scanner',
     refreshListenable: _StaffAuthRefreshNotifier(authBloc),
     redirect: (context, state) {
+      if (state.uri.scheme == 'cineplexstaff') {
+        final hostPart = state.uri.host.isNotEmpty ? '/${state.uri.host}' : '';
+        final path = '$hostPart${state.uri.path}'.replaceAll('//', '/');
+        final query = state.uri.hasQuery ? '?${state.uri.query}' : '';
+        return path.isEmpty ? '/pos' : '$path$query';
+      }
+
       final authState = authBloc.state;
       final isAuth = authState is AuthAuthenticated;
       final isOnLogin = state.matchedLocation == '/login';
