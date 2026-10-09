@@ -4375,7 +4375,7 @@ abstract class AppLocalizations {
   /// No description provided for @posSearchCustomer.
   ///
   /// In vi, this message translates to:
-  /// **'Tìm khách hàng'**
+  /// **'Tìm'**
   String get posSearchCustomer;
 
   /// No description provided for @posSearchCustomerHint.

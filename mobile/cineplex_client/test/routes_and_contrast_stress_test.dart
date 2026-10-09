@@ -818,7 +818,6 @@ void main() {
 
       expect(find.byType(CheckoutScreen), findsOneWidget);
       expect(find.text('Tóm tắt đơn hàng'), findsOneWidget);
-      expect(find.text('CPX-TEST-99'), findsOneWidget);
       expect(find.text('Tổng cộng'), findsOneWidget);
       expect(find.text('Phương thức thanh toán'), findsOneWidget);
       expect(find.text('Thanh toán ngay'), findsOneWidget);

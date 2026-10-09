@@ -448,8 +448,9 @@ void main() {
       // Tap MOMO payment method
       final momoFinder = find.text(l10n.momo);
       expect(momoFinder, findsOneWidget);
+      await tester.ensureVisible(momoFinder);
       await tester.tap(momoFinder);
-      await tester.pump();
+      await tester.pumpAndSettle();
 
       // Cash calculator elements should now be gone
       expect(find.text('Đủ tiền'), findsNothing);
@@ -457,8 +458,9 @@ void main() {
       // Tap CASH payment method again
       final cashFinder = find.text(l10n.cash);
       expect(cashFinder, findsOneWidget);
+      await tester.ensureVisible(cashFinder);
       await tester.tap(cashFinder);
-      await tester.pump();
+      await tester.pumpAndSettle();
 
       // Cash calculator elements should be visible again
       expect(find.text('Đủ tiền'), findsOneWidget);

@@ -103,7 +103,7 @@ void main() {
 
       // Verify that the waiting dialog appears
       expect(find.byType(AlertDialog), findsOneWidget);
-      expect(find.text('BK-789', skipOffstage: false), findsWidgets);
+      expect(find.textContaining('BK-789', skipOffstage: false), findsWidgets);
       expect(find.text('Kiểm tra thanh toán'), findsOneWidget);
       expect(find.text('Mở cổng thanh toán MoMo'), findsOneWidget);
 

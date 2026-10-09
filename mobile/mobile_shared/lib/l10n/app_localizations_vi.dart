@@ -2268,7 +2268,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get posCancelPoints => 'Hủy';
 
   @override
-  String get posSearchCustomer => 'Tìm khách hàng';
+  String get posSearchCustomer => 'Tìm';
 
   @override
   String get posSearchCustomerHint => 'Nhập email hoặc số điện thoại...';

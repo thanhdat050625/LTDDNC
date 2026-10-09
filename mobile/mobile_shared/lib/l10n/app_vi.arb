@@ -1059,7 +1059,7 @@
     }
   },
   "posCancelPoints": "Hủy",
-  "posSearchCustomer": "Tìm khách hàng",
+  "posSearchCustomer": "Tìm",
   "posSearchCustomerHint": "Nhập email hoặc số điện thoại...",
   "posCustomerNotFound": "Không tìm thấy khách hàng",
   "posChangeCustomer": "Đổi khách hàng",

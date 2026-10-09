@@ -22,7 +22,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   bool _isSubmitting = false;
   int _receivedAmount = 0;
   final TextEditingController _cashReceivedController = TextEditingController();
-  final TextEditingController _pointsController = TextEditingController();
   final TextEditingController _customerSearchController = TextEditingController();
 
   UserModel? _customer;
@@ -37,15 +36,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     _receivedAmount = total;
     _cashReceivedController.text = total > 0 ? '$total' : '';
     _usedPoints = widget.args?.pointsToUse ?? 0;
-    if (_usedPoints > 0) {
-      _pointsController.text = '$_usedPoints';
-    }
   }
 
   @override
   void dispose() {
     _cashReceivedController.dispose();
-    _pointsController.dispose();
     _customerSearchController.dispose();
     super.dispose();
   }
@@ -99,14 +94,62 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Top: Payment Methods & Cash options
+          // Single Unified Scrollable Content
           Expanded(
-            flex: 50,
             child: SingleChildScrollView(
               padding: EdgeInsets.all(theme.spacingLg),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // 1. Order Summary Section
+                  Text(
+                    l10n.orderSummary,
+                    style: AppTextStyles.title.copyWith(
+                      color: theme.textPrimary,
+                    ),
+                  ),
+                  SizedBox(height: theme.spacingMd),
+
+                  // Movie Info
+                  if (args != null)
+                    _buildMovieSummary(theme, l10n, args)
+                  else
+                    Text(
+                      l10n.noData,
+                      style: TextStyle(color: theme.textSecondary),
+                    ),
+
+                  SizedBox(height: theme.spacingMd),
+                  Divider(color: theme.borderSubtle),
+                  SizedBox(height: theme.spacingSm),
+
+                  // Breakdown rows
+                  _buildBreakdownRow(
+                    theme,
+                    l10n.movieTicket(args?.selectedSeats.length ?? 0),
+                    _ticketTotal,
+                  ),
+                  if (_concessionTotal > 0)
+                    _buildBreakdownRow(
+                      theme,
+                      l10n.concessions,
+                      _concessionTotal,
+                    ),
+                  if (_usedPoints > 0)
+                    _buildBreakdownRow(
+                      theme,
+                      l10n.discountPointsTitle,
+                      -_usedPoints,
+                      isDiscount: true,
+                    ),
+
+                  SizedBox(height: theme.spacingLg),
+
+                  // 2. Loyalty Points Card
+                  _buildLoyaltyCard(theme, l10n),
+                  SizedBox(height: theme.spacingLg),
+
+                  // 3. Payment Methods
                   Text(
                     l10n.paymentMethod,
                     style: AppTextStyles.title.copyWith(
@@ -122,122 +165,75 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     _buildCashCalculator(theme, l10n),
                     SizedBox(height: theme.spacingMd),
                   ],
-
-                  // Loyalty Points Card
-                  _buildLoyaltyCard(theme, l10n),
                 ],
               ),
             ),
           ),
 
-          // Bottom: Summary & Submit Payment
-          Expanded(
-            flex: 50,
-            child: Container(
+          // Sticky Bottom Bar: Total & Pay Now Button
+          Container(
+            padding: EdgeInsets.all(theme.spacingLg),
+            decoration: BoxDecoration(
               color: theme.surface,
-              padding: EdgeInsets.all(theme.spacingLg),
+              border: Border(top: BorderSide(color: theme.borderSubtle)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.15),
+                  blurRadius: 10,
+                  offset: const Offset(0, -3),
+                ),
+              ],
+            ),
+            child: SafeArea(
+              top: false,
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            l10n.orderSummary,
-                            style: AppTextStyles.title.copyWith(
-                              color: theme.textPrimary,
-                            ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          l10n.totalAmount.toUpperCase(),
+                          style: TextStyle(
+                            color: theme.textPrimary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
                           ),
-                          SizedBox(height: theme.spacingMd),
-
-                          // Movie Info
-                          if (args != null)
-                            _buildMovieSummary(theme, l10n, args)
-                          else
-                            Text(
-                              l10n.noData,
-                              style: TextStyle(color: theme.textSecondary),
-                            ),
-
-                          SizedBox(height: theme.spacingMd),
-                          Divider(color: theme.borderSubtle),
-                          SizedBox(height: theme.spacingSm),
-
-                          // Breakdown rows
-                          _buildBreakdownRow(
-                            theme,
-                            l10n.movieTicket(args?.selectedSeats.length ?? 0),
-                            _ticketTotal,
-                          ),
-                          if (_concessionTotal > 0)
-                            _buildBreakdownRow(
-                              theme,
-                              l10n.concessions,
-                              _concessionTotal,
-                            ),
-                          if (_usedPoints > 0)
-                            _buildBreakdownRow(
-                              theme,
-                              l10n.discountPointsTitle,
-                              -_usedPoints,
-                              isDiscount: true,
-                            ),
-
-                          SizedBox(height: theme.spacingSm),
-                          Divider(color: theme.borderSubtle),
-                          SizedBox(height: theme.spacingSm),
-
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  l10n.totalAmount.toUpperCase(),
-                                  style: TextStyle(
-                                    color: theme.textPrimary,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                FormatUtils.formatCurrency(_grandTotal),
-                                style: TextStyle(
-                                  color: theme.accent,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          if (_customer != null && _grandTotal > 0) ...[
-                            const SizedBox(height: 8),
-                            Row(
-                              children: [
-                                Icon(LucideIcons.sparkles, color: theme.warning, size: 14),
-                                const SizedBox(width: 6),
-                                Expanded(
-                                  child: Text(
-                                    l10n.paymentEarnedPointsNotice((_grandTotal * 0.1).floor()),
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                      color: theme.warning,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ],
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                    ),
+                      const SizedBox(width: 8),
+                      Text(
+                        FormatUtils.formatCurrency(_grandTotal),
+                        style: TextStyle(
+                          color: theme.accent,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
-
-                  // Action Button
+                  if (_customer != null && _grandTotal > 0) ...[
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Icon(LucideIcons.sparkles, color: theme.warning, size: 14),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            l10n.paymentEarnedPointsNotice((_grandTotal * 0.1).floor()),
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: theme.warning,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                  SizedBox(height: theme.spacingMd),
                   SizedBox(
                     width: double.infinity,
                     child: AppButton(
@@ -527,7 +523,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     setState(() {
                       _customer = null;
                       _usedPoints = 0;
-                      _pointsController.clear();
                     });
                   },
                   style: TextButton.styleFrom(
@@ -565,7 +560,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   isLoading: _isSearchingCustomer,
                   backgroundColor: theme.primary,
                   textColor: Colors.white,
-                  width: 90,
+                  width: 80,
                   onPressed: _isSearchingCustomer
                       ? null
                       : () => _searchCustomer(theme, l10n),
@@ -633,8 +628,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ),
             const SizedBox(height: 10),
 
-            // 1-Tap Switch Toggle for Loyalty Points (Client style)
-            if (customer.loyaltyPoints > 0) ...[
+            // 1-Tap Switch Toggle for Loyalty Points (Auto-calculated up to max 20%)
+            if (customer.loyaltyPoints > 0 && maxAllowedDiscount > 0) ...[
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
@@ -677,14 +672,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       activeTrackColor: theme.primary.withValues(alpha: 0.5),
                       onChanged: (val) {
                         setState(() {
-                          if (val) {
-                            final pts = math.min(customer.loyaltyPoints, maxAllowedDiscount);
-                            _usedPoints = pts;
-                            _pointsController.text = '$pts';
-                          } else {
-                            _usedPoints = 0;
-                            _pointsController.clear();
-                          }
+                          _usedPoints = val ? math.min(customer.loyaltyPoints, maxAllowedDiscount) : 0;
                         });
                       },
                     ),
@@ -734,7 +722,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           onPressed: () {
                             setState(() {
                               _usedPoints = 0;
-                              _pointsController.clear();
                             });
                           },
                           style: TextButton.styleFrom(
@@ -792,7 +779,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             style:
                                 TextStyle(fontSize: 11, color: theme.success)),
                         Text(
-                          FormatUtils.formatCurrency(_usedPoints),
+                          '-${FormatUtils.formatCurrency(_usedPoints)}',
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
@@ -803,68 +790,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     ),
                   ],
                 ),
-              ),
-            ] else ...[
-              // Prompt to enter points
-              Text(
-                l10n.posCustomerLoyaltyBalance(
-                    FormatUtils.formatNumber(customer.loyaltyPoints)),
-                style: TextStyle(color: theme.textSecondary, fontSize: 12),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Expanded(
-                    child: AppTextField(
-                      controller: _pointsController,
-                      hintText: l10n.enterPoints,
-                      keyboardType: TextInputType.number,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  AppButton(
-                    text: l10n.usePoints,
-                    backgroundColor: theme.primary,
-                    textColor: Colors.white,
-                    width: 100,
-                    onPressed: () {
-                      final input = _pointsController.text.trim();
-                      final pts =
-                          int.tryParse(input.replaceAll(RegExp(r'[^0-9]'), ''));
-                      if (pts == null || pts <= 0) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(l10n.posPointsInvalid),
-                            backgroundColor: theme.error,
-                          ),
-                        );
-                        return;
-                      }
-                      if (pts > customer.loyaltyPoints) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(l10n.posPointsExceedBalance),
-                            backgroundColor: theme.error,
-                          ),
-                        );
-                        return;
-                      }
-                      if (maxAllowedDiscount > 0 && pts > maxAllowedDiscount) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(l10n.posPointsExceedLimit),
-                            backgroundColor: theme.error,
-                          ),
-                        );
-                        return;
-                      }
-                      // Valid! Update state locally ONLY (No API call, no DB deduction yet)
-                      setState(() {
-                        _usedPoints = pts;
-                      });
-                    },
-                  ),
-                ],
               ),
             ],
           ],
@@ -895,8 +820,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       } else {
         setState(() {
           _customer = results.first;
-          _usedPoints = 0;
-          _pointsController.clear();
+          final maxAllowed = ((_ticketTotal + _concessionTotal) * 0.2).floor();
+          _usedPoints = math.min(results.first.loyaltyPoints, maxAllowed);
         });
       }
     } catch (e) {
