@@ -89,7 +89,7 @@ export class AuthService implements OnModuleInit {
       subject: 'Cảnh báo đăng nhập',
       content: 'Tài khoản của bạn vừa đăng nhập thành công vào hệ thống.',
       type: ENotificationType.ACCOUNT,
-      link: '/'
+      link: '/home',
     });
 
     return new ApiResponse(true, 'Đăng nhập thành công', {

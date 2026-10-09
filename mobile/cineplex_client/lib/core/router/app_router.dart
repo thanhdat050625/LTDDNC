@@ -48,12 +48,32 @@ GoRouter createRouter(
     navigatorKey: rootKey,
     initialLocation: '/home',
     refreshListenable: _AuthRefreshNotifier(authBloc),
+    errorBuilder: (context, state) => const HomeScreen(),
     redirect: (context, state) {
       if (state.uri.scheme == 'cineplex') {
         final hostPart = state.uri.host.isNotEmpty ? '/${state.uri.host}' : '';
         final path = '$hostPart${state.uri.path}'.replaceAll('//', '/');
         final query = state.uri.hasQuery ? '?${state.uri.query}' : '';
+        if (path == '/booking-history' || path == '/history' || path == '/tickets') {
+          return '/my-tickets$query';
+        }
+        if (path == '/' || path.isEmpty) {
+          return '/home$query';
+        }
         return '$path$query';
+      }
+
+      final loc = state.matchedLocation.isNotEmpty ? state.matchedLocation : state.uri.path;
+      if (loc == '/' || state.uri.path == '/') {
+        return '/home';
+      }
+      if (loc == '/booking-history' ||
+          state.uri.path == '/booking-history' ||
+          loc == '/history' ||
+          state.uri.path == '/history' ||
+          loc == '/tickets' ||
+          state.uri.path == '/tickets') {
+        return '/my-tickets';
       }
 
       final authState = authBloc.state;
@@ -85,6 +105,12 @@ GoRouter createRouter(
       return null;
     },
     routes: [
+      // Aliases & redirects for web / notification deep links
+      GoRoute(path: '/', redirect: (_, __) => '/home'),
+      GoRoute(path: '/booking-history', redirect: (_, __) => '/my-tickets'),
+      GoRoute(path: '/history', redirect: (_, __) => '/my-tickets'),
+      GoRoute(path: '/tickets', redirect: (_, __) => '/my-tickets'),
+
       // Auth routes (no shell)
       GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
       GoRoute(path: '/register', builder: (_, __) => const RegisterScreen()),
@@ -206,8 +232,14 @@ GoRouter createRouter(
       ),
       GoRoute(
         path: '/my-tickets/:id',
-        builder: (_, state) {
-          final booking = state.extra as BookingDetailModel;
+        builder: (context, state) {
+          final booking = state.extra is BookingDetailModel ? state.extra as BookingDetailModel : null;
+          if (booking == null) {
+            return BlocProvider(
+              create: (ctx) => MyTicketsCubit(ctx.read<TicketRepository>()),
+              child: const MyTicketsScreen(),
+            );
+          }
           return TicketDetailScreen(booking: booking);
         },
       ),

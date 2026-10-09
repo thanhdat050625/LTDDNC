@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Notification } from './entities/notification.entity';
@@ -13,6 +13,8 @@ import { EUserStatus } from '../users/enums/user.enum';
 
 @Injectable()
 export class NotificationService {
+  private readonly logger = new Logger(NotificationService.name);
+
   constructor(
     @InjectRepository(Notification)
     private readonly notificationRepository: Repository<Notification>,
@@ -34,13 +36,22 @@ export class NotificationService {
     type: ENotificationType;
     link?: string;
   }) {
-    const notification = this.notificationRepository.create({
-      ...payload,
-      isSent: true,
-      sentAt: new Date(),
-    });
-    const savedNotification = await this.notificationRepository.save(notification);
-    this.notificationGateway.emitNewNotification(payload.userId, savedNotification);
+    if (!payload.userId) {
+      this.logger.warn(`Skipping notification creation: userId is missing (subject: ${payload.subject})`);
+      return;
+    }
+    try {
+      const notification = this.notificationRepository.create({
+        ...payload,
+        isSent: true,
+        sentAt: new Date(),
+      });
+      const savedNotification = await this.notificationRepository.save(notification);
+      this.notificationGateway.emitNewNotification(payload.userId, savedNotification);
+      this.logger.log(`Created and emitted notification #${savedNotification.id} to userId=${payload.userId}: ${payload.subject}`);
+    } catch (err) {
+      this.logger.error(`Failed to create notification for userId=${payload.userId}`, err);
+    }
   }
 
   /**
@@ -100,7 +111,7 @@ export class NotificationService {
           type: ENotificationType.SYSTEM,
           isSent: true,
           sentAt: new Date(),
-          link: '/booking-history',
+          link: '/my-tickets',
         });
       });
 

@@ -1069,6 +1069,16 @@
   "posPaymentFailedPrompt": "Thanh toán không thành công. Quý khách có thể thử lại.",
   "posRetryPayment": "Thử lại thanh toán",
   "posPaymentCancelledPrompt": "Giao dịch thanh toán đã bị hủy.",
+  "posContinueSale": "Tiếp tục bán vé",
+  "posViewTickets": "Xem quản lý vé",
+  "posEarnedPointsSuccess": "Tích lũy +{points} điểm thành công",
+  "@posEarnedPointsSuccess": {
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
   "scanSoundTitle": "Âm báo khi quét mã",
   "scanHapticTitle": "Rung khi quét mã",
   "seatUnit": "ghế",

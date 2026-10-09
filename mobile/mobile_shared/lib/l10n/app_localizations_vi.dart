@@ -2280,6 +2280,17 @@ class AppLocalizationsVi extends AppLocalizations {
   String get posPaymentCancelledPrompt => 'Giao dịch thanh toán đã bị hủy.';
 
   @override
+  String get posContinueSale => 'Tiếp tục bán vé';
+
+  @override
+  String get posViewTickets => 'Xem quản lý vé';
+
+  @override
+  String posEarnedPointsSuccess(int points) {
+    return 'Tích lũy +$points điểm thành công';
+  }
+
+  @override
   String get scanSoundTitle => 'Âm báo khi quét mã';
 
   @override

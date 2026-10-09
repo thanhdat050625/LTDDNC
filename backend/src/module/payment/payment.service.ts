@@ -864,23 +864,29 @@ export class PaymentService {
             </div>
           `;
 
-          await this.mailerService.sendMail({
-            to: fullBooking.user.email,
-            subject: `Xac nhan dat ve thanh cong - ${fullBooking.bookingCode}`,
-            html: emailHtml,
-            attachments,
-          });
-          this.logger.log(`Sent ticket email to ${fullBooking.user.email}`);
+          try {
+            await this.mailerService.sendMail({
+              to: fullBooking.user.email,
+              subject: `Xac nhan dat ve thanh cong - ${fullBooking.bookingCode}`,
+              html: emailHtml,
+              attachments,
+            });
+            this.logger.log(`Sent ticket email to ${fullBooking.user.email}`);
+          } catch (mailErr: any) {
+            this.logger.warn(`Failed to send ticket email to ${fullBooking.user.email}: ${mailErr?.message || mailErr}`);
+          }
         }
       }
 
-      this.eventEmitter.emit('notification.create', {
-        userId: booking.userId,
-        subject: 'Đặt vé thành công!',
-        content: `Đơn hàng ${booking.bookingCode} đã được thanh toán. Vé của bạn đã sẵn sàng. Vào mục "Vé của tôi" để xem.`,
-        type: ENotificationType.TICKET_CONFIRM,
-        link: '/booking-history',
-      });
+      if (booking.userId) {
+        this.eventEmitter.emit('notification.create', {
+          userId: booking.userId,
+          subject: 'Đặt vé thành công!',
+          content: `Đơn hàng ${booking.bookingCode} đã được thanh toán. Vé của bạn đã sẵn sàng. Vào mục "Vé của tôi" để xem.`,
+          type: ENotificationType.TICKET_CONFIRM,
+          link: '/my-tickets',
+        });
+      }
     } catch (err) {
       this.logger.error(`Post-payment actions failed for booking ${booking.id}`, err);
     }
@@ -945,7 +951,7 @@ export class PaymentService {
         subject: targetStatus === EBookingStatus.EXPIRED ? 'Đơn hàng hết hạn' : 'Thanh toán thất bại',
         content: `Đơn hàng ${booking.bookingCode} đã bị hủy.${booking.pointsUsed > 0 ? ` Điểm tích lũy đã được hoàn trả (${booking.pointsUsed.toLocaleString()} điểm).` : ''}`,
         type: ENotificationType.PAYMENT_FAILED,
-        link: '/booking-history',
+        link: '/my-tickets',
       });
     }
   }
@@ -1054,7 +1060,7 @@ export class PaymentService {
           subject: 'Đơn hàng hết hạn',
           content: expireContent,
           type: ENotificationType.PAYMENT_FAILED,
-          link: '/booking-history',
+          link: '/my-tickets',
         });
 
         this.logger.log(`Booking ${booking.bookingCode} expired and released`);

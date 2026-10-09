@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_shared/mobile_shared.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../data/models/notification_model.dart';
 
 class NotificationDetailBottomSheet extends StatelessWidget {
@@ -190,11 +191,35 @@ class NotificationDetailBottomSheet extends StatelessWidget {
                 AppButton(
                   text: l10n.notificationOpenLink,
                   backgroundColor: colors.primary,
-                  onPressed: () {
+                  onPressed: () async {
                     Navigator.of(context).pop();
+                    final raw = notification.link?.trim() ?? '';
+                    if (raw.isEmpty) return;
+
+                    if (raw.startsWith('http://') || raw.startsWith('https://')) {
+                      final uri = Uri.tryParse(raw);
+                      if (uri != null && await canLaunchUrl(uri)) {
+                        await launchUrl(uri, mode: LaunchMode.externalApplication);
+                      }
+                      return;
+                    }
+
+                    String route = raw;
+                    if (route == '/' || route.isEmpty) {
+                      route = '/home';
+                    } else if (route == '/booking-history' ||
+                        route == '/history' ||
+                        route == '/tickets') {
+                      route = '/my-tickets';
+                    }
+
                     try {
-                      context.push(notification.link!);
-                    } catch (_) {}
+                      context.push(route);
+                    } catch (_) {
+                      try {
+                        context.go(route);
+                      } catch (_) {}
+                    }
                   },
                 ),
                 const SizedBox(height: 10),

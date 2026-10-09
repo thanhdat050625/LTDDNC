@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -210,6 +211,25 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                               ),
                             ],
                           ),
+                          if (_customer != null && _grandTotal > 0) ...[
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Icon(LucideIcons.sparkles, color: theme.warning, size: 14),
+                                const SizedBox(width: 6),
+                                Expanded(
+                                  child: Text(
+                                    l10n.paymentEarnedPointsNotice((_grandTotal * 0.1).floor()),
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      color: theme.warning,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ],
                       ),
                     ),
@@ -577,6 +597,67 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ),
             const SizedBox(height: 10),
 
+            // 1-Tap Switch Toggle for Loyalty Points (Client style)
+            if (customer.loyaltyPoints > 0) ...[
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: theme.surface,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: theme.borderSubtle),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.stars_rounded, color: theme.warning, size: 24),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            l10n.paymentUseLoyaltyPoints(math.min(customer.loyaltyPoints, maxAllowedDiscount)),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                              color: theme.textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            _usedPoints > 0
+                                ? '${l10n.posDiscountValue}: -${FormatUtils.formatCurrency(_usedPoints)}'
+                                : l10n.maxPointsDiscount,
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: _usedPoints > 0 ? theme.success : theme.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Switch(
+                      value: _usedPoints > 0,
+                      activeThumbColor: theme.primary,
+                      activeTrackColor: theme.primary.withValues(alpha: 0.5),
+                      onChanged: (val) {
+                        setState(() {
+                          if (val) {
+                            final pts = math.min(customer.loyaltyPoints, maxAllowedDiscount);
+                            _usedPoints = pts;
+                            _pointsController.text = '$pts';
+                          } else {
+                            _usedPoints = 0;
+                            _pointsController.clear();
+                          }
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10),
+            ],
+
             // If points are currently applied: show active badge and Cancel button
             if (_usedPoints > 0) ...[
               Container(
@@ -923,7 +1004,24 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         );
       } else {
         // CASH payment - Completed immediately
-        _showSuccessDialog(context, bookingCode, theme, l10n);
+        context.go(
+          '/ticket-sale/payment-result/${booking.id}',
+          extra: {
+            'bookingId': '${booking.id}',
+            'bookingCode': bookingCode,
+            'status': 'PAID',
+            'totalAmount': _grandTotal,
+            'method': 'CASH',
+            'cashReceived': _receivedAmount,
+            'cashChange': _cashChange,
+            'customer': _customer,
+            'pointsUsed': _usedPoints,
+            'pointsEarned': (_grandTotal * 0.1).floor(),
+            'showtime': args.showtime,
+            'selectedSeats': args.selectedSeats,
+            'concessions': args.concessions,
+          },
+        );
       }
     } catch (e) {
       if (context.mounted) {
@@ -965,7 +1063,22 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
               if (status == 'PAID') {
                 Navigator.pop(dialogCtx);
-                _showSuccessDialog(context, bookingCode, theme, l10n);
+                context.go(
+                  '/ticket-sale/payment-result/$bookingId',
+                  extra: {
+                    'bookingId': '$bookingId',
+                    'bookingCode': bookingCode,
+                    'status': 'PAID',
+                    'totalAmount': _grandTotal,
+                    'method': _selectedMethod,
+                    'customer': _customer,
+                    'pointsUsed': _usedPoints,
+                    'pointsEarned': (_grandTotal * 0.1).floor(),
+                    'showtime': widget.args?.showtime,
+                    'selectedSeats': widget.args?.selectedSeats,
+                    'concessions': widget.args?.concessions,
+                  },
+                );
               } else if (status == 'FAILED') {
                 setDialogState(() {
                   statusMessage = l10n.posPaymentFailedPrompt;
@@ -1096,81 +1209,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ],
           );
         },
-      ),
-    );
-  }
-
-  void _showSuccessDialog(
-    BuildContext context,
-    String bookingCode,
-    CineplexColors theme,
-    AppLocalizations l10n,
-  ) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogCtx) => AlertDialog(
-        backgroundColor: theme.surface,
-        title: Row(
-          children: [
-            Icon(LucideIcons.checkCircle2, color: theme.success, size: 24),
-            const SizedBox(width: 8),
-            Text(
-              l10n.paymentSuccess,
-              style: TextStyle(
-                color: theme.success,
-                fontWeight: FontWeight.bold,
-                fontSize: 17,
-              ),
-            ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l10n.posOrderSuccessPrompt(bookingCode),
-              style: TextStyle(
-                color: theme.textPrimary,
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '${l10n.totalAmount}: ${FormatUtils.formatCurrency(_grandTotal)}',
-              style: TextStyle(color: theme.textSecondary, fontSize: 13),
-            ),
-            if (_selectedMethod == 'CASH' && _cashChange > 0)
-              Padding(
-                padding: const EdgeInsets.only(top: 4.0),
-                child: Text(
-                  '${l10n.cashChange}: ${FormatUtils.formatCurrency(_cashChange)}',
-                  style: TextStyle(
-                    color: theme.success,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                  ),
-                ),
-              ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(dialogCtx);
-              context.go('/pos');
-            },
-            child: Text(
-              l10n.ok,
-              style: TextStyle(
-                color: theme.primary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
