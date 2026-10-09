@@ -3,7 +3,6 @@ import {
   NotFoundException,
   ConflictException,
   BadRequestException,
-  OnModuleInit,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
@@ -21,7 +20,7 @@ import {
 import { EUserRole } from '../users/enums/user.enum';
 
 @Injectable()
-export class ShiftService implements OnModuleInit {
+export class ShiftService {
   constructor(
     @InjectRepository(Shift)
     private readonly shiftRepo: Repository<Shift>,
