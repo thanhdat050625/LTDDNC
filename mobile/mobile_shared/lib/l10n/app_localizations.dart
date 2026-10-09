@@ -2968,6 +2968,24 @@ abstract class AppLocalizations {
   /// **'Để trống nếu không muốn đổi mật khẩu'**
   String get optionalPasswordHint;
 
+  /// No description provided for @staffBranch.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chi nhánh'**
+  String get staffBranch;
+
+  /// No description provided for @selectStaffBranch.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn chi nhánh (rạp)'**
+  String get selectStaffBranch;
+
+  /// No description provided for @noBranchAssigned.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa gán chi nhánh'**
+  String get noBranchAssigned;
+
   /// No description provided for @accountDetailsTitle.
   ///
   /// In vi, this message translates to:
@@ -5247,6 +5265,48 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Người phân ca'**
   String get shiftAssignedBy;
+
+  /// No description provided for @shiftAddStaff.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thêm'**
+  String get shiftAddStaff;
+
+  /// No description provided for @shiftStaffCount.
+  ///
+  /// In vi, this message translates to:
+  /// **'{count} nhân viên'**
+  String shiftStaffCount(int count);
+
+  /// No description provided for @shiftSelectMultipleStaff.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn nhân viên (có thể chọn nhiều)'**
+  String get shiftSelectMultipleStaff;
+
+  /// No description provided for @shiftSelectedStaffCount.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã chọn {count} nhân viên'**
+  String shiftSelectedStaffCount(int count);
+
+  /// No description provided for @shiftAssignMultipleSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã phân ca thành công cho {count} nhân viên'**
+  String shiftAssignMultipleSuccess(int count);
+
+  /// No description provided for @shiftToday.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hôm nay'**
+  String get shiftToday;
+
+  /// No description provided for @shiftNoStaffAssigned.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có nhân viên'**
+  String get shiftNoStaffAssigned;
 }
 
 class _AppLocalizationsDelegate

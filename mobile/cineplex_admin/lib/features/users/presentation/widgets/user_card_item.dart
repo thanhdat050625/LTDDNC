@@ -199,6 +199,35 @@ class UserCardItem extends StatelessWidget {
                             ],
                           ),
                         ],
+
+                        // Branch (if staff)
+                        if (user.isStaff) ...[
+                          const SizedBox(height: 2),
+                          Row(
+                            children: [
+                              const Icon(
+                                LucideIcons.mapPin,
+                                size: 13,
+                                color: Color(0xFF3A86FF),
+                              ),
+                              const SizedBox(width: 5),
+                              Flexible(
+                                child: Text(
+                                  user.cinema?.name ?? l10n.noBranchAssigned,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: user.cinema != null
+                                        ? const Color(0xFF3A86FF)
+                                        : theme.textSecondary.withValues(alpha: 0.7),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ],
                     ),
                   ),

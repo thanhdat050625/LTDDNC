@@ -22,11 +22,25 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
   }
 
   Future<void> _loadCinema() async {
+    final authState = context.read<AuthBloc>().state;
+    final user = authState is AuthAuthenticated ? authState.user : null;
+    if (user?.cinema?.name != null && user!.cinema!.name.isNotEmpty) {
+      if (mounted) {
+        setState(() => _cinemaName = user.cinema!.name);
+      }
+      return;
+    }
+
     try {
       final dio = context.read<DioClient>();
       final cinemas = await CinemaManagementRepository(dio).getAllCinemas();
       if (mounted && cinemas.isNotEmpty) {
-        setState(() => _cinemaName = cinemas.first.name);
+        final assigned = user?.cinemaId != null
+            ? cinemas.where((c) => c.id == user!.cinemaId).firstOrNull
+            : null;
+        if (assigned != null) {
+          setState(() => _cinemaName = assigned.name);
+        }
       }
     } catch (_) {}
   }
@@ -42,7 +56,8 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
         ? user!.fullName
         : l10n.staffRole;
     final staffEmail = user?.email ?? 'staff@cineplex.vn';
-    final cinemaDisplayName = _cinemaName;
+    final cinemaDisplayName = user?.cinema?.name ??
+        (_cinemaName.isNotEmpty ? _cinemaName : (user?.cinemaId != null ? '' : l10n.noBranchAssigned));
 
     return AppScaffold(
       title: l10n.staffProfile,
@@ -71,14 +86,19 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
                   CircleAvatar(
                     radius: 30,
                     backgroundColor: theme.primary.withValues(alpha: 0.15),
-                    child: Text(
-                      staffName.isNotEmpty ? staffName[0].toUpperCase() : 'S',
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: theme.primary,
-                      ),
-                    ),
+                    backgroundImage: (user?.avatar != null && user!.avatar!.trim().isNotEmpty)
+                        ? NetworkImage(user.avatar!.trim())
+                        : null,
+                    child: (user?.avatar == null || user!.avatar!.trim().isEmpty)
+                        ? Text(
+                            staffName.isNotEmpty ? staffName[0].toUpperCase() : 'S',
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: theme.primary,
+                            ),
+                          )
+                        : null,
                   ),
                   const SizedBox(width: 14),
                   Expanded(

@@ -36,6 +36,8 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
 
   File? _avatarFile;
   String? _currentAvatarUrl;
+  List<CinemaModel> _cinemas = [];
+  int? _selectedCinemaId;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   bool _isLoading = false;
@@ -50,6 +52,19 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
     _emailController = TextEditingController(text: widget.staff?.email ?? '');
     _phoneController = TextEditingController(text: widget.staff?.phone ?? '');
     _currentAvatarUrl = widget.staff?.avatar;
+    _selectedCinemaId = widget.staff?.cinemaId;
+    _loadCinemas();
+  }
+
+  Future<void> _loadCinemas() async {
+    try {
+      final cinemas = await context.read<UserManagementCubit>().repository.getCinemas();
+      if (mounted) {
+        setState(() {
+          _cinemas = cinemas;
+        });
+      }
+    } catch (_) {}
   }
 
   @override
@@ -129,6 +144,7 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
             ? _phoneController.text.trim()
             : null,
         avatarFilePath: _avatarFile?.path,
+        cinemaId: _selectedCinemaId,
       );
     } else {
       success = await cubit.createStaff(
@@ -139,6 +155,7 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
             ? _phoneController.text.trim()
             : null,
         avatarFilePath: _avatarFile?.path,
+        cinemaId: _selectedCinemaId,
       );
     }
 
@@ -375,6 +392,56 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
                 hint: l10n.phonePlaceholder,
                 prefixIcon: LucideIcons.phone,
                 keyboardType: TextInputType.phone,
+              ),
+              const SizedBox(height: 8),
+
+              // Branch / Cinema Dropdown
+              DropdownButtonFormField<int>(
+                initialValue: _selectedCinemaId,
+                isExpanded: true,
+                dropdownColor: theme.surface,
+                style: TextStyle(color: theme.textPrimary, fontSize: 14),
+                decoration: InputDecoration(
+                  labelText: l10n.staffBranch,
+                  hintText: l10n.selectStaffBranch,
+                  labelStyle: TextStyle(color: theme.textSecondary, fontSize: 14),
+                  hintStyle: TextStyle(color: theme.textSecondary.withValues(alpha: 0.6), fontSize: 14),
+                  prefixIcon: Icon(LucideIcons.mapPin, size: 20, color: theme.textSecondary),
+                  filled: true,
+                  fillColor: theme.surface,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: theme.textSecondary.withValues(alpha: 0.15),
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: theme.textSecondary.withValues(alpha: 0.15),
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: theme.primary,
+                      width: 1.5,
+                    ),
+                  ),
+                ),
+                items: [
+                  ..._cinemas.map((c) => DropdownMenuItem<int>(
+                    value: c.id,
+                    child: Text(
+                      c.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(color: theme.textPrimary),
+                    ),
+                  )),
+                ],
+                onChanged: (val) => setState(() => _selectedCinemaId = val),
               ),
               const SizedBox(height: 8),
 

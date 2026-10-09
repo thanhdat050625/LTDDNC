@@ -209,6 +209,7 @@ class UserManagementCubit extends Cubit<UserManagementState> {
     required String password,
     String? phone,
     String? avatarFilePath,
+    int? cinemaId,
   }) async {
     final currentState = state;
     if (currentState is UserManagementLoaded) {
@@ -222,6 +223,7 @@ class UserManagementCubit extends Cubit<UserManagementState> {
         password: password,
         phone: phone,
         avatarFilePath: avatarFilePath,
+        cinemaId: cinemaId,
       );
       // Reload on success
       await loadUsers();
@@ -241,6 +243,7 @@ class UserManagementCubit extends Cubit<UserManagementState> {
     String? password,
     String? phone,
     String? avatarFilePath,
+    int? cinemaId,
   }) async {
     final currentState = state;
     if (currentState is UserManagementLoaded) {
@@ -255,6 +258,7 @@ class UserManagementCubit extends Cubit<UserManagementState> {
         password: password,
         phone: phone,
         avatarFilePath: avatarFilePath,
+        cinemaId: cinemaId,
       );
       // Reload on success
       await loadUsers();
@@ -287,8 +291,11 @@ class UserManagementCubit extends Cubit<UserManagementState> {
             status: newStatus,
             loyaltyPoints: u.loyaltyPoints,
             gender: u.gender,
+            avatar: u.avatar,
             dateOfBirth: u.dateOfBirth,
             createdAt: u.createdAt,
+            cinemaId: u.cinemaId,
+            cinema: u.cinema,
           );
         }
         return u;

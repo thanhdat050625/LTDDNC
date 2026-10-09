@@ -173,14 +173,19 @@ class CineplexDrawer extends StatelessWidget {
                       padding: const EdgeInsets.all(2),
                       child: CircleAvatar(
                         backgroundColor: theme.surface,
-                        child: Text(
-                          avatarLetter,
-                          style: TextStyle(
-                            color: theme.accent,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                          ),
-                        ),
+                        backgroundImage: (user?.avatar != null && user!.avatar!.trim().isNotEmpty)
+                            ? NetworkImage(user.avatar!.trim())
+                            : null,
+                        child: (user?.avatar == null || user!.avatar!.trim().isEmpty)
+                            ? Text(
+                                avatarLetter,
+                                style: TextStyle(
+                                  color: theme.accent,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                ),
+                              )
+                            : null,
                       ),
                     ),
                     SizedBox(width: theme.spacingMd),
@@ -234,6 +239,30 @@ class CineplexDrawer extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
+                          if (!isAdmin && user?.cinema?.name != null && user!.cinema!.name.isNotEmpty) ...[
+                            const SizedBox(height: 2),
+                            Row(
+                              children: [
+                                Icon(
+                                  LucideIcons.mapPin,
+                                  size: 11,
+                                  color: theme.textSecondary,
+                                ),
+                                const SizedBox(width: 3),
+                                Expanded(
+                                  child: Text(
+                                    user.cinema!.name,
+                                    style: TextStyle(
+                                      color: theme.textSecondary,
+                                      fontSize: 11,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ],
                       ),
                     ),

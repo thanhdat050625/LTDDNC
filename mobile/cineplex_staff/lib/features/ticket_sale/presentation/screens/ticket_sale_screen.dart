@@ -13,6 +13,10 @@ class TicketSaleScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authState = context.read<AuthBloc>().state;
+    final staffUser = authState is AuthAuthenticated ? authState.user : null;
+    final defaultCinemaId = staffUser?.cinema?.id ?? staffUser?.cinemaId;
+
     return BlocProvider(
       create: (context) {
         final dio = context.read<DioClient>();
@@ -20,7 +24,7 @@ class TicketSaleScreen extends StatelessWidget {
           CinemaManagementRepository(dio),
           ShowtimeManagementRepository(dio),
           BookingManagementRepository(dio),
-        )..loadInitialData();
+        )..loadInitialData(defaultCinemaId: defaultCinemaId);
       },
       child: _TicketSaleScreenView(drawer: drawer),
     );

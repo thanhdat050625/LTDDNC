@@ -693,6 +693,9 @@
   "staffUpdatedSuccess": "Cập nhật tài khoản nhân viên thành công",
   "edit": "Chỉnh sửa",
   "optionalPasswordHint": "Để trống nếu không muốn đổi mật khẩu",
+  "staffBranch": "Chi nhánh",
+  "selectStaffBranch": "Chọn chi nhánh (rạp)",
+  "noBranchAssigned": "Chưa gán chi nhánh",
   "accountDetailsTitle": "Chi tiết tài khoản",
   "joinedDateLabel": "Ngày tham gia",
   "loyaltyPointsTitle": "Điểm tích lũy",
@@ -1246,5 +1249,33 @@
   "shiftCurrentWeek": "Tuần này",
   "shiftNextWeek": "Tuần sau",
   "shiftPreviousWeek": "Tuần trước",
-  "shiftAssignedBy": "Người phân ca"
+  "shiftAssignedBy": "Người phân ca",
+  "shiftAddStaff": "Thêm",
+  "shiftStaffCount": "{count} nhân viên",
+  "@shiftStaffCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shiftSelectMultipleStaff": "Chọn nhân viên (có thể chọn nhiều)",
+  "shiftSelectedStaffCount": "Đã chọn {count} nhân viên",
+  "@shiftSelectedStaffCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shiftAssignMultipleSuccess": "Đã phân ca thành công cho {count} nhân viên",
+  "@shiftAssignMultipleSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shiftToday": "Hôm nay",
+  "shiftNoStaffAssigned": "Chưa có nhân viên"
 }

@@ -70,7 +70,8 @@ export class AuthService implements OnModuleInit {
     const { email, password } = loginDto;
     const user = await this.userRepository.findOne({
       where: { email },
-      select: ['id', 'email', 'password', 'role', 'fullName', 'tokenVersion', 'phone', 'status', 'loyaltyPoints']
+      select: ['id', 'email', 'password', 'role', 'fullName', 'tokenVersion', 'phone', 'status', 'loyaltyPoints', 'avatar', 'cinemaId'],
+      relations: ['cinema'],
     });
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
@@ -100,6 +101,9 @@ export class AuthService implements OnModuleInit {
         fullName: user.fullName || '',
         role: user.role,
         phone: user.phone || null,
+        avatar: user.avatar || null,
+        cinemaId: user.cinemaId || null,
+        cinema: user.cinema || null,
         status: user.status,
         loyaltyPoints: user.loyaltyPoints
       }

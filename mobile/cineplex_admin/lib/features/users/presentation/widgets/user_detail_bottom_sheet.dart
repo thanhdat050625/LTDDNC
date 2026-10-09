@@ -303,6 +303,16 @@ class UserDetailBottomSheet extends StatelessWidget {
                   label: l10n.phoneLabel,
                   value: user.phone != null && user.phone!.isNotEmpty ? user.phone! : l10n.notProvided,
                 ),
+                if (user.isStaff) ...[
+                  _buildDivider(theme),
+                  _buildInfoRow(
+                    theme,
+                    icon: LucideIcons.mapPin,
+                    label: l10n.staffBranch,
+                    value: user.cinema?.name ?? l10n.noBranchAssigned,
+                    valueColor: user.cinema != null ? const Color(0xFF3A86FF) : null,
+                  ),
+                ],
                 if (user.isCustomer) ...[
                   _buildDivider(theme),
                   _buildInfoRow(

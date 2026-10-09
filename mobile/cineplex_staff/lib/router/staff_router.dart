@@ -121,12 +121,15 @@ GoRouter createStaffRouter(
             );
           }
           final dioClient = context.read<DioClient>();
+          final authState = context.read<AuthBloc>().state;
+          final staffUser = authState is AuthAuthenticated ? authState.user : null;
+          final defaultCinemaId = staffUser?.cinema?.id ?? staffUser?.cinemaId;
           return BlocProvider(
             create: (_) => TicketSaleCubit(
               CinemaManagementRepository(dioClient),
               ShowtimeManagementRepository(dioClient),
               BookingManagementRepository(dioClient),
-            )..loadInitialData(),
+            )..loadInitialData(defaultCinemaId: defaultCinemaId),
             child: const SeatSelectionScreen(),
           );
         },

@@ -184,12 +184,16 @@ class MockUserManagementRepository implements UserManagementRepository {
   }
 
   @override
+  Future<List<CinemaModel>> getCinemas() async => const [];
+
+  @override
   Future<UserModel> createStaff({
     required String fullName,
     required String email,
     required String password,
     String? phone,
     String? avatarFilePath,
+    int? cinemaId,
   }) async {
     return UserModel(
       id: 999,
@@ -198,6 +202,7 @@ class MockUserManagementRepository implements UserManagementRepository {
       role: 'STAFF',
       status: 'ACTIVE',
       phone: phone,
+      cinemaId: cinemaId,
     );
   }
 
@@ -209,6 +214,7 @@ class MockUserManagementRepository implements UserManagementRepository {
     String? password,
     String? phone,
     String? avatarFilePath,
+    int? cinemaId,
   }) async {
     return UserModel(
       id: staffId,
@@ -217,6 +223,7 @@ class MockUserManagementRepository implements UserManagementRepository {
       role: 'STAFF',
       status: 'ACTIVE',
       phone: phone,
+      cinemaId: cinemaId,
     );
   }
 

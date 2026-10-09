@@ -11,7 +11,12 @@ class TicketSaleCubit extends Cubit<TicketSaleState> {
   TicketSaleCubit(this._cinemaRepo, this._showtimeRepo, this._bookingRepo)
     : super(TicketSaleInitial());
 
-  Future<void> loadInitialData() async {
+  int? _defaultCinemaId;
+
+  Future<void> loadInitialData({int? defaultCinemaId}) async {
+    if (defaultCinemaId != null) {
+      _defaultCinemaId = defaultCinemaId;
+    }
     emit(TicketSaleLoading());
     try {
       final cinemas = await _cinemaRepo.getAllCinemas();
@@ -20,8 +25,15 @@ class TicketSaleCubit extends Cubit<TicketSaleState> {
         return;
       }
 
-      final firstCinema = cinemas.first;
-      final showtimesData = await _showtimeRepo.getByCinemaId(firstCinema.id);
+      CinemaModel selectedCinema = cinemas.first;
+      if (_defaultCinemaId != null) {
+        final matched = cinemas.where((c) => c.id == _defaultCinemaId).firstOrNull;
+        if (matched != null) {
+          selectedCinema = matched;
+        }
+      }
+
+      final showtimesData = await _showtimeRepo.getByCinemaId(selectedCinema.id);
       final List<ShowtimeModel> showtimes = _parseShowtimes(showtimesData);
 
       final movies = _extractMovies(showtimes);
@@ -29,7 +41,7 @@ class TicketSaleCubit extends Cubit<TicketSaleState> {
       emit(
         TicketSaleLoaded(
           cinemas: cinemas,
-          selectedCinemaId: firstCinema.id,
+          selectedCinemaId: selectedCinema.id,
           cinemaShowtimes: showtimes,
           moviesForCinema: movies,
           selectedMovieId: movies.isNotEmpty ? movies.first.id : null,

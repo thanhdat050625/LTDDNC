@@ -36,6 +36,20 @@ class FakeUserManagementRepository implements UserManagementRepository {
       totalBlocked: 0,
     );
   }
+
+  @override
+  Future<List<CinemaModel>> getCinemas() async {
+    return const [
+      CinemaModel(
+        id: 1,
+        name: 'Cineplex Landmark 81',
+        address: 'Bình Thạnh, TP.HCM',
+        phone: '02812345678',
+        email: 'landmark@cineplex.vn',
+        status: 'ACTIVE',
+      ),
+    ];
+  }
 }
 
 void main() {
@@ -112,12 +126,35 @@ void main() {
       final visibilityIcons = find.byIcon(Icons.visibility_off_outlined);
       expect(visibilityIcons, findsNWidgets(2)); // for password and confirm password
 
+      var editableTexts = tester.widgetList<EditableText>(find.byType(EditableText)).toList();
+      expect(editableTexts[3].obscureText, isTrue);
+      expect(editableTexts[4].obscureText, isTrue);
+
       // Tap on first visibility icon
       await tester.tap(visibilityIcons.first);
       await tester.pumpAndSettle();
 
       // Now one is visible
       expect(find.byIcon(Icons.visibility_outlined), findsOneWidget);
+      editableTexts = tester.widgetList<EditableText>(find.byType(EditableText)).toList();
+      expect(editableTexts[3].obscureText, isFalse);
+      expect(editableTexts[4].obscureText, isTrue);
+
+      // Tap on second visibility icon (confirm password)
+      await tester.tap(find.byIcon(Icons.visibility_off_outlined).first);
+      await tester.pumpAndSettle();
+
+      editableTexts = tester.widgetList<EditableText>(find.byType(EditableText)).toList();
+      expect(editableTexts[3].obscureText, isFalse);
+      expect(editableTexts[4].obscureText, isFalse);
+
+      // Tap on first visibility icon again to hide
+      await tester.tap(find.byIcon(Icons.visibility_outlined).first);
+      await tester.pumpAndSettle();
+
+      editableTexts = tester.widgetList<EditableText>(find.byType(EditableText)).toList();
+      expect(editableTexts[3].obscureText, isTrue);
+      expect(editableTexts[4].obscureText, isFalse);
     });
   });
 }

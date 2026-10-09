@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'cinema_model.dart';
 
 class UserModel extends Equatable {
   final int id;
@@ -12,6 +13,8 @@ class UserModel extends Equatable {
   final String? avatar;
   final DateTime? dateOfBirth;
   final DateTime? createdAt;
+  final int? cinemaId;
+  final CinemaModel? cinema;
 
   const UserModel({
     required this.id,
@@ -25,6 +28,8 @@ class UserModel extends Equatable {
     this.avatar,
     this.dateOfBirth,
     this.createdAt,
+    this.cinemaId,
+    this.cinema,
   });
 
   bool get isBlocked => status.toUpperCase() == 'BLOCKED';
@@ -48,6 +53,12 @@ class UserModel extends Equatable {
       avatar: json['avatar']?.toString(),
       dateOfBirth: json['dateOfBirth'] != null ? DateTime.tryParse(json['dateOfBirth'].toString()) : null,
       createdAt: json['createdAt'] != null ? DateTime.tryParse(json['createdAt'].toString()) : null,
+      cinemaId: json['cinemaId'] is int
+          ? json['cinemaId']
+          : int.tryParse(json['cinemaId']?.toString() ?? ''),
+      cinema: json['cinema'] != null && json['cinema'] is Map<String, dynamic>
+          ? CinemaModel.fromJson(json['cinema'] as Map<String, dynamic>)
+          : null,
     );
   }
 
@@ -63,6 +74,12 @@ class UserModel extends Equatable {
         'avatar': avatar,
         'dateOfBirth': dateOfBirth?.toIso8601String(),
         'createdAt': createdAt?.toIso8601String(),
+        'cinemaId': cinemaId,
+        if (cinema != null) 'cinema': {
+          'id': cinema!.id,
+          'name': cinema!.name,
+          'address': cinema!.address,
+        },
       };
 
   @override
@@ -78,5 +95,7 @@ class UserModel extends Equatable {
         avatar,
         dateOfBirth,
         createdAt,
+        cinemaId,
+        cinema,
       ];
 }

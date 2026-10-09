@@ -48,6 +48,11 @@ export class CreateStaffDto {
   @IsString()
   @IsOptional()
   avatar?: string;
+
+  @Type(() => Number)
+  @IsNumber()
+  @IsOptional()
+  cinemaId?: number;
 }
 
 export class UpdateStaffDto {
@@ -72,6 +77,11 @@ export class UpdateStaffDto {
   @IsString()
   @IsOptional()
   avatar?: string;
+
+  @Type(() => Number)
+  @IsNumber()
+  @IsOptional()
+  cinemaId?: number;
 }
 
 export class UpdateUserStatusDto {

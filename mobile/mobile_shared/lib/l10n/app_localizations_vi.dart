@@ -1524,6 +1524,15 @@ class AppLocalizationsVi extends AppLocalizations {
   String get optionalPasswordHint => 'Để trống nếu không muốn đổi mật khẩu';
 
   @override
+  String get staffBranch => 'Chi nhánh';
+
+  @override
+  String get selectStaffBranch => 'Chọn chi nhánh (rạp)';
+
+  @override
+  String get noBranchAssigned => 'Chưa gán chi nhánh';
+
+  @override
   String get accountDetailsTitle => 'Chi tiết tài khoản';
 
   @override
@@ -2726,4 +2735,31 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get shiftAssignedBy => 'Người phân ca';
+
+  @override
+  String get shiftAddStaff => 'Thêm';
+
+  @override
+  String shiftStaffCount(int count) {
+    return '$count nhân viên';
+  }
+
+  @override
+  String get shiftSelectMultipleStaff => 'Chọn nhân viên (có thể chọn nhiều)';
+
+  @override
+  String shiftSelectedStaffCount(int count) {
+    return 'Đã chọn $count nhân viên';
+  }
+
+  @override
+  String shiftAssignMultipleSuccess(int count) {
+    return 'Đã phân ca thành công cho $count nhân viên';
+  }
+
+  @override
+  String get shiftToday => 'Hôm nay';
+
+  @override
+  String get shiftNoStaffAssigned => 'Chưa có nhân viên';
 }

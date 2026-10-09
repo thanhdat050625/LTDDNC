@@ -129,15 +129,35 @@ class StaffShiftManagementCubit extends Cubit<StaffShiftManagementState> {
     required String assignedRole,
     String? note,
   }) async {
+    return createMultipleSchedules(
+      staffIds: [staffId],
+      cinemaId: cinemaId,
+      shiftId: shiftId,
+      workDate: workDate,
+      assignedRole: assignedRole,
+      note: note,
+    );
+  }
+
+  Future<bool> createMultipleSchedules({
+    required List<int> staffIds,
+    required int cinemaId,
+    required int shiftId,
+    required String workDate,
+    required String assignedRole,
+    String? note,
+  }) async {
+    if (staffIds.isEmpty) return false;
     try {
-      await _shiftRepository.createSchedule({
-        'staffId': staffId,
-        'cinemaId': cinemaId,
-        'shiftId': shiftId,
-        'workDate': workDate,
-        'assignedRole': assignedRole,
-        if (note != null && note.isNotEmpty) 'note': note,
-      });
+      final futures = staffIds.map((staffId) => _shiftRepository.createSchedule({
+            'staffId': staffId,
+            'cinemaId': cinemaId,
+            'shiftId': shiftId,
+            'workDate': workDate,
+            'assignedRole': assignedRole,
+            if (note != null && note.isNotEmpty) 'note': note,
+          }));
+      await Future.wait(futures);
       await _fetchSchedules();
       return true;
     } catch (e) {

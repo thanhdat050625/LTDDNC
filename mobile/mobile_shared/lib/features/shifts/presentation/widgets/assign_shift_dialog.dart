@@ -28,6 +28,7 @@ class AssignShiftDialog extends StatefulWidget {
 
 class _AssignShiftDialogState extends State<AssignShiftDialog> {
   late int? _selectedStaffId;
+  final Set<int> _selectedStaffIds = {};
   late int? _selectedCinemaId;
   late int? _selectedShiftId;
   late DateTime _selectedDate;
@@ -48,6 +49,9 @@ class _AssignShiftDialogState extends State<AssignShiftDialog> {
       _noteController.text = s.note ?? '';
     } else {
       _selectedStaffId = widget.staffList.isNotEmpty ? widget.staffList.first.id : null;
+      if (widget.staffList.isNotEmpty) {
+        _selectedStaffIds.add(widget.staffList.first.id);
+      }
       _selectedCinemaId = widget.initialCinemaId ?? (widget.cinemas.isNotEmpty ? widget.cinemas.first.id : null);
       _selectedShiftId = widget.initialShiftId ?? (widget.shifts.isNotEmpty ? widget.shifts.first.id : null);
       _selectedDate = widget.initialDate;
@@ -91,11 +95,11 @@ class _AssignShiftDialogState extends State<AssignShiftDialog> {
 
     return Dialog(
       backgroundColor: theme.surface,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(theme.radiusLg)),
       child: Container(
         width: 480,
-        padding: EdgeInsets.symmetric(horizontal: theme.spacingMd, vertical: theme.spacingLg),
+        padding: EdgeInsets.all(theme.spacingMd),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -107,7 +111,7 @@ class _AssignShiftDialogState extends State<AssignShiftDialog> {
                 children: [
                   Row(
                     children: [
-                      Icon(LucideIcons.calendarPlus, color: theme.primary, size: 22),
+                      Icon(LucideIcons.calendarPlus, color: theme.primary, size: 20),
                       SizedBox(width: theme.spacingSm),
                       Text(
                         isEditing ? l10n.shiftEdit : l10n.shiftAssignNew,
@@ -119,44 +123,139 @@ class _AssignShiftDialogState extends State<AssignShiftDialog> {
                     ],
                   ),
                   IconButton(
-                    icon: Icon(LucideIcons.x, color: theme.textSecondary, size: 20),
+                    icon: Icon(LucideIcons.x, color: theme.textSecondary, size: 18),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],
               ),
-              Divider(color: theme.divider, height: theme.spacingLg),
+              Divider(color: theme.divider, height: 16),
 
               // Chọn Nhân viên
-              Text(
-                l10n.shiftSelectStaff,
-                style: textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: theme.textPrimary,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      isEditing ? l10n.shiftSelectStaff : l10n.shiftSelectMultipleStaff,
+                      style: textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: theme.textPrimary,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  if (!isEditing) ...[
+                    const SizedBox(width: 8),
+                    Text(
+                      l10n.shiftSelectedStaffCount(_selectedStaffIds.length),
+                      style: textTheme.bodySmall?.copyWith(
+                        color: theme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ],
               ),
               const SizedBox(height: 6),
-              DropdownButtonFormField<int>(
-                initialValue: _selectedStaffId,
-                isExpanded: true,
-                dropdownColor: theme.surface,
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(horizontal: theme.spacingMd, vertical: theme.spacingSm),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
+              if (isEditing)
+                DropdownButtonFormField<int>(
+                  initialValue: _selectedStaffId,
+                  isExpanded: true,
+                  dropdownColor: theme.surface,
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.symmetric(horizontal: theme.spacingMd, vertical: theme.spacingSm),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
+                  ),
+                  items: widget.staffList.map((user) {
+                    return DropdownMenuItem<int>(
+                      value: user.id,
+                      child: Text(
+                        '${user.fullName} (${user.email})',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: textTheme.bodyMedium?.copyWith(color: theme.textPrimary),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: null,
+                )
+              else
+                Container(
+                  constraints: const BoxConstraints(maxHeight: 130),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: theme.border),
+                    borderRadius: BorderRadius.circular(theme.radiusMd),
+                    color: theme.surfaceVariant.withValues(alpha: 0.25),
+                  ),
+                  child: widget.staffList.isEmpty
+                      ? Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Text(l10n.shiftNoStaffAssigned, style: TextStyle(color: theme.textSecondary)),
+                        )
+                      : ListView.separated(
+                          shrinkWrap: true,
+                          itemCount: widget.staffList.length,
+                          separatorBuilder: (_, __) => Divider(height: 1, color: theme.divider),
+                          itemBuilder: (context, idx) {
+                            final user = widget.staffList[idx];
+                            final isSelected = _selectedStaffIds.contains(user.id);
+                            return InkWell(
+                              onTap: () {
+                                setState(() {
+                                  if (isSelected) {
+                                    _selectedStaffIds.remove(user.id);
+                                  } else {
+                                    _selectedStaffIds.add(user.id);
+                                  }
+                                });
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: Checkbox(
+                                        value: isSelected,
+                                        activeColor: theme.primary,
+                                        onChanged: (val) {
+                                          setState(() {
+                                            if (val == true) {
+                                              _selectedStaffIds.add(user.id);
+                                            } else {
+                                              _selectedStaffIds.remove(user.id);
+                                            }
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        user.fullName,
+                                        style: textTheme.bodyMedium?.copyWith(
+                                          color: theme.textPrimary,
+                                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    Text(
+                                      user.email,
+                                      style: textTheme.bodySmall?.copyWith(color: theme.textSecondary),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                 ),
-                items: widget.staffList.map((user) {
-                  return DropdownMenuItem<int>(
-                    value: user.id,
-                    child: Text(
-                      '${user.fullName} (${user.email})',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: textTheme.bodyMedium?.copyWith(color: theme.textPrimary),
-                    ),
-                  );
-                }).toList(),
-                onChanged: isEditing ? null : (val) => setState(() => _selectedStaffId = val),
-              ),
-              SizedBox(height: theme.spacingMd),
+              const SizedBox(height: 10),
 
               // Chọn Cụm rạp
               Text(
@@ -252,7 +351,7 @@ class _AssignShiftDialogState extends State<AssignShiftDialog> {
                 }).toList(),
                 onChanged: (val) => setState(() => _selectedRole = val ?? 'GENERAL'),
               ),
-              SizedBox(height: theme.spacingMd),
+              const SizedBox(height: 10),
 
               // Chọn Ngày
               Text(
@@ -295,7 +394,7 @@ class _AssignShiftDialogState extends State<AssignShiftDialog> {
                   ),
                 ),
               ),
-              SizedBox(height: theme.spacingMd),
+              const SizedBox(height: 10),
 
               // Ghi chú
               Text(
@@ -316,7 +415,7 @@ class _AssignShiftDialogState extends State<AssignShiftDialog> {
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
                 ),
               ),
-              SizedBox(height: theme.spacingLg),
+              const SizedBox(height: 14),
 
               // Buttons
               Row(
@@ -333,11 +432,17 @@ class _AssignShiftDialogState extends State<AssignShiftDialog> {
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(theme.radiusMd)),
                     ),
-                    onPressed: _isSubmitting || _selectedStaffId == null || _selectedCinemaId == null || _selectedShiftId == null
+                    onPressed: _isSubmitting ||
+                            _selectedCinemaId == null ||
+                            _selectedShiftId == null ||
+                            (isEditing ? _selectedStaffId == null : _selectedStaffIds.isEmpty)
                         ? null
                         : () {
                             Navigator.of(context).pop({
-                              'staffId': _selectedStaffId,
+                              if (isEditing)
+                                'staffId': _selectedStaffId
+                              else
+                                'staffIds': _selectedStaffIds.toList(),
                               'cinemaId': _selectedCinemaId,
                               'shiftId': _selectedShiftId,
                               'workDate': _formatDate(_selectedDate),
