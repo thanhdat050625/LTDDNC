@@ -34,6 +34,7 @@ class BookingManagementRepository {
     int? customerId,
     List<Map<String, dynamic>>? concessions,
     int? pointsToUse,
+    String? promotionCode,
     String source = 'OFFLINE',
   }) async {
     final response = await _dioClient.post(
@@ -46,6 +47,8 @@ class BookingManagementRepository {
         if (concessions != null && concessions.isNotEmpty)
           'concessions': concessions,
         if (pointsToUse != null && pointsToUse > 0) 'pointsToUse': pointsToUse,
+        if (promotionCode != null && promotionCode.isNotEmpty)
+          'promotionCode': promotionCode,
       },
     );
     final payload = (response.data is Map && response.data.containsKey('data'))

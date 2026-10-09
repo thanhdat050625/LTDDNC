@@ -13,6 +13,7 @@ import '../features/scanner/presentation/screens/staff_scanner_screen.dart';
 import '../features/ticket_sale/data/models/checkout_args.dart';
 import '../features/ticket_sale/presentation/cubit/ticket_sale_cubit.dart';
 import '../features/ticket_sale/presentation/screens/checkout_screen.dart';
+import '../features/ticket_sale/presentation/screens/concession_selection_screen.dart';
 import '../features/ticket_sale/presentation/screens/payment_result_screen.dart';
 import '../features/ticket_sale/presentation/screens/seat_selection_screen.dart';
 import '../features/ticket_sale/presentation/screens/ticket_sale_screen.dart';
@@ -128,6 +129,13 @@ GoRouter createStaffRouter(
             )..loadInitialData(),
             child: const SeatSelectionScreen(),
           );
+        },
+      ),
+      GoRoute(
+        path: '/ticket-sale/concessions',
+        builder: (context, state) {
+          final args = state.extra as CheckoutArgs?;
+          return ConcessionSelectionScreen(args: args);
         },
       ),
       GoRoute(

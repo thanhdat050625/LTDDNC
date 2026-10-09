@@ -22,6 +22,8 @@ class CheckoutArgs {
   final List<SelectedConcession> concessions;
   final UserModel? customer;
   final int pointsToUse;
+  final String? promotionCode;
+  final int discountAmount;
 
   const CheckoutArgs({
     required this.showtime,
@@ -29,6 +31,8 @@ class CheckoutArgs {
     this.concessions = const [],
     this.customer,
     this.pointsToUse = 0,
+    this.promotionCode,
+    this.discountAmount = 0,
   });
 
   int get ticketTotal {
@@ -37,7 +41,7 @@ class CheckoutArgs {
   }
 
   int get concessionTotal => concessions.fold(0, (sum, c) => sum + c.subtotal);
-  int get discountTotal => pointsToUse;
+  int get discountTotal => pointsToUse + discountAmount;
   int get grandTotal =>
       (ticketTotal + concessionTotal - discountTotal).clamp(0, 999999999);
 }
