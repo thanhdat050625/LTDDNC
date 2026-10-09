@@ -22,38 +22,43 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   bool _isSubmitting = false;
   int _receivedAmount = 0;
   final TextEditingController _cashReceivedController = TextEditingController();
-  final TextEditingController _pointsController = TextEditingController();
   final TextEditingController _customerSearchController = TextEditingController();
+  final TextEditingController _promoCodeController = TextEditingController();
 
   UserModel? _customer;
   bool _isSearchingCustomer = false;
   int _usedPoints = 0;
+  String? _appliedPromoCode;
+  int _discountAmount = 0;
+  bool _isCheckingPromo = false;
 
   @override
   void initState() {
     super.initState();
     _customer = widget.args?.customer;
+    _appliedPromoCode = widget.args?.promotionCode;
+    _discountAmount = widget.args?.discountAmount ?? 0;
+    if (_appliedPromoCode != null) {
+      _promoCodeController.text = _appliedPromoCode!;
+    }
     final total = widget.args?.grandTotal ?? 0;
     _receivedAmount = total;
     _cashReceivedController.text = total > 0 ? '$total' : '';
     _usedPoints = widget.args?.pointsToUse ?? 0;
-    if (_usedPoints > 0) {
-      _pointsController.text = '$_usedPoints';
-    }
   }
 
   @override
   void dispose() {
     _cashReceivedController.dispose();
-    _pointsController.dispose();
     _customerSearchController.dispose();
+    _promoCodeController.dispose();
     super.dispose();
   }
 
   int get _ticketTotal => widget.args?.ticketTotal ?? 0;
   int get _concessionTotal => widget.args?.concessionTotal ?? 0;
   int get _grandTotal {
-    final base = _ticketTotal + _concessionTotal - _usedPoints;
+    final base = _ticketTotal + _concessionTotal - _usedPoints - _discountAmount;
     return base > 0 ? base : 0;
   }
 
@@ -99,145 +104,157 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Top: Payment Methods & Cash options
+          // Single Unified Scrollable Content
           Expanded(
-            flex: 50,
             child: SingleChildScrollView(
-              padding: EdgeInsets.all(theme.spacingLg),
+              padding: EdgeInsets.all(theme.spacingMd),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // 1. Order Summary Section
+                  Text(
+                    l10n.orderSummary,
+                    style: AppTextStyles.title.copyWith(
+                      color: theme.textPrimary,
+                    ),
+                  ),
+                  SizedBox(height: theme.spacingSm),
+
+                  // Movie Info
+                  if (args != null)
+                    _buildMovieSummary(theme, l10n, args)
+                  else
+                    Text(
+                      l10n.noData,
+                      style: TextStyle(color: theme.textSecondary),
+                    ),
+
+                  SizedBox(height: theme.spacingSm),
+                  Divider(color: theme.borderSubtle),
+                  SizedBox(height: theme.spacingSm),
+
+                  // Breakdown rows
+                  _buildBreakdownRow(
+                    theme,
+                    l10n.movieTicket(args?.selectedSeats.length ?? 0),
+                    _ticketTotal,
+                  ),
+                  if (_concessionTotal > 0)
+                    _buildBreakdownRow(
+                      theme,
+                      l10n.concessions,
+                      _concessionTotal,
+                    ),
+                  if (_discountAmount > 0)
+                    _buildBreakdownRow(
+                      theme,
+                      l10n.discountAmount,
+                      -_discountAmount,
+                      isDiscount: true,
+                    ),
+                  if (_usedPoints > 0)
+                    _buildBreakdownRow(
+                      theme,
+                      l10n.discountPointsTitle,
+                      -_usedPoints,
+                      isDiscount: true,
+                    ),
+
+                  SizedBox(height: theme.spacingMd),
+
+                  // 2. Voucher / Promo Card
+                  _buildVoucherCard(theme, l10n),
+                  const SizedBox(height: 10),
+
+                  // 3. Loyalty Points Card
+                  _buildLoyaltyCard(theme, l10n),
+                  SizedBox(height: theme.spacingMd),
+
+                  // 3. Payment Methods
                   Text(
                     l10n.paymentMethod,
                     style: AppTextStyles.title.copyWith(
                       color: theme.textPrimary,
                     ),
                   ),
-                  SizedBox(height: theme.spacingMd),
+                  SizedBox(height: theme.spacingSm),
                   ...methods.map((m) => _buildMethodCard(theme, m)),
-                  SizedBox(height: theme.spacingMd),
+                  SizedBox(height: theme.spacingSm),
 
                   // Cash Received Calculator (Visible when CASH is selected)
                   if (_selectedMethod == 'CASH') ...[
                     _buildCashCalculator(theme, l10n),
                     SizedBox(height: theme.spacingMd),
                   ],
-
-                  // Loyalty Points Card
-                  _buildLoyaltyCard(theme, l10n),
                 ],
               ),
             ),
           ),
 
-          // Bottom: Summary & Submit Payment
-          Expanded(
-            flex: 50,
-            child: Container(
+          // Sticky Bottom Bar: Total & Pay Now Button
+          Container(
+            padding: EdgeInsets.all(theme.spacingLg),
+            decoration: BoxDecoration(
               color: theme.surface,
-              padding: EdgeInsets.all(theme.spacingLg),
+              border: Border(top: BorderSide(color: theme.borderSubtle)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.15),
+                  blurRadius: 10,
+                  offset: const Offset(0, -3),
+                ),
+              ],
+            ),
+            child: SafeArea(
+              top: false,
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            l10n.orderSummary,
-                            style: AppTextStyles.title.copyWith(
-                              color: theme.textPrimary,
-                            ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          l10n.totalAmount.toUpperCase(),
+                          style: TextStyle(
+                            color: theme.textPrimary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
                           ),
-                          SizedBox(height: theme.spacingMd),
-
-                          // Movie Info
-                          if (args != null)
-                            _buildMovieSummary(theme, l10n, args)
-                          else
-                            Text(
-                              l10n.noData,
-                              style: TextStyle(color: theme.textSecondary),
-                            ),
-
-                          SizedBox(height: theme.spacingMd),
-                          Divider(color: theme.borderSubtle),
-                          SizedBox(height: theme.spacingSm),
-
-                          // Breakdown rows
-                          _buildBreakdownRow(
-                            theme,
-                            l10n.movieTicket(args?.selectedSeats.length ?? 0),
-                            _ticketTotal,
-                          ),
-                          if (_concessionTotal > 0)
-                            _buildBreakdownRow(
-                              theme,
-                              l10n.concessions,
-                              _concessionTotal,
-                            ),
-                          if (_usedPoints > 0)
-                            _buildBreakdownRow(
-                              theme,
-                              l10n.discountPointsTitle,
-                              -_usedPoints,
-                              isDiscount: true,
-                            ),
-
-                          SizedBox(height: theme.spacingSm),
-                          Divider(color: theme.borderSubtle),
-                          SizedBox(height: theme.spacingSm),
-
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  l10n.totalAmount.toUpperCase(),
-                                  style: TextStyle(
-                                    color: theme.textPrimary,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                FormatUtils.formatCurrency(_grandTotal),
-                                style: TextStyle(
-                                  color: theme.accent,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          if (_customer != null && _grandTotal > 0) ...[
-                            const SizedBox(height: 8),
-                            Row(
-                              children: [
-                                Icon(LucideIcons.sparkles, color: theme.warning, size: 14),
-                                const SizedBox(width: 6),
-                                Expanded(
-                                  child: Text(
-                                    l10n.paymentEarnedPointsNotice((_grandTotal * 0.1).floor()),
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                      color: theme.warning,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ],
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                    ),
+                      const SizedBox(width: 8),
+                      Text(
+                        FormatUtils.formatCurrency(_grandTotal),
+                        style: TextStyle(
+                          color: theme.accent,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
-
-                  // Action Button
+                  if (_customer != null && _grandTotal > 0) ...[
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Icon(LucideIcons.sparkles, color: theme.warning, size: 14),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            l10n.paymentEarnedPointsNotice((_grandTotal * 0.1).floor()),
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: theme.warning,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                  SizedBox(height: theme.spacingMd),
                   SizedBox(
                     width: double.infinity,
                     child: AppButton(
@@ -495,6 +512,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     final maxAllowedDiscount = (orderSubtotal * 0.2).floor();
 
     return AppCard(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       backgroundColor: theme.accent.withValues(alpha: 0.08),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -527,7 +545,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     setState(() {
                       _customer = null;
                       _usedPoints = 0;
-                      _pointsController.clear();
                     });
                   },
                   style: TextButton.styleFrom(
@@ -545,11 +562,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
           // If no customer is identified yet: provide lookup input
           if (customer == null) ...[
-            Text(
-              l10n.searchCustomerHint,
-              style: TextStyle(color: theme.textSecondary, fontSize: 12),
-            ),
-            const SizedBox(height: 8),
             Row(
               children: [
                 Expanded(
@@ -565,7 +577,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   isLoading: _isSearchingCustomer,
                   backgroundColor: theme.primary,
                   textColor: Colors.white,
-                  width: 90,
+                  width: 80,
                   onPressed: _isSearchingCustomer
                       ? null
                       : () => _searchCustomer(theme, l10n),
@@ -633,8 +645,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ),
             const SizedBox(height: 10),
 
-            // 1-Tap Switch Toggle for Loyalty Points (Client style)
-            if (customer.loyaltyPoints > 0) ...[
+            // 1-Tap Switch Toggle for Loyalty Points (Auto-calculated up to max 20%)
+            if (customer.loyaltyPoints > 0 && maxAllowedDiscount > 0) ...[
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
@@ -677,14 +689,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       activeTrackColor: theme.primary.withValues(alpha: 0.5),
                       onChanged: (val) {
                         setState(() {
-                          if (val) {
-                            final pts = math.min(customer.loyaltyPoints, maxAllowedDiscount);
-                            _usedPoints = pts;
-                            _pointsController.text = '$pts';
-                          } else {
-                            _usedPoints = 0;
-                            _pointsController.clear();
-                          }
+                          _usedPoints = val ? math.min(customer.loyaltyPoints, maxAllowedDiscount) : 0;
                         });
                       },
                     ),
@@ -734,7 +739,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           onPressed: () {
                             setState(() {
                               _usedPoints = 0;
-                              _pointsController.clear();
                             });
                           },
                           style: TextButton.styleFrom(
@@ -792,7 +796,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             style:
                                 TextStyle(fontSize: 11, color: theme.success)),
                         Text(
-                          FormatUtils.formatCurrency(_usedPoints),
+                          '-${FormatUtils.formatCurrency(_usedPoints)}',
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
@@ -803,68 +807,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     ),
                   ],
                 ),
-              ),
-            ] else ...[
-              // Prompt to enter points
-              Text(
-                l10n.posCustomerLoyaltyBalance(
-                    FormatUtils.formatNumber(customer.loyaltyPoints)),
-                style: TextStyle(color: theme.textSecondary, fontSize: 12),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Expanded(
-                    child: AppTextField(
-                      controller: _pointsController,
-                      hintText: l10n.enterPoints,
-                      keyboardType: TextInputType.number,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  AppButton(
-                    text: l10n.usePoints,
-                    backgroundColor: theme.primary,
-                    textColor: Colors.white,
-                    width: 100,
-                    onPressed: () {
-                      final input = _pointsController.text.trim();
-                      final pts =
-                          int.tryParse(input.replaceAll(RegExp(r'[^0-9]'), ''));
-                      if (pts == null || pts <= 0) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(l10n.posPointsInvalid),
-                            backgroundColor: theme.error,
-                          ),
-                        );
-                        return;
-                      }
-                      if (pts > customer.loyaltyPoints) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(l10n.posPointsExceedBalance),
-                            backgroundColor: theme.error,
-                          ),
-                        );
-                        return;
-                      }
-                      if (maxAllowedDiscount > 0 && pts > maxAllowedDiscount) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(l10n.posPointsExceedLimit),
-                            backgroundColor: theme.error,
-                          ),
-                        );
-                        return;
-                      }
-                      // Valid! Update state locally ONLY (No API call, no DB deduction yet)
-                      setState(() {
-                        _usedPoints = pts;
-                      });
-                    },
-                  ),
-                ],
               ),
             ],
           ],
@@ -895,8 +837,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       } else {
         setState(() {
           _customer = results.first;
-          _usedPoints = 0;
-          _pointsController.clear();
+          final maxAllowed = ((_ticketTotal + _concessionTotal) * 0.2).floor();
+          _usedPoints = math.min(results.first.loyaltyPoints, maxAllowed);
         });
       }
     } catch (e) {
@@ -910,6 +852,383 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       }
     } finally {
       if (mounted) setState(() => _isSearchingCustomer = false);
+    }
+  }
+
+  Widget _buildVoucherCard(CineplexColors theme, AppLocalizations l10n) {
+    final isApplied = _appliedPromoCode != null;
+
+    return AppCard(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      backgroundColor: isApplied
+          ? theme.primary.withValues(alpha: 0.08)
+          : theme.surface,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                isApplied ? LucideIcons.checkCircle2 : LucideIcons.ticket,
+                color: theme.primary,
+                size: 18,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  l10n.promotionCode,
+                  style: TextStyle(
+                    color: theme.textPrimary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+              if (isApplied)
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _appliedPromoCode = null;
+                      _discountAmount = 0;
+                      _promoCodeController.clear();
+                      _cashReceivedController.text = '$_grandTotal';
+                      _receivedAmount = _grandTotal;
+                    });
+                  },
+                  style: TextButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                    padding: EdgeInsets.zero,
+                  ),
+                  child: Text(
+                    l10n.removePromotion,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: theme.error,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 6),
+
+          if (isApplied) ...[
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              decoration: BoxDecoration(
+                color: theme.success.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: theme.success.withValues(alpha: 0.3)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _appliedPromoCode!,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: theme.textPrimary,
+                        ),
+                      ),
+                      Text(
+                        l10n.promotionApplied,
+                        style: TextStyle(fontSize: 11, color: theme.success),
+                      ),
+                    ],
+                  ),
+                  Text(
+                    '-${FormatUtils.formatCurrency(_discountAmount)}',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: theme.success,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ] else ...[
+            Row(
+              children: [
+                Expanded(
+                  child: AppTextField(
+                    controller: _promoCodeController,
+                    hintText: l10n.promotionCode,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                AppButton(
+                  text: l10n.applyPromotion,
+                  isLoading: _isCheckingPromo,
+                  backgroundColor: theme.primary,
+                  textColor: Colors.white,
+                  width: 90,
+                  onPressed: _isCheckingPromo
+                      ? null
+                      : () => _applyPromotionCode(
+                            _promoCodeController.text.trim(),
+                            theme,
+                            l10n,
+                          ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            InkWell(
+              borderRadius: BorderRadius.circular(8),
+              onTap: () => _showVoucherPicker(context, theme, l10n),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 2),
+                child: Row(
+                  children: [
+                    Icon(LucideIcons.tags, color: theme.primary, size: 16),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        l10n.paymentSelectVoucher,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: theme.primary,
+                        ),
+                      ),
+                    ),
+                    Icon(LucideIcons.chevronRight, color: theme.primary, size: 16),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  void _showVoucherPicker(
+    BuildContext context,
+    CineplexColors theme,
+    AppLocalizations l10n,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: theme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (bottomSheetContext) {
+        return FutureBuilder<List<PromotionModel>>(
+          future: PromotionManagementRepository(context.read<DioClient>())
+              .getActivePromotions(),
+          builder: (context, snapshot) {
+            final promos = snapshot.data ?? [];
+            final isLoading = snapshot.connectionState == ConnectionState.waiting;
+
+            return SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          l10n.paymentAvailableVouchers,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: theme.textPrimary,
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(LucideIcons.x, color: theme.textSecondary),
+                          onPressed: () => Navigator.pop(bottomSheetContext),
+                          visualDensity: VisualDensity.compact,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    if (isLoading)
+                      const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(24.0),
+                          child: AppLoading(),
+                        ),
+                      )
+                    else if (promos.isEmpty)
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Text(
+                            l10n.paymentNoVouchers,
+                            style: TextStyle(color: theme.textSecondary),
+                          ),
+                        ),
+                      )
+                    else
+                      ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxHeight: MediaQuery.of(context).size.height * 0.45,
+                        ),
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          itemCount: promos.length,
+                          separatorBuilder: (_, __) => const SizedBox(height: 8),
+                          itemBuilder: (context, index) {
+                            final promo = promos[index];
+                            final discountText = promo.discountType.toUpperCase() == 'PERCENT'
+                                ? '${promo.discountValue}%'
+                                : FormatUtils.formatCurrency(promo.discountValue.toInt());
+
+                            return Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: theme.background,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: theme.borderSubtle),
+                              ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: theme.primary.withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Icon(
+                                      LucideIcons.tag,
+                                      color: theme.primary,
+                                      size: 20,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          promo.code,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                            color: theme.textPrimary,
+                                          ),
+                                        ),
+                                        Text(
+                                          promo.description ?? l10n.posDiscountValue,
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            color: theme.textSecondary,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        Text(
+                                          discountText,
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600,
+                                            color: theme.primary,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  AppButton(
+                                    text: l10n.applyPromotion,
+                                    width: 80,
+                                    onPressed: () {
+                                      Navigator.pop(bottomSheetContext);
+                                      _promoCodeController.text = promo.code;
+                                      _applyPromotionCode(
+                                        promo.code,
+                                        theme,
+                                        l10n,
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _applyPromotionCode(
+    String code,
+    CineplexColors theme,
+    AppLocalizations l10n,
+  ) async {
+    if (code.isEmpty) return;
+    setState(() => _isCheckingPromo = true);
+
+    try {
+      final dio = context.read<DioClient>();
+      final promoRepo = PromotionManagementRepository(dio);
+      final subtotal = _ticketTotal + _concessionTotal;
+      final movieId = widget.args?.showtime.movieId;
+
+      final res = await promoRepo.checkPromotion(
+        code,
+        movieId: movieId,
+        orderTotal: subtotal,
+      );
+
+      final data = (res is Map && res.containsKey('data')) ? res['data'] : res;
+      if (data is Map<String, dynamic>) {
+        final calcDiscount = (data['discountAmount'] as num?)?.toInt() ??
+            _calculateLocalDiscount(data, subtotal);
+        setState(() {
+          _appliedPromoCode = code;
+          _discountAmount = calcDiscount;
+          _cashReceivedController.text = '$_grandTotal';
+          _receivedAmount = _grandTotal;
+        });
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(l10n.promotionApplied),
+              backgroundColor: theme.success,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.promotionInvalid),
+            backgroundColor: theme.error,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isCheckingPromo = false);
+    }
+  }
+
+  int _calculateLocalDiscount(Map<String, dynamic> promo, int subtotal) {
+    final type = promo['discountType']?.toString().toUpperCase();
+    final value = (promo['discountValue'] as num?)?.toDouble() ?? 0.0;
+    if (type == 'PERCENT') {
+      return ((subtotal * value) / 100).floor();
+    } else {
+      return value.toInt();
     }
   }
 
@@ -987,8 +1306,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     final bookingRepo = BookingManagementRepository(context.read<DioClient>());
 
     try {
-      // Step 1: Create staff offline booking
+      // Step 1: Ensure seats are actively held by this staff member, then create offline booking
       final seatIds = args.selectedSeats.map((s) => s.seatId).toList();
+      await bookingRepo.holdSeats(args.showtime.id, seatIds);
+
       final concessionsPayload = args.concessions
           .map((c) => {'productId': c.productId, 'quantity': c.quantity})
           .toList();
@@ -999,6 +1320,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         customerId: _customer?.id,
         concessions: concessionsPayload.isNotEmpty ? concessionsPayload : null,
         pointsToUse: _usedPoints > 0 ? _usedPoints : null,
+        promotionCode: _appliedPromoCode,
         source: 'OFFLINE',
       );
 

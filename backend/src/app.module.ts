@@ -34,8 +34,8 @@ import { ShiftModule } from './module/shift/shift.module';
     ScheduleModule.forRoot(),
     ThrottlerModule.forRoot([
       {
-        ttl: 2000,
-        limit: 5,
+        ttl: 1000,
+        limit: 10,
       },
     ]),
 

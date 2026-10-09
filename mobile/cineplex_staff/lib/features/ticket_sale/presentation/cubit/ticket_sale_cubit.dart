@@ -11,25 +11,40 @@ class TicketSaleCubit extends Cubit<TicketSaleState> {
   TicketSaleCubit(this._cinemaRepo, this._showtimeRepo, this._bookingRepo)
     : super(TicketSaleInitial());
 
-  Future<void> loadInitialData() async {
+  int? _defaultCinemaId;
+  bool _isCinemaFixed = false;
+
+  Future<void> loadInitialData({int? defaultCinemaId}) async {
+    if (defaultCinemaId != null) {
+      _defaultCinemaId = defaultCinemaId;
+      _isCinemaFixed = true;
+    }
     emit(TicketSaleLoading());
     try {
       final cinemas = await _cinemaRepo.getAllCinemas();
       if (cinemas.isEmpty) {
-        emit(TicketSaleLoaded(cinemas: [], selectedCinemaId: null));
+        emit(TicketSaleLoaded(cinemas: [], selectedCinemaId: null, isCinemaFixed: _isCinemaFixed));
         return;
       }
 
-      final firstCinema = cinemas.first;
-      final showtimesData = await _showtimeRepo.getByCinemaId(firstCinema.id);
-      final List<ShowtimeModel> showtimes = _parseShowtimes(showtimesData);
+      CinemaModel selectedCinema = cinemas.first;
+      if (_defaultCinemaId != null) {
+        final matched = cinemas.where((c) => c.id == _defaultCinemaId).firstOrNull;
+        if (matched != null) {
+          selectedCinema = matched;
+        }
+      }
+
+      final showtimesData = await _showtimeRepo.getByCinemaId(selectedCinema.id);
+      final List<ShowtimeModel> showtimes = _parseShowtimes(showtimesData, selectedCinema.id);
 
       final movies = _extractMovies(showtimes);
 
       emit(
         TicketSaleLoaded(
-          cinemas: cinemas,
-          selectedCinemaId: firstCinema.id,
+          cinemas: _isCinemaFixed ? [selectedCinema] : cinemas,
+          selectedCinemaId: selectedCinema.id,
+          isCinemaFixed: _isCinemaFixed,
           cinemaShowtimes: showtimes,
           moviesForCinema: movies,
           selectedMovieId: movies.isNotEmpty ? movies.first.id : null,
@@ -41,18 +56,20 @@ class TicketSaleCubit extends Cubit<TicketSaleState> {
   }
 
   Future<void> selectCinema(int cinemaId) async {
+    if (_isCinemaFixed) return;
     if (state is TicketSaleLoaded) {
       final currentState = state as TicketSaleLoaded;
       emit(TicketSaleLoading());
       try {
         final showtimesData = await _showtimeRepo.getByCinemaId(cinemaId);
-        final List<ShowtimeModel> showtimes = _parseShowtimes(showtimesData);
+        final List<ShowtimeModel> showtimes = _parseShowtimes(showtimesData, cinemaId);
         final movies = _extractMovies(showtimes);
 
         emit(
           TicketSaleLoaded(
             cinemas: currentState.cinemas,
             selectedCinemaId: cinemaId,
+            isCinemaFixed: _isCinemaFixed,
             cinemaShowtimes: showtimes,
             moviesForCinema: movies,
             selectedMovieId: movies.isNotEmpty ? movies.first.id : null,
@@ -130,16 +147,25 @@ class TicketSaleCubit extends Cubit<TicketSaleState> {
     return false;
   }
 
-  List<ShowtimeModel> _parseShowtimes(Map<String, dynamic> data) {
+  List<ShowtimeModel> _parseShowtimes(Map<String, dynamic> data, [int? cinemaId]) {
     final List<ShowtimeModel> allShowtimes = [];
+    final now = DateTime.now();
+    final endOfTomorrow = DateTime(now.year, now.month, now.day + 1, 23, 59, 59, 999);
 
     // The backend returns a map keyed by YYYY-MM-DD
     data.forEach((dateString, list) {
       if (list is List) {
         for (var item in list) {
           final st = ShowtimeModel.fromJson(item as Map<String, dynamic>);
-          // Filter out past showtimes or completed/cancelled
-          if (st.status != 'COMPLETED' && st.status != 'CANCELLED') {
+          // Ensure showtime belongs to cinema if specified
+          if (cinemaId != null && st.room?.cinemaId != null && st.room!.cinemaId != cinemaId) {
+            continue;
+          }
+          // Filter: only showtimes from now until end of tomorrow
+          if (st.status != 'COMPLETED' &&
+              st.status != 'CANCELLED' &&
+              st.publicStartTime.isAfter(now) &&
+              st.publicStartTime.isBefore(endOfTomorrow)) {
             allShowtimes.add(st);
           }
         }

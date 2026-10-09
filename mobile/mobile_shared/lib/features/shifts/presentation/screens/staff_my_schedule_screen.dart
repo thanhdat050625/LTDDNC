@@ -46,31 +46,6 @@ class _StaffMyScheduleScreenState extends State<StaffMyScheduleScreen> {
     }
   }
 
-  String _getRoleLabel(String role, AppLocalizations l10n) {
-    switch (role) {
-      case 'TICKET_COUNTER':
-        return l10n.shiftRoleTicketCounter;
-      case 'SCANNER_GATE':
-        return l10n.shiftRoleScannerGate;
-      case 'CONCESSION':
-        return l10n.shiftRoleConcession;
-      default:
-        return l10n.shiftRoleGeneral;
-    }
-  }
-
-  Color _getRoleColor(String role) {
-    switch (role) {
-      case 'TICKET_COUNTER':
-        return const Color(0xFFF59E0B);
-      case 'SCANNER_GATE':
-        return const Color(0xFF10B981);
-      case 'CONCESSION':
-        return const Color(0xFFEC4899);
-      default:
-        return const Color(0xFF6366F1);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -123,13 +98,13 @@ class _StaffMyScheduleScreenState extends State<StaffMyScheduleScreen> {
             onRefresh: () => context.read<StaffMyScheduleCubit>().loadSchedule(),
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: EdgeInsets.all(theme.spacingMd),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // --- HEADER CHUYỂN TUẦN ---
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: theme.spacingMd, vertical: theme.spacingSm),
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
                       color: theme.surface,
                       borderRadius: BorderRadius.circular(theme.radiusMd),
@@ -139,42 +114,38 @@ class _StaffMyScheduleScreenState extends State<StaffMyScheduleScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         IconButton(
-                          icon: const Icon(LucideIcons.chevronLeft),
+                          icon: const Icon(LucideIcons.chevronLeft, size: 18),
                           color: theme.textSecondary,
+                          constraints: const BoxConstraints(minWidth: 34, minHeight: 34),
+                          padding: EdgeInsets.zero,
                           onPressed: () => context.read<StaffMyScheduleCubit>().previousWeek(),
                         ),
                         InkWell(
                           onTap: () => context.read<StaffMyScheduleCubit>().currentWeek(),
-                          child: Column(
-                            children: [
-                              Text(
-                                '${_formatDate(loadedState.weekStartDate)} - ${_formatDate(weekEnd)}',
-                                style: textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: theme.textPrimary,
-                                ),
-                              ),
-                              Text(
-                                l10n.shiftCurrentWeek,
-                                style: textTheme.bodySmall?.copyWith(color: theme.primary),
-                              ),
-                            ],
+                          child: Text(
+                            '${_formatDate(loadedState.weekStartDate)} - ${_formatDate(weekEnd)}',
+                            style: textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: theme.textPrimary,
+                            ),
                           ),
                         ),
                         IconButton(
-                          icon: const Icon(LucideIcons.chevronRight),
+                          icon: const Icon(LucideIcons.chevronRight, size: 18),
                           color: theme.textSecondary,
+                          constraints: const BoxConstraints(minWidth: 34, minHeight: 34),
+                          padding: EdgeInsets.zero,
                           onPressed: () => context.read<StaffMyScheduleCubit>().nextWeek(),
                         ),
                       ],
                     ),
                   ),
 
-                  SizedBox(height: theme.spacingMd),
+                  const SizedBox(height: 8),
 
                   // --- THANH LỊCH 7 NGÀY TRONG TUẦN ---
                   Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                    padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
                     decoration: BoxDecoration(
                       color: theme.surface,
                       borderRadius: BorderRadius.circular(theme.radiusMd),
@@ -194,7 +165,7 @@ class _StaffMyScheduleScreenState extends State<StaffMyScheduleScreen> {
                             onTap: () => context.read<StaffMyScheduleCubit>().selectDate(d),
                             borderRadius: BorderRadius.circular(theme.radiusSm),
                             child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              padding: const EdgeInsets.symmetric(vertical: 5),
                               decoration: BoxDecoration(
                                 color: isSelected ? theme.primary : Colors.transparent,
                                 borderRadius: BorderRadius.circular(theme.radiusSm),
@@ -211,9 +182,10 @@ class _StaffMyScheduleScreenState extends State<StaffMyScheduleScreen> {
                                           ? Colors.white
                                           : (isToday ? theme.primary : theme.textSecondary),
                                       fontWeight: isToday || isSelected ? FontWeight.bold : FontWeight.normal,
+                                      fontSize: 11,
                                     ),
                                   ),
-                                  const SizedBox(height: 4),
+                                  const SizedBox(height: 2),
                                   Text(
                                     '${d.day}',
                                     style: textTheme.titleSmall?.copyWith(
@@ -221,13 +193,14 @@ class _StaffMyScheduleScreenState extends State<StaffMyScheduleScreen> {
                                           ? Colors.white
                                           : (isToday ? theme.primary : theme.textPrimary),
                                       fontWeight: FontWeight.bold,
+                                      fontSize: 13,
                                     ),
                                   ),
-                                  const SizedBox(height: 4),
+                                  const SizedBox(height: 2),
                                   // Shift indicator dot
                                   Container(
-                                    width: 6,
-                                    height: 6,
+                                    width: 5,
+                                    height: 5,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       color: hasShift
@@ -244,22 +217,22 @@ class _StaffMyScheduleScreenState extends State<StaffMyScheduleScreen> {
                     ),
                   ),
 
-                  SizedBox(height: theme.spacingLg),
+                  const SizedBox(height: 10),
 
                   // --- DANH SÁCH CA LÀM CỦA NGÀY ĐƯỢC CHỌN ---
                   Text(
                     'Ca làm việc ngày ${_formatDate(loadedState.selectedDate)}',
-                    style: textTheme.titleMedium?.copyWith(
+                    style: textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: theme.textPrimary,
                     ),
                   ),
-                  SizedBox(height: theme.spacingSm),
+                  const SizedBox(height: 6),
 
                   if (schedulesForDate.isEmpty)
                     Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.all(32),
+                      padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
                         color: theme.surface,
                         borderRadius: BorderRadius.circular(theme.radiusMd),
@@ -268,11 +241,11 @@ class _StaffMyScheduleScreenState extends State<StaffMyScheduleScreen> {
                       child: Center(
                         child: Column(
                           children: [
-                            Icon(LucideIcons.calendarX, size: 40, color: theme.textSecondary),
-                            SizedBox(height: theme.spacingSm),
+                            Icon(LucideIcons.calendarX, size: 32, color: theme.textSecondary),
+                            const SizedBox(height: 6),
                             Text(
                               l10n.shiftEmptyList,
-                              style: textTheme.bodyMedium?.copyWith(color: theme.textSecondary),
+                              style: textTheme.bodySmall?.copyWith(color: theme.textSecondary),
                             ),
                           ],
                         ),
@@ -280,11 +253,9 @@ class _StaffMyScheduleScreenState extends State<StaffMyScheduleScreen> {
                     )
                   else
                     ...schedulesForDate.map((schedule) {
-                      final roleColor = _getRoleColor(schedule.assignedRole);
-
                       return Container(
-                        margin: EdgeInsets.only(bottom: theme.spacingMd),
-                        padding: EdgeInsets.all(theme.spacingMd),
+                        margin: const EdgeInsets.only(bottom: 8),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         decoration: BoxDecoration(
                           color: theme.surface,
                           borderRadius: BorderRadius.circular(theme.radiusMd),
@@ -295,64 +266,51 @@ class _StaffMyScheduleScreenState extends State<StaffMyScheduleScreen> {
                           children: [
                             // Shift name & time
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Row(
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                      decoration: BoxDecoration(
-                                        color: theme.primary.withValues(alpha: 0.15),
-                                        borderRadius: BorderRadius.circular(theme.radiusSm),
-                                      ),
-                                      child: Text(
-                                        '${schedule.startTime} - ${schedule.endTime}',
-                                        style: textTheme.labelMedium?.copyWith(
-                                          color: theme.primary,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(width: theme.spacingSm),
-                                    Text(
-                                      schedule.shiftName,
-                                      style: textTheme.titleMedium?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: theme.textPrimary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
                                   decoration: BoxDecoration(
-                                    color: roleColor.withValues(alpha: 0.15),
+                                    color: theme.primary.withValues(alpha: 0.15),
                                     borderRadius: BorderRadius.circular(theme.radiusSm),
                                   ),
                                   child: Text(
-                                    _getRoleLabel(schedule.assignedRole, l10n),
+                                    '${schedule.startTime} - ${schedule.endTime}',
                                     style: textTheme.labelSmall?.copyWith(
-                                      color: roleColor,
+                                      color: theme.primary,
                                       fontWeight: FontWeight.bold,
+                                      fontSize: 11,
                                     ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    schedule.shiftName,
+                                    style: textTheme.titleSmall?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: theme.textPrimary,
+                                      fontSize: 13,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ],
                             ),
 
-                            Divider(color: theme.divider, height: theme.spacingLg),
+                            Divider(color: theme.divider, height: 10),
 
                             // Cinema
                             Row(
                               children: [
-                                Icon(LucideIcons.building, size: 16, color: theme.textSecondary),
-                                SizedBox(width: theme.spacingSm),
+                                Icon(LucideIcons.building, size: 14, color: theme.textSecondary),
+                                const SizedBox(width: 6),
                                 Expanded(
                                   child: Text(
                                     schedule.cinemaName,
-                                    style: textTheme.bodyMedium?.copyWith(
+                                    style: textTheme.bodySmall?.copyWith(
                                       color: theme.textPrimary,
                                       fontWeight: FontWeight.w600,
+                                      fontSize: 12,
                                     ),
                                   ),
                                 ),
@@ -361,18 +319,19 @@ class _StaffMyScheduleScreenState extends State<StaffMyScheduleScreen> {
 
                             // Note (if any)
                             if (schedule.note != null && schedule.note!.isNotEmpty) ...[
-                              SizedBox(height: theme.spacingSm),
+                              const SizedBox(height: 4),
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Icon(LucideIcons.fileText, size: 16, color: theme.textSecondary),
-                                  SizedBox(width: theme.spacingSm),
+                                  Icon(LucideIcons.fileText, size: 13, color: theme.textSecondary),
+                                  const SizedBox(width: 6),
                                   Expanded(
                                     child: Text(
                                       schedule.note!,
                                       style: textTheme.bodySmall?.copyWith(
                                         color: theme.textSecondary,
                                         fontStyle: FontStyle.italic,
+                                        fontSize: 11,
                                       ),
                                     ),
                                   ),
@@ -382,14 +341,14 @@ class _StaffMyScheduleScreenState extends State<StaffMyScheduleScreen> {
 
                             // Assigned By
                             if (schedule.assignedByName != null) ...[
-                              const SizedBox(height: 6),
+                              const SizedBox(height: 4),
                               Row(
                                 children: [
-                                  Icon(LucideIcons.userCheck, size: 14, color: theme.textMuted),
+                                  Icon(LucideIcons.userCheck, size: 12, color: theme.textMuted),
                                   const SizedBox(width: 6),
                                   Text(
                                     '${l10n.shiftAssignedBy}: ${schedule.assignedByName}',
-                                    style: textTheme.labelSmall?.copyWith(color: theme.textMuted),
+                                    style: textTheme.labelSmall?.copyWith(color: theme.textMuted, fontSize: 10.5),
                                   ),
                                 ],
                               ),

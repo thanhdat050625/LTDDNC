@@ -1783,7 +1783,7 @@ abstract class AppLocalizations {
   /// No description provided for @userManagement.
   ///
   /// In vi, this message translates to:
-  /// **'Quản lý người dùng'**
+  /// **'Quản lý tài khoản'**
   String get userManagement;
 
   /// No description provided for @scanBookingCodeWarning.
@@ -2931,6 +2931,60 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Tạo nhân viên'**
   String get saveStaffButton;
+
+  /// No description provided for @editStaffTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chỉnh sửa nhân viên'**
+  String get editStaffTitle;
+
+  /// No description provided for @editStaffSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cập nhật thông tin tài khoản nhân viên'**
+  String get editStaffSubtitle;
+
+  /// No description provided for @updateStaffButton.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cập nhật'**
+  String get updateStaffButton;
+
+  /// No description provided for @staffUpdatedSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cập nhật tài khoản nhân viên thành công'**
+  String get staffUpdatedSuccess;
+
+  /// No description provided for @edit.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chỉnh sửa'**
+  String get edit;
+
+  /// No description provided for @optionalPasswordHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Để trống nếu không muốn đổi mật khẩu'**
+  String get optionalPasswordHint;
+
+  /// No description provided for @staffBranch.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chi nhánh'**
+  String get staffBranch;
+
+  /// No description provided for @selectStaffBranch.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn chi nhánh (rạp)'**
+  String get selectStaffBranch;
+
+  /// No description provided for @noBranchAssigned.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa gán chi nhánh'**
+  String get noBranchAssigned;
 
   /// No description provided for @accountDetailsTitle.
   ///
@@ -4375,7 +4429,7 @@ abstract class AppLocalizations {
   /// No description provided for @posSearchCustomer.
   ///
   /// In vi, this message translates to:
-  /// **'Tìm khách hàng'**
+  /// **'Tìm'**
   String get posSearchCustomer;
 
   /// No description provided for @posSearchCustomerHint.
@@ -5211,6 +5265,72 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Người phân ca'**
   String get shiftAssignedBy;
+
+  /// No description provided for @shiftAddStaff.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thêm'**
+  String get shiftAddStaff;
+
+  /// No description provided for @shiftStaffCount.
+  ///
+  /// In vi, this message translates to:
+  /// **'{count} nhân viên'**
+  String shiftStaffCount(int count);
+
+  /// No description provided for @shiftSelectMultipleStaff.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn nhân viên'**
+  String get shiftSelectMultipleStaff;
+
+  /// No description provided for @shiftSelectedStaffCount.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã chọn {count} nhân viên'**
+  String shiftSelectedStaffCount(int count);
+
+  /// No description provided for @shiftSelectedShiftCount.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã chọn {count} ca'**
+  String shiftSelectedShiftCount(int count);
+
+  /// No description provided for @shiftAssignMultipleSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã phân ca thành công cho {count} nhân viên'**
+  String shiftAssignMultipleSuccess(int count);
+
+  /// No description provided for @shiftToday.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hôm nay'**
+  String get shiftToday;
+
+  /// No description provided for @shiftNoStaffAssigned.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có nhân viên thuộc cụm rạp này'**
+  String get shiftNoStaffAssigned;
+
+  /// No description provided for @shiftReadOnly.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chỉ xem'**
+  String get shiftReadOnly;
+
+  /// No description provided for @shiftNoAvailableShifts.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không có ca làm việc nào có thể phân công trong ngày này'**
+  String get shiftNoAvailableShifts;
+
+  /// No description provided for @shiftCannotModifyPastOrCurrent.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể chỉnh sửa, thêm hoặc xóa ca hiện tại hoặc đã qua'**
+  String get shiftCannotModifyPastOrCurrent;
 }
 
 class _AppLocalizationsDelegate

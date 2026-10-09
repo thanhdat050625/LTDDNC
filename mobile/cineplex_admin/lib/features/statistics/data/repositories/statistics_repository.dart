@@ -31,8 +31,22 @@ class StatisticsRepository {
     return (apiResponse.data as List).map((e) => RevenuePeriodModel.fromJson(e)).toList();
   }
 
-  Future<List<MoviePerformanceModel>> getMoviePerformance() async {
-    final response = await _dioClient.get('/statistics/movies');
+  Future<List<MoviePerformanceModel>> getMoviePerformance({
+    String filterType = 'year',
+    int? year,
+    int? month,
+    String? startDate,
+    String? endDate,
+  }) async {
+    final queryParameters = <String, dynamic>{
+      'filterType': filterType,
+      'timeFrame': filterType,
+      if (year != null) 'year': year,
+      if (month != null) 'month': month,
+      if (startDate != null) 'startDate': startDate,
+      if (endDate != null) 'endDate': endDate,
+    };
+    final response = await _dioClient.get('/statistics/movies', queryParameters: queryParameters);
     final apiResponse = ApiResponse.fromJson(response.data);
     return (apiResponse.data as List).map((e) => MoviePerformanceModel.fromJson(e)).toList();
   }

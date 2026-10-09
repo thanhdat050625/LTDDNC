@@ -179,13 +179,22 @@ class UserDetailBottomSheet extends StatelessWidget {
                     color: roleColor.withValues(alpha: 0.15),
                   ),
                   alignment: Alignment.center,
-                  child: Text(
-                    firstLetter,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: roleColor,
-                    ),
+                  child: ClipOval(
+                    child: user.avatar != null && user.avatar!.isNotEmpty
+                        ? AppCachedImage(
+                            imageUrl: user.avatar!,
+                            width: 44,
+                            height: 44,
+                            fit: BoxFit.cover,
+                          )
+                        : Text(
+                            firstLetter,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: roleColor,
+                            ),
+                          ),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -294,6 +303,16 @@ class UserDetailBottomSheet extends StatelessWidget {
                   label: l10n.phoneLabel,
                   value: user.phone != null && user.phone!.isNotEmpty ? user.phone! : l10n.notProvided,
                 ),
+                if (user.isStaff) ...[
+                  _buildDivider(theme),
+                  _buildInfoRow(
+                    theme,
+                    icon: LucideIcons.mapPin,
+                    label: l10n.staffBranch,
+                    value: user.cinema?.name ?? l10n.noBranchAssigned,
+                    valueColor: user.cinema != null ? const Color(0xFF3A86FF) : null,
+                  ),
+                ],
                 if (user.isCustomer) ...[
                   _buildDivider(theme),
                   _buildInfoRow(

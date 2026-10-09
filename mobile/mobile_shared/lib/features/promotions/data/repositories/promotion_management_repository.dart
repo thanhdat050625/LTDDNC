@@ -34,4 +34,30 @@ class PromotionManagementRepository {
   Future<void> deletePromotion(int id) async {
     await _dioClient.delete('/promotions/$id');
   }
+
+  Future<List<PromotionModel>> getActivePromotions() async {
+    final response = await _dioClient.get('/promotions/active');
+    final raw = response.data;
+    final payload = (raw is Map && raw.containsKey('data')) ? raw['data'] : raw;
+    if (payload is List) {
+      return payload
+          .map((e) => PromotionModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+    }
+    return [];
+  }
+
+  Future<dynamic> checkPromotion(
+    String code, {
+    int? movieId,
+    num? orderTotal,
+  }) async {
+    final response = await _dioClient.post('/promotions/check-promotion', data: {
+      'code': code,
+      if (movieId != null) 'movieId': movieId,
+      if (orderTotal != null) 'orderTotal': orderTotal,
+    });
+    final raw = response.data;
+    return (raw is Map && raw.containsKey('data')) ? raw['data'] : raw;
+  }
 }

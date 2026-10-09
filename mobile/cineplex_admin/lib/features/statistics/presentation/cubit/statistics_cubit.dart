@@ -37,6 +37,7 @@ class StatisticsLoaded extends StatisticsState {
 
   String get currentTimeFrame => filterType;
   num get totalFilteredRevenue => revenuePeriods.fold<num>(0, (sum, p) => sum + p.revenue);
+  int get totalFilteredTickets => movies.fold<int>(0, (sum, m) => sum + m.ticketsSold);
 
   @override
   List<Object?> get props => [
@@ -119,7 +120,13 @@ class StatisticsCubit extends Cubit<StatisticsState> {
           startDate: _formatDate(effectiveStart),
           endDate: _formatDate(effectiveEnd),
         ),
-        repository.getMoviePerformance(),
+        repository.getMoviePerformance(
+          filterType: filterType,
+          year: effectiveYear,
+          month: effectiveMonth,
+          startDate: _formatDate(effectiveStart),
+          endDate: _formatDate(effectiveEnd),
+        ),
       ]);
 
       emit(StatisticsLoaded(
@@ -172,16 +179,26 @@ class StatisticsCubit extends Cubit<StatisticsState> {
     ));
 
     try {
-      final revenue = await repository.getRevenueStatistics(
-        filterType: newType,
-        year: newYear,
-        month: newMonth,
-        startDate: _formatDate(newStart),
-        endDate: _formatDate(newEnd),
-      );
+      final results = await Future.wait([
+        repository.getRevenueStatistics(
+          filterType: newType,
+          year: newYear,
+          month: newMonth,
+          startDate: _formatDate(newStart),
+          endDate: _formatDate(newEnd),
+        ),
+        repository.getMoviePerformance(
+          filterType: newType,
+          year: newYear,
+          month: newMonth,
+          startDate: _formatDate(newStart),
+          endDate: _formatDate(newEnd),
+        ),
+      ]);
 
       emit(currentState.copyWith(
-        revenuePeriods: revenue,
+        revenuePeriods: results[0] as List<RevenuePeriodModel>,
+        movies: results[1] as List<MoviePerformanceModel>,
         filterType: newType,
         selectedYear: newYear,
         selectedMonth: newMonth,

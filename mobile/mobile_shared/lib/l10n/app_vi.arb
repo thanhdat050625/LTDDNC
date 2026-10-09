@@ -364,7 +364,7 @@
   "loyaltyOrderCode": "Mã đơn hàng",
   "loyaltyTransactionTime": "Thời gian giao dịch",
   "managementSection": "Quản lý & Nghiệp vụ",
-  "userManagement": "Quản lý người dùng",
+  "userManagement": "Quản lý tài khoản",
   "scanBookingCodeWarning": "Đây là mã đặt vé (BK-), vui lòng quét mã QR của từng vé (bắt đầu bằng TKT-).",
   "scanAlreadyCheckedIn": "Vé này đã được soát trước đó!",
   "scanTicketNotActive": "Vé không còn hiệu lực!",
@@ -687,6 +687,15 @@
   "passwordLabel": "Mật khẩu",
   "confirmPasswordLabel": "Xác nhận mật khẩu",
   "saveStaffButton": "Tạo nhân viên",
+  "editStaffTitle": "Chỉnh sửa nhân viên",
+  "editStaffSubtitle": "Cập nhật thông tin tài khoản nhân viên",
+  "updateStaffButton": "Cập nhật",
+  "staffUpdatedSuccess": "Cập nhật tài khoản nhân viên thành công",
+  "edit": "Chỉnh sửa",
+  "optionalPasswordHint": "Để trống nếu không muốn đổi mật khẩu",
+  "staffBranch": "Chi nhánh",
+  "selectStaffBranch": "Chọn chi nhánh (rạp)",
+  "noBranchAssigned": "Chưa gán chi nhánh",
   "accountDetailsTitle": "Chi tiết tài khoản",
   "joinedDateLabel": "Ngày tham gia",
   "loyaltyPointsTitle": "Điểm tích lũy",
@@ -1059,7 +1068,7 @@
     }
   },
   "posCancelPoints": "Hủy",
-  "posSearchCustomer": "Tìm khách hàng",
+  "posSearchCustomer": "Tìm",
   "posSearchCustomerHint": "Nhập email hoặc số điện thoại...",
   "posCustomerNotFound": "Không tìm thấy khách hàng",
   "posChangeCustomer": "Đổi khách hàng",
@@ -1240,5 +1249,44 @@
   "shiftCurrentWeek": "Tuần này",
   "shiftNextWeek": "Tuần sau",
   "shiftPreviousWeek": "Tuần trước",
-  "shiftAssignedBy": "Người phân ca"
+  "shiftAssignedBy": "Người phân ca",
+  "shiftAddStaff": "Thêm",
+  "shiftStaffCount": "{count} nhân viên",
+  "@shiftStaffCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shiftSelectMultipleStaff": "Chọn nhân viên",
+  "shiftSelectedStaffCount": "Đã chọn {count} nhân viên",
+  "@shiftSelectedStaffCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shiftSelectedShiftCount": "Đã chọn {count} ca",
+  "@shiftSelectedShiftCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shiftAssignMultipleSuccess": "Đã phân ca thành công cho {count} nhân viên",
+  "@shiftAssignMultipleSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shiftToday": "Hôm nay",
+  "shiftNoStaffAssigned": "Chưa có nhân viên thuộc cụm rạp này",
+  "shiftReadOnly": "Chỉ xem",
+  "shiftNoAvailableShifts": "Không có ca làm việc nào có thể phân công trong ngày này",
+  "shiftCannotModifyPastOrCurrent": "Không thể chỉnh sửa, thêm hoặc xóa ca hiện tại hoặc đã qua"
 }

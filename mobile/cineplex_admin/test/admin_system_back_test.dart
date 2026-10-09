@@ -85,7 +85,13 @@ class _FakeStatisticsRepo implements StatisticsRepository {
   }
 
   @override
-  Future<List<MoviePerformanceModel>> getMoviePerformance() async {
+  Future<List<MoviePerformanceModel>> getMoviePerformance({
+    String filterType = 'year',
+    int? year,
+    int? month,
+    String? startDate,
+    String? endDate,
+  }) async {
     return const [
       MoviePerformanceModel(
         id: 1,

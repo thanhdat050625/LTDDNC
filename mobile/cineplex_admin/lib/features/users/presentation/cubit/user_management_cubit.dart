@@ -208,6 +208,8 @@ class UserManagementCubit extends Cubit<UserManagementState> {
     required String email,
     required String password,
     String? phone,
+    String? avatarFilePath,
+    int? cinemaId,
   }) async {
     final currentState = state;
     if (currentState is UserManagementLoaded) {
@@ -220,6 +222,8 @@ class UserManagementCubit extends Cubit<UserManagementState> {
         email: email,
         password: password,
         phone: phone,
+        avatarFilePath: avatarFilePath,
+        cinemaId: cinemaId,
       );
       // Reload on success
       await loadUsers();
@@ -227,6 +231,41 @@ class UserManagementCubit extends Cubit<UserManagementState> {
     } catch (e) {
       if (currentState is UserManagementLoaded) {
         emit(currentState.copyWith(isCreatingStaff: false));
+      }
+      return false;
+    }
+  }
+
+  Future<bool> updateStaff({
+    required int staffId,
+    required String fullName,
+    String? email,
+    String? password,
+    String? phone,
+    String? avatarFilePath,
+    int? cinemaId,
+  }) async {
+    final currentState = state;
+    if (currentState is UserManagementLoaded) {
+      emit(currentState.copyWith(updatingUserId: staffId));
+    }
+
+    try {
+      await repository.updateStaff(
+        staffId: staffId,
+        fullName: fullName,
+        email: email,
+        password: password,
+        phone: phone,
+        avatarFilePath: avatarFilePath,
+        cinemaId: cinemaId,
+      );
+      // Reload on success
+      await loadUsers();
+      return true;
+    } catch (e) {
+      if (currentState is UserManagementLoaded) {
+        emit(currentState.copyWith(clearUpdatingUser: true));
       }
       return false;
     }
@@ -252,8 +291,11 @@ class UserManagementCubit extends Cubit<UserManagementState> {
             status: newStatus,
             loyaltyPoints: u.loyaltyPoints,
             gender: u.gender,
+            avatar: u.avatar,
             dateOfBirth: u.dateOfBirth,
             createdAt: u.createdAt,
+            cinemaId: u.cinemaId,
+            cinema: u.cinema,
           );
         }
         return u;

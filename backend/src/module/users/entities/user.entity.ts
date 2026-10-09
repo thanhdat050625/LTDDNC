@@ -1,8 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm';
 import { EUserRole, EUserStatus } from '../enums/user.enum';
 import { Booking } from '../../booking/entities/booking.entity';
 import { SeatHold } from '../../booking/entities/seat-hold.entity';
 import { Notification } from '../../notification/entities/notification.entity';
+import { Cinema } from '../../cinema/entities/cinema.entity';
 
 @Entity('users')
 export class User {
@@ -23,6 +24,13 @@ export class User {
 
   @Column({ type: 'text', nullable: true })
   avatar: string;
+
+  @Column({ nullable: true })
+  cinemaId: number;
+
+  @ManyToOne(() => Cinema, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'cinemaId' })
+  cinema: Cinema;
 
   @Column({ unique: true })
   email: string;

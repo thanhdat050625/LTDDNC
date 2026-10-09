@@ -129,15 +129,35 @@ class StaffShiftManagementCubit extends Cubit<StaffShiftManagementState> {
     required String assignedRole,
     String? note,
   }) async {
+    return createMultipleSchedules(
+      staffIds: [staffId],
+      cinemaId: cinemaId,
+      shiftId: shiftId,
+      workDate: workDate,
+      assignedRole: assignedRole,
+      note: note,
+    );
+  }
+
+  Future<bool> createMultipleSchedules({
+    required List<int> staffIds,
+    required int cinemaId,
+    required int shiftId,
+    required String workDate,
+    required String assignedRole,
+    String? note,
+  }) async {
+    if (staffIds.isEmpty) return false;
     try {
-      await _shiftRepository.createSchedule({
-        'staffId': staffId,
-        'cinemaId': cinemaId,
-        'shiftId': shiftId,
-        'workDate': workDate,
-        'assignedRole': assignedRole,
-        if (note != null && note.isNotEmpty) 'note': note,
-      });
+      final futures = staffIds.map((staffId) => _shiftRepository.createSchedule({
+            'staffId': staffId,
+            'cinemaId': cinemaId,
+            'shiftId': shiftId,
+            'workDate': workDate,
+            'assignedRole': assignedRole,
+            if (note != null && note.isNotEmpty) 'note': note,
+          }));
+      await Future.wait(futures);
       await _fetchSchedules();
       return true;
     } catch (e) {
@@ -169,6 +189,34 @@ class StaffShiftManagementCubit extends Cubit<StaffShiftManagementState> {
       return true;
     } catch (e) {
       final msg = e is AppException ? e.message : 'Lỗi hủy ca làm: $e';
+      emit(StaffShiftManagementError(msg));
+      _fetchSchedules();
+      return false;
+    }
+  }
+
+  Future<bool> syncSchedules({
+    required int cinemaId,
+    required List<int> shiftIds,
+    required List<int> staffIds,
+    required List<String> dates,
+    required List<int> initialShiftIds,
+    required List<int> initialStaffIds,
+  }) async {
+    try {
+      await _shiftRepository.bulkSyncSchedules({
+        'cinemaId': cinemaId,
+        'shiftIds': shiftIds,
+        'staffIds': staffIds,
+        'dates': dates,
+        'initialShiftIds': initialShiftIds,
+        'initialStaffIds': initialStaffIds,
+        'assignedRole': 'GENERAL',
+      });
+      await _fetchSchedules();
+      return true;
+    } catch (e) {
+      final msg = e is AppException ? e.message : 'Lỗi đồng bộ phân ca: $e';
       emit(StaffShiftManagementError(msg));
       _fetchSchedules();
       return false;

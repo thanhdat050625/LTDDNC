@@ -79,18 +79,82 @@ class UserManagementRepository {
     );
   }
 
+  Future<List<CinemaModel>> getCinemas() async {
+    final response = await _dioClient.get('/cinemas', queryParameters: {'limit': 100});
+    final data = response.data;
+    List<dynamic> items = [];
+    if (data is Map && data.containsKey('data')) {
+      items = data['data'] is List ? data['data'] : [];
+    } else if (data is Map && data.containsKey('items')) {
+      items = data['items'];
+    } else if (data is List) {
+      items = data;
+    }
+    return items.map((e) => CinemaModel.fromJson(e as Map<String, dynamic>)).toList();
+  }
+
   Future<UserModel> createStaff({
     required String fullName,
     required String email,
     required String password,
     String? phone,
+    String? avatarFilePath,
+    int? cinemaId,
   }) async {
-    final response = await _dioClient.post('/users/staff', data: {
+    final payload = <String, dynamic>{
       'fullName': fullName.trim(),
       'email': email.trim(),
       'password': password,
       if (phone != null && phone.trim().isNotEmpty) 'phone': phone.trim(),
-    });
+      if (cinemaId != null) 'cinemaId': cinemaId,
+    };
+
+    dynamic requestData;
+    if (avatarFilePath != null && avatarFilePath.isNotEmpty) {
+      final formData = FormData.fromMap(payload);
+      formData.files.add(
+        MapEntry('avatar', await MultipartFile.fromFile(avatarFilePath)),
+      );
+      requestData = formData;
+    } else {
+      requestData = payload;
+    }
+
+    final response = await _dioClient.post('/users/staff', data: requestData);
+    final raw = response.data as Map<String, dynamic>;
+    final data = raw['data'] as Map<String, dynamic>;
+    return UserModel.fromJson(data);
+  }
+
+  Future<UserModel> updateStaff({
+    required int staffId,
+    required String fullName,
+    String? email,
+    String? password,
+    String? phone,
+    String? avatarFilePath,
+    int? cinemaId,
+  }) async {
+    final payload = <String, dynamic>{
+      'fullName': fullName.trim(),
+      if (email != null && email.trim().isNotEmpty) 'email': email.trim(),
+      if (password != null && password.trim().isNotEmpty) 'password': password.trim(),
+      'phone': phone?.trim() ?? '',
+      if (cinemaId != null) 'cinemaId': cinemaId,
+    };
+
+    dynamic requestData;
+    if (avatarFilePath != null && avatarFilePath.isNotEmpty) {
+      final formData = FormData.fromMap(payload);
+      formData.files.add(
+        MapEntry('avatar', await MultipartFile.fromFile(avatarFilePath)),
+      );
+      requestData = formData;
+    } else {
+      requestData = payload;
+    }
+
+    final response = await _dioClient.put('/users/staff/$staffId', data: requestData);
     final raw = response.data as Map<String, dynamic>;
     final data = raw['data'] as Map<String, dynamic>;
     return UserModel.fromJson(data);

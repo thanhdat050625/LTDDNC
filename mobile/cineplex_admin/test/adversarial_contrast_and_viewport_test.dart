@@ -108,7 +108,13 @@ class MockStatisticsRepository implements StatisticsRepository {
   }
 
   @override
-  Future<List<MoviePerformanceModel>> getMoviePerformance() async {
+  Future<List<MoviePerformanceModel>> getMoviePerformance({
+    String filterType = 'year',
+    int? year,
+    int? month,
+    String? startDate,
+    String? endDate,
+  }) async {
     return const [
       MoviePerformanceModel(
         id: 1,
@@ -178,11 +184,16 @@ class MockUserManagementRepository implements UserManagementRepository {
   }
 
   @override
+  Future<List<CinemaModel>> getCinemas() async => const [];
+
+  @override
   Future<UserModel> createStaff({
     required String fullName,
     required String email,
     required String password,
     String? phone,
+    String? avatarFilePath,
+    int? cinemaId,
   }) async {
     return UserModel(
       id: 999,
@@ -191,6 +202,28 @@ class MockUserManagementRepository implements UserManagementRepository {
       role: 'STAFF',
       status: 'ACTIVE',
       phone: phone,
+      cinemaId: cinemaId,
+    );
+  }
+
+  @override
+  Future<UserModel> updateStaff({
+    required int staffId,
+    required String fullName,
+    String? email,
+    String? password,
+    String? phone,
+    String? avatarFilePath,
+    int? cinemaId,
+  }) async {
+    return UserModel(
+      id: staffId,
+      email: email ?? 'staff@cineplex.vn',
+      fullName: fullName,
+      role: 'STAFF',
+      status: 'ACTIVE',
+      phone: phone,
+      cinemaId: cinemaId,
     );
   }
 

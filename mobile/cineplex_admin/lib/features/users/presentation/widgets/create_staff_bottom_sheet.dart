@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -5,16 +6,18 @@ import 'package:mobile_shared/mobile_shared.dart';
 import '../cubit/user_management_cubit.dart';
 
 class CreateStaffBottomSheet extends StatefulWidget {
-  const CreateStaffBottomSheet({super.key});
+  final UserModel? staff;
 
-  static Future<bool?> show(BuildContext context) {
+  const CreateStaffBottomSheet({super.key, this.staff});
+
+  static Future<bool?> show(BuildContext context, {UserModel? staff}) {
     return showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) => BlocProvider.value(
         value: context.read<UserManagementCubit>(),
-        child: const CreateStaffBottomSheet(),
+        child: CreateStaffBottomSheet(staff: staff),
       ),
     );
   }
@@ -25,16 +28,44 @@ class CreateStaffBottomSheet extends StatefulWidget {
 
 class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
   final _formKey = GlobalKey<FormState>();
-  final _fullNameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
+  late final TextEditingController _fullNameController;
+  late final TextEditingController _emailController;
+  late final TextEditingController _phoneController;
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
+  File? _avatarFile;
+  String? _currentAvatarUrl;
+  List<CinemaModel> _cinemas = [];
+  int? _selectedCinemaId;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   bool _isLoading = false;
   String? _errorMessage;
+
+  bool get _isEdit => widget.staff != null;
+
+  @override
+  void initState() {
+    super.initState();
+    _fullNameController = TextEditingController(text: widget.staff?.fullName ?? '');
+    _emailController = TextEditingController(text: widget.staff?.email ?? '');
+    _phoneController = TextEditingController(text: widget.staff?.phone ?? '');
+    _currentAvatarUrl = widget.staff?.avatar;
+    _selectedCinemaId = widget.staff?.cinemaId;
+    _loadCinemas();
+  }
+
+  Future<void> _loadCinemas() async {
+    try {
+      final cinemas = await context.read<UserManagementCubit>().repository.getCinemas();
+      if (mounted) {
+        setState(() {
+          _cinemas = cinemas;
+        });
+      }
+    } catch (_) {}
+  }
 
   @override
   void dispose() {
@@ -46,6 +77,52 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
     super.dispose();
   }
 
+  Future<void> _pickAvatar() async {
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        final theme = CineplexColors.of(ctx);
+        final l10n = AppLocalizations.of(ctx)!;
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          decoration: BoxDecoration(
+            color: theme.surface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+          ),
+          child: SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: Icon(LucideIcons.camera, color: theme.primary),
+                  title: Text(l10n.takePhoto, style: TextStyle(color: theme.textPrimary)),
+                  onTap: () => Navigator.pop(ctx, ImageSource.camera),
+                ),
+                ListTile(
+                  leading: Icon(LucideIcons.image, color: theme.primary),
+                  title: Text(l10n.chooseFromGallery, style: TextStyle(color: theme.textPrimary)),
+                  onTap: () => Navigator.pop(ctx, ImageSource.gallery),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (source == null) return;
+
+    try {
+      final picked = await ImagePicker().pickImage(source: source);
+      if (picked != null && mounted) {
+        setState(() {
+          _avatarFile = File(picked.path);
+        });
+      }
+    } catch (_) {}
+  }
+
   Future<void> _submit(AppLocalizations l10n) async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -54,14 +131,33 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
       _errorMessage = null;
     });
 
-    final success = await context.read<UserManagementCubit>().createStaff(
-          fullName: _fullNameController.text.trim(),
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
-          phone: _phoneController.text.trim().isNotEmpty
-              ? _phoneController.text.trim()
-              : null,
-        );
+    final cubit = context.read<UserManagementCubit>();
+    final bool success;
+
+    if (_isEdit) {
+      success = await cubit.updateStaff(
+        staffId: widget.staff!.id,
+        fullName: _fullNameController.text.trim(),
+        email: _emailController.text.trim(),
+        password: _passwordController.text.isNotEmpty ? _passwordController.text : null,
+        phone: _phoneController.text.trim().isNotEmpty
+            ? _phoneController.text.trim()
+            : null,
+        avatarFilePath: _avatarFile?.path,
+        cinemaId: _selectedCinemaId,
+      );
+    } else {
+      success = await cubit.createStaff(
+        fullName: _fullNameController.text.trim(),
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+        phone: _phoneController.text.trim().isNotEmpty
+            ? _phoneController.text.trim()
+            : null,
+        avatarFilePath: _avatarFile?.path,
+        cinemaId: _selectedCinemaId,
+      );
+    }
 
     if (!mounted) return;
 
@@ -124,9 +220,9 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
                       color: const Color(0xFF3A86FF).withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Icon(
-                      LucideIcons.userPlus,
-                      color: Color(0xFF3A86FF),
+                    child: Icon(
+                      _isEdit ? LucideIcons.pencil : LucideIcons.userPlus,
+                      color: const Color(0xFF3A86FF),
                       size: 18,
                     ),
                   ),
@@ -136,7 +232,7 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          l10n.createStaffTitle,
+                          _isEdit ? l10n.editStaffTitle : l10n.createStaffTitle,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -144,7 +240,7 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
                           ),
                         ),
                         Text(
-                          l10n.createStaffSubtitle,
+                          _isEdit ? l10n.editStaffSubtitle : l10n.createStaffSubtitle,
                           style: TextStyle(
                             fontSize: 11,
                             color: theme.textSecondary,
@@ -161,6 +257,69 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
                     padding: const EdgeInsets.all(8),
                   ),
                 ],
+              ),
+              const SizedBox(height: 12),
+
+              // Avatar picker
+              Center(
+                child: Stack(
+                  children: [
+                    Container(
+                      width: 72,
+                      height: 72,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: theme.surface,
+                        border: Border.all(
+                          color: theme.primary,
+                          width: 2,
+                        ),
+                      ),
+                      child: ClipOval(
+                        child: _avatarFile != null
+                            ? Image.file(
+                                _avatarFile!,
+                                width: 72,
+                                height: 72,
+                                fit: BoxFit.cover,
+                              )
+                            : (_currentAvatarUrl != null && _currentAvatarUrl!.isNotEmpty
+                                ? AppCachedImage(
+                                    imageUrl: _currentAvatarUrl!,
+                                    width: 72,
+                                    height: 72,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Icon(
+                                    LucideIcons.user,
+                                    size: 36,
+                                    color: theme.textSecondary.withValues(alpha: 0.5),
+                                  )),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Material(
+                        color: theme.primary,
+                        shape: const CircleBorder(),
+                        elevation: 2,
+                        child: InkWell(
+                          customBorder: const CircleBorder(),
+                          onTap: _pickAvatar,
+                          child: const Padding(
+                            padding: EdgeInsets.all(5.0),
+                            child: Icon(
+                              LucideIcons.camera,
+                              size: 14,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 10),
 
@@ -236,11 +395,61 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
               ),
               const SizedBox(height: 8),
 
+              // Branch / Cinema Dropdown
+              DropdownButtonFormField<int>(
+                initialValue: _selectedCinemaId,
+                isExpanded: true,
+                dropdownColor: theme.surface,
+                style: TextStyle(color: theme.textPrimary, fontSize: 14),
+                decoration: InputDecoration(
+                  labelText: l10n.staffBranch,
+                  hintText: l10n.selectStaffBranch,
+                  labelStyle: TextStyle(color: theme.textSecondary, fontSize: 14),
+                  hintStyle: TextStyle(color: theme.textSecondary.withValues(alpha: 0.6), fontSize: 14),
+                  prefixIcon: Icon(LucideIcons.mapPin, size: 20, color: theme.textSecondary),
+                  filled: true,
+                  fillColor: theme.surface,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: theme.textSecondary.withValues(alpha: 0.15),
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: theme.textSecondary.withValues(alpha: 0.15),
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: theme.primary,
+                      width: 1.5,
+                    ),
+                  ),
+                ),
+                items: [
+                  ..._cinemas.map((c) => DropdownMenuItem<int>(
+                    value: c.id,
+                    child: Text(
+                      c.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(color: theme.textPrimary),
+                    ),
+                  )),
+                ],
+                onChanged: (val) => setState(() => _selectedCinemaId = val),
+              ),
+              const SizedBox(height: 8),
+
               // Password
               AppTextField(
                 controller: _passwordController,
                 label: l10n.passwordLabel,
-                hint: l10n.passwordPlaceholder,
+                hint: _isEdit ? l10n.optionalPasswordHint : l10n.passwordPlaceholder,
                 prefixIcon: LucideIcons.lock,
                 obscureText: _obscurePassword,
                 suffixIcon: IconButton(
@@ -254,8 +463,8 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
                   onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                 ),
                 validator: (val) {
-                  if (val == null || val.isEmpty) return l10n.fieldRequired;
-                  if (val.length < 6) return l10n.passwordMinLength;
+                  if (!_isEdit && (val == null || val.isEmpty)) return l10n.fieldRequired;
+                  if (val != null && val.isNotEmpty && val.length < 6) return l10n.passwordMinLength;
                   return null;
                 },
               ),
@@ -265,7 +474,7 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
               AppTextField(
                 controller: _confirmPasswordController,
                 label: l10n.confirmPasswordLabel,
-                hint: l10n.confirmPasswordPlaceholder,
+                hint: _isEdit ? l10n.optionalPasswordHint : l10n.confirmPasswordPlaceholder,
                 prefixIcon: LucideIcons.lockKeyhole,
                 obscureText: _obscureConfirmPassword,
                 suffixIcon: IconButton(
@@ -279,8 +488,8 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
                   onPressed: () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
                 ),
                 validator: (val) {
-                  if (val == null || val.isEmpty) return l10n.fieldRequired;
-                  if (val != _passwordController.text) {
+                  if (!_isEdit && (val == null || val.isEmpty)) return l10n.fieldRequired;
+                  if (_passwordController.text.isNotEmpty && val != _passwordController.text) {
                     return l10n.confirmPasswordMismatch;
                   }
                   return null;
@@ -290,7 +499,7 @@ class _CreateStaffBottomSheetState extends State<CreateStaffBottomSheet> {
 
               // Submit Button
               AppButton(
-                text: l10n.saveStaffButton,
+                text: _isEdit ? l10n.updateStaffButton : l10n.saveStaffButton,
                 isLoading: _isLoading,
                 icon: LucideIcons.check,
                 onPressed: () => _submit(l10n),

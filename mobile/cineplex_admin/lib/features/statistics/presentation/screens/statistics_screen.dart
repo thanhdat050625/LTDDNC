@@ -47,6 +47,10 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                 children: [
+                  // Filter Bar at the top
+                  _buildFilterBar(context, state, l10n, colorScheme, colors),
+                  const SizedBox(height: 8),
+
                   // KPI Grid
                   GridView.count(
                     crossAxisCount: 2,
@@ -59,14 +63,14 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                       _buildKpiCard(
                         context,
                         title: l10n.totalRevenue,
-                        value: FormatUtils.formatCurrency(summary.revenue.toInt()),
+                        value: FormatUtils.formatCurrency(state.totalFilteredRevenue.toInt()),
                         icon: Icons.monetization_on_outlined,
                         accentColor: colors.accent,
                       ),
                       _buildKpiCard(
                         context,
                         title: l10n.ticketsSold,
-                        value: summary.tickets.toString(),
+                        value: state.totalFilteredTickets.toString(),
                         icon: Icons.confirmation_number_outlined,
                         accentColor: colors.primary,
                       ),
@@ -89,7 +93,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   const SizedBox(height: 8),
 
                   // Revenue Chart Section
-                  _buildRevenueChartSection(context, state, l10n, colorScheme),
+                  _buildRevenueChartSection(context, state, l10n, colorScheme, colors),
                   const SizedBox(height: 8),
 
                   // Movie Performance Section
@@ -188,113 +192,112 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     );
   }
 
-  Widget _buildRevenueChartSection(
+  Widget _buildFilterBar(
     BuildContext context,
     StatisticsLoaded state,
     AppLocalizations l10n,
     ColorScheme colorScheme,
+    CineplexColors colors,
   ) {
     final currentYear = DateTime.now().year;
 
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerLow,
+        color: colors.card,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+        border: Border.all(color: colors.cardBorder),
+        boxShadow: [
+          BoxShadow(
+            color: colors.shadowColor.withValues(alpha: 0.04),
+            blurRadius: 4,
+            offset: const Offset(0, 1),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header: Title + Total Revenue + Loading Spinner
+          // Filter Mode Tabs + updating spinner
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: Text(
-                  '${l10n.totalRevenueLabel}: ${FormatUtils.formatCurrency(state.totalFilteredRevenue)}',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: colorScheme.primary,
+                child: Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceContainerHigh,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      _buildFilterTab(
+                        title: l10n.filterByYear,
+                        isSelected: state.filterType == 'year',
+                        onTap: () {
+                          if (state.filterType != 'year') {
+                            context.read<StatisticsCubit>().updateRevenueFilter(
+                                  filterType: 'year',
+                                  year: state.selectedYear,
+                                );
+                          }
+                        },
+                        colorScheme: colorScheme,
+                      ),
+                      _buildFilterTab(
+                        title: l10n.filterByMonth,
+                        isSelected: state.filterType == 'month',
+                        onTap: () {
+                          if (state.filterType != 'month') {
+                            context.read<StatisticsCubit>().updateRevenueFilter(
+                                  filterType: 'month',
+                                  year: state.selectedYear,
+                                  month: state.selectedMonth,
+                                );
+                          }
+                        },
+                        colorScheme: colorScheme,
+                      ),
+                      _buildFilterTab(
+                        title: l10n.filterByDateRange,
+                        isSelected: state.filterType == 'custom',
+                        onTap: () {
+                          if (state.filterType != 'custom') {
+                            context.read<StatisticsCubit>().updateRevenueFilter(
+                                  filterType: 'custom',
+                                  startDate: state.startDate,
+                                  endDate: state.endDate,
+                                );
+                          }
+                        },
+                        colorScheme: colorScheme,
+                      ),
+                    ],
                   ),
                 ),
               ),
-              if (state.isUpdatingRevenue)
+              if (state.isUpdatingRevenue) ...[
+                const SizedBox(width: 8),
                 const SizedBox(
                   width: 14,
                   height: 14,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 ),
+              ],
             ],
           ),
           const SizedBox(height: 8),
 
-          // 3 Filter Mode Tabs (Theo năm, Theo tháng, Khoảng ngày)
-          Container(
-            padding: const EdgeInsets.all(2),
-            decoration: BoxDecoration(
-              color: colorScheme.surfaceContainerHigh,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                _buildFilterTab(
-                  title: l10n.filterByYear,
-                  isSelected: state.filterType == 'year',
-                  onTap: () {
-                    if (state.filterType != 'year') {
-                      context.read<StatisticsCubit>().updateRevenueFilter(
-                            filterType: 'year',
-                            year: state.selectedYear,
-                          );
-                    }
-                  },
-                  colorScheme: colorScheme,
-                ),
-                _buildFilterTab(
-                  title: l10n.filterByMonth,
-                  isSelected: state.filterType == 'month',
-                  onTap: () {
-                    if (state.filterType != 'month') {
-                      context.read<StatisticsCubit>().updateRevenueFilter(
-                            filterType: 'month',
-                            year: state.selectedYear,
-                            month: state.selectedMonth,
-                          );
-                    }
-                  },
-                  colorScheme: colorScheme,
-                ),
-                _buildFilterTab(
-                  title: l10n.filterByDateRange,
-                  isSelected: state.filterType == 'custom',
-                  onTap: () {
-                    if (state.filterType != 'custom') {
-                      context.read<StatisticsCubit>().updateRevenueFilter(
-                            filterType: 'custom',
-                            startDate: state.startDate,
-                            endDate: state.endDate,
-                          );
-                    }
-                  },
-                  colorScheme: colorScheme,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 8),
-
-          // Sub-filter Selector based on Filter Mode
+          // Sub-filter selector based on active filter mode
           if (state.filterType == 'year')
             Row(
               children: [
+                Icon(LucideIcons.calendar, size: 14, color: colorScheme.primary),
+                const SizedBox(width: 6),
                 Text(
                   '${l10n.year}: ',
                   style: TextStyle(
                     fontSize: 12,
-                    color: colorScheme.onSurfaceVariant,
+                    color: colors.textSecondary,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -303,6 +306,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   decoration: BoxDecoration(
                     color: colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(6),
+                    border: Border.all(color: colors.cardBorder),
                   ),
                   child: DropdownButton<int>(
                     value: state.selectedYear,
@@ -325,77 +329,93 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               ],
             )
           else if (state.filterType == 'month')
-            Row(
+            Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 8,
+              runSpacing: 4,
               children: [
-                Text(
-                  '${l10n.month}: ',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: colorScheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w500,
-                  ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(LucideIcons.calendar, size: 14, color: colorScheme.primary),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${l10n.month}: ',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: colors.textSecondary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
+                      decoration: BoxDecoration(
+                        color: colorScheme.surfaceContainerHighest,
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: colors.cardBorder),
+                      ),
+                      child: DropdownButton<int>(
+                        value: state.selectedMonth,
+                        isDense: true,
+                        underline: const SizedBox.shrink(),
+                        items: [
+                          for (int m = 1; m <= 12; m++)
+                            DropdownMenuItem(
+                              value: m,
+                              child: Text(l10n.monthFormat(m), style: const TextStyle(fontSize: 12)),
+                            ),
+                        ],
+                        onChanged: (m) {
+                          if (m != null) {
+                            context.read<StatisticsCubit>().updateRevenueFilter(
+                                  filterType: 'month',
+                                  year: state.selectedYear,
+                                  month: m,
+                                );
+                          }
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
-                  decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: DropdownButton<int>(
-                    value: state.selectedMonth,
-                    isDense: true,
-                    underline: const SizedBox.shrink(),
-                    items: [
-                      for (int m = 1; m <= 12; m++)
-                        DropdownMenuItem(
-                          value: m,
-                          child: Text(l10n.monthFormat(m), style: const TextStyle(fontSize: 12)),
-                        ),
-                    ],
-                    onChanged: (m) {
-                      if (m != null) {
-                        context.read<StatisticsCubit>().updateRevenueFilter(
-                              filterType: 'month',
-                              year: state.selectedYear,
-                              month: m,
-                            );
-                      }
-                    },
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '${l10n.year}: ',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: colorScheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
-                  decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: DropdownButton<int>(
-                    value: state.selectedYear,
-                    isDense: true,
-                    underline: const SizedBox.shrink(),
-                    items: [
-                      for (int y = currentYear; y >= currentYear - 4; y--)
-                        DropdownMenuItem(value: y, child: Text(y.toString(), style: const TextStyle(fontSize: 12))),
-                    ],
-                    onChanged: (y) {
-                      if (y != null) {
-                        context.read<StatisticsCubit>().updateRevenueFilter(
-                              filterType: 'month',
-                              year: y,
-                              month: state.selectedMonth,
-                            );
-                      }
-                    },
-                  ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '${l10n.year}: ',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: colors.textSecondary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
+                      decoration: BoxDecoration(
+                        color: colorScheme.surfaceContainerHighest,
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: colors.cardBorder),
+                      ),
+                      child: DropdownButton<int>(
+                        value: state.selectedYear,
+                        isDense: true,
+                        underline: const SizedBox.shrink(),
+                        items: [
+                          for (int y = currentYear; y >= currentYear - 4; y--)
+                            DropdownMenuItem(value: y, child: Text(y.toString(), style: const TextStyle(fontSize: 12))),
+                        ],
+                        onChanged: (y) {
+                          if (y != null) {
+                            context.read<StatisticsCubit>().updateRevenueFilter(
+                                  filterType: 'month',
+                                  year: y,
+                                  month: state.selectedMonth,
+                                );
+                          }
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ],
             )
@@ -454,29 +474,6 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 ),
               ),
             ),
-
-          const SizedBox(height: 8),
-
-          // Custom Bar Chart
-          if (state.revenuePeriods.isEmpty) ...[
-            Container(
-              height: 100,
-              alignment: Alignment.center,
-              child: Text(
-                l10n.noRevenueInPeriod,
-                style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12),
-              ),
-            ),
-          ] else ...[
-            AnimatedOpacity(
-              opacity: state.isUpdatingRevenue ? 0.6 : 1.0,
-              duration: const Duration(milliseconds: 200),
-              child: SizedBox(
-                height: 135,
-                child: _buildBarChart(state.revenuePeriods, colorScheme, state.filterType, l10n),
-              ),
-            ),
-          ],
         ],
       ),
     );
@@ -514,6 +511,76 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     );
   }
 
+  Widget _buildRevenueChartSection(
+    BuildContext context,
+    StatisticsLoaded state,
+    AppLocalizations l10n,
+    ColorScheme colorScheme,
+    CineplexColors colors,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  '${l10n.totalRevenueLabel}: ${FormatUtils.formatCurrency(state.totalFilteredRevenue)}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: colorScheme.primary,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                l10n.chartRevenueUnit,
+                style: TextStyle(
+                  fontSize: 10,
+                  color: colors.textSecondary,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+
+          // Custom Bar Chart
+          if (state.revenuePeriods.isEmpty) ...[
+            Container(
+              height: 100,
+              alignment: Alignment.center,
+              child: Text(
+                l10n.noRevenueInPeriod,
+                style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12),
+              ),
+            ),
+          ] else ...[
+            AnimatedOpacity(
+              opacity: state.isUpdatingRevenue ? 0.6 : 1.0,
+              duration: const Duration(milliseconds: 200),
+              child: SizedBox(
+                height: 135,
+                child: _buildBarChart(state.revenuePeriods, colorScheme, state.filterType, l10n),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
   Widget _buildBarChart(
     List<RevenuePeriodModel> periods,
     ColorScheme colorScheme,
@@ -523,14 +590,12 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     final maxRevenue = periods.fold<num>(0, (prev, p) => p.revenue > prev ? p.revenue : prev);
     final safeMax = maxRevenue > 0 ? maxRevenue : 1;
 
-    final barWidth = periods.length > 20 ? 11.0 : 16.0;
-    final horizontalPad = periods.length > 20 ? 2.0 : 3.5;
+    // Only year filter with short labels (T1..T12) expands evenly to fill the container width.
+    // Month (28-31 days) and Custom date range always scroll horizontally with touch/drag.
+    final bool shouldExpand = filterType == 'year';
+    final double itemWidth = filterType == 'custom' ? 38.0 : 26.0;
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: periods.map((p) {
+        Widget buildColumnItem(RevenuePeriodModel p, {double? fixedWidth}) {
           final hasRevenue = p.revenue > 0;
           final ratio = (p.revenue / safeMax).clamp(0.0, 1.0);
           final barHeight = hasRevenue ? (80.0 * ratio + 4.0) : 3.0;
@@ -557,15 +622,17 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   : (p.revenue >= 1000 ? '${(p.revenue / 1000).toStringAsFixed(0)}K' : p.revenue.toString()))
               : '';
 
-          return Padding(
-            padding: EdgeInsets.symmetric(horizontal: horizontalPad),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                SizedBox(
-                  height: 12,
+          final content = Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 12,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
                   child: Text(
                     revenueText,
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 8,
                       color: hasRevenue ? colorScheme.primary : Colors.transparent,
@@ -573,41 +640,64 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 2),
-                Tooltip(
-                  message: '${p.period}: ${FormatUtils.formatCurrency(p.revenue)}',
-                  child: Container(
-                    width: barWidth,
-                    height: barHeight,
-                    decoration: BoxDecoration(
-                      gradient: hasRevenue
-                          ? LinearGradient(
-                              colors: [
-                                colorScheme.primary,
-                                colorScheme.primary.withValues(alpha: 0.6),
-                              ],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                            )
-                          : null,
-                      color: hasRevenue ? null : colorScheme.outlineVariant.withValues(alpha: 0.25),
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
-                    ),
+              ),
+              const SizedBox(height: 2),
+              Tooltip(
+                message: '${p.period}: ${FormatUtils.formatCurrency(p.revenue)}',
+                child: Container(
+                  width: shouldExpand ? 14.0 : 14.0,
+                  height: barHeight,
+                  decoration: BoxDecoration(
+                    gradient: hasRevenue
+                        ? LinearGradient(
+                            colors: [
+                              colorScheme.primary,
+                              colorScheme.primary.withValues(alpha: 0.6),
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          )
+                        : null,
+                    color: hasRevenue ? null : colorScheme.outlineVariant.withValues(alpha: 0.25),
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
+              ),
+              const SizedBox(height: 4),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
                   label,
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 9,
                     color: hasRevenue ? colorScheme.onSurface : colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
                     fontWeight: hasRevenue ? FontWeight.bold : FontWeight.w500,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           );
-        }).toList(),
+
+          if (fixedWidth != null) {
+            return SizedBox(width: fixedWidth, child: content);
+          }
+          return content;
+        }
+
+    if (shouldExpand) {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: periods.map((p) => Expanded(child: buildColumnItem(p))).toList(),
+      );
+    }
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: periods.map((p) => buildColumnItem(p, fixedWidth: itemWidth)).toList(),
       ),
     );
   }

@@ -6,7 +6,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import multer from 'multer';
 import { UsersService } from './users.service';
-import { CreateStaffDto, GetUsersQueryDto, UpdateProfileDto, UpdateUserStatusDto } from './dto/users.dto';
+import { CreateStaffDto, GetUsersQueryDto, UpdateProfileDto, UpdateStaffDto, UpdateUserStatusDto } from './dto/users.dto';
 import { JwtAuthGuard } from '../../core/security/jwt/jwt-auth.guard';
 import { RolesGuard } from '../../core/security/roles/roles.guard';
 import { Roles } from '../../core/security/roles/roles.decorator';
@@ -27,9 +27,36 @@ export class UsersController {
   @Post('staff')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(EUserRole.ADMIN)
+  @UseInterceptors(
+    FileInterceptor('avatar', {
+      storage: multer.memoryStorage(),
+      limits: { fileSize: 5 * 1024 * 1024 },
+    }),
+  )
   @HttpCode(HttpStatus.CREATED)
-  async createStaff(@Body() dto: CreateStaffDto) {
-    return this.usersService.createStaff(dto);
+  async createStaff(
+    @Body() dto: CreateStaffDto,
+    @UploadedFile() avatar?: Express.Multer.File,
+  ) {
+    return this.usersService.createStaff(dto, avatar);
+  }
+
+  @Put('staff/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(EUserRole.ADMIN)
+  @UseInterceptors(
+    FileInterceptor('avatar', {
+      storage: multer.memoryStorage(),
+      limits: { fileSize: 5 * 1024 * 1024 },
+    }),
+  )
+  @HttpCode(HttpStatus.OK)
+  async updateStaff(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateStaffDto,
+    @UploadedFile() avatar?: Express.Multer.File,
+  ) {
+    return this.usersService.updateStaff(id, dto, avatar);
   }
 
   @Get('search')

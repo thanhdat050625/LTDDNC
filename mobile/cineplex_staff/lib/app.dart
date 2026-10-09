@@ -43,8 +43,8 @@ class _CineplexStaffAppState extends State<CineplexStaffApp> {
       router: _router,
       rootNavKey: staffRootNavigatorKey,
       shellNavKey: staffShellNavigatorKey,
-      defaultRootPath: '/scanner',
-      exitOnPaths: {'/scanner', '/login'},
+      defaultRootPath: '/pos',
+      exitOnPaths: {'/pos', '/login'},
     )..init();
   }
 

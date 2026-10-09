@@ -2,6 +2,7 @@ import 'package:cineplex_staff/features/ticket_sale/data/models/checkout_args.da
 import 'package:cineplex_staff/features/ticket_sale/presentation/cubit/ticket_sale_cubit.dart';
 import 'package:cineplex_staff/features/ticket_sale/presentation/cubit/ticket_sale_state.dart';
 import 'package:cineplex_staff/features/ticket_sale/presentation/screens/checkout_screen.dart';
+import 'package:cineplex_staff/features/ticket_sale/presentation/screens/concession_selection_screen.dart';
 import 'package:cineplex_staff/features/ticket_sale/presentation/screens/seat_selection_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -360,22 +361,12 @@ void main() {
       expect(payBtn.onPressed, isNull);
     });
 
-    testWidgets('SeatSelectionScreen allows incrementing and decrementing concessions', (
+    testWidgets('ConcessionSelectionScreen allows incrementing and decrementing concessions', (
       tester,
     ) async {
-      final cubit = TicketSaleCubit(
-        _FakeCinemaRepo(),
-        _FakeShowtimeRepo(),
-        _FakeBookingRepo(),
-      );
-
-      cubit.emit(
-        TicketSaleLoaded(
-          cinemas: [],
-          selectedShowtime: testShowtime,
-          seats: [seatA1],
-          selectedSeats: [seatA1],
-        ),
+      final args = CheckoutArgs(
+        showtime: testShowtime,
+        selectedSeats: [seatA1],
       );
 
       await tester.pumpWidget(
@@ -384,16 +375,13 @@ void main() {
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: const [Locale('vi')],
           locale: const Locale('vi'),
-          home: BlocProvider<TicketSaleCubit>.value(
-            value: cubit,
-            child: const SeatSelectionScreen(),
-          ),
+          home: ConcessionSelectionScreen(args: args),
         ),
       );
 
       await tester.pump();
 
-      // Find first '+' button for concessions (Bắp rang bơ)
+      // Find first '+' button for concessions (Popcorn)
       final plusIcons = find.byIcon(LucideIcons.plusCircle);
       expect(plusIcons, findsWidgets);
 
@@ -448,8 +436,9 @@ void main() {
       // Tap MOMO payment method
       final momoFinder = find.text(l10n.momo);
       expect(momoFinder, findsOneWidget);
+      await tester.ensureVisible(momoFinder);
       await tester.tap(momoFinder);
-      await tester.pump();
+      await tester.pumpAndSettle();
 
       // Cash calculator elements should now be gone
       expect(find.text('Đủ tiền'), findsNothing);
@@ -457,11 +446,58 @@ void main() {
       // Tap CASH payment method again
       final cashFinder = find.text(l10n.cash);
       expect(cashFinder, findsOneWidget);
+      await tester.ensureVisible(cashFinder);
       await tester.tap(cashFinder);
-      await tester.pump();
+      await tester.pumpAndSettle();
 
       // Cash calculator elements should be visible again
       expect(find.text('Đủ tiền'), findsOneWidget);
+    });
+
+    testWidgets('CheckoutScreen displays voucher section and handles initial voucher & removal', (
+      tester,
+    ) async {
+      final args = CheckoutArgs(
+        showtime: testShowtime,
+        selectedSeats: [seatA1, seatA2], // 170000
+        promotionCode: 'GIAM20K',
+        discountAmount: 20000,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.darkTheme,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: const [Locale('vi')],
+          locale: const Locale('vi'),
+          home: CheckoutScreen(args: args),
+        ),
+      );
+
+      await tester.pump();
+
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(CheckoutScreen)),
+      )!;
+
+      // Applied promo code badge
+      expect(find.text('GIAM20K'), findsOneWidget);
+      expect(find.text(l10n.promotionApplied), findsOneWidget);
+      expect(find.text('-${FormatUtils.formatCurrency(20000)}'), findsWidgets);
+
+      // Grand total should be 170000 - 20000 = 150000
+      expect(find.text(FormatUtils.formatCurrency(150000)), findsWidgets);
+
+      // Tap remove promotion button
+      final removeBtnFinder = find.text(l10n.removePromotion);
+      expect(removeBtnFinder, findsOneWidget);
+      await tester.tap(removeBtnFinder);
+      await tester.pump();
+
+      // Voucher removed, grand total reverts to 170000
+      expect(find.text(FormatUtils.formatCurrency(170000)), findsWidgets);
+      // Input field should now appear
+      expect(find.widgetWithText(AppButton, l10n.applyPromotion), findsOneWidget);
     });
   });
 }
