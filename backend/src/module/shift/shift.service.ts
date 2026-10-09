@@ -17,8 +17,10 @@ import {
   CreateStaffScheduleDto,
   UpdateStaffScheduleDto,
   GetSchedulesQueryDto,
+  SyncStaffSchedulesDto,
 } from './dto/shift.dto';
 import { EUserRole } from '../users/enums/user.enum';
+import { EStaffShiftRole, EScheduleStatus } from './enums/shift.enum';
 
 @Injectable()
 export class ShiftService implements OnModuleInit {
@@ -255,5 +257,91 @@ export class ShiftService implements OnModuleInit {
     }
     await this.scheduleRepo.remove(schedule);
     return { success: true, message: 'Hủy phân ca làm việc thành công' };
+  }
+
+  async bulkSyncSchedules(
+    dto: SyncStaffSchedulesDto,
+    assignedById?: number,
+  ): Promise<{ added: number; removed: number }> {
+    const cinema = await this.cinemaRepo.findOne({ where: { id: dto.cinemaId } });
+    if (!cinema) {
+      throw new NotFoundException(`Không tìm thấy rạp chiếu với ID ${dto.cinemaId}`);
+    }
+
+    if (!dto.dates || dto.dates.length === 0) {
+      throw new BadRequestException('Danh sách ngày làm việc không được để trống');
+    }
+
+    const targetStaffSet = new Set(dto.staffIds);
+    const initialStaffSet = new Set(dto.initialStaffIds || []);
+    const targetShiftSet = new Set(dto.shiftIds);
+    const initialShiftSet = new Set(dto.initialShiftIds || []);
+
+    let removed = 0;
+
+    // 1. Gỡ bỏ ca bị bỏ tích
+    const removedShiftIds = [...initialShiftSet].filter((id) => !targetShiftSet.has(id));
+    if (removedShiftIds.length > 0 && initialStaffSet.size > 0 && dto.dates.length > 0) {
+      const del = await this.scheduleRepo
+        .createQueryBuilder()
+        .delete()
+        .where('cinemaId = :cinemaId', { cinemaId: dto.cinemaId })
+        .andWhere('workDate IN (:...dates)', { dates: dto.dates })
+        .andWhere('shiftId IN (:...removedShiftIds)', { removedShiftIds })
+        .andWhere('staffId IN (:...initialStaffIds)', { initialStaffIds: [...initialStaffSet] })
+        .execute();
+      removed += del.affected || 0;
+    }
+
+    // 2. Gỡ bỏ nhân viên bị bỏ tích trong các ca giữ nguyên
+    const commonShiftIds = [...targetShiftSet].filter((id) => initialShiftSet.has(id));
+    const removedStaffIds = [...initialStaffSet].filter((id) => !targetStaffSet.has(id));
+    if (removedStaffIds.length > 0 && commonShiftIds.length > 0 && dto.dates.length > 0) {
+      const del = await this.scheduleRepo
+        .createQueryBuilder()
+        .delete()
+        .where('cinemaId = :cinemaId', { cinemaId: dto.cinemaId })
+        .andWhere('workDate IN (:...dates)', { dates: dto.dates })
+        .andWhere('shiftId IN (:...commonShiftIds)', { commonShiftIds })
+        .andWhere('staffId IN (:...removedStaffIds)', { removedStaffIds })
+        .execute();
+      removed += del.affected || 0;
+    }
+
+    // 3. Thêm mới các nhân viên & ca được chọn
+    const toInsert: Partial<StaffSchedule>[] = [];
+    for (const date of dto.dates) {
+      for (const shiftId of dto.shiftIds) {
+        for (const staffId of dto.staffIds) {
+          toInsert.push({
+            cinemaId: dto.cinemaId,
+            shiftId,
+            staffId,
+            workDate: date,
+            assignedRole: dto.assignedRole || EStaffShiftRole.GENERAL,
+            status: EScheduleStatus.SCHEDULED,
+            assignedById,
+          });
+        }
+      }
+    }
+
+    let added = 0;
+    if (toInsert.length > 0) {
+      const chunkSize = 500;
+      for (let i = 0; i < toInsert.length; i += chunkSize) {
+        const chunk = toInsert.slice(i, i + chunkSize);
+        const res = await this.scheduleRepo
+          .createQueryBuilder()
+          .insert()
+          .into(StaffSchedule)
+          .values(chunk)
+          .orIgnore()
+          .execute();
+        added += res.raw?.affectedRows || 0;
+      }
+    }
+
+    return { added, removed };
   }
 }

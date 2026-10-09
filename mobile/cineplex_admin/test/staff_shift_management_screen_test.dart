@@ -90,6 +90,9 @@ class FakeShiftRepository implements ShiftRepository {
 
   @override
   Future<bool> deleteSchedule(int id) async => true;
+
+  @override
+  Future<void> bulkSyncSchedules(Map<String, dynamic> data) async {}
 }
 
 class FakeStaffShiftManagementCubit extends Cubit<StaffShiftManagementState>
@@ -130,6 +133,16 @@ class FakeStaffShiftManagementCubit extends Cubit<StaffShiftManagementState>
 
   @override
   Future<bool> deleteSchedule(int id) async => true;
+
+  @override
+  Future<bool> syncSchedules({
+    required int cinemaId,
+    required List<int> shiftIds,
+    required List<int> staffIds,
+    required List<String> dates,
+    required List<int> initialShiftIds,
+    required List<int> initialStaffIds,
+  }) async => true;
 }
 
 void main() {
@@ -150,8 +163,9 @@ void main() {
   ];
 
   final List<UserModel> sampleStaff = [
-    const UserModel(id: 1, fullName: 'Nguyễn Văn A', email: 'a@cineplex.vn', role: 'STAFF', status: 'ACTIVE'),
-    const UserModel(id: 2, fullName: 'Trần Thị B', email: 'b@cineplex.vn', role: 'STAFF', status: 'ACTIVE'),
+    const UserModel(id: 1, fullName: 'Nguyễn Văn A', email: 'a@cineplex.vn', role: 'STAFF', status: 'ACTIVE', cinemaId: 1),
+    const UserModel(id: 2, fullName: 'Trần Thị B', email: 'b@cineplex.vn', role: 'STAFF', status: 'ACTIVE', cinemaId: 1),
+    const UserModel(id: 3, fullName: 'Lê Văn C', email: 'c@cineplex.vn', role: 'STAFF', status: 'ACTIVE', cinemaId: 2),
   ];
 
   final sampleSchedules = [
@@ -294,6 +308,7 @@ void main() {
             shifts: sampleShifts,
             cinemas: sampleCinemas,
             staffList: sampleStaff,
+            schedules: sampleSchedules,
             initialCinemaId: 1,
             initialShiftId: 1,
             initialDate: DateTime(2026, 10, 10),
@@ -305,19 +320,42 @@ void main() {
       // Title
       expect(find.text('Phân ca mới'), findsOneWidget);
 
-      // Multi-staff selector label & counter
-      expect(find.text('Chọn nhân viên (có thể chọn nhiều)'), findsOneWidget);
-      expect(find.text('Đã chọn 1 nhân viên'), findsOneWidget);
+      // Cinema selection dropdown is removed from dialog
+      expect(find.text('Chọn cụm rạp'), findsNothing);
 
-      // Staff list checkboxes
+      // Staff from other cinemas (Lê Văn C belongs to cinema 2) are filtered out
+      expect(find.text('Lê Văn C'), findsNothing);
+
+      // Shows cinema badge in header
+      expect(find.text('CINEPLEX Đà Nẵng'), findsOneWidget);
+
+      // Shift checkboxes rendered with counter
+      expect(find.text('Đã chọn 1 ca'), findsOneWidget);
+
+      // Note is completely removed
+      expect(find.text('Ghi chú'), findsNothing);
+
+      // Multi-staff selector label & counter synchronized with reality (both A and B are in shift 1)
+      expect(find.text('Chọn nhân viên'), findsOneWidget);
+      expect(find.text('Đã chọn 2 nhân viên'), findsOneWidget);
+
+      // Staff list checkboxes for cinema 1
       expect(find.text('Nguyễn Văn A'), findsOneWidget);
       expect(find.text('Trần Thị B'), findsOneWidget);
 
-      // Toggle second staff member
+      // Save button is initially DISABLED because no checkmarks have changed
+      final saveBtnBefore = tester.widget<ElevatedButton>(find.widgetWithText(ElevatedButton, 'Lưu'));
+      expect(saveBtnBefore.onPressed, isNull);
+
+      // Toggle off second staff member (Trần Thị B)
       await tester.tap(find.text('Trần Thị B'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Đã chọn 2 nhân viên'), findsOneWidget);
+      expect(find.text('Đã chọn 1 nhân viên'), findsOneWidget);
+
+      // Save button is now ENABLED because checkmarks changed
+      final saveBtnAfter = tester.widget<ElevatedButton>(find.widgetWithText(ElevatedButton, 'Lưu'));
+      expect(saveBtnAfter.onPressed, isNotNull);
     });
 
     testWidgets('enforces read-only on current and past shifts, only editable from next shift onwards', (tester) async {
@@ -392,10 +430,81 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Ca sáng (08:00) is filtered out because it is current/past.
-      // Default selected shift is Ca chiều (16:00).
-      expect(find.textContaining('Ca chiều'), findsOneWidget);
-      expect(find.textContaining('Ca sáng'), findsNothing);
+      // Ca sáng (08:00) is disabled with 'Chỉ xem' badge because it is current/past.
+      // Default selected shift is Ca chiều (16:00) -> 1 ca selected.
+      expect(find.text('Chỉ xem'), findsOneWidget);
+      expect(find.text('Đã chọn 1 ca'), findsOneWidget);
+    });
+
+    testWidgets('AssignShiftDialog shows empty staff notice when cinema has no staff', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(390, 844));
+      await tester.pumpWidget(
+        buildTestWidget(
+          child: AssignShiftDialog(
+            shifts: sampleShifts,
+            cinemas: sampleCinemas,
+            staffList: sampleStaff, // has staff for cinema 1 and 2
+            initialCinemaId: 99, // cinema with no staff
+            initialDate: DateTime(2026, 10, 10),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Chưa có nhân viên thuộc cụm rạp này'), findsOneWidget);
+      expect(find.text('Đã chọn 0 nhân viên'), findsOneWidget);
+    });
+
+    testWidgets('AssignShiftDialog supports selecting multiple shifts and activates Save button', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(390, 844));
+      await tester.pumpWidget(
+        buildTestWidget(
+          child: AssignShiftDialog(
+            shifts: sampleShifts,
+            cinemas: sampleCinemas,
+            staffList: sampleStaff,
+            schedules: sampleSchedules,
+            initialCinemaId: 1,
+            initialDate: DateTime(2026, 10, 10),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Initially only Ca sáng is selected -> 1 ca
+      expect(find.text('Đã chọn 1 ca'), findsOneWidget);
+
+      // Toggle Ca chiều on -> now both Ca sáng and Ca chiều are selected
+      await tester.tap(find.text('Ca chiều'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Đã chọn 2 ca'), findsOneWidget);
+
+      // Save button is now active
+      final saveBtn = tester.widget<ElevatedButton>(find.widgetWithText(ElevatedButton, 'Lưu'));
+      expect(saveBtn.onPressed, isNotNull);
+    });
+
+    test('StaffScheduleModel.fromJson normalizes ISO strings to YYYY-MM-DD', () {
+      final model = StaffScheduleModel.fromJson({
+        'id': 1,
+        'staffId': 2,
+        'cinemaId': 3,
+        'shiftId': 4,
+        'workDate': '2026-10-10',
+      });
+      expect(model.workDate, '2026-10-10');
+
+      final isoModel = StaffScheduleModel.fromJson({
+        'id': 2,
+        'staffId': 2,
+        'cinemaId': 3,
+        'shiftId': 4,
+        'workDate': '2026-10-10T00:00:00.000Z',
+      });
+      expect(isoModel.workDate.isNotEmpty, isTrue);
+      expect(isoModel.workDate.length, 10);
+      expect(isoModel.workDate.contains('T'), isFalse);
     });
   });
 }

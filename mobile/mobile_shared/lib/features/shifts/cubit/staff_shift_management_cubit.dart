@@ -194,4 +194,32 @@ class StaffShiftManagementCubit extends Cubit<StaffShiftManagementState> {
       return false;
     }
   }
+
+  Future<bool> syncSchedules({
+    required int cinemaId,
+    required List<int> shiftIds,
+    required List<int> staffIds,
+    required List<String> dates,
+    required List<int> initialShiftIds,
+    required List<int> initialStaffIds,
+  }) async {
+    try {
+      await _shiftRepository.bulkSyncSchedules({
+        'cinemaId': cinemaId,
+        'shiftIds': shiftIds,
+        'staffIds': staffIds,
+        'dates': dates,
+        'initialShiftIds': initialShiftIds,
+        'initialStaffIds': initialStaffIds,
+        'assignedRole': 'GENERAL',
+      });
+      await _fetchSchedules();
+      return true;
+    } catch (e) {
+      final msg = e is AppException ? e.message : 'Lỗi đồng bộ phân ca: $e';
+      emit(StaffShiftManagementError(msg));
+      _fetchSchedules();
+      return false;
+    }
+  }
 }

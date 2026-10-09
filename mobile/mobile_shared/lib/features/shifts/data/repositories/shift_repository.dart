@@ -78,4 +78,8 @@ class ShiftRepository {
   Future<void> deleteSchedule(int id) async {
     await _dioClient.delete('/shifts/schedules/$id');
   }
+
+  Future<void> bulkSyncSchedules(Map<String, dynamic> data) async {
+    await _dioClient.post('/shifts/schedules/bulk', data: data);
+  }
 }

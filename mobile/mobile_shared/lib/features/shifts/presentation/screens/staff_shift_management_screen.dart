@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 
@@ -93,6 +94,7 @@ class _StaffShiftManagementScreenState extends State<StaffShiftManagementScreen>
         shifts: state.shifts,
         cinemas: state.cinemas,
         staffList: state.staffList,
+        schedules: state.schedules,
         initialCinemaId: state.selectedCinemaId,
         initialShiftId: preselectedShiftId,
         initialDate: state.selectedDate,
@@ -104,7 +106,7 @@ class _StaffShiftManagementScreenState extends State<StaffShiftManagementScreen>
     if (result != null && mounted) {
       final cubit = context.read<StaffShiftManagementCubit>();
       final l10n = AppLocalizations.of(context)!;
-      if (existingSchedule != null) {
+      if (existingSchedule != null && result.containsKey('staffId')) {
         final success = await cubit.updateSchedule(existingSchedule.id, result);
         if (success && mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -112,19 +114,23 @@ class _StaffShiftManagementScreenState extends State<StaffShiftManagementScreen>
           );
         }
       } else {
-        final staffIds = (result['staffIds'] as List<dynamic>?)?.map((e) => e as int).toList() ??
-            (result['staffId'] != null ? [result['staffId'] as int] : <int>[]);
-        final success = await cubit.createMultipleSchedules(
-          staffIds: staffIds,
+        final shiftIds = (result['shiftIds'] as List<dynamic>?)?.map((e) => e as int).toList() ?? <int>[];
+        final staffIds = (result['staffIds'] as List<dynamic>?)?.map((e) => e as int).toList() ?? <int>[];
+        final dates = (result['dates'] as List<dynamic>?)?.map((e) => e as String).toList() ?? <String>[];
+        final initialShiftIds = (result['initialShiftIds'] as List<dynamic>?)?.map((e) => e as int).toList() ?? <int>[];
+        final initialStaffIds = (result['initialStaffIds'] as List<dynamic>?)?.map((e) => e as int).toList() ?? <int>[];
+
+        final success = await cubit.syncSchedules(
           cinemaId: result['cinemaId'] as int,
-          shiftId: result['shiftId'] as int,
-          workDate: result['workDate'] as String,
-          assignedRole: (result['assignedRole'] as String?) ?? 'GENERAL',
-          note: result['note'] as String?,
+          shiftIds: shiftIds,
+          staffIds: staffIds,
+          dates: dates,
+          initialShiftIds: initialShiftIds,
+          initialStaffIds: initialStaffIds,
         );
         if (success && mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.shiftAssignMultipleSuccess(staffIds.length))),
+            SnackBar(content: Text(l10n.shiftUpdateSuccess)),
           );
         }
       }
@@ -570,14 +576,22 @@ class _StaffShiftManagementScreenState extends State<StaffShiftManagementScreen>
                                         CircleAvatar(
                                           radius: 13,
                                           backgroundColor: theme.primary.withValues(alpha: 0.18),
-                                          child: Text(
-                                            schedule.staffName.isNotEmpty ? schedule.staffName[0].toUpperCase() : 'S',
-                                            style: TextStyle(
-                                              color: theme.primary,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 11,
-                                            ),
-                                          ),
+                                          backgroundImage: (schedule.staffAvatar != null && schedule.staffAvatar!.trim().isNotEmpty)
+                                              ? CachedNetworkImageProvider(schedule.staffAvatar!.trim())
+                                              : null,
+                                          onBackgroundImageError: (schedule.staffAvatar != null && schedule.staffAvatar!.trim().isNotEmpty)
+                                              ? (_, __) {}
+                                              : null,
+                                          child: (schedule.staffAvatar == null || schedule.staffAvatar!.trim().isEmpty)
+                                              ? Text(
+                                                  schedule.staffName.isNotEmpty ? schedule.staffName[0].toUpperCase() : 'S',
+                                                  style: TextStyle(
+                                                    color: theme.primary,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 11,
+                                                  ),
+                                                )
+                                              : null,
                                         ),
                                         const SizedBox(width: 8),
                                         Expanded(

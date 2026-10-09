@@ -36,3 +36,6 @@ key.properties
 
 # Agents Teamwork
 .agents/teamwork
+
+# Database dumps
+*.sql

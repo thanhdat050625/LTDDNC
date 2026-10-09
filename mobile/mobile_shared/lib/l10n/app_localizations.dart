@@ -5281,7 +5281,7 @@ abstract class AppLocalizations {
   /// No description provided for @shiftSelectMultipleStaff.
   ///
   /// In vi, this message translates to:
-  /// **'Chọn nhân viên (có thể chọn nhiều)'**
+  /// **'Chọn nhân viên'**
   String get shiftSelectMultipleStaff;
 
   /// No description provided for @shiftSelectedStaffCount.
@@ -5289,6 +5289,12 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Đã chọn {count} nhân viên'**
   String shiftSelectedStaffCount(int count);
+
+  /// No description provided for @shiftSelectedShiftCount.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã chọn {count} ca'**
+  String shiftSelectedShiftCount(int count);
 
   /// No description provided for @shiftAssignMultipleSuccess.
   ///
@@ -5305,7 +5311,7 @@ abstract class AppLocalizations {
   /// No description provided for @shiftNoStaffAssigned.
   ///
   /// In vi, this message translates to:
-  /// **'Chưa có nhân viên'**
+  /// **'Chưa có nhân viên thuộc cụm rạp này'**
   String get shiftNoStaffAssigned;
 
   /// No description provided for @shiftReadOnly.

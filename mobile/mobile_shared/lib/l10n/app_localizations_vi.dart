@@ -2745,11 +2745,16 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
-  String get shiftSelectMultipleStaff => 'Chọn nhân viên (có thể chọn nhiều)';
+  String get shiftSelectMultipleStaff => 'Chọn nhân viên';
 
   @override
   String shiftSelectedStaffCount(int count) {
     return 'Đã chọn $count nhân viên';
+  }
+
+  @override
+  String shiftSelectedShiftCount(int count) {
+    return 'Đã chọn $count ca';
   }
 
   @override
@@ -2761,7 +2766,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get shiftToday => 'Hôm nay';
 
   @override
-  String get shiftNoStaffAssigned => 'Chưa có nhân viên';
+  String get shiftNoStaffAssigned => 'Chưa có nhân viên thuộc cụm rạp này';
 
   @override
   String get shiftReadOnly => 'Chỉ xem';

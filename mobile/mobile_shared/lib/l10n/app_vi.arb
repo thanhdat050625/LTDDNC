@@ -1259,9 +1259,17 @@
       }
     }
   },
-  "shiftSelectMultipleStaff": "Chọn nhân viên (có thể chọn nhiều)",
+  "shiftSelectMultipleStaff": "Chọn nhân viên",
   "shiftSelectedStaffCount": "Đã chọn {count} nhân viên",
   "@shiftSelectedStaffCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shiftSelectedShiftCount": "Đã chọn {count} ca",
+  "@shiftSelectedShiftCount": {
     "placeholders": {
       "count": {
         "type": "int"
@@ -1277,7 +1285,7 @@
     }
   },
   "shiftToday": "Hôm nay",
-  "shiftNoStaffAssigned": "Chưa có nhân viên",
+  "shiftNoStaffAssigned": "Chưa có nhân viên thuộc cụm rạp này",
   "shiftReadOnly": "Chỉ xem",
   "shiftNoAvailableShifts": "Không có ca làm việc nào có thể phân công trong ngày này",
   "shiftCannotModifyPastOrCurrent": "Không thể chỉnh sửa, thêm hoặc xóa ca hiện tại hoặc đã qua"
