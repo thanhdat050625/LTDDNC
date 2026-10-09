@@ -54,6 +54,17 @@ export class UsersController {
     return this.usersService.getLoyaltyInfo(req.user.id);
   }
 
+  @Get('loyalty-history')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async getLoyaltyHistory(
+    @Request() req,
+    @Query('page') page: number = 1,
+    @Query('pageSize') pageSize: number = 20,
+  ) {
+    return this.usersService.getLoyaltyHistory(req.user.id, page, pageSize);
+  }
+
   @Put('profile')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(

@@ -1696,6 +1696,84 @@ abstract class AppLocalizations {
   /// **'điểm'**
   String get pointsSuffix;
 
+  /// No description provided for @loyaltyPolicyRefund.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hoàn điểm: Điểm đã dùng sẽ được tự động hoàn trả 100% khi đơn hàng bị hủy hoặc quá thời gian giữ chỗ.'**
+  String get loyaltyPolicyRefund;
+
+  /// No description provided for @loyaltyPolicyVoucher.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ưu đãi kép: Được phép áp dụng đồng thời điểm tích lũy và mã voucher giảm giá.'**
+  String get loyaltyPolicyVoucher;
+
+  /// No description provided for @loyaltyTabHistory.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lịch sử điểm'**
+  String get loyaltyTabHistory;
+
+  /// No description provided for @loyaltyTabPolicy.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quy chế tích & tiêu'**
+  String get loyaltyTabPolicy;
+
+  /// No description provided for @loyaltyNoHistory.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có giao dịch điểm nào'**
+  String get loyaltyNoHistory;
+
+  /// No description provided for @loyaltyNoHistorySubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hãy đặt vé xem phim để bắt đầu tích lũy điểm thưởng nhé!'**
+  String get loyaltyNoHistorySubtitle;
+
+  /// No description provided for @loyaltyCardSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thành viên thân thiết'**
+  String get loyaltyCardSubtitle;
+
+  /// No description provided for @loyaltyTotalPoints.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tổng điểm khả dụng'**
+  String get loyaltyTotalPoints;
+
+  /// No description provided for @loyaltyTransactionDetail.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chi tiết giao dịch điểm'**
+  String get loyaltyTransactionDetail;
+
+  /// No description provided for @loyaltyViewTicket.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem chi tiết vé'**
+  String get loyaltyViewTicket;
+
+  /// No description provided for @loyaltyPointsChange.
+  ///
+  /// In vi, this message translates to:
+  /// **'Biến động điểm'**
+  String get loyaltyPointsChange;
+
+  /// No description provided for @loyaltyOrderCode.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mã đơn hàng'**
+  String get loyaltyOrderCode;
+
+  /// No description provided for @loyaltyTransactionTime.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thời gian giao dịch'**
+  String get loyaltyTransactionTime;
+
   /// No description provided for @managementSection.
   ///
   /// In vi, this message translates to:

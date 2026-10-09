@@ -98,9 +98,10 @@ export class PaymentController {
     }
 
     const isStaff = source === 'OFFLINE';
+    const targetBookingParam = bookingId || bookingCode;
     const appScheme = isStaff
       ? `cineplexstaff://pos?bookingCode=${bookingCode}&bookingId=${bookingId}`
-      : `cineplex://payment-result/${bookingId}?bookingCode=${bookingCode}`;
+      : `cineplex://payment-result/${targetBookingParam}?bookingCode=${bookingCode}`;
     const appName = isStaff ? 'Cineplex Staff' : 'Cineplex';
     const frontendUrl = this.getFrontendUrl();
 

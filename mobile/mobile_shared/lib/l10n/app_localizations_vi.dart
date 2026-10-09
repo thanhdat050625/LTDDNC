@@ -842,6 +842,48 @@ class AppLocalizationsVi extends AppLocalizations {
   String get pointsSuffix => 'điểm';
 
   @override
+  String get loyaltyPolicyRefund =>
+      'Hoàn điểm: Điểm đã dùng sẽ được tự động hoàn trả 100% khi đơn hàng bị hủy hoặc quá thời gian giữ chỗ.';
+
+  @override
+  String get loyaltyPolicyVoucher =>
+      'Ưu đãi kép: Được phép áp dụng đồng thời điểm tích lũy và mã voucher giảm giá.';
+
+  @override
+  String get loyaltyTabHistory => 'Lịch sử điểm';
+
+  @override
+  String get loyaltyTabPolicy => 'Quy chế tích & tiêu';
+
+  @override
+  String get loyaltyNoHistory => 'Chưa có giao dịch điểm nào';
+
+  @override
+  String get loyaltyNoHistorySubtitle =>
+      'Hãy đặt vé xem phim để bắt đầu tích lũy điểm thưởng nhé!';
+
+  @override
+  String get loyaltyCardSubtitle => 'Thành viên thân thiết';
+
+  @override
+  String get loyaltyTotalPoints => 'Tổng điểm khả dụng';
+
+  @override
+  String get loyaltyTransactionDetail => 'Chi tiết giao dịch điểm';
+
+  @override
+  String get loyaltyViewTicket => 'Xem chi tiết vé';
+
+  @override
+  String get loyaltyPointsChange => 'Biến động điểm';
+
+  @override
+  String get loyaltyOrderCode => 'Mã đơn hàng';
+
+  @override
+  String get loyaltyTransactionTime => 'Thời gian giao dịch';
+
+  @override
   String get managementSection => 'Quản lý & Nghiệp vụ';
 
   @override
