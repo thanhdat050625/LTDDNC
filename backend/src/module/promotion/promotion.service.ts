@@ -1,6 +1,6 @@
 import { Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
 import { Promotion } from './entities/promotion.entity';
 import { CreatePromotionDto, UpdatePromotionDto, CheckPromotionDto } from './dto/promotion.dto';
 import { ApiResponse } from '../../core/dto/ApiResponse.dto';
@@ -86,6 +86,21 @@ export class PromotionService {
     const response = new ApiResponse(true, 'Lấy danh sách khuyến mãi thành công', promotions);
     response.pagination = { page: Number(page), pageSize: Number(pageSize), totalItems, totalPages };
     return response;
+  }
+
+  async getActivePromotions(): Promise<ApiResponse<Promotion[]>> {
+    const today = new Date();
+    const promotions = await this.promotionRepository.find({
+      where: {
+        isActive: true,
+        startDate: LessThanOrEqual(today),
+        endDate: MoreThanOrEqual(today),
+      },
+      relations: ['movie'],
+      order: { endDate: 'ASC' },
+    });
+    const available = promotions.filter(p => !p.maxUsage || p.usedCount < p.maxUsage);
+    return new ApiResponse(true, 'Lấy danh sách khuyến mãi khả dụng thành công', available);
   }
 
   async findOne(id: number): Promise<ApiResponse<Promotion>> {

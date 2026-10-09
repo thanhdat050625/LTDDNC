@@ -52,7 +52,8 @@ class CreateBookingDto {
     required this.seatIds,
     this.concessions,
     this.promotionCode,
-    this.source = 'MOBILE',
+    // ponytail: Default booking source matches backend EBookingSource. ONLINE/OFFLINE only.
+    this.source = 'ONLINE',
     this.pointsToUse,
     this.redeemConcessionId,
   });

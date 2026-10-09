@@ -1,6 +1,7 @@
 library;
 
 // Network & API
+export 'package:dio/dio.dart';
 export 'network/dio_client.dart';
 export 'network/api_response.dart';
 
@@ -40,6 +41,8 @@ export 'widgets/app_cached_image.dart';
 export 'widgets/shimmer_skeleton.dart';
 export 'widgets/staggered_list.dart';
 export 'widgets/seat_widget.dart';
+export 'widgets/seat_layout_widget.dart';
+export 'widgets/screen_painter.dart';
 export 'widgets/app_exit_dialog.dart';
 export 'widgets/app_drawer.dart';
 export 'navigation/app_back_handler.dart';

@@ -1174,6 +1174,24 @@ abstract class AppLocalizations {
   /// **'Thanh toán thất bại'**
   String get notificationPaymentFailed;
 
+  /// No description provided for @notificationAccount.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tài khoản'**
+  String get notificationAccount;
+
+  /// No description provided for @notificationDetail.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chi tiết thông báo'**
+  String get notificationDetail;
+
+  /// No description provided for @notificationOpenLink.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem chi tiết liên kết'**
+  String get notificationOpenLink;
+
   /// No description provided for @profile.
   ///
   /// In vi, this message translates to:
@@ -1678,6 +1696,84 @@ abstract class AppLocalizations {
   /// **'điểm'**
   String get pointsSuffix;
 
+  /// No description provided for @loyaltyPolicyRefund.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hoàn điểm: Điểm đã dùng sẽ được tự động hoàn trả 100% khi đơn hàng bị hủy hoặc quá thời gian giữ chỗ.'**
+  String get loyaltyPolicyRefund;
+
+  /// No description provided for @loyaltyPolicyVoucher.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ưu đãi kép: Được phép áp dụng đồng thời điểm tích lũy và mã voucher giảm giá.'**
+  String get loyaltyPolicyVoucher;
+
+  /// No description provided for @loyaltyTabHistory.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lịch sử điểm'**
+  String get loyaltyTabHistory;
+
+  /// No description provided for @loyaltyTabPolicy.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quy chế tích & tiêu'**
+  String get loyaltyTabPolicy;
+
+  /// No description provided for @loyaltyNoHistory.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có giao dịch điểm nào'**
+  String get loyaltyNoHistory;
+
+  /// No description provided for @loyaltyNoHistorySubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hãy đặt vé xem phim để bắt đầu tích lũy điểm thưởng nhé!'**
+  String get loyaltyNoHistorySubtitle;
+
+  /// No description provided for @loyaltyCardSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thành viên thân thiết'**
+  String get loyaltyCardSubtitle;
+
+  /// No description provided for @loyaltyTotalPoints.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tổng điểm khả dụng'**
+  String get loyaltyTotalPoints;
+
+  /// No description provided for @loyaltyTransactionDetail.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chi tiết giao dịch điểm'**
+  String get loyaltyTransactionDetail;
+
+  /// No description provided for @loyaltyViewTicket.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem chi tiết vé'**
+  String get loyaltyViewTicket;
+
+  /// No description provided for @loyaltyPointsChange.
+  ///
+  /// In vi, this message translates to:
+  /// **'Biến động điểm'**
+  String get loyaltyPointsChange;
+
+  /// No description provided for @loyaltyOrderCode.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mã đơn hàng'**
+  String get loyaltyOrderCode;
+
+  /// No description provided for @loyaltyTransactionTime.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thời gian giao dịch'**
+  String get loyaltyTransactionTime;
+
   /// No description provided for @managementSection.
   ///
   /// In vi, this message translates to:
@@ -1687,7 +1783,7 @@ abstract class AppLocalizations {
   /// No description provided for @userManagement.
   ///
   /// In vi, this message translates to:
-  /// **'Quản lý người dùng'**
+  /// **'Quản lý tài khoản'**
   String get userManagement;
 
   /// No description provided for @scanBookingCodeWarning.
@@ -2836,6 +2932,60 @@ abstract class AppLocalizations {
   /// **'Tạo nhân viên'**
   String get saveStaffButton;
 
+  /// No description provided for @editStaffTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chỉnh sửa nhân viên'**
+  String get editStaffTitle;
+
+  /// No description provided for @editStaffSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cập nhật thông tin tài khoản nhân viên'**
+  String get editStaffSubtitle;
+
+  /// No description provided for @updateStaffButton.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cập nhật'**
+  String get updateStaffButton;
+
+  /// No description provided for @staffUpdatedSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cập nhật tài khoản nhân viên thành công'**
+  String get staffUpdatedSuccess;
+
+  /// No description provided for @edit.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chỉnh sửa'**
+  String get edit;
+
+  /// No description provided for @optionalPasswordHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Để trống nếu không muốn đổi mật khẩu'**
+  String get optionalPasswordHint;
+
+  /// No description provided for @staffBranch.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chi nhánh'**
+  String get staffBranch;
+
+  /// No description provided for @selectStaffBranch.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn chi nhánh (rạp)'**
+  String get selectStaffBranch;
+
+  /// No description provided for @noBranchAssigned.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa gán chi nhánh'**
+  String get noBranchAssigned;
+
   /// No description provided for @accountDetailsTitle.
   ///
   /// In vi, this message translates to:
@@ -3207,6 +3357,48 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Tiền mặt tại quầy'**
   String get paymentMethodCash;
+
+  /// No description provided for @paymentSelectVoucher.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn voucher'**
+  String get paymentSelectVoucher;
+
+  /// No description provided for @paymentAvailableVouchers.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mã khuyến mãi khả dụng'**
+  String get paymentAvailableVouchers;
+
+  /// No description provided for @paymentNoVouchers.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không có mã khuyến mãi khả dụng'**
+  String get paymentNoVouchers;
+
+  /// No description provided for @paymentEarnedPointsNotice.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tích lũy +{points} điểm khi hoàn tất'**
+  String paymentEarnedPointsNotice(int points);
+
+  /// No description provided for @paymentUseLoyaltyPoints.
+  ///
+  /// In vi, this message translates to:
+  /// **'Dùng điểm tích lũy ({points} điểm)'**
+  String paymentUseLoyaltyPoints(int points);
+
+  /// No description provided for @paymentSeatsLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ghế: {seats}'**
+  String paymentSeatsLabel(String seats);
+
+  /// No description provided for @paymentTicketsCount.
+  ///
+  /// In vi, this message translates to:
+  /// **'{count} vé xem phim'**
+  String paymentTicketsCount(int count);
 
   /// No description provided for @epassTitle.
   ///
@@ -4237,7 +4429,7 @@ abstract class AppLocalizations {
   /// No description provided for @posSearchCustomer.
   ///
   /// In vi, this message translates to:
-  /// **'Tìm khách hàng'**
+  /// **'Tìm'**
   String get posSearchCustomer;
 
   /// No description provided for @posSearchCustomerHint.
@@ -4329,6 +4521,24 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Giao dịch thanh toán đã bị hủy.'**
   String get posPaymentCancelledPrompt;
+
+  /// No description provided for @posContinueSale.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tiếp tục bán vé'**
+  String get posContinueSale;
+
+  /// No description provided for @posViewTickets.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem quản lý vé'**
+  String get posViewTickets;
+
+  /// No description provided for @posEarnedPointsSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tích lũy +{points} điểm thành công'**
+  String posEarnedPointsSuccess(int points);
 
   /// No description provided for @scanSoundTitle.
   ///
@@ -5055,6 +5265,72 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Người phân ca'**
   String get shiftAssignedBy;
+
+  /// No description provided for @shiftAddStaff.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thêm'**
+  String get shiftAddStaff;
+
+  /// No description provided for @shiftStaffCount.
+  ///
+  /// In vi, this message translates to:
+  /// **'{count} nhân viên'**
+  String shiftStaffCount(int count);
+
+  /// No description provided for @shiftSelectMultipleStaff.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn nhân viên'**
+  String get shiftSelectMultipleStaff;
+
+  /// No description provided for @shiftSelectedStaffCount.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã chọn {count} nhân viên'**
+  String shiftSelectedStaffCount(int count);
+
+  /// No description provided for @shiftSelectedShiftCount.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã chọn {count} ca'**
+  String shiftSelectedShiftCount(int count);
+
+  /// No description provided for @shiftAssignMultipleSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã phân ca thành công cho {count} nhân viên'**
+  String shiftAssignMultipleSuccess(int count);
+
+  /// No description provided for @shiftToday.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hôm nay'**
+  String get shiftToday;
+
+  /// No description provided for @shiftNoStaffAssigned.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có nhân viên thuộc cụm rạp này'**
+  String get shiftNoStaffAssigned;
+
+  /// No description provided for @shiftReadOnly.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chỉ xem'**
+  String get shiftReadOnly;
+
+  /// No description provided for @shiftNoAvailableShifts.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không có ca làm việc nào có thể phân công trong ngày này'**
+  String get shiftNoAvailableShifts;
+
+  /// No description provided for @shiftCannotModifyPastOrCurrent.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể chỉnh sửa, thêm hoặc xóa ca hiện tại hoặc đã qua'**
+  String get shiftCannotModifyPastOrCurrent;
 }
 
 class _AppLocalizationsDelegate

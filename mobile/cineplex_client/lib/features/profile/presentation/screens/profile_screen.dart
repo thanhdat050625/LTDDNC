@@ -20,74 +20,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     context.read<ProfileCubit>().loadProfile();
   }
 
-  void _showLoyaltyPolicyDialog(
-    BuildContext context,
-    Map<String, dynamic> loyalty,
-    AppLocalizations l10n,
-  ) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Row(
-          children: [
-            const Icon(Icons.stars_rounded, color: Color(0xFFFFB800)),
-            const SizedBox(width: 8),
-            Expanded(child: Text(l10n.loyaltyPolicyTitle)),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildPolicyItem(
-              icon: Icons.card_giftcard,
-              color: colorScheme.primary,
-              text: l10n.loyaltyPolicyEarn,
-            ),
-            const SizedBox(height: 12),
-            _buildPolicyItem(
-              icon: Icons.discount_outlined,
-              color: colorScheme.secondary,
-              text: l10n.loyaltyPolicyDiscount,
-            ),
-            const SizedBox(height: 12),
-            _buildPolicyItem(
-              icon: Icons.fastfood_outlined,
-              color: colorScheme.tertiary,
-              text: l10n.loyaltyPolicyGifts,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(l10n.close),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPolicyItem({
-    required IconData icon,
-    required Color color,
-    required String text,
-  }) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, size: 20, color: color),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Text(text, style: const TextStyle(fontSize: 13, height: 1.4)),
-        ),
-      ],
-    );
-  }
-
   void _showLogoutDialog(BuildContext context, AppLocalizations l10n) {
     showDialog(
       context: context,
@@ -280,8 +212,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     // Loyalty Card
                     InkWell(
-                      onTap: () =>
-                          _showLoyaltyPolicyDialog(context, loyalty, l10n),
+                      onTap: () => context.push(
+                        '/loyalty',
+                        extra: {
+                          'user': user,
+                          'loyalty': loyalty,
+                        },
+                      ),
                       borderRadius: BorderRadius.circular(16),
                       child: Container(
                         padding: const EdgeInsets.all(16),

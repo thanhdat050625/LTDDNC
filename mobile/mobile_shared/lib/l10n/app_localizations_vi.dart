@@ -572,6 +572,15 @@ class AppLocalizationsVi extends AppLocalizations {
   String get notificationPaymentFailed => 'Thanh toán thất bại';
 
   @override
+  String get notificationAccount => 'Tài khoản';
+
+  @override
+  String get notificationDetail => 'Chi tiết thông báo';
+
+  @override
+  String get notificationOpenLink => 'Xem chi tiết liên kết';
+
+  @override
   String get profile => 'Tài khoản';
 
   @override
@@ -833,10 +842,52 @@ class AppLocalizationsVi extends AppLocalizations {
   String get pointsSuffix => 'điểm';
 
   @override
+  String get loyaltyPolicyRefund =>
+      'Hoàn điểm: Điểm đã dùng sẽ được tự động hoàn trả 100% khi đơn hàng bị hủy hoặc quá thời gian giữ chỗ.';
+
+  @override
+  String get loyaltyPolicyVoucher =>
+      'Ưu đãi kép: Được phép áp dụng đồng thời điểm tích lũy và mã voucher giảm giá.';
+
+  @override
+  String get loyaltyTabHistory => 'Lịch sử điểm';
+
+  @override
+  String get loyaltyTabPolicy => 'Quy chế tích & tiêu';
+
+  @override
+  String get loyaltyNoHistory => 'Chưa có giao dịch điểm nào';
+
+  @override
+  String get loyaltyNoHistorySubtitle =>
+      'Hãy đặt vé xem phim để bắt đầu tích lũy điểm thưởng nhé!';
+
+  @override
+  String get loyaltyCardSubtitle => 'Thành viên thân thiết';
+
+  @override
+  String get loyaltyTotalPoints => 'Tổng điểm khả dụng';
+
+  @override
+  String get loyaltyTransactionDetail => 'Chi tiết giao dịch điểm';
+
+  @override
+  String get loyaltyViewTicket => 'Xem chi tiết vé';
+
+  @override
+  String get loyaltyPointsChange => 'Biến động điểm';
+
+  @override
+  String get loyaltyOrderCode => 'Mã đơn hàng';
+
+  @override
+  String get loyaltyTransactionTime => 'Thời gian giao dịch';
+
+  @override
   String get managementSection => 'Quản lý & Nghiệp vụ';
 
   @override
-  String get userManagement => 'Quản lý người dùng';
+  String get userManagement => 'Quản lý tài khoản';
 
   @override
   String get scanBookingCodeWarning =>
@@ -1455,6 +1506,33 @@ class AppLocalizationsVi extends AppLocalizations {
   String get saveStaffButton => 'Tạo nhân viên';
 
   @override
+  String get editStaffTitle => 'Chỉnh sửa nhân viên';
+
+  @override
+  String get editStaffSubtitle => 'Cập nhật thông tin tài khoản nhân viên';
+
+  @override
+  String get updateStaffButton => 'Cập nhật';
+
+  @override
+  String get staffUpdatedSuccess => 'Cập nhật tài khoản nhân viên thành công';
+
+  @override
+  String get edit => 'Chỉnh sửa';
+
+  @override
+  String get optionalPasswordHint => 'Để trống nếu không muốn đổi mật khẩu';
+
+  @override
+  String get staffBranch => 'Chi nhánh';
+
+  @override
+  String get selectStaffBranch => 'Chọn chi nhánh (rạp)';
+
+  @override
+  String get noBranchAssigned => 'Chưa gán chi nhánh';
+
+  @override
   String get accountDetailsTitle => 'Chi tiết tài khoản';
 
   @override
@@ -1643,6 +1721,35 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get paymentMethodCash => 'Tiền mặt tại quầy';
+
+  @override
+  String get paymentSelectVoucher => 'Chọn voucher';
+
+  @override
+  String get paymentAvailableVouchers => 'Mã khuyến mãi khả dụng';
+
+  @override
+  String get paymentNoVouchers => 'Không có mã khuyến mãi khả dụng';
+
+  @override
+  String paymentEarnedPointsNotice(int points) {
+    return 'Tích lũy +$points điểm khi hoàn tất';
+  }
+
+  @override
+  String paymentUseLoyaltyPoints(int points) {
+    return 'Dùng điểm tích lũy ($points điểm)';
+  }
+
+  @override
+  String paymentSeatsLabel(String seats) {
+    return 'Ghế: $seats';
+  }
+
+  @override
+  String paymentTicketsCount(int count) {
+    return '$count vé xem phim';
+  }
 
   @override
   String get epassTitle => 'Vé điện tử (E-Pass)';
@@ -2188,7 +2295,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get posCancelPoints => 'Hủy';
 
   @override
-  String get posSearchCustomer => 'Tìm khách hàng';
+  String get posSearchCustomer => 'Tìm';
 
   @override
   String get posSearchCustomerHint => 'Nhập email hoặc số điện thoại...';
@@ -2240,6 +2347,17 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get posPaymentCancelledPrompt => 'Giao dịch thanh toán đã bị hủy.';
+
+  @override
+  String get posContinueSale => 'Tiếp tục bán vé';
+
+  @override
+  String get posViewTickets => 'Xem quản lý vé';
+
+  @override
+  String posEarnedPointsSuccess(int points) {
+    return 'Tích lũy +$points điểm thành công';
+  }
 
   @override
   String get scanSoundTitle => 'Âm báo khi quét mã';
@@ -2617,4 +2735,47 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get shiftAssignedBy => 'Người phân ca';
+
+  @override
+  String get shiftAddStaff => 'Thêm';
+
+  @override
+  String shiftStaffCount(int count) {
+    return '$count nhân viên';
+  }
+
+  @override
+  String get shiftSelectMultipleStaff => 'Chọn nhân viên';
+
+  @override
+  String shiftSelectedStaffCount(int count) {
+    return 'Đã chọn $count nhân viên';
+  }
+
+  @override
+  String shiftSelectedShiftCount(int count) {
+    return 'Đã chọn $count ca';
+  }
+
+  @override
+  String shiftAssignMultipleSuccess(int count) {
+    return 'Đã phân ca thành công cho $count nhân viên';
+  }
+
+  @override
+  String get shiftToday => 'Hôm nay';
+
+  @override
+  String get shiftNoStaffAssigned => 'Chưa có nhân viên thuộc cụm rạp này';
+
+  @override
+  String get shiftReadOnly => 'Chỉ xem';
+
+  @override
+  String get shiftNoAvailableShifts =>
+      'Không có ca làm việc nào có thể phân công trong ngày này';
+
+  @override
+  String get shiftCannotModifyPastOrCurrent =>
+      'Không thể chỉnh sửa, thêm hoặc xóa ca hiện tại hoặc đã qua';
 }

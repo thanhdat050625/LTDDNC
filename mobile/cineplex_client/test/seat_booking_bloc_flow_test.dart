@@ -36,22 +36,12 @@ void main() {
     });
 
     blocTest<SeatBookingBloc, SeatBookingState>(
-      '1. Hold seats -> create booking with real bookingId > 0 emits SeatsHeld',
+      '1. Hold seats -> emits SeatsHeld without calling createBooking prematurely',
       build: () {
         when(() => repository.getUnavailableSeats(101)).thenAnswer((_) async => {});
         when(() => repository.holdSeats(101, [1, 2])).thenAnswer((_) async => {
           'expiredAt': '2026-10-06T23:59:59.000Z',
         });
-        when(() => repository.createBooking(any())).thenAnswer((_) async => BookingModel(
-          id: 999,
-          bookingCode: 'BK-REAL-999',
-          showtimeId: 101,
-          totalAmount: 100000,
-          discountAmount: 0,
-          pointsUsed: 0,
-          status: 'PENDING',
-          expiredAt: DateTime.parse('2026-10-06T23:59:59.000Z'),
-        ));
         return SeatBookingBloc(repository, socketService);
       },
       act: (bloc) async {
@@ -67,12 +57,13 @@ void main() {
         isA<SeatMapLoaded>().having((s) => s.selectedSeatIds, 'selected', [1]),
         isA<SeatMapLoaded>().having((s) => s.selectedSeatIds, 'selected', [1, 2]),
         isA<SeatsHeld>()
-            .having((s) => s.bookingId, 'bookingId', 999)
+            .having((s) => s.seatIds, 'seatIds', [1, 2])
+            .having((s) => s.showtimeId, 'showtimeId', 101)
             .having((s) => s.expiredAt, 'expiredAt', isNotNull),
       ],
       verify: (_) {
         verify(() => repository.holdSeats(101, [1, 2])).called(1);
-        verify(() => repository.createBooking(any(that: isA<CreateBookingDto>()))).called(1);
+        verifyNever(() => repository.createBooking(any()));
       },
     );
 

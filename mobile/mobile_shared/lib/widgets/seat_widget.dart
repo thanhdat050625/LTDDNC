@@ -325,6 +325,7 @@ class SeatLegend extends StatelessWidget {
                 SeatLegendType.vip,
                 SeatLegendType.couple,
                 SeatLegendType.selected,
+                SeatLegendType.held,
                 SeatLegendType.booked,
               ]);
 

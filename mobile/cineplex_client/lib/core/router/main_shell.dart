@@ -10,6 +10,7 @@ import 'package:cineplex_client/features/notification/data/models/notification_m
 import 'package:cineplex_client/features/notification/presentation/cubit/notification_cubit.dart';
 import 'package:cineplex_client/features/notification/presentation/widgets/in_app_notification_banner.dart';
 import 'package:cineplex_client/features/notification/presentation/widgets/notification_badge_icon.dart';
+import 'package:cineplex_client/features/notification/presentation/widgets/notification_detail_bottom_sheet.dart';
 
 /// Main shell with bottom navigation bar.
 /// Wraps the 5 main tabs: Home, Movies, Tickets, Notifications, Profile.
@@ -38,7 +39,14 @@ class _MainShellState extends State<MainShell> {
         InAppNotificationBanner.show(
           context: context,
           notification: notification,
-          onTap: () => context.go('/notifications'),
+          onTap: () {
+            if (!notification.isRead) {
+              try {
+                notifCubit.markAsRead(notification.id);
+              } catch (_) {}
+            }
+            NotificationDetailBottomSheet.show(context, notification);
+          },
         );
       }
     });
@@ -144,14 +152,14 @@ class _CustomGlassBottomBar extends StatelessWidget {
                         bottom: 5,
                         width: tabWidth,
                         child: Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                          margin: const EdgeInsets.symmetric(horizontal: 5),
                           decoration: BoxDecoration(
                             color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.22),
                             border: Border.all(
                               color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.35),
                               width: 1,
                             ),
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(26),
                           ),
                         ),
                       ),

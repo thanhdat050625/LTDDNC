@@ -157,36 +157,98 @@ export class StatisticsService {
     }
   }
 
-  async getMoviePerformance(): Promise<ApiResponse<any>> {
+  async getMoviePerformance(
+    filterType: string = 'year',
+    year?: number,
+    month?: number,
+    startDate?: string,
+    endDate?: string,
+  ): Promise<ApiResponse<any>> {
     try {
-      // 1. Lấy thông tin phim và tính tổng doanh thu + vé bán ra
-      const moviesStats = await this.movieRepository.createQueryBuilder('movie')
-        .leftJoin('movie.showtimes', 'showtime')
-        .leftJoin('showtime.tickets', 'ticket', 'ticket.status != :ticketStatus', { ticketStatus: 'CANCELLED' })
-        .leftJoin('ticket.booking', 'booking', 'booking.status = :bookingStatus', { bookingStatus: EBookingStatus.PAID })
+      const now = new Date();
+      const targetYear = year || now.getFullYear();
+      const targetMonth = month || (now.getMonth() + 1);
+
+      const queryBuilder = this.movieRepository.createQueryBuilder('movie')
+        .innerJoin('movie.showtimes', 'showtime')
+        .innerJoin('showtime.tickets', 'ticket', 'ticket.status != :ticketStatus', { ticketStatus: 'CANCELLED' })
+        .innerJoin('ticket.booking', 'booking', 'booking.status = :bookingStatus', { bookingStatus: EBookingStatus.PAID })
         .select('movie.id', 'id')
         .addSelect('movie.title', 'title')
         .addSelect('movie.posterUrl', 'poster')
         .addSelect('COUNT(ticket.id)', 'ticketsSold')
-        .addSelect('SUM(ticket.price)', 'revenue')
+        .addSelect('SUM(ticket.price)', 'revenue');
+
+      let startStr = '';
+      let endStr = '';
+
+      if (filterType === 'year') {
+        queryBuilder.andWhere('YEAR(booking.createdAt) = :year', { year: targetYear });
+      } else if (filterType === 'month') {
+        queryBuilder
+          .andWhere('YEAR(booking.createdAt) = :year', { year: targetYear })
+          .andWhere('MONTH(booking.createdAt) = :month', { month: targetMonth });
+      } else {
+        let start = startDate ? new Date(startDate) : new Date(now.getTime() - 13 * 24 * 60 * 60 * 1000);
+        let end = endDate ? new Date(endDate) : now;
+
+        if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+          start = new Date(now.getTime() - 13 * 24 * 60 * 60 * 1000);
+          end = now;
+        }
+        if (start > end) {
+          const temp = start;
+          start = end;
+          end = temp;
+        }
+
+        const formatIsoDate = (d: Date) => {
+          const y = d.getFullYear();
+          const m = String(d.getMonth() + 1).padStart(2, '0');
+          const day = String(d.getDate()).padStart(2, '0');
+          return `${y}-${m}-${day}`;
+        };
+
+        startStr = formatIsoDate(start);
+        endStr = formatIsoDate(end);
+
+        queryBuilder
+          .andWhere('booking.createdAt >= :startDateTime', { startDateTime: `${startStr} 00:00:00` })
+          .andWhere('booking.createdAt <= :endDateTime', { endDateTime: `${endStr} 23:59:59` });
+      }
+
+      queryBuilder
         .groupBy('movie.id')
         .addGroupBy('movie.title')
         .addGroupBy('movie.posterUrl')
         .orderBy('ticketsSold', 'DESC')
-        .getRawMany();
+        .addOrderBy('revenue', 'DESC')
+        .limit(20);
 
-      // 2. Tính tỷ lệ lấp đầy (Occupancy Rate)
-      // Tỷ lệ lấp đầy = Tổng vé / (Tổng suất chiếu * Tổng số ghế phòng)
+      const moviesStats = await queryBuilder.getRawMany();
+
       const performanceData: any[] = [];
 
       for (const stat of moviesStats) {
         const movieId = stat.id;
         
-        // Lấy tổng số suất chiếu và tổng số ghế tương ứng
-        const showtimes = await this.showtimeRepository.createQueryBuilder('showtime')
+        const showtimeQuery = this.showtimeRepository.createQueryBuilder('showtime')
           .leftJoinAndSelect('showtime.room', 'room')
-          .where('showtime.movieId = :movieId', { movieId })
-          .getMany();
+          .where('showtime.movieId = :movieId', { movieId });
+
+        if (filterType === 'year') {
+          showtimeQuery.andWhere('YEAR(showtime.publicStartTime) = :year', { year: targetYear });
+        } else if (filterType === 'month') {
+          showtimeQuery
+            .andWhere('YEAR(showtime.publicStartTime) = :year', { year: targetYear })
+            .andWhere('MONTH(showtime.publicStartTime) = :month', { month: targetMonth });
+        } else if (startStr && endStr) {
+          showtimeQuery
+            .andWhere('showtime.publicStartTime >= :startDateTime', { startDateTime: `${startStr} 00:00:00` })
+            .andWhere('showtime.publicStartTime <= :endDateTime', { endDateTime: `${endStr} 23:59:59` });
+        }
+
+        const showtimes = await showtimeQuery.getMany();
 
         let totalCapacity = 0;
         showtimes.forEach(st => {
@@ -198,7 +260,7 @@ export class StatisticsService {
         const ticketsSold = Number(stat.ticketsSold) || 0;
         let occupancyRate = 0;
         if (totalCapacity > 0) {
-          occupancyRate = Math.round((ticketsSold / totalCapacity) * 100);
+          occupancyRate = Math.min(100, Math.round((ticketsSold / totalCapacity) * 100));
         }
 
         performanceData.push({

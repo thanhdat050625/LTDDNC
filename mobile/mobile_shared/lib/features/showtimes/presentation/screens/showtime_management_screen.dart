@@ -76,6 +76,8 @@ class _ShowtimeManagementScreenState extends State<ShowtimeManagementScreen> {
               DateTime? selectedDate;
               if (state is ShowtimeManagementLoaded) {
                 selectedDate = state.selectedDate;
+              } else if (state is ShowtimeManagementLoading) {
+                selectedDate = state.selectedDate;
               }
 
               return Row(

@@ -8,10 +8,17 @@ class ShowtimeManagementRepository {
   Future<List<ShowtimeModel>> getAllShowtimes({
     int page = 1,
     int pageSize = 50,
+    String? date,
+    int? cinemaId,
   }) async {
     final response = await _dioClient.get(
       '/showtimes',
-      queryParameters: {'page': page, 'pageSize': pageSize},
+      queryParameters: {
+        'page': page,
+        'pageSize': pageSize,
+        if (date != null) 'date': date,
+        if (cinemaId != null) 'cinemaId': cinemaId,
+      },
     );
     
     final data = response.data;
@@ -33,12 +40,17 @@ class ShowtimeManagementRepository {
     List<dynamic> items = [];
     if (data is Map && data.containsKey('data')) {
       items = data['data'] is List ? data['data'] : [];
-    } else if (data is Map && data.containsKey('items')) {
-      items = data['items'];
     } else if (data is List) {
       items = data;
     }
-    return items.map((e) => ShowtimeModel.fromJson(e as Map<String, dynamic>)).toList();
+    final now = DateTime.now();
+    return items
+        .map((e) => ShowtimeModel.fromJson(e as Map<String, dynamic>))
+        .where((st) =>
+            st.status != 'COMPLETED' &&
+            st.status != 'CANCELLED' &&
+            st.publicStartTime.isAfter(now))
+        .toList();
   }
 
   Future<Map<String, dynamic>> getByCinemaId(int cinemaId) async {

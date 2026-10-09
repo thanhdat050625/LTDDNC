@@ -9,10 +9,28 @@ import '../cubit/ticket_sale_state.dart';
 
 class TicketSaleScreen extends StatelessWidget {
   final Widget? drawer;
-  const TicketSaleScreen({super.key, this.drawer = const StaffDrawer()});
+  final TicketSaleCubit? cubit;
+  final int? initialCinemaId;
+  const TicketSaleScreen({
+    super.key,
+    this.drawer = const StaffDrawer(),
+    this.cubit,
+    this.initialCinemaId,
+  });
 
   @override
   Widget build(BuildContext context) {
+    if (cubit != null) {
+      return BlocProvider.value(
+        value: cubit!,
+        child: _TicketSaleScreenView(drawer: drawer),
+      );
+    }
+
+    final authState = context.read<AuthBloc>().state;
+    final staffUser = authState is AuthAuthenticated ? authState.user : null;
+    final defaultCinemaId = initialCinemaId ?? staffUser?.cinema?.id ?? staffUser?.cinemaId;
+
     return BlocProvider(
       create: (context) {
         final dio = context.read<DioClient>();
@@ -20,7 +38,7 @@ class TicketSaleScreen extends StatelessWidget {
           CinemaManagementRepository(dio),
           ShowtimeManagementRepository(dio),
           BookingManagementRepository(dio),
-        )..loadInitialData();
+        )..loadInitialData(defaultCinemaId: defaultCinemaId);
       },
       child: _TicketSaleScreenView(drawer: drawer),
     );
@@ -119,6 +137,64 @@ class _TicketSaleScreenView extends StatelessWidget {
     AppLocalizations l10n,
     TicketSaleLoaded state,
   ) {
+    if (state.isCinemaFixed) {
+      final cinemaName = state.cinemas
+          .where((c) => c.id == state.selectedCinemaId)
+          .firstOrNull
+          ?.name ?? l10n.staffBranch;
+
+      return Container(
+        margin: EdgeInsets.fromLTRB(
+          theme.spacingMd,
+          theme.spacingSm,
+          theme.spacingMd,
+          4.0,
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        decoration: BoxDecoration(
+          color: theme.surface,
+          borderRadius: BorderRadius.circular(theme.radiusMd),
+          border: Border.all(color: theme.borderSubtle),
+        ),
+        child: Row(
+          children: [
+            Icon(LucideIcons.mapPin, size: 18, color: theme.primary),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                cinemaName,
+                style: TextStyle(
+                  color: theme.textPrimary,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              decoration: BoxDecoration(
+                color: theme.primary.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(
+                  color: theme.primary.withValues(alpha: 0.3),
+                  width: 0.8,
+                ),
+              ),
+              child: Text(
+                l10n.staffBranch,
+                style: TextStyle(
+                  color: theme.primary,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Container(
       margin: EdgeInsets.fromLTRB(
         theme.spacingMd,
@@ -407,8 +483,18 @@ class _TicketSaleScreenView extends StatelessWidget {
       );
     }
 
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final tomorrow = today.add(const Duration(days: 1));
+    final endOfTomorrow = DateTime(now.year, now.month, now.day + 1, 23, 59, 59, 999);
+
     final movieShowtimes = state.cinemaShowtimes
-        .where((st) => st.movie?.id == state.selectedMovieId)
+        .where((st) =>
+            st.movie?.id == state.selectedMovieId &&
+            st.status != 'COMPLETED' &&
+            st.status != 'CANCELLED' &&
+            st.publicStartTime.isAfter(now) &&
+            st.publicStartTime.isBefore(endOfTomorrow))
         .toList();
 
     if (movieShowtimes.isEmpty) {
@@ -460,6 +546,21 @@ class _TicketSaleScreenView extends StatelessWidget {
           final dateStr = entry.key;
           final list = entry.value;
 
+          final firstSt = list.first;
+          final stDate = DateTime(
+            firstSt.publicStartTime.year,
+            firstSt.publicStartTime.month,
+            firstSt.publicStartTime.day,
+          );
+          final String displayHeader;
+          if (stDate == today) {
+            displayHeader = '${l10n.today} - $dateStr';
+          } else if (stDate == tomorrow) {
+            displayHeader = '${l10n.tomorrow} - $dateStr';
+          } else {
+            displayHeader = dateStr;
+          }
+
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -474,7 +575,7 @@ class _TicketSaleScreenView extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      dateStr,
+                      displayHeader,
                       style: TextStyle(
                         color: theme.textPrimary,
                         fontSize: 14,

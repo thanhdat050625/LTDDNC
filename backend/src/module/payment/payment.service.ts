@@ -10,6 +10,10 @@ import { BookingConcession } from '../booking/entities/booking-concession.entity
 import { ConcessionProduct } from '../concession/entities/concession-product.entity';
 import { User } from '../users/entities/user.entity';
 import { Promotion } from '../promotion/entities/promotion.entity';
+import { Showtime } from '../showtime/entities/showtime.entity';
+import { Seat } from '../cinema/entities/seat.entity';
+import { ERoomType } from '../cinema/enums/cinema.enum';
+import { TicketPrice } from '../ticket/entities/ticket-price.entity';
 
 import { CreatePaymentUrlDto } from './dto/create-payment-url.dto';
 import { ApiResponse } from '../../core/dto/ApiResponse.dto';
@@ -112,6 +116,10 @@ export class PaymentService {
       subtotal: bc.subtotal,
     }));
 
+    const concessionTotal = concessions.reduce((acc, bc) => acc + Number(bc.subtotal || 0), 0);
+    const orderOriginal = booking.totalAmount + booking.discountAmount + (booking.pointsUsed || 0);
+    const ticketTotal = Math.max(0, orderOriginal - concessionTotal);
+
     const secondsRemaining = booking.expiredAt
       ? Math.max(0, Math.floor((booking.expiredAt.getTime() - now.getTime()) / 1000))
       : 0;
@@ -127,8 +135,11 @@ export class PaymentService {
       },
       seats,
       concessions,
+      ticketTotal,
+      concessionTotal,
       totalAmount: booking.totalAmount,
       discountAmount: booking.discountAmount,
+      pointsUsed: booking.pointsUsed || 0,
       promotion: booking.promotion ? {
         code: booking.promotion.code,
         discountType: booking.promotion.discountType,
@@ -138,7 +149,120 @@ export class PaymentService {
       secondsRemaining,
       customerId: booking.userId,
       customerName: booking.user?.fullName || booking.user?.email || null,
-      loyaltyPoints: booking.user?.loyaltyPoints || 0,
+      loyaltyPoints: (booking.user?.loyaltyPoints || 0) + (booking.pointsUsed || 0),
+      estimatedPointsEarned: Math.floor(booking.totalAmount * LOYALTY_EARN_RATE),
+    });
+  }
+
+  // ─── PREPARE CHECKOUT DRAFT ───────────────────────────────────────────
+  // Tính toán tóm tắt đơn hàng khi người dùng chưa bấm tạo đơn (không ghi DB)
+  async prepareCheckoutDraft(
+    userId: number,
+    dto: { showtimeId: number; seatIds: number[]; concessions?: { productId: number; quantity: number }[] },
+  ): Promise<ApiResponse<any>> {
+    const showtime = await this.dataSource.getRepository(Showtime).findOne({
+      where: { id: dto.showtimeId },
+      relations: ['movie', 'room'],
+    });
+
+    if (!showtime) {
+      throw new CustomException(HttpStatus.NOT_FOUND, 'SHOWTIME_NOT_FOUND', 'Không tìm thấy suất chiếu');
+    }
+
+    const seats = await this.dataSource.getRepository(Seat).find({
+      where: { id: In(dto.seatIds || []) },
+      relations: ['room'],
+    });
+
+    const isWeekend = [0, 6].includes(new Date(showtime.publicStartTime).getDay());
+    const dayType = isWeekend ? 'WEEKEND' : 'WEEKDAY';
+
+    let ticketTotal = 0;
+    const seatItems: any[] = [];
+    for (const seat of seats) {
+      const isVipSeat =
+        seat.room?.roomType === ERoomType.VIP ||
+        (seat.room?.roomType === ERoomType.STANDARD &&
+          (seat.room?.rows ?? 0) >= 6 &&
+          ['D', 'E', 'F'].includes(seat.row.toUpperCase()));
+      const isCoupleSeat =
+        seat.room?.roomType === ERoomType.COUPLE ||
+        (seat.room?.isCouple &&
+          seat.row.toUpperCase() ===
+            String.fromCharCode(65 + (seat.room?.rows ?? 0) - 1));
+      const targetRoomType = isCoupleSeat
+        ? ERoomType.COUPLE
+        : isVipSeat
+          ? ERoomType.VIP
+          : seat.room?.roomType ?? ERoomType.STANDARD;
+
+      let ticketPrice = await this.dataSource.getRepository(TicketPrice).findOne({
+        where: { roomType: targetRoomType, dayType: dayType as any },
+      });
+      if (!ticketPrice) {
+        ticketPrice = await this.dataSource.getRepository(TicketPrice).findOne({
+          where: { roomType: seat.room?.roomType, dayType: dayType as any },
+        });
+      }
+      const price = ticketPrice?.price ?? 50000;
+      ticketTotal += price;
+      seatItems.push({
+        id: seat.id,
+        row: seat.row,
+        column: seat.number,
+        roomType: seat.room?.roomType,
+      });
+    }
+
+    let concessionTotal = 0;
+    const concessionItems: any[] = [];
+    if (dto.concessions && dto.concessions.length > 0) {
+      const productIds = dto.concessions.map(c => c.productId);
+      const products = await this.dataSource.getRepository(ConcessionProduct).find({
+        where: { id: In(productIds) },
+      });
+      for (const item of dto.concessions) {
+        const product = products.find(p => p.id === item.productId);
+        if (product) {
+          const subtotal = product.price * item.quantity;
+          concessionTotal += subtotal;
+          concessionItems.push({
+            productId: product.id,
+            name: product.name,
+            quantity: item.quantity,
+            unitPrice: product.price,
+            subtotal,
+          });
+        }
+      }
+    }
+
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    const loyaltyPoints = user?.loyaltyPoints || 0;
+    const totalAmount = ticketTotal + concessionTotal;
+
+    return new ApiResponse(true, 'Chuẩn bị thanh toán thành công', {
+      bookingId: '0',
+      bookingCode: 'DRAFT',
+      showtime: {
+        id: showtime.id,
+        movie: showtime.movie?.title,
+        room: showtime.room?.name,
+        publicStartTime: showtime.publicStartTime,
+      },
+      seats: seatItems,
+      concessions: concessionItems,
+      ticketTotal,
+      concessionTotal,
+      totalAmount,
+      discountAmount: 0,
+      pointsUsed: 0,
+      promotion: null,
+      secondsRemaining: 300,
+      customerId: userId,
+      customerName: user?.fullName || user?.email || null,
+      loyaltyPoints,
+      estimatedPointsEarned: Math.floor(totalAmount * LOYALTY_EARN_RATE),
     });
   }
 
@@ -286,6 +410,12 @@ export class PaymentService {
 
     const now = new Date();
     const isExpired = booking.status === EBookingStatus.EXPIRED || (booking.expiredAt ? booking.expiredAt < now : false);
+
+    if (isExpired && booking.status === EBookingStatus.PENDING) {
+      await this.cancelOrExpireBooking(booking, EBookingStatus.EXPIRED);
+      booking.status = EBookingStatus.EXPIRED;
+    }
+
     const canRetry = booking.status === EBookingStatus.PENDING && !isExpired && booking.payment?.status === EPaymentStatus.FAILED;
 
     let statusForFrontend: 'PENDING' | 'PAID' | 'FAILED' | 'EXPIRED';
@@ -330,6 +460,12 @@ export class PaymentService {
 
     const now = new Date();
     const isExpired = booking.status === EBookingStatus.EXPIRED || (booking.expiredAt ? booking.expiredAt < now : false);
+
+    if (isExpired && booking.status === EBookingStatus.PENDING) {
+      await this.cancelOrExpireBooking(booking, EBookingStatus.EXPIRED);
+      booking.status = EBookingStatus.EXPIRED;
+    }
+
     const canRetry = booking.status === EBookingStatus.PENDING && !isExpired && booking.payment?.status === EPaymentStatus.FAILED;
 
     let statusForFrontend: 'PENDING' | 'PAID' | 'FAILED' | 'EXPIRED';
@@ -728,23 +864,29 @@ export class PaymentService {
             </div>
           `;
 
-          await this.mailerService.sendMail({
-            to: fullBooking.user.email,
-            subject: `Xac nhan dat ve thanh cong - ${fullBooking.bookingCode}`,
-            html: emailHtml,
-            attachments,
-          });
-          this.logger.log(`Sent ticket email to ${fullBooking.user.email}`);
+          try {
+            await this.mailerService.sendMail({
+              to: fullBooking.user.email,
+              subject: `Xac nhan dat ve thanh cong - ${fullBooking.bookingCode}`,
+              html: emailHtml,
+              attachments,
+            });
+            this.logger.log(`Sent ticket email to ${fullBooking.user.email}`);
+          } catch (mailErr: any) {
+            this.logger.warn(`Failed to send ticket email to ${fullBooking.user.email}: ${mailErr?.message || mailErr}`);
+          }
         }
       }
 
-      this.eventEmitter.emit('notification.create', {
-        userId: booking.userId,
-        subject: 'Đặt vé thành công!',
-        content: `Đơn hàng ${booking.bookingCode} đã được thanh toán. Vé của bạn đã sẵn sàng. Vào mục "Vé của tôi" để xem.`,
-        type: ENotificationType.TICKET_CONFIRM,
-        link: '/booking-history',
-      });
+      if (booking.userId) {
+        this.eventEmitter.emit('notification.create', {
+          userId: booking.userId,
+          subject: 'Đặt vé thành công!',
+          content: `Đơn hàng ${booking.bookingCode} đã được thanh toán. Vé của bạn đã sẵn sàng. Vào mục "Vé của tôi" để xem.`,
+          type: ENotificationType.TICKET_CONFIRM,
+          link: `/my-tickets/${booking.id}`,
+        });
+      }
     } catch (err) {
       this.logger.error(`Post-payment actions failed for booking ${booking.id}`, err);
     }
@@ -771,7 +913,7 @@ export class PaymentService {
         await this.dataSource
           .createQueryBuilder()
           .update(Promotion)
-          .set({ usedCount: () => 'GREATEST(used_count - 1, 0)' })
+          .set({ usedCount: () => 'GREATEST(usedCount - 1, 0)' })
           .where('id = :id', { id: booking.promotionId })
           .execute();
       }
@@ -795,6 +937,11 @@ export class PaymentService {
           { id: In(seatHoldIds) },
           { status: ESeatHoldStatus.RELEASED },
         );
+      } else {
+        await this.seatHoldRepository.update(
+          { bookingId: booking.id },
+          { status: ESeatHoldStatus.RELEASED },
+        );
       }
 
       await this.releaseBookingResources(booking);
@@ -804,7 +951,7 @@ export class PaymentService {
         subject: targetStatus === EBookingStatus.EXPIRED ? 'Đơn hàng hết hạn' : 'Thanh toán thất bại',
         content: `Đơn hàng ${booking.bookingCode} đã bị hủy.${booking.pointsUsed > 0 ? ` Điểm tích lũy đã được hoàn trả (${booking.pointsUsed.toLocaleString()} điểm).` : ''}`,
         type: ENotificationType.PAYMENT_FAILED,
-        link: '/booking-history',
+        link: `/my-tickets/${booking.id}`,
       });
     }
   }
@@ -876,13 +1023,19 @@ export class PaymentService {
             { id: In(seatHoldIds) },
             { status: ESeatHoldStatus.RELEASED },
           );
+        } else {
+          await queryRunner.manager.update(
+            SeatHold,
+            { bookingId: booking.id },
+            { status: ESeatHoldStatus.RELEASED },
+          );
         }
 
         if (booking.promotionId) {
           await queryRunner.manager
             .createQueryBuilder()
             .update(Promotion)
-            .set({ usedCount: () => 'GREATEST(used_count - 1, 0)' })
+            .set({ usedCount: () => 'GREATEST(usedCount - 1, 0)' })
             .where('id = :id', { id: booking.promotionId })
             .execute();
         }
@@ -907,7 +1060,7 @@ export class PaymentService {
           subject: 'Đơn hàng hết hạn',
           content: expireContent,
           type: ENotificationType.PAYMENT_FAILED,
-          link: '/booking-history',
+          link: `/my-tickets/${booking.id}`,
         });
 
         this.logger.log(`Booking ${booking.bookingCode} expired and released`);
@@ -937,9 +1090,16 @@ export class PaymentService {
       const remainingHeld = await this.redisService.getHeldSeatIds(showtimeId);
       const confirmedHolds = await this.seatHoldRepository.find({
         where: { showtimeId, status: ESeatHoldStatus.CONFIRMED },
-        select: ['seatId'],
+        relations: ['booking'],
       });
-      const bookedSeatIds = confirmedHolds.map(h => h.seatId);
+      const now = new Date();
+      const validConfirmed = confirmedHolds.filter(h => {
+        if (!h.booking) return true;
+        if (h.booking.status === EBookingStatus.CANCELLED || h.booking.status === EBookingStatus.EXPIRED) return false;
+        if (h.booking.status === EBookingStatus.PENDING && h.booking.expiredAt && new Date(h.booking.expiredAt) < now) return false;
+        return true;
+      });
+      const bookedSeatIds = validConfirmed.map(h => h.seatId);
       this.seatGateway.emitSeatUpdate(showtimeId, remainingHeld, bookedSeatIds);
     }
   }

@@ -20,6 +20,7 @@ import {
   CreateStaffScheduleDto,
   UpdateStaffScheduleDto,
   GetSchedulesQueryDto,
+  SyncStaffSchedulesDto,
 } from './dto/shift.dto';
 import { JwtAuthGuard } from '../../core/security/jwt/jwt-auth.guard';
 import { RolesGuard } from '../../core/security/roles/roles.guard';
@@ -101,6 +102,18 @@ export class ShiftController {
   ) {
     const data = await this.shiftService.createSchedule(dto, req.user?.id);
     return { success: true, message: 'Phân ca làm việc thành công', data };
+  }
+
+  @Post('schedules/bulk')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(EUserRole.ADMIN)
+  @HttpCode(HttpStatus.OK)
+  async bulkSyncSchedules(
+    @Body() dto: SyncStaffSchedulesDto,
+    @Request() req,
+  ) {
+    const data = await this.shiftService.bulkSyncSchedules(dto, req.user?.id);
+    return { success: true, message: 'Đồng bộ phân ca làm việc thành công', data };
   }
 
   @Put('schedules/:id')

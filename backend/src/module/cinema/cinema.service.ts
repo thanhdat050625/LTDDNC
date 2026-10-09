@@ -5,6 +5,7 @@ import { Cinema } from './entities/cinema.entity';
 import { Room } from './entities/room.entity';
 import { Seat } from './entities/seat.entity';
 import { RoomTypeConfig } from './entities/room-type-config.entity';
+import { Showtime } from '../showtime/entities/showtime.entity';
 import {
   CreateCinemaDto,
   UpdateCinemaDto,
@@ -35,6 +36,8 @@ export class CinemaService {
     private readonly seatRepository: Repository<Seat>,
     @InjectRepository(RoomTypeConfig)
     private readonly roomTypeConfigRepository: Repository<RoomTypeConfig>,
+    @InjectRepository(Showtime)
+    private readonly showtimeRepository: Repository<Showtime>,
   ) {}
 
   // NEW: chuẩn hóa roomType trả về cho FE theo lowercase
@@ -88,14 +91,16 @@ export class CinemaService {
       }
     }
 
-    const savedSeats = await this.seatRepository.save(seats);
+    if (seats.length > 0) {
+      await this.seatRepository.insert(seats);
+    }
 
-    if (room.totalSeats !== savedSeats.length) {
-      room.totalSeats = savedSeats.length;
+    if (room.totalSeats !== seats.length) {
+      room.totalSeats = seats.length;
       await this.roomRepository.save(room);
     }
 
-    return savedSeats;
+    return seats;
   }
 
   // —— CINEMA CRUD ——————————————————————————————————————————————
@@ -361,6 +366,17 @@ export class CinemaService {
 
     // NEW: nếu đổi roomType thì cập nhật lại cấu hình cố định
     if (dto.roomType && dto.roomType !== room.roomType) {
+      const showtimeCount = await this.showtimeRepository.count({
+        where: { roomId },
+      });
+      if (showtimeCount > 0) {
+        throw new CustomException(
+          HttpStatus.BAD_REQUEST,
+          'ROOM_HAS_SHOWTIMES',
+          'Không thể đổi loại phòng chiếu khi phòng đã có lịch suất chiếu',
+        );
+      }
+
       const config = await this.getRoomTypeConfigOrThrow(dto.roomType);
       room.roomType = dto.roomType;
       room.rows = config.rows;
@@ -389,6 +405,20 @@ export class CinemaService {
         'Khong tim thay phong chieu',
       );
     }
+
+    const showtimeCount = await this.showtimeRepository.count({
+      where: { roomId },
+    });
+    if (showtimeCount > 0) {
+      throw new CustomException(
+        HttpStatus.BAD_REQUEST,
+        'ROOM_HAS_SHOWTIMES',
+        'Không thể xóa phòng chiếu đang có lịch suất chiếu. Vui lòng chuyển hoặc hủy các suất chiếu trước.',
+      );
+    }
+
+    // Xóa ghế của phòng trước để tránh lỗi khóa ngoại
+    await this.seatRepository.delete({ roomId });
     await this.roomRepository.remove(room);
     return new ApiResponse(true, 'Xoa phong chieu thanh cong');
   }

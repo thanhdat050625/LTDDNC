@@ -5,6 +5,7 @@ import {
   IsEnum,
   IsNumber,
   IsBoolean,
+  IsArray,
   Matches,
 } from 'class-validator';
 import { Type } from 'class-transformer';
@@ -135,3 +136,37 @@ export class GetSchedulesQueryDto {
   @IsString()
   endDate?: string;
 }
+
+export class SyncStaffSchedulesDto {
+  @IsNotEmpty({ message: 'cinemaId không được để trống' })
+  @Type(() => Number)
+  @IsNumber()
+  cinemaId: number;
+
+  @IsArray({ message: 'shiftIds phải là mảng' })
+  @IsNumber({}, { each: true })
+  shiftIds: number[];
+
+  @IsArray({ message: 'staffIds phải là mảng' })
+  @IsNumber({}, { each: true })
+  staffIds: number[];
+
+  @IsArray({ message: 'dates phải là mảng' })
+  @IsString({ each: true })
+  dates: string[];
+
+  @IsOptional()
+  @IsEnum(EStaffShiftRole, { message: 'assignedRole không hợp lệ' })
+  assignedRole?: EStaffShiftRole;
+
+  @IsOptional()
+  @IsArray()
+  @IsNumber({}, { each: true })
+  initialShiftIds?: number[];
+
+  @IsOptional()
+  @IsArray()
+  @IsNumber({}, { each: true })
+  initialStaffIds?: number[];
+}
+

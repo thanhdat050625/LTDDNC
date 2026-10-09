@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_shared/mobile_shared.dart';
+import 'package:cineplex_client/features/booking/data/repositories/booking_repository.dart';
 import '../cubit/payment_cubit.dart';
 
 class PaymentResultScreen extends StatefulWidget {
@@ -26,6 +27,10 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
 
     return AppScaffold(
       title: l10n.paymentResult,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () => context.go('/home'),
+      ),
       body: BlocBuilder<PaymentCubit, PaymentState>(
         builder: (context, state) {
           if (state is PaymentPolling || state is PaymentLoading) {
@@ -142,7 +147,24 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
                     const SizedBox(height: 28),
                     AppButton(
                       text: l10n.viewTickets,
-                      onPressed: () => context.go('/my-tickets'),
+                      onPressed: () {
+                        final targetTicketId = (state.status.bookingId.isNotEmpty && state.status.bookingId != '0')
+                            ? state.status.bookingId
+                            : (state.status.bookingCode.isNotEmpty
+                                ? state.status.bookingCode
+                                : widget.bookingId);
+                        if (targetTicketId.isNotEmpty && targetTicketId != '0') {
+                          context.push('/my-tickets/$targetTicketId');
+                        } else {
+                          context.push('/my-tickets');
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    AppButton(
+                      text: l10n.home,
+                      isOutlined: true,
+                      onPressed: () => context.go('/home'),
                     ),
                   ],
                 ),
@@ -195,6 +217,12 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
                       AppButton(
                         text: l10n.reselectSeats,
                         onPressed: () {
+                          final bId = int.tryParse(widget.bookingId);
+                          if (bId != null && bId > 0) {
+                            try {
+                              context.read<BookingRepository>().cancelBooking(bId);
+                            } catch (_) {}
+                          }
                           final showtimeId = state.status?.showtimeId;
                           if (showtimeId != null && showtimeId > 0) {
                             context.go('/booking/$showtimeId');
@@ -213,6 +241,12 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
                         text: l10n.reselectSeats,
                         isOutlined: true,
                         onPressed: () {
+                          final bId = int.tryParse(widget.bookingId);
+                          if (bId != null && bId > 0) {
+                            try {
+                              context.read<BookingRepository>().cancelBooking(bId);
+                            } catch (_) {}
+                          }
                           final showtimeId = state.status?.showtimeId;
                           if (showtimeId != null && showtimeId > 0) {
                             context.go('/booking/$showtimeId');

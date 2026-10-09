@@ -3,7 +3,7 @@ import {
   Query, UseGuards, HttpCode, HttpStatus, Request,
 } from '@nestjs/common';
 import { BookingService } from './booking.service';
-import { HoldSeatsDto, CreateBookingDto, ReleaseSeatsDto, ApplyPromotionDto } from './dto/booking.dto';
+import { HoldSeatsDto, CreateBookingDto, ReleaseSeatsDto, ApplyPromotionDto, ApplyLoyaltyPointsDto } from './dto/booking.dto';
 import { UpdateBookingConcessionsDto } from './dto/update-concessions.dto';
 import { JwtAuthGuard } from '../../core/security/jwt/jwt-auth.guard';
 import { RolesGuard } from '../../core/security/roles/roles.guard';
@@ -46,6 +46,16 @@ export class BookingController {
     return this.bookingService.createBooking(req.user.id, dto);
   }
 
+  @Post(':id/cancel')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async cancelBooking(
+    @Request() req,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.bookingService.cancelBooking(req.user.id, id);
+  }
+
   @Post(':id/promotion')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
@@ -65,6 +75,27 @@ export class BookingController {
     @Param('id', ParseIntPipe) id: number,
   ) {
     return this.bookingService.removePromotionFromBooking(req.user.id, id);
+  }
+
+  @Post(':id/loyalty-points')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async applyLoyaltyPoints(
+    @Request() req,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: ApplyLoyaltyPointsDto,
+  ) {
+    return this.bookingService.applyLoyaltyPointsToBooking(req.user.id, id, dto.pointsToUse);
+  }
+
+  @Delete(':id/loyalty-points')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async removeLoyaltyPoints(
+    @Request() req,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.bookingService.removeLoyaltyPointsFromBooking(req.user.id, id);
   }
 
   @Post('staff/hold-seats')
@@ -109,5 +140,19 @@ export class BookingController {
     @Query('pageSize') pageSize: number = 10,
   ) {
     return this.bookingService.getUserBookingHistory(req.user.id, page, pageSize);
+  }
+
+  @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async getBookingById(
+    @Request() req,
+    @Param('id') id: string,
+  ) {
+    const numId = Number(id);
+    if (!isNaN(numId)) {
+      return this.bookingService.getBookingById(numId, req.user);
+    }
+    return this.bookingService.getBookingByCode(id, req.user);
   }
 }

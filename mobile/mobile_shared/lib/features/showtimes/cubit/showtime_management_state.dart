@@ -10,7 +10,13 @@ abstract class ShowtimeManagementState extends Equatable {
 
 class ShowtimeManagementInitial extends ShowtimeManagementState {}
 
-class ShowtimeManagementLoading extends ShowtimeManagementState {}
+class ShowtimeManagementLoading extends ShowtimeManagementState {
+  final DateTime? selectedDate;
+  const ShowtimeManagementLoading({this.selectedDate});
+
+  @override
+  List<Object?> get props => [selectedDate];
+}
 
 class ShowtimeManagementLoaded extends ShowtimeManagementState {
   final List<ShowtimeModel> showtimes;

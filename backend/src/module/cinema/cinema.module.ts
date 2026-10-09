@@ -8,9 +8,11 @@ import { CinemaService } from './cinema.service';
 import { CinemaController } from './cinema.controller';
 import { AuthModule } from '../auth/auth.module';
 
+import { Showtime } from '../showtime/entities/showtime.entity';
+
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Cinema, Room, Seat, RoomTypeConfig]),
+    TypeOrmModule.forFeature([Cinema, Room, Seat, RoomTypeConfig, Showtime]),
     AuthModule,
   ],
   controllers: [CinemaController],

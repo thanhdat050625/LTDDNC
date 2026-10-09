@@ -41,15 +41,28 @@ class _StaffDashboardScreenState extends State<StaffDashboardScreen> {
     if (mounted) setState(() => _isLoading = true);
 
     try {
+      final authState = context.read<AuthBloc>().state;
+      final staffUser = authState is AuthAuthenticated ? authState.user : null;
+
       // 1. Fetch cinemas to get assigned cinema name
       final cinemaRepo = CinemaManagementRepository(dio);
       final cinemas = await cinemaRepo.getAllCinemas();
-      int? currentCinemaId;
-      String currentCinemaName = '';
+      int? currentCinemaId = staffUser?.cinema?.id ?? staffUser?.cinemaId;
+      String currentCinemaName = staffUser?.cinema?.name ?? '';
 
-      if (cinemas.isNotEmpty) {
-        currentCinemaId = cinemas.first.id;
-        currentCinemaName = cinemas.first.name;
+      if (currentCinemaId == null || currentCinemaName.isEmpty) {
+        if (cinemas.isNotEmpty) {
+          final matchedCinema = currentCinemaId != null
+              ? cinemas.where((c) => c.id == currentCinemaId).firstOrNull
+              : null;
+          if (matchedCinema != null) {
+            currentCinemaId = matchedCinema.id;
+            currentCinemaName = matchedCinema.name;
+          } else if (currentCinemaId == null) {
+            currentCinemaId = cinemas.first.id;
+            currentCinemaName = cinemas.first.name;
+          }
+        }
       }
 
       // 2. Fetch summary statistics
@@ -155,7 +168,8 @@ class _StaffDashboardScreenState extends State<StaffDashboardScreen> {
     final staffName = staffUser?.fullName.isNotEmpty == true
         ? staffUser!.fullName
         : l10n.staffRole;
-    final cinemaDisplayName = _cinemaName;
+    final cinemaDisplayName = staffUser?.cinema?.name ??
+        (_cinemaName.isNotEmpty ? _cinemaName : (staffUser?.cinemaId != null ? '' : l10n.noBranchAssigned));
 
     return AppScaffold(
       title: l10n.staffDashboard,
@@ -183,6 +197,7 @@ class _StaffDashboardScreenState extends State<StaffDashboardScreen> {
                 staffName,
                 cinemaDisplayName,
                 l10n,
+                avatar: staffUser?.avatar,
               ),
               const SizedBox(height: 16),
 
@@ -253,8 +268,9 @@ class _StaffDashboardScreenState extends State<StaffDashboardScreen> {
     CineplexColors theme,
     String staffName,
     String cinemaName,
-    AppLocalizations l10n,
-  ) {
+    AppLocalizations l10n, {
+    String? avatar,
+  }) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -274,14 +290,19 @@ class _StaffDashboardScreenState extends State<StaffDashboardScreen> {
           CircleAvatar(
             radius: 26,
             backgroundColor: theme.primary.withValues(alpha: 0.15),
-            child: Text(
-              staffName.isNotEmpty ? staffName[0].toUpperCase() : 'S',
-              style: TextStyle(
-                color: theme.primary,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
-            ),
+            backgroundImage: (avatar != null && avatar.trim().isNotEmpty)
+                ? NetworkImage(avatar.trim())
+                : null,
+            child: (avatar == null || avatar.trim().isEmpty)
+                ? Text(
+                    staffName.isNotEmpty ? staffName[0].toUpperCase() : 'S',
+                    style: TextStyle(
+                      color: theme.primary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  )
+                : null,
           ),
           const SizedBox(width: 14),
           Expanded(

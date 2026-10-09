@@ -13,6 +13,8 @@ import '../features/scanner/presentation/screens/staff_scanner_screen.dart';
 import '../features/ticket_sale/data/models/checkout_args.dart';
 import '../features/ticket_sale/presentation/cubit/ticket_sale_cubit.dart';
 import '../features/ticket_sale/presentation/screens/checkout_screen.dart';
+import '../features/ticket_sale/presentation/screens/concession_selection_screen.dart';
+import '../features/ticket_sale/presentation/screens/payment_result_screen.dart';
 import '../features/ticket_sale/presentation/screens/seat_selection_screen.dart';
 import '../features/ticket_sale/presentation/screens/ticket_sale_screen.dart';
 
@@ -28,9 +30,16 @@ GoRouter createStaffRouter(
   final shellKey = shellNavKey ?? staffShellNavigatorKey;
   return GoRouter(
     navigatorKey: rootKey,
-    initialLocation: '/scanner',
+    initialLocation: '/pos',
     refreshListenable: _StaffAuthRefreshNotifier(authBloc),
     redirect: (context, state) {
+      if (state.uri.scheme == 'cineplexstaff') {
+        final hostPart = state.uri.host.isNotEmpty ? '/${state.uri.host}' : '';
+        final path = '$hostPart${state.uri.path}'.replaceAll('//', '/');
+        final query = state.uri.hasQuery ? '?${state.uri.query}' : '';
+        return path.isEmpty ? '/pos' : '$path$query';
+      }
+
       final authState = authBloc.state;
       final isAuth = authState is AuthAuthenticated;
       final isOnLogin = state.matchedLocation == '/login';
@@ -42,12 +51,12 @@ GoRouter createStaffRouter(
       if (isAuth && isOnLogin) {
         final role = authState.user.role.toUpperCase();
         if (role == 'STAFF' || role == 'ADMIN') {
-          return '/scanner';
+          return '/pos';
         }
       }
 
       if (state.matchedLocation == '/dashboard') {
-        return '/scanner';
+        return '/pos';
       }
 
       if (state.matchedLocation == '/ticket-sale') {
@@ -112,14 +121,24 @@ GoRouter createStaffRouter(
             );
           }
           final dioClient = context.read<DioClient>();
+          final authState = context.read<AuthBloc>().state;
+          final staffUser = authState is AuthAuthenticated ? authState.user : null;
+          final defaultCinemaId = staffUser?.cinema?.id ?? staffUser?.cinemaId;
           return BlocProvider(
             create: (_) => TicketSaleCubit(
               CinemaManagementRepository(dioClient),
               ShowtimeManagementRepository(dioClient),
               BookingManagementRepository(dioClient),
-            )..loadInitialData(),
+            )..loadInitialData(defaultCinemaId: defaultCinemaId),
             child: const SeatSelectionScreen(),
           );
+        },
+      ),
+      GoRoute(
+        path: '/ticket-sale/concessions',
+        builder: (context, state) {
+          final args = state.extra as CheckoutArgs?;
+          return ConcessionSelectionScreen(args: args);
         },
       ),
       GoRoute(
@@ -127,6 +146,28 @@ GoRouter createStaffRouter(
         builder: (context, state) {
           final args = state.extra as CheckoutArgs?;
           return CheckoutScreen(args: args);
+        },
+      ),
+      GoRoute(
+        path: '/ticket-sale/payment-result/:id',
+        builder: (context, state) {
+          final bookingId = state.pathParameters['id'] ?? '0';
+          final extra = state.extra as Map<String, dynamic>?;
+          return StaffPaymentResultScreen(
+            bookingId: bookingId,
+            initialData: extra,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/payment-result/:id',
+        builder: (context, state) {
+          final bookingId = state.pathParameters['id'] ?? '0';
+          final extra = state.extra as Map<String, dynamic>?;
+          return StaffPaymentResultScreen(
+            bookingId: bookingId,
+            initialData: extra,
+          );
         },
       ),
 

@@ -52,7 +52,18 @@ class _ShowtimeOccupancyScreenState extends State<ShowtimeOccupancyScreen> {
       final cinemas = await cinemaRepo.getAllCinemas();
 
       if (cinemas.isNotEmpty) {
-        final currentCinemaId = _selectedCinemaId ?? cinemas.first.id;
+        int initialCinemaId = cinemas.first.id;
+        try {
+          final authState = context.read<AuthBloc>().state;
+          if (authState is AuthAuthenticated) {
+            final userCinemaId = authState.user.cinema?.id ?? authState.user.cinemaId;
+            if (userCinemaId != null && cinemas.any((c) => c.id == userCinemaId)) {
+              initialCinemaId = userCinemaId;
+            }
+          }
+        } catch (_) {}
+
+        final currentCinemaId = _selectedCinemaId ?? initialCinemaId;
         final showtimeRepo = ShowtimeManagementRepository(dio);
         final map = await showtimeRepo.getByCinemaId(currentCinemaId);
 

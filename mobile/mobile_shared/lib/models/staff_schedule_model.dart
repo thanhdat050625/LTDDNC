@@ -43,6 +43,26 @@ class StaffScheduleModel extends Equatable {
     final shift = json['shift'] as Map<String, dynamic>?;
     final assignedBy = json['assignedBy'] as Map<String, dynamic>?;
 
+    String parsedWorkDate = '';
+    final rawWorkDate = json['workDate'];
+    if (rawWorkDate != null) {
+      final str = rawWorkDate.toString();
+      if (str.contains('T')) {
+        final dt = DateTime.tryParse(str);
+        if (dt != null) {
+          final local = dt.toLocal();
+          final y = local.year.toString().padLeft(4, '0');
+          final m = local.month.toString().padLeft(2, '0');
+          final d = local.day.toString().padLeft(2, '0');
+          parsedWorkDate = '$y-$m-$d';
+        } else {
+          parsedWorkDate = str.split('T').first;
+        }
+      } else {
+        parsedWorkDate = str;
+      }
+    }
+
     return StaffScheduleModel(
       id: json['id'] as int,
       staffId: json['staffId'] as int? ?? staff?['id'] as int? ?? 0,
@@ -55,7 +75,7 @@ class StaffScheduleModel extends Equatable {
       shiftName: shift?['name'] as String? ?? 'Ca làm #${json['shiftId']}',
       startTime: shift?['startTime'] as String? ?? '',
       endTime: shift?['endTime'] as String? ?? '',
-      workDate: json['workDate'] as String? ?? '',
+      workDate: parsedWorkDate,
       assignedRole: json['assignedRole'] as String? ?? 'GENERAL',
       status: json['status'] as String? ?? 'SCHEDULED',
       note: json['note'] as String?,

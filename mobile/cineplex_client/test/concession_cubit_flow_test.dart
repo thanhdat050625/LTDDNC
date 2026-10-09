@@ -9,10 +9,12 @@ import 'package:cineplex_client/features/concession/presentation/cubit/concessio
 class MockConcessionRepository extends Mock implements ConcessionRepository {}
 class MockBookingRepository extends Mock implements BookingRepository {}
 class FakeUpdateBookingConcessionsDto extends Fake implements UpdateBookingConcessionsDto {}
+class FakeCreateBookingDto extends Fake implements CreateBookingDto {}
 
 void main() {
   setUpAll(() {
     registerFallbackValue(FakeUpdateBookingConcessionsDto());
+    registerFallbackValue(FakeCreateBookingDto());
   });
 
   late MockConcessionRepository concessionRepo;
@@ -147,6 +149,26 @@ void main() {
         isA<ConcessionError>().having((e) => e.message, 'message', contains('Cập nhật bắp nước thất bại')),
         isA<ConcessionLoaded>().having((s) => s.isSubmitting, 'isSubmitting', false),
       ],
+    );
+
+    blocTest<ConcessionCubit, ConcessionState>(
+      '6. Submit concessions when bookingId is 0 defers booking creation to checkout and emits success with concessions',
+      build: () => ConcessionCubit(concessionRepo, bookingRepo),
+      seed: () => ConcessionLoaded(
+        products: sampleProducts,
+        selectedItems: const {1: 1},
+        totalPrice: 60000.0,
+      ),
+      act: (cubit) async => cubit.submitConcessions(0, 101, [1, 2]),
+      expect: () => [
+        isA<ConcessionLoaded>().having((s) => s.isSubmitting, 'isSubmitting', true),
+        isA<ConcessionSubmitSuccess>()
+            .having((s) => s.bookingId, 'bookingId', 0)
+            .having((s) => s.concessions.length, 'concessions count', 1),
+      ],
+      verify: (_) {
+        verifyNever(() => bookingRepo.createBooking(any()));
+      },
     );
   });
 }

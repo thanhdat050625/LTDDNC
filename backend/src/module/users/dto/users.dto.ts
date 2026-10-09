@@ -44,6 +44,44 @@ export class CreateStaffDto {
   @IsString()
   @IsOptional()
   phone?: string;
+
+  @IsString()
+  @IsOptional()
+  avatar?: string;
+
+  @Type(() => Number)
+  @IsNumber()
+  @IsOptional()
+  cinemaId?: number;
+}
+
+export class UpdateStaffDto {
+  @IsString()
+  @IsNotEmpty({ message: 'Vui lòng nhập họ và tên' })
+  @IsOptional()
+  fullName?: string;
+
+  @IsEmail({}, { message: 'Email không hợp lệ' })
+  @IsOptional()
+  email?: string;
+
+  @IsString()
+  @MinLength(6, { message: 'Mật khẩu phải có ít nhất 6 ký tự' })
+  @IsOptional()
+  password?: string;
+
+  @IsString()
+  @IsOptional()
+  phone?: string;
+
+  @IsString()
+  @IsOptional()
+  avatar?: string;
+
+  @Type(() => Number)
+  @IsNumber()
+  @IsOptional()
+  cinemaId?: number;
 }
 
 export class UpdateUserStatusDto {

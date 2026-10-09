@@ -44,11 +44,21 @@ class ConcessionLoaded extends ConcessionState {
   List<Object?> get props => [products, selectedItems, totalPrice, isSubmitting];
 }
 
-class ConcessionSubmitSuccess extends ConcessionState {
+class ConcessionSubmitSuccess extends ConcessionLoaded {
   final int bookingId;
-  const ConcessionSubmitSuccess(this.bookingId);
+  final List<ConcessionItemDto> concessions;
+
+  const ConcessionSubmitSuccess(
+    this.bookingId, {
+    this.concessions = const [],
+    super.products = const [],
+    super.selectedItems = const {},
+    super.totalPrice = 0.0,
+    super.isSubmitting = false,
+  });
+
   @override
-  List<Object?> get props => [bookingId];
+  List<Object?> get props => [bookingId, concessions, products, selectedItems, totalPrice, isSubmitting];
 }
 
 class ConcessionError extends ConcessionState {
@@ -102,28 +112,45 @@ class ConcessionCubit extends Cubit<ConcessionState> {
     }
   }
 
-  Future<bool> submitConcessions(int bookingId) async {
+  Future<bool> submitConcessions([
+    int bookingId = 0,
+    int showtimeId = 0,
+    List<int> seatIds = const [],
+    bool skip = false,
+  ]) async {
     if (state is ConcessionLoaded) {
       final currentState = state as ConcessionLoaded;
       emit(currentState.copyWith(isSubmitting: true));
 
       try {
-        final items = currentState.selectedItems.entries
-            .where((item) => item.value > 0)
-            .map((item) => ConcessionItemDto(
-                  concessionId: item.key,
-                  quantity: item.value,
-                ))
-            .toList();
+        final items = skip
+            ? <ConcessionItemDto>[]
+            : currentState.selectedItems.entries
+                .where((item) => item.value > 0)
+                .map((item) => ConcessionItemDto(
+                      concessionId: item.key,
+                      quantity: item.value,
+                    ))
+                .toList();
 
-        if (_bookingRepository != null) {
+        final targetBookingId = bookingId;
+
+        // ponytail: Order creation is deferred to "Thanh toán ngay" on CheckoutScreen.
+        if (targetBookingId > 0 && _bookingRepository != null && !skip) {
           await _bookingRepository.updateBookingConcessions(
-            bookingId,
+            targetBookingId,
             UpdateBookingConcessionsDto(concessions: items),
           );
         }
 
-        emit(ConcessionSubmitSuccess(bookingId));
+        emit(ConcessionSubmitSuccess(
+          targetBookingId,
+          concessions: items,
+          products: currentState.products,
+          selectedItems: currentState.selectedItems,
+          totalPrice: currentState.totalPrice,
+          isSubmitting: false,
+        ));
         return true;
       } catch (e) {
         emit(ConcessionError(e.toString()));

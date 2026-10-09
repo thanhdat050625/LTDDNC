@@ -34,8 +34,10 @@ export class ShowtimeController {
   async findAll(
     @Query('page') page: number = 1,
     @Query('pageSize') pageSize: number = 10,
+    @Query('date') date?: string,
+    @Query('cinemaId') cinemaId?: number,
   ) {
-    return this.showtimeService.findAll(page, pageSize);
+    return this.showtimeService.findAll(page, pageSize, date, cinemaId ? Number(cinemaId) : undefined);
   }
 
   @Get('by-movie/:movieId')

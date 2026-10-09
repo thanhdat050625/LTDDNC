@@ -24,6 +24,7 @@ import 'package:cineplex_client/features/payment/presentation/screens/payment_we
 import 'package:cineplex_client/features/payment/presentation/screens/payment_result_screen.dart';
 import 'package:cineplex_client/features/ticket/data/repositories/ticket_repository.dart';
 import 'package:cineplex_client/features/ticket/presentation/screens/my_tickets_screen.dart';
+import 'package:cineplex_client/features/ticket/presentation/screens/ticket_detail_screen.dart';
 import 'package:cineplex_client/features/notification/data/repositories/notification_repository.dart';
 import 'package:cineplex_client/features/notification/data/models/notification_model.dart';
 import 'package:cineplex_client/features/notification/presentation/cubit/notification_cubit.dart';
@@ -126,6 +127,28 @@ class FakeTicketRepository extends TicketRepository {
         ],
       ),
     ];
+  }
+  @override
+  Future<BookingDetailModel?> getBookingById(String id) async {
+    return const BookingDetailModel(
+      id: '1',
+      bookingCode: 'CPX-TEST-99',
+      totalAmount: 130000,
+      status: 'PAID',
+      movieTitle: 'Cineplex Movie',
+      tickets: [
+        TicketModel(
+          id: '1',
+          bookingId: '1',
+          seatId: 'A1',
+          seatLabel: 'A1',
+          qrCode: 'QR_TICKET_A1',
+          price: 75000,
+          status: 'PAID',
+          isCheckedIn: false,
+        ),
+      ],
+    );
   }
 }
 
@@ -528,6 +551,13 @@ void main() {
 
         expect(find.byType(PaymentResultScreen), findsOneWidget);
 
+        // Tap "Xem vé của tôi" and verify direct navigation to exact TicketDetailRouteScreen
+        await tester.tap(find.text('Xem vé của tôi'));
+        await tester.pumpAndSettle();
+
+        expect(find.byType(TicketDetailRouteScreen), findsOneWidget);
+        expect(find.text('CPX-TEST-99'), findsWidgets);
+
         final providerExceptions = errorDetails.where((e) => e.exceptionAsString().contains('ProviderNotFoundException')).toList();
         expect(providerExceptions, isEmpty, reason: 'Must have zero ProviderNotFoundException');
       } finally {
@@ -788,7 +818,6 @@ void main() {
 
       expect(find.byType(CheckoutScreen), findsOneWidget);
       expect(find.text('Tóm tắt đơn hàng'), findsOneWidget);
-      expect(find.text('CPX-TEST-99'), findsOneWidget);
       expect(find.text('Tổng cộng'), findsOneWidget);
       expect(find.text('Phương thức thanh toán'), findsOneWidget);
       expect(find.text('Thanh toán ngay'), findsOneWidget);

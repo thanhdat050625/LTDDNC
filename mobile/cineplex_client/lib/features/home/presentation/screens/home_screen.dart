@@ -62,7 +62,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             Row(
                               children: [
-                                Icon(Icons.movie_filter_rounded, color: colors.primary, size: 28),
+                                Image.asset(
+                                  'assets/images/app_icon.png',
+                                  width: 28,
+                                  height: 28,
+                                ),
                                 const SizedBox(width: 8),
                                 Text(
                                   l10n.appTitle,

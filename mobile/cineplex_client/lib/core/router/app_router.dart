@@ -21,6 +21,7 @@ import 'package:cineplex_client/features/ticket/presentation/cubit/my_tickets_cu
 import 'package:cineplex_client/features/ticket/data/repositories/ticket_repository.dart';
 import 'package:cineplex_client/features/notification/presentation/screens/notification_screen.dart';
 import 'package:cineplex_client/features/profile/presentation/screens/profile_screen.dart';
+import 'package:cineplex_client/features/profile/presentation/screens/loyalty_detail_screen.dart';
 import 'package:cineplex_client/features/profile/presentation/screens/edit_profile_screen.dart';
 import 'package:cineplex_client/features/profile/presentation/screens/change_password_screen.dart';
 import 'package:cineplex_client/features/showtime/presentation/cubit/showtime_cubit.dart';
@@ -31,6 +32,7 @@ import 'package:cineplex_client/features/concession/presentation/cubit/concessio
 import 'package:cineplex_client/features/concession/data/repositories/concession_repository.dart';
 import 'package:cineplex_client/features/payment/presentation/cubit/payment_cubit.dart';
 import 'package:cineplex_client/features/payment/data/repositories/payment_repository.dart';
+import 'package:cineplex_client/features/payment/data/models/payment_model.dart';
 import 'package:cineplex_client/core/router/main_shell.dart';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -47,7 +49,50 @@ GoRouter createRouter(
     navigatorKey: rootKey,
     initialLocation: '/home',
     refreshListenable: _AuthRefreshNotifier(authBloc),
+    errorBuilder: (context, state) => const HomeScreen(),
     redirect: (context, state) {
+      if (state.uri.scheme == 'cineplex') {
+        final hostPart = state.uri.host.isNotEmpty ? '/${state.uri.host}' : '';
+        final path = '$hostPart${state.uri.path}'.replaceAll('//', '/');
+        final query = state.uri.hasQuery ? '?${state.uri.query}' : '';
+        if (path.startsWith('/booking-history/') ||
+            path.startsWith('/history/') ||
+            path.startsWith('/tickets/')) {
+          final id = path.split('/').last;
+          return '/my-tickets/$id$query';
+        }
+        if (path == '/booking-history' || path == '/history' || path == '/tickets') {
+          return '/my-tickets$query';
+        }
+        if (path == '/' || path.isEmpty) {
+          return '/home$query';
+        }
+        return '$path$query';
+      }
+
+      final loc = state.matchedLocation.isNotEmpty ? state.matchedLocation : state.uri.path;
+      if (loc == '/' || state.uri.path == '/') {
+        return '/home';
+      }
+      if (loc.startsWith('/booking-history/') ||
+          state.uri.path.startsWith('/booking-history/') ||
+          loc.startsWith('/history/') ||
+          state.uri.path.startsWith('/history/') ||
+          loc.startsWith('/tickets/') ||
+          state.uri.path.startsWith('/tickets/')) {
+        final targetPath = loc.isNotEmpty ? loc : state.uri.path;
+        final id = targetPath.split('/').last;
+        return '/my-tickets/$id';
+      }
+      if (loc == '/booking-history' ||
+          state.uri.path == '/booking-history' ||
+          loc == '/history' ||
+          state.uri.path == '/history' ||
+          loc == '/tickets' ||
+          state.uri.path == '/tickets') {
+        return '/my-tickets';
+      }
+
       final authState = authBloc.state;
       final isAuth = authState is AuthAuthenticated;
       final isOnAuth =
@@ -77,6 +122,24 @@ GoRouter createRouter(
       return null;
     },
     routes: [
+      // Aliases & redirects for web / notification deep links
+      GoRoute(path: '/', redirect: (_, __) => '/home'),
+      GoRoute(path: '/booking-history', redirect: (_, __) => '/my-tickets'),
+      GoRoute(path: '/history', redirect: (_, __) => '/my-tickets'),
+      GoRoute(path: '/tickets', redirect: (_, __) => '/my-tickets'),
+      GoRoute(
+        path: '/booking-history/:id',
+        redirect: (_, state) => '/my-tickets/${state.pathParameters['id']}',
+      ),
+      GoRoute(
+        path: '/history/:id',
+        redirect: (_, state) => '/my-tickets/${state.pathParameters['id']}',
+      ),
+      GoRoute(
+        path: '/tickets/:id',
+        redirect: (_, state) => '/my-tickets/${state.pathParameters['id']}',
+      ),
+
       // Auth routes (no shell)
       GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
       GoRoute(path: '/register', builder: (_, __) => const RegisterScreen()),
@@ -141,14 +204,17 @@ GoRouter createRouter(
       GoRoute(
         path: '/concessions/:bookingId',
         builder: (context, state) {
-          final bookingId = int.parse(state.pathParameters['bookingId']!);
+          final bookingId = int.tryParse(state.pathParameters['bookingId'] ?? '0') ?? 0;
+          final args = state.extra is ConcessionScreenArgs
+              ? state.extra as ConcessionScreenArgs
+              : ConcessionScreenArgs(bookingId: bookingId);
           return BlocProvider(
             create: (ctx) =>
                 ConcessionCubit(
                   ctx.read<ConcessionRepository>(),
                   ctx.read<BookingRepository>(),
                 )..loadConcessions(),
-            child: ConcessionScreen(bookingId: bookingId),
+            child: ConcessionScreen(bookingId: bookingId, args: args),
           );
         },
       ),
@@ -156,11 +222,21 @@ GoRouter createRouter(
         path: '/checkout/:bookingId',
         builder: (context, state) {
           final bookingId = state.pathParameters['bookingId']!;
+          final args = state.extra is CheckoutScreenArgs ? state.extra as CheckoutScreenArgs : null;
           return BlocProvider(
-            create: (ctx) =>
-                PaymentCubit(ctx.read<PaymentRepository>())
-                  ..prepareCheckout(bookingId),
-            child: CheckoutScreen(bookingId: bookingId),
+            create: (ctx) {
+              final cubit = PaymentCubit(
+                ctx.read<PaymentRepository>(),
+                ctx.read<BookingRepository>(),
+              );
+              if ((bookingId == '0' || bookingId.isEmpty) && args != null) {
+                cubit.prepareCheckoutDraft(args);
+              } else {
+                cubit.prepareCheckout(bookingId);
+              }
+              return cubit;
+            },
+            child: CheckoutScreen(bookingId: bookingId, args: args),
           );
         },
       ),
@@ -174,20 +250,26 @@ GoRouter createRouter(
       GoRoute(
         path: '/payment-result/:bookingId',
         builder: (context, state) {
-          final bookingId = state.pathParameters['bookingId']!;
+          final paramId = state.pathParameters['bookingId'] ?? '';
+          final queryCode = state.uri.queryParameters['bookingCode'] ?? '';
+          final effectiveBookingId = (paramId.isNotEmpty && paramId != '0') ? paramId : (queryCode.isNotEmpty ? queryCode : paramId);
           return BlocProvider(
             create: (ctx) =>
                 PaymentCubit(ctx.read<PaymentRepository>())
-                  ..checkStatus(bookingId),
-            child: PaymentResultScreen(bookingId: bookingId),
+                  ..checkStatus(effectiveBookingId),
+            child: PaymentResultScreen(bookingId: effectiveBookingId),
           );
         },
       ),
       GoRoute(
         path: '/my-tickets/:id',
-        builder: (_, state) {
-          final booking = state.extra as BookingDetailModel;
-          return TicketDetailScreen(booking: booking);
+        builder: (context, state) {
+          final booking = state.extra is BookingDetailModel ? state.extra as BookingDetailModel : null;
+          final bookingId = state.pathParameters['id'] ?? '';
+          return TicketDetailRouteScreen(
+            bookingId: bookingId,
+            initialBooking: booking,
+          );
         },
       ),
       GoRoute(
@@ -199,6 +281,18 @@ GoRouter createRouter(
       GoRoute(
         path: '/change-password',
         builder: (_, __) => const ChangePasswordScreen(),
+      ),
+      GoRoute(
+        path: '/loyalty',
+        builder: (_, state) {
+          final extra = state.extra is Map<String, dynamic> ? state.extra as Map<String, dynamic> : null;
+          final user = extra?['user'] as Map<String, dynamic>?;
+          final loyalty = extra?['loyalty'] as Map<String, dynamic>?;
+          return LoyaltyDetailScreen(
+            initialUser: user,
+            initialLoyalty: loyalty,
+          );
+        },
       ),
       GoRoute(
         path: '/settings',

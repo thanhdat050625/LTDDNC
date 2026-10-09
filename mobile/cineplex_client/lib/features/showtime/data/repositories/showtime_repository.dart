@@ -10,11 +10,21 @@ class ShowtimeRepository {
     final raw = response.data;
     final data = (raw is Map && raw.containsKey('data')) ? raw['data'] : raw;
     
+    final now = DateTime.now();
     final Map<String, List<ShowtimeModel>> showtimes = {};
     if (data is Map<String, dynamic>) {
       data.forEach((key, value) {
         if (value is List) {
-          showtimes[key] = value.map((e) => ShowtimeModel.fromJson(e as Map<String, dynamic>)).toList();
+          final list = value
+              .map((e) => ShowtimeModel.fromJson(e as Map<String, dynamic>))
+              .where((st) =>
+                  st.status != 'COMPLETED' &&
+                  st.status != 'CANCELLED' &&
+                  st.publicStartTime.isAfter(now))
+              .toList();
+          if (list.isNotEmpty) {
+            showtimes[key] = list;
+          }
         }
       });
     }

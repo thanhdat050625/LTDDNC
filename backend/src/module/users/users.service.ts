@@ -2,10 +2,12 @@ import { Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
+import { Booking } from '../booking/entities/booking.entity';
+import { EBookingStatus } from '../booking/enums/booking.enum';
 import { ApiResponse } from '../../core/dto/ApiResponse.dto';
 import { CustomException } from '../../core/exceptions/custom.exception';
 import { EUserRole, EUserStatus } from './enums/user.enum';
-import { CreateStaffDto, GetUsersQueryDto, UpdateProfileDto } from './dto/users.dto';
+import { CreateStaffDto, GetUsersQueryDto, UpdateProfileDto, UpdateStaffDto } from './dto/users.dto';
 import * as bcrypt from 'bcrypt';
 
 import { ENotificationType } from '../notification/enums/notification.enum';
@@ -17,6 +19,8 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Booking)
+    private readonly bookingRepository: Repository<Booking>,
     private readonly eventEmitter: EventEmitter2,
     private readonly cloudinaryService: CloudinaryService,
   ) {}
@@ -26,7 +30,8 @@ export class UsersService {
     const pageSize = Math.max(1, Number(query.pageSize || 10));
     const skip = (page - 1) * pageSize;
 
-    const qb = this.userRepository.createQueryBuilder('user');
+    const qb = this.userRepository.createQueryBuilder('user')
+      .leftJoinAndSelect('user.cinema', 'cinema');
 
     if (query.role) {
       qb.andWhere('user.role = :role', { role: query.role });
@@ -65,11 +70,17 @@ export class UsersService {
     return response;
   }
 
-  async createStaff(dto: CreateStaffDto): Promise<ApiResponse<User>> {
+  async createStaff(dto: CreateStaffDto, avatar?: Express.Multer.File): Promise<ApiResponse<User>> {
     const email = dto.email.trim().toLowerCase();
     const existing = await this.userRepository.findOne({ where: { email } });
     if (existing) {
       throw new CustomException(HttpStatus.BAD_REQUEST, 'USER_EXISTS', 'Email đã được sử dụng trong hệ thống');
+    }
+
+    let avatarUrl: string | undefined = dto.avatar?.trim() || undefined;
+    if (avatar) {
+      const uploadRes = await this.cloudinaryService.uploadImage(avatar);
+      avatarUrl = uploadRes.secure_url;
     }
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
@@ -77,6 +88,8 @@ export class UsersService {
       fullName: dto.fullName.trim(),
       email,
       phone: dto.phone?.trim() || undefined,
+      avatar: avatarUrl,
+      cinemaId: dto.cinemaId ? Number(dto.cinemaId) : undefined,
       password: hashedPassword,
       role: EUserRole.STAFF,
       status: EUserStatus.ACTIVE,
@@ -84,6 +97,10 @@ export class UsersService {
     });
 
     const savedStaff = await this.userRepository.save(newStaff);
+    const resultStaff = await this.userRepository.findOne({
+      where: { id: savedStaff.id },
+      relations: ['cinema'],
+    });
 
     // Phát sự kiện thông báo chào mừng nhân viên
     this.eventEmitter.emit('notification.create', {
@@ -93,7 +110,60 @@ export class UsersService {
       type: ENotificationType.SYSTEM,
     });
 
-    return new ApiResponse(true, 'Tạo tài khoản nhân viên thành công', savedStaff);
+    return new ApiResponse(true, 'Tạo tài khoản nhân viên thành công', resultStaff || savedStaff);
+  }
+
+  async updateStaff(
+    staffId: number,
+    dto: UpdateStaffDto,
+    avatar?: Express.Multer.File,
+  ): Promise<ApiResponse<User>> {
+    const staff = await this.userRepository.findOne({ where: { id: staffId } });
+    if (!staff) {
+      throw new CustomException(HttpStatus.NOT_FOUND, 'USER_NOT_FOUND', 'Không tìm thấy người dùng');
+    }
+    if (staff.role !== EUserRole.STAFF) {
+      throw new CustomException(HttpStatus.BAD_REQUEST, 'INVALID_ROLE', 'Chỉ có thể chỉnh sửa tài khoản nhân viên');
+    }
+
+    if (dto.email && dto.email.trim().toLowerCase() !== staff.email.toLowerCase()) {
+      const newEmail = dto.email.trim().toLowerCase();
+      const existing = await this.userRepository.findOne({ where: { email: newEmail } });
+      if (existing && existing.id !== staffId) {
+        throw new CustomException(HttpStatus.BAD_REQUEST, 'USER_EXISTS', 'Email đã được sử dụng trong hệ thống');
+      }
+      staff.email = newEmail;
+    }
+
+    if (dto.fullName) {
+      staff.fullName = dto.fullName.trim();
+    }
+
+    if (dto.phone !== undefined) {
+      staff.phone = dto.phone ? dto.phone.trim() : (null as any);
+    }
+
+    if (dto.password && dto.password.trim().length >= 6) {
+      staff.password = await bcrypt.hash(dto.password.trim(), 10);
+    }
+
+    if (avatar) {
+      const uploadRes = await this.cloudinaryService.uploadImage(avatar);
+      staff.avatar = uploadRes.secure_url;
+    } else if (dto.avatar !== undefined) {
+      staff.avatar = dto.avatar ? dto.avatar.trim() : (null as any);
+    }
+
+    if (dto.cinemaId !== undefined) {
+      staff.cinemaId = dto.cinemaId ? Number(dto.cinemaId) : (null as any);
+    }
+
+    await this.userRepository.save(staff);
+    const updatedStaff = await this.userRepository.findOne({
+      where: { id: staffId },
+      relations: ['cinema'],
+    });
+    return new ApiResponse(true, 'Cập nhật tài khoản nhân viên thành công', updatedStaff || staff);
   }
 
   async updateUserStatus(userId: number, status: EUserStatus, currentUserId?: number): Promise<ApiResponse<User>> {
@@ -121,7 +191,10 @@ export class UsersService {
   }
 
   async getProfile(userId: number): Promise<ApiResponse<User>> {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['cinema'],
+    });
     if (!user) {
       throw new CustomException(HttpStatus.NOT_FOUND, 'USER_NOT_FOUND', 'Không tìm thấy người dùng');
     }
@@ -195,7 +268,110 @@ export class UsersService {
       pointValue: 1,           // 1 điểm = 1 VNĐ
       earnRate: 0.10,           // 10% giá trị đơn hàng
       maxDiscountRate: 0.20,    // Tối đa 20% tổng đơn
+      policy: {
+        earnRate: 0.10,
+        earnRatePercent: 10,
+        pointValue: 1,
+        maxDiscountRate: 0.20,
+        maxDiscountPercent: 20,
+      },
     });
+  }
+
+  async getLoyaltyHistory(userId: number, page: number = 1, pageSize: number = 20): Promise<ApiResponse<any>> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new CustomException(HttpStatus.NOT_FOUND, 'USER_NOT_FOUND', 'Không tìm thấy người dùng');
+    }
+
+    const bookings = await this.bookingRepository.find({
+      where: { userId },
+      relations: ['showtime', 'showtime.movie', 'payment'],
+      order: { createdAt: 'DESC' },
+    });
+
+    const history: Array<{
+      id: string;
+      bookingId: number;
+      bookingCode: string;
+      movieTitle?: string;
+      type: 'EARN' | 'REDEEM' | 'REFUND';
+      points: number;
+      title: string;
+      description: string;
+      createdAt: Date;
+    }> = [];
+
+    for (const b of bookings) {
+      const movieTitle = b.showtime?.movie?.title;
+
+      // 1. Dùng điểm giảm giá (REDEEM)
+      if (b.pointsUsed && b.pointsUsed > 0) {
+        history.push({
+          id: `redeem-${b.id}`,
+          bookingId: b.id,
+          bookingCode: b.bookingCode,
+          movieTitle,
+          type: 'REDEEM',
+          points: -b.pointsUsed,
+          title: 'Dùng điểm thanh toán',
+          description: `Đơn hàng #${b.bookingCode}${movieTitle ? ` - ${movieTitle}` : ''}`,
+          createdAt: b.createdAt,
+        });
+      }
+
+      // 2. Tích lũy điểm khi thanh toán thành công (EARN)
+      if (b.status === EBookingStatus.PAID) {
+        const pointsEarned = Math.floor(b.totalAmount * 0.10);
+        if (pointsEarned > 0) {
+          history.push({
+            id: `earn-${b.id}`,
+            bookingId: b.id,
+            bookingCode: b.bookingCode,
+            movieTitle,
+            type: 'EARN',
+            points: pointsEarned,
+            title: 'Tích lũy từ đơn vé',
+            description: `Đơn hàng #${b.bookingCode}${movieTitle ? ` - ${movieTitle}` : ''}`,
+            createdAt: b.payment?.createdAt || b.createdAt,
+          });
+        }
+      }
+
+      // 3. Hoàn lại điểm khi đơn bị hủy hoặc quá hạn (REFUND)
+      if ((b.status === EBookingStatus.CANCELLED || b.status === EBookingStatus.EXPIRED) && b.pointsUsed && b.pointsUsed > 0) {
+        history.push({
+          id: `refund-${b.id}`,
+          bookingId: b.id,
+          bookingCode: b.bookingCode,
+          movieTitle,
+          type: 'REFUND',
+          points: b.pointsUsed,
+          title: 'Hoàn trả điểm tích lũy',
+          description: `Đơn hàng #${b.bookingCode} bị hủy/hết hạn`,
+          createdAt: b.expiredAt || b.createdAt,
+        });
+      }
+    }
+
+    history.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+    const totalItems = history.length;
+    const totalPages = Math.ceil(totalItems / pageSize) || 1;
+    const start = (page - 1) * pageSize;
+    const items = history.slice(start, start + pageSize);
+
+    const response = new ApiResponse(true, 'Lấy lịch sử điểm tích lũy thành công', {
+      loyaltyPoints: user.loyaltyPoints,
+      policy: {
+        earnRatePercent: 10,
+        pointValue: 1,
+        maxDiscountPercent: 20,
+      },
+      items,
+    });
+    response.pagination = { page: Number(page), pageSize: Number(pageSize), totalItems, totalPages };
+    return response;
   }
 
   async searchUser(keyword: string): Promise<ApiResponse<User[]>> {

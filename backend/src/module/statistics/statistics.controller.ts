@@ -34,8 +34,24 @@ export class StatisticsController {
   }
 
   @Get('movies')
-  async getMoviePerformance() {
-    return this.statisticsService.getMoviePerformance();
+  async getMoviePerformance(
+    @Query('filterType') filterType?: string,
+    @Query('timeFrame') timeFrame?: string,
+    @Query('year') year?: string,
+    @Query('month') month?: string,
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string,
+  ) {
+    const parsedYear = year ? parseInt(year, 10) : undefined;
+    const parsedMonth = month ? parseInt(month, 10) : undefined;
+    const type = (startDate && endDate && !filterType) ? 'custom' : (filterType || timeFrame || 'year');
+    return this.statisticsService.getMoviePerformance(
+      type,
+      parsedYear,
+      parsedMonth,
+      startDate,
+      endDate,
+    );
   }
 
   @Get('summary')

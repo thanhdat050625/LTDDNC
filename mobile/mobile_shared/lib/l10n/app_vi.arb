@@ -242,6 +242,9 @@
   "notificationReminder": "Nhắc nhở",
   "notificationSystem": "Hệ thống",
   "notificationPaymentFailed": "Thanh toán thất bại",
+  "notificationAccount": "Tài khoản",
+  "notificationDetail": "Chi tiết thông báo",
+  "notificationOpenLink": "Xem chi tiết liên kết",
   "profile": "Tài khoản",
   "editProfile": "Chỉnh sửa thông tin",
   "fullName": "Họ và tên",
@@ -347,8 +350,21 @@
   "loyaltyPolicyGifts": "Đổi quà: Dùng điểm quy đổi các Combo bắp nước miễn phí.",
   "currentPointsBalance": "Số dư điểm hiện tại:",
   "pointsSuffix": "điểm",
+  "loyaltyPolicyRefund": "Hoàn điểm: Điểm đã dùng sẽ được tự động hoàn trả 100% khi đơn hàng bị hủy hoặc quá thời gian giữ chỗ.",
+  "loyaltyPolicyVoucher": "Ưu đãi kép: Được phép áp dụng đồng thời điểm tích lũy và mã voucher giảm giá.",
+  "loyaltyTabHistory": "Lịch sử điểm",
+  "loyaltyTabPolicy": "Quy chế tích & tiêu",
+  "loyaltyNoHistory": "Chưa có giao dịch điểm nào",
+  "loyaltyNoHistorySubtitle": "Hãy đặt vé xem phim để bắt đầu tích lũy điểm thưởng nhé!",
+  "loyaltyCardSubtitle": "Thành viên thân thiết",
+  "loyaltyTotalPoints": "Tổng điểm khả dụng",
+  "loyaltyTransactionDetail": "Chi tiết giao dịch điểm",
+  "loyaltyViewTicket": "Xem chi tiết vé",
+  "loyaltyPointsChange": "Biến động điểm",
+  "loyaltyOrderCode": "Mã đơn hàng",
+  "loyaltyTransactionTime": "Thời gian giao dịch",
   "managementSection": "Quản lý & Nghiệp vụ",
-  "userManagement": "Quản lý người dùng",
+  "userManagement": "Quản lý tài khoản",
   "scanBookingCodeWarning": "Đây là mã đặt vé (BK-), vui lòng quét mã QR của từng vé (bắt đầu bằng TKT-).",
   "scanAlreadyCheckedIn": "Vé này đã được soát trước đó!",
   "scanTicketNotActive": "Vé không còn hiệu lực!",
@@ -671,6 +687,15 @@
   "passwordLabel": "Mật khẩu",
   "confirmPasswordLabel": "Xác nhận mật khẩu",
   "saveStaffButton": "Tạo nhân viên",
+  "editStaffTitle": "Chỉnh sửa nhân viên",
+  "editStaffSubtitle": "Cập nhật thông tin tài khoản nhân viên",
+  "updateStaffButton": "Cập nhật",
+  "staffUpdatedSuccess": "Cập nhật tài khoản nhân viên thành công",
+  "edit": "Chỉnh sửa",
+  "optionalPasswordHint": "Để trống nếu không muốn đổi mật khẩu",
+  "staffBranch": "Chi nhánh",
+  "selectStaffBranch": "Chọn chi nhánh (rạp)",
+  "noBranchAssigned": "Chưa gán chi nhánh",
   "accountDetailsTitle": "Chi tiết tài khoản",
   "joinedDateLabel": "Ngày tham gia",
   "loyaltyPointsTitle": "Điểm tích lũy",
@@ -750,6 +775,41 @@
   "paymentMethodZaloPay": "Ví ZaloPay",
   "paymentMethodCard": "Thẻ ATM / Thẻ quốc tế",
   "paymentMethodCash": "Tiền mặt tại quầy",
+  "paymentSelectVoucher": "Chọn voucher",
+  "paymentAvailableVouchers": "Mã khuyến mãi khả dụng",
+  "paymentNoVouchers": "Không có mã khuyến mãi khả dụng",
+  "paymentEarnedPointsNotice": "Tích lũy +{points} điểm khi hoàn tất",
+  "@paymentEarnedPointsNotice": {
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "paymentUseLoyaltyPoints": "Dùng điểm tích lũy ({points} điểm)",
+  "@paymentUseLoyaltyPoints": {
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "paymentSeatsLabel": "Ghế: {seats}",
+  "@paymentSeatsLabel": {
+    "placeholders": {
+      "seats": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentTicketsCount": "{count} vé xem phim",
+  "@paymentTicketsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "epassTitle": "Vé điện tử (E-Pass)",
   "epassInstruction": "Vui lòng xuất trình mã QR này tại cửa kiểm soát để vào rạp",
   "ticketFormat2D": "2D",
@@ -1008,7 +1068,7 @@
     }
   },
   "posCancelPoints": "Hủy",
-  "posSearchCustomer": "Tìm khách hàng",
+  "posSearchCustomer": "Tìm",
   "posSearchCustomerHint": "Nhập email hoặc số điện thoại...",
   "posCustomerNotFound": "Không tìm thấy khách hàng",
   "posChangeCustomer": "Đổi khách hàng",
@@ -1031,6 +1091,16 @@
   "posPaymentFailedPrompt": "Thanh toán không thành công. Quý khách có thể thử lại.",
   "posRetryPayment": "Thử lại thanh toán",
   "posPaymentCancelledPrompt": "Giao dịch thanh toán đã bị hủy.",
+  "posContinueSale": "Tiếp tục bán vé",
+  "posViewTickets": "Xem quản lý vé",
+  "posEarnedPointsSuccess": "Tích lũy +{points} điểm thành công",
+  "@posEarnedPointsSuccess": {
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
   "scanSoundTitle": "Âm báo khi quét mã",
   "scanHapticTitle": "Rung khi quét mã",
   "seatUnit": "ghế",
@@ -1179,5 +1249,44 @@
   "shiftCurrentWeek": "Tuần này",
   "shiftNextWeek": "Tuần sau",
   "shiftPreviousWeek": "Tuần trước",
-  "shiftAssignedBy": "Người phân ca"
+  "shiftAssignedBy": "Người phân ca",
+  "shiftAddStaff": "Thêm",
+  "shiftStaffCount": "{count} nhân viên",
+  "@shiftStaffCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shiftSelectMultipleStaff": "Chọn nhân viên",
+  "shiftSelectedStaffCount": "Đã chọn {count} nhân viên",
+  "@shiftSelectedStaffCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shiftSelectedShiftCount": "Đã chọn {count} ca",
+  "@shiftSelectedShiftCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shiftAssignMultipleSuccess": "Đã phân ca thành công cho {count} nhân viên",
+  "@shiftAssignMultipleSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shiftToday": "Hôm nay",
+  "shiftNoStaffAssigned": "Chưa có nhân viên thuộc cụm rạp này",
+  "shiftReadOnly": "Chỉ xem",
+  "shiftNoAvailableShifts": "Không có ca làm việc nào có thể phân công trong ngày này",
+  "shiftCannotModifyPastOrCurrent": "Không thể chỉnh sửa, thêm hoặc xóa ca hiện tại hoặc đã qua"
 }

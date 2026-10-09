@@ -3,8 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 import 'package:cineplex_client/features/booking/presentation/bloc/seat_booking_bloc.dart';
-import 'package:cineplex_client/features/booking/presentation/widgets/seat_layout_widget.dart';
 import 'package:cineplex_client/features/booking/presentation/widgets/booking_timer_widget.dart';
+
+import 'package:cineplex_client/features/concession/presentation/screens/concession_screen.dart';
 
 class SeatSelectionScreen extends StatefulWidget {
   final int showtimeId;
@@ -34,8 +35,16 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
       ),
       body: BlocConsumer<SeatBookingBloc, SeatBookingState>(
         listener: (context, state) {
-          if (state is SeatsHeld && state.bookingId > 0) {
-            context.push('/concessions/${state.bookingId}');
+          if (state is SeatsHeld) {
+            context.push(
+              '/concessions/${state.bookingId}',
+              extra: ConcessionScreenArgs(
+                showtimeId: state.showtimeId > 0 ? state.showtimeId : widget.showtimeId,
+                seatIds: state.seatIds,
+                seatPrice: state.seatPrice,
+                bookingId: state.bookingId,
+              ),
+            );
           } else if (state is SeatBookingError) {
             String errorMsg = state.message;
             if (state.message == 'MAX_SEATS_EXCEEDED') {
@@ -202,58 +211,5 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
       ),
     );
   }
-}
-
-class ScreenPainter extends CustomPainter {
-  final Color color;
-  const ScreenPainter({required this.color});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    // 1. Vệt sáng chiếu từ màn hình (Projector light beam effect)
-    final lightPath = Path();
-    lightPath.moveTo(0, size.height);
-    lightPath.quadraticBezierTo(size.width / 2, 0, size.width, size.height);
-    lightPath.lineTo(size.width * 0.85, size.height + 16);
-    lightPath.lineTo(size.width * 0.15, size.height + 16);
-    lightPath.close();
-
-    final lightPaint = Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          color.withValues(alpha: 0.16),
-          color.withValues(alpha: 0.0),
-        ],
-      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height + 16));
-    canvas.drawPath(lightPath, lightPaint);
-
-    // 2. Viền tỏa sáng (Outer glow)
-    final glowPaint = Paint()
-      ..color = color.withValues(alpha: 0.35)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 6.0
-      ..strokeCap = StrokeCap.round
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5.0);
-
-    final path = Path();
-    path.moveTo(0, size.height);
-    path.quadraticBezierTo(size.width / 2, 0, size.width, size.height);
-
-    canvas.drawPath(path, glowPaint);
-
-    // 3. Đường cong màn hình sắc nét (Crisp screen arc)
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3.2
-      ..strokeCap = StrokeCap.round;
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 

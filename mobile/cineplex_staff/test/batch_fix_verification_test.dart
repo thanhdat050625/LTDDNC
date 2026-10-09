@@ -87,13 +87,13 @@ void main() {
 
       final l10n = AppLocalizations.of(tester.element(find.byType(CheckoutScreen)))!;
 
-      // Verify real customer name and points badge
+      // Verify real customer name, points badge, and loyalty switch toggle
       expect(find.text('Nguyen Van A'), findsOneWidget);
       expect(find.text('20.000 ${l10n.pointsSuffix}'), findsOneWidget);
-      expect(find.text(l10n.posCustomerLoyaltyBalance('20.000')), findsOneWidget);
+      expect(find.byType(Switch), findsOneWidget);
     });
 
-    testWidgets('TC-LOY-002: Nhập 5.000 điểm -> UI preview discount chính xác, DB không bị trừ', (
+    testWidgets('TC-LOY-002: Bật Switch dùng điểm -> tự động tính toán tối đa 20% (20.000 điểm)', (
       tester,
     ) async {
       setScreenSize(tester);
@@ -117,26 +117,20 @@ void main() {
 
       final l10n = AppLocalizations.of(tester.element(find.byType(CheckoutScreen)))!;
 
-      // Enter 5000 points
-      final pointsInput = find.widgetWithText(AppTextField, l10n.enterPoints);
-      expect(pointsInput, findsOneWidget);
-      await tester.ensureVisible(pointsInput);
-      await tester.enterText(pointsInput, '5000');
-      await tester.pump();
-
-      // Tap "Sử dụng điểm"
-      final usePointsBtn = find.widgetWithText(AppButton, l10n.usePoints);
-      await tester.ensureVisible(usePointsBtn);
-      await tester.tap(usePointsBtn);
+      // Tap Switch to enable points auto-calculation
+      final switchWidget = find.byType(Switch);
+      expect(switchWidget, findsOneWidget);
+      await tester.ensureVisible(switchWidget);
+      await tester.tap(switchWidget);
       await tester.pumpAndSettle();
 
-      // Verify active badge: "Đang sử dụng 5.000 điểm"
-      expect(find.text(l10n.posUsingPointsBadge('5.000')), findsOneWidget);
+      // Verify active badge: "Đang sử dụng 20.000 điểm" (auto capped at 20%)
+      expect(find.text(l10n.posUsingPointsBadge('20.000')), findsOneWidget);
       // Verify preview values
-      expect(find.text('15.000 ${l10n.pointsSuffix}'), findsOneWidget); // remaining
+      expect(find.text('0 ${l10n.pointsSuffix}'), findsOneWidget); // remaining
       expect(find.text(l10n.discountPointsTitle), findsOneWidget); // discount row in breakdown
-      // Total amount reduced by 5,000 (100,000 - 5,000 = 95,000 đ)
-      expect(find.text(FormatUtils.formatCurrency(95000)), findsOneWidget);
+      // Total amount reduced by 20,000 (100,000 - 20,000 = 80,000 đ)
+      expect(find.text(FormatUtils.formatCurrency(80000)), findsWidgets);
     });
 
     testWidgets('TC-LOY-003: Bấm Hủy sử dụng điểm -> điểm = 0, discount = 0, tổng tiền quay về giá trị ban đầu', (
@@ -166,7 +160,7 @@ void main() {
 
       // Active badge exists
       expect(find.text(l10n.posUsingPointsBadge('5.000')), findsOneWidget);
-      expect(find.text(FormatUtils.formatCurrency(95000)), findsOneWidget);
+      expect(find.text(FormatUtils.formatCurrency(95000)), findsWidgets);
 
       // Tap "Hủy" button
       final cancelPointsBtn = find.text(l10n.posCancelPoints);
@@ -175,22 +169,30 @@ void main() {
       await tester.tap(cancelPointsBtn);
       await tester.pumpAndSettle();
 
-      // Badge disappears, prompt returns
+      // Badge disappears
       expect(find.text(l10n.posUsingPointsBadge('5.000')), findsNothing);
-      expect(find.text(l10n.posCustomerLoyaltyBalance('20.000')), findsOneWidget);
       // Total amount returns to 100,000 đ
       expect(find.text(FormatUtils.formatCurrency(100000)), findsWidgets);
     });
 
-    testWidgets('TC-LOY-004: Nhập > balance -> Bị Reject và hiển thị SnackBar cảnh báo', (
+    testWidgets('TC-LOY-004: Khách nhiều điểm -> Tự động giới hạn tối đa 20% tổng đơn', (
       tester,
     ) async {
       setScreenSize(tester);
 
+      final richCustomer = UserModel(
+        id: 99,
+        fullName: 'Rich Customer',
+        email: 'rich@gmail.com',
+        role: 'CUSTOMER',
+        status: 'ACTIVE',
+        loyaltyPoints: 100000, // Very high points
+      );
+
       final args = CheckoutArgs(
         showtime: showtime,
-        selectedSeats: seats,
-        customer: customer, // balance = 20,000
+        selectedSeats: seats, // ticketTotal = 100,000 -> 20% max = 20,000
+        customer: richCustomer,
       );
 
       await tester.pumpWidget(
@@ -206,22 +208,16 @@ void main() {
 
       final l10n = AppLocalizations.of(tester.element(find.byType(CheckoutScreen)))!;
 
-      // Enter 25,000 (> balance of 20,000)
-      final pointsInput = find.widgetWithText(AppTextField, l10n.enterPoints);
-      await tester.ensureVisible(pointsInput);
-      await tester.enterText(pointsInput, '25000');
-      await tester.pump();
-
-      // Tap "Sử dụng điểm"
-      final usePointsBtn = find.widgetWithText(AppButton, l10n.usePoints);
-      await tester.ensureVisible(usePointsBtn);
-      await tester.tap(usePointsBtn);
+      // Tap Switch
+      final switchWidget = find.byType(Switch);
+      await tester.ensureVisible(switchWidget);
+      await tester.tap(switchWidget);
       await tester.pumpAndSettle();
 
-      // SnackBar rejected
-      expect(find.text(l10n.posPointsExceedBalance), findsOneWidget);
-      // Still 0 points used
-      expect(find.text(l10n.posUsingPointsBadge('25.000')), findsNothing);
+      // Auto-calculated up to max 20,000 (not 100,000)
+      expect(find.text(l10n.posUsingPointsBadge('20.000')), findsOneWidget);
+      // Total: 80,000đ
+      expect(find.text(FormatUtils.formatCurrency(80000)), findsWidgets);
     });
 
     testWidgets('TC-MOMO-001: Chọn MoMo -> Phương thức chuyển sang MoMo, không tự động coi là SUCCESS', (
