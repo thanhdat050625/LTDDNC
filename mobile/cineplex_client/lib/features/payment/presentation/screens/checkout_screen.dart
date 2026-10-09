@@ -183,8 +183,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     final colors = CineplexColors.of(context);
 
     final paymentMethods = [
-      {'id': 'VNPAY', 'name': l10n.paymentMethodVnpay, 'icon': Icons.qr_code_2_outlined, 'color': const Color(0xFF005BAA)},
-      {'id': 'MOMO', 'name': l10n.paymentMethodMomo, 'icon': Icons.account_balance_wallet_outlined, 'color': const Color(0xFFA50064)},
+      {
+        'id': 'VNPAY',
+        'name': l10n.paymentMethodVnpay,
+        'logoAsset': 'assets/images/vnpay_icon.png',
+        'color': const Color(0xFF005BAA),
+      },
+      {
+        'id': 'MOMO',
+        'name': l10n.paymentMethodMomo,
+        'logoAsset': 'assets/images/momo_icon.png',
+        'color': const Color(0xFFA50064),
+      },
     ];
 
     return AppScaffold(
@@ -616,16 +626,34 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         color: Colors.transparent,
                         type: MaterialType.transparency,
                         child: ListTile(
-                          leading: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: (pm['color'] as Color).withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Icon(
-                              pm['icon'] as IconData,
-                              color: pm['color'] as Color,
-                              size: 22,
+                          leading: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Container(
+                              width: 38,
+                              height: 38,
+                              decoration: BoxDecoration(
+                                color: pm['id'] == 'MOMO'
+                                    ? const Color(0xFFA50064)
+                                    : Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: colors.borderSubtle,
+                                  width: 0.5,
+                                ),
+                              ),
+                              child: Image.asset(
+                                pm['logoAsset'] as String,
+                                width: 38,
+                                height: 38,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => Icon(
+                                  pm['id'] == 'VNPAY'
+                                      ? Icons.qr_code_2_outlined
+                                      : Icons.account_balance_wallet_outlined,
+                                  color: pm['color'] as Color,
+                                  size: 22,
+                                ),
+                              ),
                             ),
                           ),
                           title: Text(

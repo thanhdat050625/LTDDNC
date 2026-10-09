@@ -77,18 +77,20 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         'color': theme.success,
       },
       {
-        'id': 'MOMO',
-        'label': l10n.momo,
-        'desc': l10n.momoPaymentDesc,
-        'icon': LucideIcons.wallet,
-        'color': theme.accent,
-      },
-      {
         'id': 'VNPAY',
         'label': l10n.vnpay,
         'desc': l10n.vnpayPaymentDesc,
+        'logoAsset': 'assets/images/vnpay_icon.png',
         'icon': LucideIcons.creditCard,
         'color': theme.primary,
+      },
+      {
+        'id': 'MOMO',
+        'label': l10n.momo,
+        'desc': l10n.momoPaymentDesc,
+        'logoAsset': 'assets/images/momo_icon.png',
+        'icon': LucideIcons.wallet,
+        'color': const Color(0xFFA50064),
       },
     ];
 
@@ -315,6 +317,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Widget _buildMethodCard(CineplexColors theme, Map<String, dynamic> method) {
     final isSelected = _selectedMethod == method['id'];
     final color = method['color'] as Color;
+    final logoAsset = method['logoAsset'] as String?;
 
     return AppCard(
       onTap: () => setState(() => _selectedMethod = method['id'] as String),
@@ -324,14 +327,47 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       margin: EdgeInsets.only(bottom: theme.spacingSm),
       child: Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.16),
+          if (logoAsset != null)
+            ClipRRect(
               borderRadius: BorderRadius.circular(8),
+              child: Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: method['id'] == 'MOMO'
+                      ? const Color(0xFFA50064)
+                      : Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: theme.borderSubtle,
+                    width: 0.5,
+                  ),
+                ),
+                child: Image.asset(
+                  logoAsset,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Center(
+                    child: Icon(
+                      method['icon'] as IconData,
+                      color: method['id'] == 'MOMO' ? Colors.white : theme.primary,
+                      size: 22,
+                    ),
+                  ),
+                ),
+              ),
+            )
+          else
+            Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.16),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Center(
+                child: Icon(method['icon'] as IconData, color: color, size: 24),
+              ),
             ),
-            child: Icon(method['icon'] as IconData, color: color, size: 24),
-          ),
           SizedBox(width: theme.spacingMd),
           Expanded(
             child: Column(

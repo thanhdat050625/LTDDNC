@@ -88,6 +88,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      // Select MoMo method explicitly since VNPay is default
+      await tester.tap(find.text('Ví MoMo'));
+      await tester.pumpAndSettle();
+
       // Emit PaymentUrlReady (simulating user clicking payNow)
       cubit.emit(const PaymentUrlReady(
         'https://test-payment.momo.vn/pay',

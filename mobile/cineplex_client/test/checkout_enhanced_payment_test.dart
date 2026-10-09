@@ -231,7 +231,7 @@ void main() {
             'showtimeId',
             202,
           )))).called(1);
-      verify(() => repo.checkout('999', 'MOMO')).called(1);
+      verify(() => repo.checkout('999', 'VNPAY')).called(1);
     });
   });
 }
