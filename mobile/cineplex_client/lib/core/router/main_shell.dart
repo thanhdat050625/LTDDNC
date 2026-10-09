@@ -152,14 +152,14 @@ class _CustomGlassBottomBar extends StatelessWidget {
                         bottom: 5,
                         width: tabWidth,
                         child: Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                          margin: const EdgeInsets.symmetric(horizontal: 5),
                           decoration: BoxDecoration(
                             color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.22),
                             border: Border.all(
                               color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.35),
                               width: 1,
                             ),
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(26),
                           ),
                         ),
                       ),
