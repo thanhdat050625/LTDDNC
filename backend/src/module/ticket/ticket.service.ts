@@ -237,8 +237,8 @@ export class TicketService {
         userId: checkedInTicket.booking.userId,
         subject: 'Soát vé thành công',
         content: `Vé của bạn cho phim "${checkedInTicket.showtime?.movie?.title}" tại ${checkedInTicket.showtime?.room?.name} đã được soát thành công. Chúc bạn xem phim vui vẻ!`,
-        type: ENotificationType.SYSTEM,
-        link: '/profile',
+        type: ENotificationType.TICKET_CONFIRM,
+        link: checkedInTicket.bookingId ? `/my-tickets/${checkedInTicket.bookingId}` : '/my-tickets',
       });
     }
 

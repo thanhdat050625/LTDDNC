@@ -216,5 +216,60 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(NotificationDetailBottomSheet), findsNothing);
   });
+
+  testWidgets('Login alert notification bottom sheet only has Close button without router button', (tester) async {
+    final loginAlert = NotificationModel(
+      id: 'login-1',
+      subject: 'Cảnh báo đăng nhập',
+      content: 'Tài khoản của bạn vừa đăng nhập thành công vào hệ thống.',
+      type: 'ACCOUNT',
+      link: '/home',
+      createdAt: DateTime.now(),
+      isRead: true,
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(
+          body: NotificationDetailBottomSheet(notification: loginAlert),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Cảnh báo đăng nhập'), findsOneWidget);
+    expect(find.text('Đóng'), findsOneWidget);
+    expect(find.text('Mở liên kết'), findsNothing);
+    expect(find.text('Xem vé'), findsNothing);
+  });
+
+  testWidgets('Check-in notification bottom sheet displays View Ticket button', (tester) async {
+    final checkInNotif = NotificationModel(
+      id: 'checkin-1',
+      subject: 'Soát vé thành công',
+      content: 'Vé của bạn đã được soát thành công.',
+      type: 'TICKET_CONFIRM',
+      link: '/my-tickets/123',
+      createdAt: DateTime.now(),
+      isRead: true,
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(
+          body: NotificationDetailBottomSheet(notification: checkInNotif),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Soát vé thành công'), findsOneWidget);
+    expect(find.text('Xem vé của tôi'), findsOneWidget);
+    expect(find.text('Đóng'), findsOneWidget);
+  });
 }
 

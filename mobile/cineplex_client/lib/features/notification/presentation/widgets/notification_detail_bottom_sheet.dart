@@ -77,7 +77,9 @@ class NotificationDetailBottomSheet extends StatelessWidget {
     final typeColor = _getTypeColor(notification.type, colors);
     final typeIcon = _getTypeIcon(notification.type);
     final typeLabel = _getTypeLabel(notification.type, l10n);
-    final hasLink = notification.link != null && notification.link!.trim().isNotEmpty;
+    final subjectLower = notification.subject.toLowerCase();
+    final isLoginAlert = subjectLower.contains('đăng nhập') || subjectLower.contains('dang nhap');
+    final hasLink = !isLoginAlert && notification.link != null && notification.link!.trim().isNotEmpty;
 
     return Container(
       constraints: BoxConstraints(
@@ -190,6 +192,8 @@ class NotificationDetailBottomSheet extends StatelessWidget {
               if (hasLink) ...[
                 AppButton(
                   text: (notification.type.toUpperCase() == 'TICKET_CONFIRM' ||
+                          subjectLower.contains('vé') ||
+                          subjectLower.contains('ve') ||
                           (notification.link?.contains('ticket') ?? false))
                       ? l10n.viewTickets
                       : l10n.notificationOpenLink,
@@ -208,6 +212,11 @@ class NotificationDetailBottomSheet extends StatelessWidget {
                     }
 
                     String route = raw;
+                    if (subjectLower.contains('soát vé') || subjectLower.contains('soat ve')) {
+                      if (route == '/profile' || route.isEmpty) {
+                        route = '/my-tickets';
+                      }
+                    }
                     if (route == '/' || route.isEmpty) {
                       route = '/home';
                     } else if (route.startsWith('/booking-history/') ||
