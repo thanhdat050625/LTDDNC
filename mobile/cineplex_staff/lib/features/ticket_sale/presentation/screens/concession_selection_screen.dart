@@ -263,17 +263,30 @@ class _ConcessionSelectionScreenState extends State<ConcessionSelectionScreen> {
         children: [
           // Concession Icon / Image
           Container(
-            width: 52,
-            height: 52,
+            width: 60,
+            height: 60,
             decoration: BoxDecoration(
-              color: theme.primary.withValues(alpha: 0.1),
+              color: theme.primary.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(theme.radiusSm),
             ),
-            child: Icon(
-              iconData,
-              color: theme.primary,
-              size: 26,
-            ),
+            child: (product.imageUrl != null && product.imageUrl!.trim().isNotEmpty)
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(theme.radiusSm),
+                    child: AppCachedImage(
+                      imageUrl: product.imageUrl!,
+                      width: 60,
+                      height: 60,
+                      borderRadius: theme.radiusSm,
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                : Center(
+                    child: Icon(
+                      iconData,
+                      color: theme.primary,
+                      size: 28,
+                    ),
+                  ),
           ),
           SizedBox(width: theme.spacingMd),
 
