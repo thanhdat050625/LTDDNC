@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_shared/mobile_shared.dart';
+import '../../data/repositories/ticket_repository.dart';
 
 class TicketDetailScreen extends StatelessWidget {
   final BookingDetailModel booking;
@@ -312,6 +314,73 @@ class TicketDetailScreen extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class TicketDetailRouteScreen extends StatefulWidget {
+  final String bookingId;
+  final BookingDetailModel? initialBooking;
+
+  const TicketDetailRouteScreen({
+    super.key,
+    required this.bookingId,
+    this.initialBooking,
+  });
+
+  @override
+  State<TicketDetailRouteScreen> createState() => _TicketDetailRouteScreenState();
+}
+
+class _TicketDetailRouteScreenState extends State<TicketDetailRouteScreen> {
+  Future<BookingDetailModel?>? _fetchFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialBooking == null && widget.bookingId.isNotEmpty) {
+      _fetchFuture = context.read<TicketRepository>().getBookingById(widget.bookingId);
+    }
+  }
+
+  void _retry() {
+    setState(() {
+      _fetchFuture = context.read<TicketRepository>().getBookingById(widget.bookingId);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.initialBooking != null) {
+      return TicketDetailScreen(booking: widget.initialBooking!);
+    }
+
+    final l10n = AppLocalizations.of(context)!;
+
+    return FutureBuilder<BookingDetailModel?>(
+      future: _fetchFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return AppScaffold(
+            title: l10n.ticketDetail,
+            body: const Center(child: AppLoading()),
+          );
+        }
+
+        if (snapshot.hasError || snapshot.data == null) {
+          return AppScaffold(
+            title: l10n.ticketDetail,
+            body: Center(
+              child: AppErrorView(
+                message: l10n.errorOccurred,
+                onRetry: _retry,
+              ),
+            ),
+          );
+        }
+
+        return TicketDetailScreen(booking: snapshot.data!);
+      },
     );
   }
 }

@@ -54,6 +54,12 @@ GoRouter createRouter(
         final hostPart = state.uri.host.isNotEmpty ? '/${state.uri.host}' : '';
         final path = '$hostPart${state.uri.path}'.replaceAll('//', '/');
         final query = state.uri.hasQuery ? '?${state.uri.query}' : '';
+        if (path.startsWith('/booking-history/') ||
+            path.startsWith('/history/') ||
+            path.startsWith('/tickets/')) {
+          final id = path.split('/').last;
+          return '/my-tickets/$id$query';
+        }
         if (path == '/booking-history' || path == '/history' || path == '/tickets') {
           return '/my-tickets$query';
         }
@@ -66,6 +72,16 @@ GoRouter createRouter(
       final loc = state.matchedLocation.isNotEmpty ? state.matchedLocation : state.uri.path;
       if (loc == '/' || state.uri.path == '/') {
         return '/home';
+      }
+      if (loc.startsWith('/booking-history/') ||
+          state.uri.path.startsWith('/booking-history/') ||
+          loc.startsWith('/history/') ||
+          state.uri.path.startsWith('/history/') ||
+          loc.startsWith('/tickets/') ||
+          state.uri.path.startsWith('/tickets/')) {
+        final targetPath = loc.isNotEmpty ? loc : state.uri.path;
+        final id = targetPath.split('/').last;
+        return '/my-tickets/$id';
       }
       if (loc == '/booking-history' ||
           state.uri.path == '/booking-history' ||
@@ -110,6 +126,18 @@ GoRouter createRouter(
       GoRoute(path: '/booking-history', redirect: (_, __) => '/my-tickets'),
       GoRoute(path: '/history', redirect: (_, __) => '/my-tickets'),
       GoRoute(path: '/tickets', redirect: (_, __) => '/my-tickets'),
+      GoRoute(
+        path: '/booking-history/:id',
+        redirect: (_, state) => '/my-tickets/${state.pathParameters['id']}',
+      ),
+      GoRoute(
+        path: '/history/:id',
+        redirect: (_, state) => '/my-tickets/${state.pathParameters['id']}',
+      ),
+      GoRoute(
+        path: '/tickets/:id',
+        redirect: (_, state) => '/my-tickets/${state.pathParameters['id']}',
+      ),
 
       // Auth routes (no shell)
       GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
@@ -234,13 +262,11 @@ GoRouter createRouter(
         path: '/my-tickets/:id',
         builder: (context, state) {
           final booking = state.extra is BookingDetailModel ? state.extra as BookingDetailModel : null;
-          if (booking == null) {
-            return BlocProvider(
-              create: (ctx) => MyTicketsCubit(ctx.read<TicketRepository>()),
-              child: const MyTicketsScreen(),
-            );
-          }
-          return TicketDetailScreen(booking: booking);
+          final bookingId = state.pathParameters['id'] ?? '';
+          return TicketDetailRouteScreen(
+            bookingId: bookingId,
+            initialBooking: booking,
+          );
         },
       ),
       GoRoute(

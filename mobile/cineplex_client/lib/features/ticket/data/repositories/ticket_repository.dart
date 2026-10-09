@@ -16,4 +16,14 @@ class TicketRepository {
         : (raw is List ? raw : []);
     return list.map((e) => BookingDetailModel.fromJson(e as Map<String, dynamic>)).toList();
   }
+
+  Future<BookingDetailModel?> getBookingById(String id) async {
+    final response = await _dioClient.get('/bookings/$id');
+    final raw = response.data;
+    final data = (raw is Map && raw.containsKey('data')) ? raw['data'] : raw;
+    if (data is Map<String, dynamic>) {
+      return BookingDetailModel.fromJson(data);
+    }
+    return null;
+  }
 }

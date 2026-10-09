@@ -38,5 +38,17 @@ void main() {
 
     final matchRoot = router.configuration.findMatch(Uri.parse('/'));
     expect(matchRoot.isEmpty, isFalse);
+
+    final matchMyTicketsId = router.configuration.findMatch(Uri.parse('/my-tickets/123'));
+    expect(matchMyTicketsId.isEmpty, isFalse);
+
+    final matchBookingHistoryId = router.configuration.findMatch(Uri.parse('/booking-history/123'));
+    expect(matchBookingHistoryId.isEmpty, isFalse);
+
+    final matchHistoryId = router.configuration.findMatch(Uri.parse('/history/123'));
+    expect(matchHistoryId.isEmpty, isFalse);
+
+    final matchTicketsId = router.configuration.findMatch(Uri.parse('/tickets/123'));
+    expect(matchTicketsId.isEmpty, isFalse);
   });
 }

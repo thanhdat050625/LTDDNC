@@ -98,7 +98,7 @@ export class NotificationService {
         { showtimeId: payload.showtimeId, status: EBookingStatus.PAID },
         { showtimeId: payload.showtimeId, status: EBookingStatus.PENDING },
       ],
-      select: ['userId', 'bookingCode'],
+      select: ['id', 'userId', 'bookingCode'],
     });
 
     const notifications = bookings
@@ -111,7 +111,7 @@ export class NotificationService {
           type: ENotificationType.SYSTEM,
           isSent: true,
           sentAt: new Date(),
-          link: '/my-tickets',
+          link: `/my-tickets/${booking.id}`,
         });
       });
 

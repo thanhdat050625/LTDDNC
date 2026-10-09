@@ -189,7 +189,10 @@ class NotificationDetailBottomSheet extends StatelessWidget {
               // Actions
               if (hasLink) ...[
                 AppButton(
-                  text: l10n.notificationOpenLink,
+                  text: (notification.type.toUpperCase() == 'TICKET_CONFIRM' ||
+                          (notification.link?.contains('ticket') ?? false))
+                      ? l10n.viewTickets
+                      : l10n.notificationOpenLink,
                   backgroundColor: colors.primary,
                   onPressed: () async {
                     Navigator.of(context).pop();
@@ -207,6 +210,11 @@ class NotificationDetailBottomSheet extends StatelessWidget {
                     String route = raw;
                     if (route == '/' || route.isEmpty) {
                       route = '/home';
+                    } else if (route.startsWith('/booking-history/') ||
+                        route.startsWith('/history/') ||
+                        route.startsWith('/tickets/')) {
+                      final id = route.split('/').last;
+                      route = '/my-tickets/$id';
                     } else if (route == '/booking-history' ||
                         route == '/history' ||
                         route == '/tickets') {

@@ -510,7 +510,7 @@ export class BookingService {
         subject: 'Đơn đặt vé chờ thanh toán',
         content: `Bạn đã tạo đơn đặt vé mã ${bookingCode}. Vui lòng thanh toán ${Math.max(totalAmount, 0).toLocaleString()} VNĐ trong vòng 5 phút để hoàn tất.${pointsMsg}`,
         type: ENotificationType.SYSTEM,
-        link: '/my-tickets',
+        link: `/my-tickets/${savedBooking!.id}`,
       });
     }
 
@@ -608,6 +608,30 @@ export class BookingService {
   async getBookingById(id: number, user?: any): Promise<ApiResponse<Booking>> {
     const booking = await this.bookingRepository.findOne({
       where: { id },
+      relations: [
+        'user',
+        'staff',
+        'showtime',
+        'showtime.movie',
+        'showtime.room',
+        'seatHolds',
+        'seatHolds.seat',
+        'tickets',
+        'tickets.seat',
+        'bookingConcessions',
+        'bookingConcessions.product',
+        'payment',
+      ],
+    });
+    if (!booking) {
+      throw new CustomException(HttpStatus.NOT_FOUND, 'BOOKING_NOT_FOUND', 'Không tìm thấy đơn đặt vé');
+    }
+    return new ApiResponse(true, 'Lấy chi tiết đơn đặt vé thành công', booking);
+  }
+
+  async getBookingByCode(bookingCode: string, user?: any): Promise<ApiResponse<Booking>> {
+    const booking = await this.bookingRepository.findOne({
+      where: { bookingCode },
       relations: [
         'user',
         'staff',
@@ -795,7 +819,7 @@ export class BookingService {
       subject: 'Cập nhật dịch vụ thành công',
       content: 'Đơn đặt vé của bạn đã được cập nhật thông tin bắp nước thành công.',
       type: ENotificationType.SYSTEM,
-      link: '/my-tickets',
+      link: `/my-tickets/${booking.id}`,
     });
 
     const estimatedPointsEarned = Math.floor(Math.max(newTotalAmount, 0) * 0.10);
