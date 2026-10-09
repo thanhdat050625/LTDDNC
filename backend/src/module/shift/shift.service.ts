@@ -3,6 +3,7 @@ import {
   NotFoundException,
   ConflictException,
   BadRequestException,
+  OnModuleInit,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
@@ -20,7 +21,7 @@ import {
 import { EUserRole } from '../users/enums/user.enum';
 
 @Injectable()
-export class ShiftService {
+export class ShiftService implements OnModuleInit {
   constructor(
     @InjectRepository(Shift)
     private readonly shiftRepo: Repository<Shift>,
@@ -31,6 +32,50 @@ export class ShiftService {
     @InjectRepository(Cinema)
     private readonly cinemaRepo: Repository<Cinema>,
   ) {}
+
+  async onModuleInit() {
+    try {
+      const defaultShifts = [
+        {
+          name: 'Ca sáng',
+          startTime: '08:00',
+          endTime: '14:00',
+          description: 'Ca làm việc buổi sáng (08:00 - 14:00)',
+          isActive: true,
+        },
+        {
+          name: 'Ca chiều',
+          startTime: '14:00',
+          endTime: '20:00',
+          description: 'Ca làm việc buổi chiều tối (14:00 - 20:00)',
+          isActive: true,
+        },
+        {
+          name: 'Ca tối / đêm',
+          startTime: '20:00',
+          endTime: '02:00',
+          description: 'Ca làm việc ca đêm (20:00 - 02:00)',
+          isActive: true,
+        },
+      ];
+
+      for (const def of defaultShifts) {
+        const existing = await this.shiftRepo.findOne({ where: { name: def.name } });
+        if (existing) {
+          if (existing.startTime !== def.startTime || existing.endTime !== def.endTime) {
+            existing.startTime = def.startTime;
+            existing.endTime = def.endTime;
+            existing.description = def.description;
+            await this.shiftRepo.save(existing);
+          }
+        } else {
+          await this.shiftRepo.save(this.shiftRepo.create(def));
+        }
+      }
+    } catch {
+      // Bỏ qua lỗi trong quá trình khởi tạo ban đầu nếu DB chưa sẵn sàng
+    }
+  }
 
 
 
