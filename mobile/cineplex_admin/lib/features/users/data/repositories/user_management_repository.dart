@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:mobile_shared/mobile_shared.dart';
 
 class UserManagementResult {

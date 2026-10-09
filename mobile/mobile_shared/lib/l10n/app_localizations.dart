@@ -1783,7 +1783,7 @@ abstract class AppLocalizations {
   /// No description provided for @userManagement.
   ///
   /// In vi, this message translates to:
-  /// **'Quản lý người dùng'**
+  /// **'Quản lý tài khoản'**
   String get userManagement;
 
   /// No description provided for @scanBookingCodeWarning.
@@ -2931,6 +2931,42 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Tạo nhân viên'**
   String get saveStaffButton;
+
+  /// No description provided for @editStaffTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chỉnh sửa nhân viên'**
+  String get editStaffTitle;
+
+  /// No description provided for @editStaffSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cập nhật thông tin tài khoản nhân viên'**
+  String get editStaffSubtitle;
+
+  /// No description provided for @updateStaffButton.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cập nhật'**
+  String get updateStaffButton;
+
+  /// No description provided for @staffUpdatedSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cập nhật tài khoản nhân viên thành công'**
+  String get staffUpdatedSuccess;
+
+  /// No description provided for @edit.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chỉnh sửa'**
+  String get edit;
+
+  /// No description provided for @optionalPasswordHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Để trống nếu không muốn đổi mật khẩu'**
+  String get optionalPasswordHint;
 
   /// No description provided for @accountDetailsTitle.
   ///

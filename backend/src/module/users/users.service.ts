@@ -7,7 +7,7 @@ import { EBookingStatus } from '../booking/enums/booking.enum';
 import { ApiResponse } from '../../core/dto/ApiResponse.dto';
 import { CustomException } from '../../core/exceptions/custom.exception';
 import { EUserRole, EUserStatus } from './enums/user.enum';
-import { CreateStaffDto, GetUsersQueryDto, UpdateProfileDto } from './dto/users.dto';
+import { CreateStaffDto, GetUsersQueryDto, UpdateProfileDto, UpdateStaffDto } from './dto/users.dto';
 import * as bcrypt from 'bcrypt';
 
 import { ENotificationType } from '../notification/enums/notification.enum';
@@ -69,11 +69,17 @@ export class UsersService {
     return response;
   }
 
-  async createStaff(dto: CreateStaffDto): Promise<ApiResponse<User>> {
+  async createStaff(dto: CreateStaffDto, avatar?: Express.Multer.File): Promise<ApiResponse<User>> {
     const email = dto.email.trim().toLowerCase();
     const existing = await this.userRepository.findOne({ where: { email } });
     if (existing) {
       throw new CustomException(HttpStatus.BAD_REQUEST, 'USER_EXISTS', 'Email đã được sử dụng trong hệ thống');
+    }
+
+    let avatarUrl: string | undefined = dto.avatar?.trim() || undefined;
+    if (avatar) {
+      const uploadRes = await this.cloudinaryService.uploadImage(avatar);
+      avatarUrl = uploadRes.secure_url;
     }
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
@@ -81,6 +87,7 @@ export class UsersService {
       fullName: dto.fullName.trim(),
       email,
       phone: dto.phone?.trim() || undefined,
+      avatar: avatarUrl,
       password: hashedPassword,
       role: EUserRole.STAFF,
       status: EUserStatus.ACTIVE,
@@ -98,6 +105,51 @@ export class UsersService {
     });
 
     return new ApiResponse(true, 'Tạo tài khoản nhân viên thành công', savedStaff);
+  }
+
+  async updateStaff(
+    staffId: number,
+    dto: UpdateStaffDto,
+    avatar?: Express.Multer.File,
+  ): Promise<ApiResponse<User>> {
+    const staff = await this.userRepository.findOne({ where: { id: staffId } });
+    if (!staff) {
+      throw new CustomException(HttpStatus.NOT_FOUND, 'USER_NOT_FOUND', 'Không tìm thấy người dùng');
+    }
+    if (staff.role !== EUserRole.STAFF) {
+      throw new CustomException(HttpStatus.BAD_REQUEST, 'INVALID_ROLE', 'Chỉ có thể chỉnh sửa tài khoản nhân viên');
+    }
+
+    if (dto.email && dto.email.trim().toLowerCase() !== staff.email.toLowerCase()) {
+      const newEmail = dto.email.trim().toLowerCase();
+      const existing = await this.userRepository.findOne({ where: { email: newEmail } });
+      if (existing && existing.id !== staffId) {
+        throw new CustomException(HttpStatus.BAD_REQUEST, 'USER_EXISTS', 'Email đã được sử dụng trong hệ thống');
+      }
+      staff.email = newEmail;
+    }
+
+    if (dto.fullName) {
+      staff.fullName = dto.fullName.trim();
+    }
+
+    if (dto.phone !== undefined) {
+      staff.phone = dto.phone ? dto.phone.trim() : (null as any);
+    }
+
+    if (dto.password && dto.password.trim().length >= 6) {
+      staff.password = await bcrypt.hash(dto.password.trim(), 10);
+    }
+
+    if (avatar) {
+      const uploadRes = await this.cloudinaryService.uploadImage(avatar);
+      staff.avatar = uploadRes.secure_url;
+    } else if (dto.avatar !== undefined) {
+      staff.avatar = dto.avatar ? dto.avatar.trim() : (null as any);
+    }
+
+    const saved = await this.userRepository.save(staff);
+    return new ApiResponse(true, 'Cập nhật tài khoản nhân viên thành công', saved);
   }
 
   async updateUserStatus(userId: number, status: EUserStatus, currentUserId?: number): Promise<ApiResponse<User>> {

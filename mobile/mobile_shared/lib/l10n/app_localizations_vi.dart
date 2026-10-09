@@ -887,7 +887,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get managementSection => 'Quản lý & Nghiệp vụ';
 
   @override
-  String get userManagement => 'Quản lý người dùng';
+  String get userManagement => 'Quản lý tài khoản';
 
   @override
   String get scanBookingCodeWarning =>
@@ -1504,6 +1504,24 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get saveStaffButton => 'Tạo nhân viên';
+
+  @override
+  String get editStaffTitle => 'Chỉnh sửa nhân viên';
+
+  @override
+  String get editStaffSubtitle => 'Cập nhật thông tin tài khoản nhân viên';
+
+  @override
+  String get updateStaffButton => 'Cập nhật';
+
+  @override
+  String get staffUpdatedSuccess => 'Cập nhật tài khoản nhân viên thành công';
+
+  @override
+  String get edit => 'Chỉnh sửa';
+
+  @override
+  String get optionalPasswordHint => 'Để trống nếu không muốn đổi mật khẩu';
 
   @override
   String get accountDetailsTitle => 'Chi tiết tài khoản';
