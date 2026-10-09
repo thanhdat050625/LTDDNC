@@ -40,12 +40,17 @@ class ShowtimeManagementRepository {
     List<dynamic> items = [];
     if (data is Map && data.containsKey('data')) {
       items = data['data'] is List ? data['data'] : [];
-    } else if (data is Map && data.containsKey('items')) {
-      items = data['items'];
     } else if (data is List) {
       items = data;
     }
-    return items.map((e) => ShowtimeModel.fromJson(e as Map<String, dynamic>)).toList();
+    final now = DateTime.now();
+    return items
+        .map((e) => ShowtimeModel.fromJson(e as Map<String, dynamic>))
+        .where((st) =>
+            st.status != 'COMPLETED' &&
+            st.status != 'CANCELLED' &&
+            st.publicStartTime.isAfter(now))
+        .toList();
   }
 
   Future<Map<String, dynamic>> getByCinemaId(int cinemaId) async {

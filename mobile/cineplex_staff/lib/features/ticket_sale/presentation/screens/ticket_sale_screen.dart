@@ -407,8 +407,13 @@ class _TicketSaleScreenView extends StatelessWidget {
       );
     }
 
+    final now = DateTime.now();
     final movieShowtimes = state.cinemaShowtimes
-        .where((st) => st.movie?.id == state.selectedMovieId)
+        .where((st) =>
+            st.movie?.id == state.selectedMovieId &&
+            st.status != 'COMPLETED' &&
+            st.status != 'CANCELLED' &&
+            st.publicStartTime.isAfter(now))
         .toList();
 
     if (movieShowtimes.isEmpty) {

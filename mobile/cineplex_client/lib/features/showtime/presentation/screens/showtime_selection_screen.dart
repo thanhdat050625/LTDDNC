@@ -71,7 +71,13 @@ class _ShowtimeSelectionScreenState extends State<ShowtimeSelectionScreen> {
                     );
                   } else if (state is ShowtimeLoaded) {
                     final dateKey = DateFormat('yyyy-MM-dd').format(_selectedDate);
-                    final showtimes = state.showtimes[dateKey] ?? [];
+                    final now = DateTime.now();
+                    final showtimes = (state.showtimes[dateKey] ?? [])
+                        .where((st) =>
+                            st.status != 'COMPLETED' &&
+                            st.status != 'CANCELLED' &&
+                            st.publicStartTime.isAfter(now))
+                        .toList();
 
                     if (showtimes.isEmpty) {
                       return ListView(
