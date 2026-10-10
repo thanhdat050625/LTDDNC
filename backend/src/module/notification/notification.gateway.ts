@@ -40,36 +40,40 @@ export class NotificationGateway
 
   @SubscribeMessage('join-notification')
   async handleJoinNotification(
-    @MessageBody() data: { userId: number },
+    @MessageBody() data: any,
     @ConnectedSocket() client: Socket,
   ) {
-    const { userId } = data;
+    const rawUserId = typeof data === 'object' && data !== null ? data.userId : data;
+    const userId = Number(rawUserId);
 
-    if (!userId || isNaN(Number(userId))) {
+    if (!userId || isNaN(userId)) {
       client.emit('error', { message: 'userId không hợp lệ' });
       return;
     }
 
-    const room = this.getRoomName(Number(userId));
+    const room = this.getRoomName(userId);
     await client.join(room);
 
     this.logger.debug(`Client ${client.id} joined notification room: ${room}`);
 
     client.emit('joined', {
-      userId: Number(userId),
+      userId,
       message: `Đã join room nhận thông báo cho user #${userId}.`,
     });
   }
 
   @SubscribeMessage('leave-notification')
   async handleLeaveNotification(
-    @MessageBody() data: { userId: number },
+    @MessageBody() data: any,
     @ConnectedSocket() client: Socket,
   ) {
-    const { userId } = data;
-    const room = this.getRoomName(Number(userId));
-    await client.leave(room);
-    this.logger.debug(`Client ${client.id} left notification room: ${room}`);
+    const rawUserId = typeof data === 'object' && data !== null ? data.userId : data;
+    const userId = Number(rawUserId);
+    if (userId && !isNaN(userId)) {
+      const room = this.getRoomName(userId);
+      await client.leave(room);
+      this.logger.debug(`Client ${client.id} left notification room: ${room}`);
+    }
   }
 
   /**

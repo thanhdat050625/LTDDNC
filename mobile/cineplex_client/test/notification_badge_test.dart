@@ -11,13 +11,14 @@ import 'package:cineplex_client/features/notification/presentation/widgets/notif
 import 'package:cineplex_client/features/notification/presentation/widgets/notification_detail_bottom_sheet.dart';
 
 class _FakeNotificationRepo extends NotificationRepository {
+  final List<NotificationModel> mockNotifs = [];
   _FakeNotificationRepo() : super(DioClient(StorageService()));
 
   @override
-  Future<List<NotificationModel>> getNotifications({int page = 1}) async => [];
+  Future<List<NotificationModel>> getNotifications({int page = 1}) async => List.of(mockNotifs);
 
   @override
-  Future<int> getUnreadCount() async => 0;
+  Future<int> getUnreadCount() async => mockNotifs.where((n) => !n.isRead).length;
 }
 
 Widget _wrap(NotificationCubit cubit) {
@@ -271,5 +272,77 @@ void main() {
     expect(find.text('Xem vé của tôi'), findsOneWidget);
     expect(find.text('Đóng'), findsOneWidget);
   });
+
+  test('NotificationCubit handles WebSocket realtime notification and stream without polling', () async {
+    final fakeRepo = _FakeNotificationRepo();
+    final fakeSocket = _FakeSocketService();
+    final cubit = NotificationCubit(fakeRepo, socketService: fakeSocket);
+
+    cubit.initSocket(42);
+    expect(fakeSocket.connectedUserId, equals(42));
+    expect(fakeSocket.onNewNotificationCallback, isNotNull);
+
+    cubit.emit(const NotificationLoaded([], 0));
+
+    NotificationModel? streamedNotif;
+    final sub = cubit.newNotificationStream.listen((n) => streamedNotif = n);
+
+    final wsPayload = {
+      'id': 'ws-100',
+      'subject': 'Thông báo realtime',
+      'content': 'Nội dung test qua WebSocket',
+      'type': 'SYSTEM',
+      'isRead': false,
+      'createdAt': DateTime.now().toIso8601String(),
+    };
+    fakeRepo.mockNotifs.add(NotificationModel.fromJson(wsPayload));
+
+    // Simulate WebSocket event arriving from server
+    fakeSocket.onNewNotificationCallback!(wsPayload);
+
+    await Future<void>.delayed(Duration.zero);
+
+    expect(streamedNotif?.id, equals('ws-100'));
+    expect(streamedNotif?.subject, equals('Thông báo realtime'));
+    expect(cubit.state, isA<NotificationLoaded>());
+    final loaded = cubit.state as NotificationLoaded;
+    expect(loaded.notifications.length, equals(1));
+    expect(loaded.unreadCount, equals(1));
+
+    await sub.cancel();
+    cubit.disconnectSocket();
+    expect(fakeSocket.connectedUserId, isNull);
+    expect(fakeSocket.onNewNotificationCallback, isNull);
+    await cubit.close();
+  });
+}
+
+class _FakeSocketService extends SocketService {
+  Function(Map<String, dynamic>)? onNewNotificationCallback;
+  int? connectedUserId;
+
+  _FakeSocketService() : super(baseUrl: 'http://localhost:3000');
+
+  @override
+  void connectNotification(int userId) {
+    connectedUserId = userId;
+  }
+
+  @override
+  void leaveNotification(int userId) {
+    if (connectedUserId == userId) {
+      connectedUserId = null;
+    }
+  }
+
+  @override
+  void onNewNotification(Function(Map<String, dynamic>) callback) {
+    onNewNotificationCallback = callback;
+  }
+
+  @override
+  void offNewNotification() {
+    onNewNotificationCallback = null;
+  }
 }
 

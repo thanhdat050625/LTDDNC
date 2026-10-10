@@ -29,7 +29,13 @@ class _MainShellState extends State<MainShell> {
   void initState() {
     super.initState();
     final notifCubit = context.read<NotificationCubit>();
-    notifCubit.startPolling();
+    try {
+      final authState = context.read<AuthBloc>().state;
+      if (authState is AuthAuthenticated) {
+        notifCubit.initSocket(authState.user.id);
+      }
+    } catch (_) {}
+    notifCubit.loadNotifications();
 
     _notifSub = notifCubit.newNotificationStream.listen((notification) {
       if (!mounted) return;
