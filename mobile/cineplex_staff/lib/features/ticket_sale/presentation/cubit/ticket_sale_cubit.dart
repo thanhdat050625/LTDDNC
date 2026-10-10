@@ -12,18 +12,17 @@ class TicketSaleCubit extends Cubit<TicketSaleState> {
     : super(TicketSaleInitial());
 
   int? _defaultCinemaId;
-  bool _isCinemaFixed = false;
+  final bool _isCinemaFixed = true;
 
   Future<void> loadInitialData({int? defaultCinemaId}) async {
     if (defaultCinemaId != null) {
       _defaultCinemaId = defaultCinemaId;
-      _isCinemaFixed = true;
     }
     emit(TicketSaleLoading());
     try {
       final cinemas = await _cinemaRepo.getAllCinemas();
       if (cinemas.isEmpty) {
-        emit(TicketSaleLoaded(cinemas: [], selectedCinemaId: null, isCinemaFixed: _isCinemaFixed));
+        emit(TicketSaleLoaded(cinemas: [], selectedCinemaId: null, isCinemaFixed: true));
         return;
       }
 
@@ -42,9 +41,9 @@ class TicketSaleCubit extends Cubit<TicketSaleState> {
 
       emit(
         TicketSaleLoaded(
-          cinemas: _isCinemaFixed ? [selectedCinema] : cinemas,
+          cinemas: [selectedCinema],
           selectedCinemaId: selectedCinema.id,
-          isCinemaFixed: _isCinemaFixed,
+          isCinemaFixed: true,
           cinemaShowtimes: showtimes,
           moviesForCinema: movies,
           selectedMovieId: movies.isNotEmpty ? movies.first.id : null,
@@ -56,29 +55,7 @@ class TicketSaleCubit extends Cubit<TicketSaleState> {
   }
 
   Future<void> selectCinema(int cinemaId) async {
-    if (_isCinemaFixed) return;
-    if (state is TicketSaleLoaded) {
-      final currentState = state as TicketSaleLoaded;
-      emit(TicketSaleLoading());
-      try {
-        final showtimesData = await _showtimeRepo.getByCinemaId(cinemaId);
-        final List<ShowtimeModel> showtimes = _parseShowtimes(showtimesData, cinemaId);
-        final movies = _extractMovies(showtimes);
-
-        emit(
-          TicketSaleLoaded(
-            cinemas: currentState.cinemas,
-            selectedCinemaId: cinemaId,
-            isCinemaFixed: _isCinemaFixed,
-            cinemaShowtimes: showtimes,
-            moviesForCinema: movies,
-            selectedMovieId: movies.isNotEmpty ? movies.first.id : null,
-          ),
-        );
-      } catch (e) {
-        emit(TicketSaleError(e.toString()));
-      }
-    }
+    return;
   }
 
   void selectMovie(int movieId) {

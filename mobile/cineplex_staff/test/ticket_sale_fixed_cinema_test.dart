@@ -190,7 +190,7 @@ void main() {
       expect(afterSwitchAttempt.moviesForCinema.first.title, equals('Dune: Part Two'));
     });
 
-    test('TicketSaleCubit allows selecting cinema when defaultCinemaId is null (unassigned)', () async {
+    test('TicketSaleCubit fixes cinema and blocks selecting cinema even when defaultCinemaId is null', () async {
       final cinemaRepo = _FakeCinemaRepo([cinema1, cinema2]);
       final showtimeRepo = _FakeShowtimeRepo({
         1: showtimesCinema1,
@@ -204,16 +204,16 @@ void main() {
       expect(cubit.state, isA<TicketSaleLoaded>());
       final loaded = cubit.state as TicketSaleLoaded;
 
-      expect(loaded.isCinemaFixed, isFalse);
-      expect(loaded.cinemas.length, equals(2));
+      expect(loaded.isCinemaFixed, isTrue);
+      expect(loaded.cinemas.length, equals(1));
       expect(loaded.selectedCinemaId, equals(1));
 
-      // Can switch to cinema 2
+      // Cannot switch to cinema 2
       await cubit.selectCinema(2);
       final loaded2 = cubit.state as TicketSaleLoaded;
-      expect(loaded2.selectedCinemaId, equals(2));
+      expect(loaded2.selectedCinemaId, equals(1));
       expect(loaded2.moviesForCinema.length, equals(1));
-      expect(loaded2.moviesForCinema.first.title, equals('Kung Fu Panda 4'));
+      expect(loaded2.moviesForCinema.first.title, equals('Dune: Part Two'));
     });
 
     testWidgets('TicketSaleScreen renders non-editable fixed cinema header when isCinemaFixed is true', (tester) async {

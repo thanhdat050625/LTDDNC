@@ -198,6 +198,22 @@ export class UsersService {
     if (!user) {
       throw new CustomException(HttpStatus.NOT_FOUND, 'USER_NOT_FOUND', 'Không tìm thấy người dùng');
     }
+    if (user.role === EUserRole.STAFF && !user.cinemaId) {
+      const schedule = await this.userRepository.manager.query(
+        'SELECT cinemaId FROM staff_schedules WHERE staffId = ? AND cinemaId IS NOT NULL ORDER BY id DESC LIMIT 1',
+        [user.id],
+      );
+      if (schedule && schedule.length > 0 && schedule[0].cinemaId) {
+        const assignedCinemaId = schedule[0].cinemaId;
+        await this.userRepository.update({ id: user.id }, { cinemaId: assignedCinemaId });
+        user.cinemaId = assignedCinemaId;
+        const cRows = await this.userRepository.manager.query(
+          'SELECT id, name, address, city FROM cinemas WHERE id = ?',
+          [assignedCinemaId],
+        );
+        user.cinema = cRows && cRows[0] ? cRows[0] : null;
+      }
+    }
     return new ApiResponse(true, 'Lấy thông tin cá nhân thành công', user);
   }
 
