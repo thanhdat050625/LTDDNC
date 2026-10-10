@@ -1306,9 +1306,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     final bookingRepo = BookingManagementRepository(context.read<DioClient>());
 
     try {
-      // Step 1: Ensure seats are actively held by this staff member, then create offline booking
+      // Step 1: Refresh seat hold for this staff member, then create offline booking
       final seatIds = args.selectedSeats.map((s) => s.seatId).toList();
-      await bookingRepo.holdSeats(args.showtime.id, seatIds);
+      try {
+        await bookingRepo.holdSeats(args.showtime.id, seatIds);
+      } catch (_) {
+        // If seat is already held by this staff member, proceed to createStaffBooking
+      }
 
       final concessionsPayload = args.concessions
           .map((c) => {'productId': c.productId, 'quantity': c.quantity})

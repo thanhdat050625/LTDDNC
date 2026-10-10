@@ -68,12 +68,15 @@ class _AppState extends State<App> {
   @override
   void initState() {
     super.initState();
+    _socketService = SocketService(baseUrl: AppConstants.baseUrl);
     _authBloc = AuthBloc(widget.authRepo)..add(CheckAuthStatus());
     _homeCubit = HomeCubit(widget.homeRepo)..load();
-    _notificationCubit = NotificationCubit(widget.notificationRepo);
+    _notificationCubit = NotificationCubit(
+      widget.notificationRepo,
+      socketService: _socketService,
+    );
     _profileCubit = ProfileCubit(widget.profileRepo);
     _themeCubit = ThemeCubit(widget.storageService);
-    _socketService = SocketService(baseUrl: AppConstants.baseUrl);
     _router = createRouter(_authBloc);
     _backHandler = AppBackHandler(
       router: _router,
@@ -85,7 +88,10 @@ class _AppState extends State<App> {
 
     _authSub = _authBloc.stream.listen((state) {
       if (state is AuthAuthenticated) {
+        _notificationCubit.initSocket(state.user.id);
         _notificationCubit.loadNotifications();
+      } else if (state is AuthUnauthenticated) {
+        _notificationCubit.disconnectSocket();
       }
     });
   }

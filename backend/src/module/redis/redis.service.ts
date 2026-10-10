@@ -65,8 +65,9 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   // ─── Seat Hold Operations ────────────────────────────────────────────
 
   /**
-   * Giữ ghế tạm thời bằng SET NX EX (atomic).
-   * @returns true nếu giữ thành công, false nếu ghế đang bị giữ bởi người khác
+   * Giữ ghế tạm thời bằng atomic Lua script.
+   * Cho phép giữ nếu ghế chưa bị giữ HOẶC đang được giữ bởi chính userId đó (gia hạn/refresh).
+   * @returns true nếu giữ thành công hoặc chính user đang giữ, false nếu ghế đang bị giữ bởi người khác
    */
   async holdSeat(
     showtimeId: number,
@@ -75,14 +76,23 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     ttlSeconds = 300,
   ): Promise<boolean> {
     const key = this.seatHoldKey(showtimeId, seatId);
-    const result = await this.client.set(
+    const luaScript = `
+      local current = redis.call('get', KEYS[1])
+      if not current or current == ARGV[1] then
+        redis.call('set', KEYS[1], ARGV[1], 'EX', tonumber(ARGV[2]))
+        return 1
+      else
+        return 0
+      end
+    `;
+    const result = await this.client.eval(
+      luaScript,
+      1,
       key,
       String(userId),
-      'EX',
-      ttlSeconds,
-      'NX',
+      String(ttlSeconds),
     );
-    return result === 'OK';
+    return result === 1;
   }
 
   /**

@@ -212,11 +212,30 @@ export class BookingService {
     for (const seatId of dto.seatIds) {
       const holder = await this.redisService.getSeatHolder(dto.showtimeId, seatId);
       if (holder !== holderId) {
-        throw new CustomException(
-          HttpStatus.BAD_REQUEST,
-          'SEAT_NOT_HELD',
-          `Ghế ${seatId} chưa được giữ hoặc đã hết hạn`,
-        );
+        // Fallback kiểm tra xem DB có hold còn hiệu lực của chính user này không
+        const dbHold = await this.seatHoldRepository.findOne({
+          where: {
+            showtimeId: dto.showtimeId,
+            seatId,
+            userId: holderId ?? undefined,
+            status: ESeatHoldStatus.HOLDING,
+          },
+        });
+        const isDbHoldValid = dbHold && (!dbHold.expiredAt || new Date(dbHold.expiredAt) > new Date());
+        if (!isDbHoldValid) {
+          if (holder !== null) {
+            throw new CustomException(
+              HttpStatus.BAD_REQUEST,
+              'SEAT_ALREADY_HELD',
+              `Ghế ${seatId} đã bị giữ bởi người khác`,
+            );
+          }
+          throw new CustomException(
+            HttpStatus.BAD_REQUEST,
+            'SEAT_NOT_HELD',
+            `Ghế ${seatId} chưa được giữ hoặc đã hết hạn`,
+          );
+        }
       }
     }
 

@@ -137,63 +137,10 @@ class _TicketSaleScreenView extends StatelessWidget {
     AppLocalizations l10n,
     TicketSaleLoaded state,
   ) {
-    if (state.isCinemaFixed) {
-      final cinemaName = state.cinemas
-          .where((c) => c.id == state.selectedCinemaId)
-          .firstOrNull
-          ?.name ?? l10n.staffBranch;
-
-      return Container(
-        margin: EdgeInsets.fromLTRB(
-          theme.spacingMd,
-          theme.spacingSm,
-          theme.spacingMd,
-          4.0,
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        decoration: BoxDecoration(
-          color: theme.surface,
-          borderRadius: BorderRadius.circular(theme.radiusMd),
-          border: Border.all(color: theme.borderSubtle),
-        ),
-        child: Row(
-          children: [
-            Icon(LucideIcons.mapPin, size: 18, color: theme.primary),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                cinemaName,
-                style: TextStyle(
-                  color: theme.textPrimary,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-              decoration: BoxDecoration(
-                color: theme.primary.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(6),
-                border: Border.all(
-                  color: theme.primary.withValues(alpha: 0.3),
-                  width: 0.8,
-                ),
-              ),
-              child: Text(
-                l10n.staffBranch,
-                style: TextStyle(
-                  color: theme.primary,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    }
+    final cinemaName = state.cinemas
+        .where((c) => c.id == state.selectedCinemaId)
+        .firstOrNull
+        ?.name ?? l10n.staffBranch;
 
     return Container(
       margin: EdgeInsets.fromLTRB(
@@ -202,7 +149,7 @@ class _TicketSaleScreenView extends StatelessWidget {
         theme.spacingMd,
         4.0,
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
         color: theme.surface,
         borderRadius: BorderRadius.circular(theme.radiusMd),
@@ -213,37 +160,32 @@ class _TicketSaleScreenView extends StatelessWidget {
           Icon(LucideIcons.mapPin, size: 18, color: theme.primary),
           const SizedBox(width: 10),
           Expanded(
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<int>(
-                value: state.selectedCinemaId,
-                isExpanded: true,
-                dropdownColor: theme.surface,
-                icon: Icon(
-                  LucideIcons.chevronDown,
-                  size: 18,
-                  color: theme.textSecondary,
-                ),
-                style: TextStyle(
-                  color: theme.textPrimary,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                ),
-                onChanged: (value) {
-                  if (value != null) {
-                    context.read<TicketSaleCubit>().selectCinema(value);
-                  }
-                },
-                items: state.cinemas
-                    .map(
-                      (c) => DropdownMenuItem(
-                        value: c.id,
-                        child: Text(
-                          c.name,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    )
-                    .toList(),
+            child: Text(
+              cinemaName,
+              style: TextStyle(
+                color: theme.textPrimary,
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            decoration: BoxDecoration(
+              color: theme.primary.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(
+                color: theme.primary.withValues(alpha: 0.3),
+                width: 0.8,
+              ),
+            ),
+            child: Text(
+              l10n.staffBranch,
+              style: TextStyle(
+                color: theme.primary,
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),

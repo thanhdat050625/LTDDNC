@@ -21,13 +21,19 @@ class SocketService {
   }
 
   void connectNotification(int userId) {
+    if (_notificationSocket != null && _notificationSocket!.connected) {
+      joinNotification(userId);
+      return;
+    }
     _notificationSocket = IO.io('$baseUrl${SocketEvents.notificationNamespace}', IO.OptionBuilder()
         .setTransports(['websocket'])
-        .disableAutoConnect()
+        .enableAutoConnect()
         .setAuth({'token': token})
         .build());
+    _notificationSocket?.onConnect((_) {
+      joinNotification(userId);
+    });
     _notificationSocket?.connect();
-    joinNotification(userId);
   }
 
   void joinShowtime(int showtimeId) {
@@ -44,11 +50,11 @@ class SocketService {
   }
 
   void joinNotification(int userId) {
-    _notificationSocket?.emit(SocketEvents.joinNotification, userId);
+    _notificationSocket?.emit(SocketEvents.joinNotification, {'userId': userId});
   }
 
   void leaveNotification(int userId) {
-    _notificationSocket?.emit(SocketEvents.leaveNotification, userId);
+    _notificationSocket?.emit(SocketEvents.leaveNotification, {'userId': userId});
   }
 
   void onSeatUpdate(Function(Map<String, dynamic>) callback) {
@@ -60,7 +66,14 @@ class SocketService {
   }
 
   void onNewNotification(Function(Map<String, dynamic>) callback) {
-    _notificationSocket?.on(SocketEvents.newNotification, (data) => callback(data as Map<String, dynamic>));
+    _notificationSocket?.off(SocketEvents.newNotification);
+    _notificationSocket?.on(SocketEvents.newNotification, (data) {
+      if (data is Map<String, dynamic>) {
+        callback(data);
+      } else if (data is Map) {
+        callback(Map<String, dynamic>.from(data));
+      }
+    });
   }
 
   void offNewNotification() {

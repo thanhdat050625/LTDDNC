@@ -342,6 +342,15 @@ export class ShiftService implements OnModuleInit {
       }
     }
 
+    if (dto.staffIds && dto.staffIds.length > 0 && dto.cinemaId) {
+      await this.userRepo
+        .createQueryBuilder()
+        .update()
+        .set({ cinemaId: dto.cinemaId })
+        .where('id IN (:...staffIds) AND (cinemaId IS NULL OR cinemaId = 0)', { staffIds: dto.staffIds })
+        .execute();
+    }
+
     return { added, removed };
   }
 }

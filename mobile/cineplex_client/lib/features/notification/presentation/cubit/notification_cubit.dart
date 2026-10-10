@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:mobile_shared/mobile_shared.dart';
 import '../../data/models/notification_model.dart';
 import '../../data/repositories/notification_repository.dart';
 
@@ -30,28 +31,63 @@ class NotificationError extends NotificationState {
 
 class NotificationCubit extends Cubit<NotificationState> {
   final NotificationRepository repository;
+  final SocketService? socketService;
   final Set<String> _knownNotificationIds = {};
   bool _hasInitialized = false;
+  int? _subscribedUserId;
 
-  Timer? _pollTimer;
   final _newNotificationController = StreamController<NotificationModel>.broadcast();
 
   Stream<NotificationModel> get newNotificationStream => _newNotificationController.stream;
 
-  NotificationCubit(this.repository) : super(NotificationInitial());
+  NotificationCubit(this.repository, {this.socketService}) : super(NotificationInitial());
+
+  void initSocket(int userId) {
+    if (socketService == null) return;
+    if (_subscribedUserId == userId) return;
+    _subscribedUserId = userId;
+    socketService!.connectNotification(userId);
+    socketService!.onNewNotification(_onNewNotificationReceived);
+  }
+
+  void disconnectSocket() {
+    if (socketService == null) return;
+    if (_subscribedUserId != null) {
+      socketService!.leaveNotification(_subscribedUserId!);
+      _subscribedUserId = null;
+    }
+    socketService!.offNewNotification();
+  }
+
+  void _onNewNotificationReceived(Map<String, dynamic> data) {
+    try {
+      final notif = NotificationModel.fromJson(data);
+      if (!_knownNotificationIds.contains(notif.id)) {
+        _knownNotificationIds.add(notif.id);
+        _newNotificationController.add(notif);
+      }
+
+      if (state is NotificationLoaded) {
+        final current = state as NotificationLoaded;
+        final updatedList = [
+          notif,
+          ...current.notifications.where((n) => n.id != notif.id),
+        ];
+        final newUnread = current.unreadCount + (notif.isRead ? 0 : 1);
+        emit(NotificationLoaded(updatedList, newUnread));
+      }
+
+      loadNotifications(isSilent: true);
+    } catch (_) {}
+  }
 
   void startPolling({Duration interval = const Duration(seconds: 10)}) {
-    _pollTimer?.cancel();
-    // Immediate load then periodic polling
+    // Deprecated: WebSocket is used for realtime notifications
     loadNotifications(isSilent: state is NotificationLoaded);
-    _pollTimer = Timer.periodic(interval, (_) {
-      loadNotifications(isSilent: true);
-    });
   }
 
   void stopPolling() {
-    _pollTimer?.cancel();
-    _pollTimer = null;
+    // Deprecated: No polling timer active
   }
 
   Future<void> loadNotifications({bool isSilent = false}) async {
@@ -96,7 +132,7 @@ class NotificationCubit extends Cubit<NotificationState> {
 
   @override
   Future<void> close() {
-    _pollTimer?.cancel();
+    disconnectSocket();
     _newNotificationController.close();
     return super.close();
   }
